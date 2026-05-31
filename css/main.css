@@ -1,0 +1,32 @@
+/* ================= MASTER CSS - DUKOPS APPLICATION ================= */
+
+/* 00-BASE STYLES */
+@import url('./00-base/_root.css');
+@import url('./00-base/_reset.css');
+@import url('./00-base/_animations.css');
+
+/* 01-LAYOUT SYSTEM */
+@import url('./01-layout/_grid.css');
+
+/* 02-COMPONENTS */
+@import url('./02-components/_buttons.css');
+@import url('./02-components/_tabs.css');
+@import url('./02-components/_forms.css');
+@import url('./02-components/_validation.css');
+
+/* 03-SECTIONS */
+@import url('./03-sections/_splash.css');
+@import url('./03-sections/_header.css');
+@import url('./03-sections/_network.css');
+@import url('./03-sections/_admin.css');
+@import url('./03-sections/_notifications.css');
+
+/* 04-FEATURES */
+@import url('./04-features/_dukops-form.css');
+@import url('./04-features/_attendance.css');
+@import url('./04-features/_jadwal.css');
+
+/* 07-RESPONSIVE */
+@import url('./07-responsive/_mobile.css');
+
+/* ================= END OF IMPORTS ================= */

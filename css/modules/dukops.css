@@ -1,0 +1,240 @@
+/* ================= DUKOPS BABINSA STYLE ================= */
+#logTerkirim {
+    background: #1d1f1d;
+    padding: 10px;
+    border-radius: 5px;
+    max-height: 150px;
+    overflow-y: auto;
+    font-size: 14px;
+    margin-top: 15px;
+}
+
+.counter-value {
+    font-size: 60px;
+    font-weight: bold;
+    color: #9fd49f;
+}
+
+.log-entry {
+    background: #2a3a2e;
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 5px;
+    font-size: 13px;
+}
+
+.log-time {
+    color: #b2d8b2;
+    font-size: 12px;
+}
+
+.log-filename {
+    font-weight: bold;
+    color: #9fd49f;
+}
+
+/* Tombol Absensi */
+#showAttendanceBtn {
+    background: #3a4f41;
+    margin-top: 10px;
+}
+
+#showAttendanceBtn:hover {
+    background: #4a6f5a;
+}
+
+/* Panel Absensi */
+#attendancePanel {
+    margin-top: 20px;
+    background: #1d1f1d;
+    padding: 15px;
+    border-radius: 5px;
+    border: 1px solid #3a4f41;
+}
+
+.attendance-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #3a4f41;
+}
+
+.attendance-filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.attendance-filters select,
+.attendance-filters input {
+    flex: 1;
+}
+
+.attendance-filters button {
+    margin-top: 5px;
+    padding: 8px 15px;
+    width: auto;
+}
+
+.attendance-summary {
+    background: #2a3a2e;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.progress-container {
+    background: #333;
+    height: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.progress-bar {
+    height: 100%;
+    background: #4CAF50;
+    transition: width 0.3s;
+}
+
+.desa-card {
+    background: #2a3a2e;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    border-left: 4px solid #4CAF50;
+}
+
+.desa-card.incomplete {
+    border-left-color: #FF9800;
+}
+
+.desa-header {
+    padding: 10px 15px;
+    background: #3a4f41;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.desa-name {
+    font-weight: bold;
+    color: #9fd49f;
+    font-size: 16px;
+}
+
+.desa-count {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+.desa-files {
+    padding: 10px 15px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.file-item {
+    padding: 8px 0;
+    border-bottom: 1px solid #3a4f41;
+}
+
+.file-item:last-child {
+    border-bottom: none;
+}
+
+.file-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.file-name {
+    font-size: 14px;
+    color: #f5f5f5;
+}
+
+.file-meta {
+    font-size: 12px;
+    color: #a5a5a5;
+    margin-top: 3px;
+}
+
+.file-link {
+    color: #b2d8b2;
+    text-decoration: none;
+    margin-left: 10px;
+}
+
+.attendance-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.attendance-actions button {
+    flex: 1;
+    margin-top: 0;
+    padding: 10px;
+}
+
+/* Popup Terima Kasih */
+.thankyou-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: fadeIn 0.5s ease;
+}
+
+.thankyou-content {
+    background: linear-gradient(135deg, #1d1f1d, #2b4d2b);
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 90%;
+    width: 500px;
+    text-align: center;
+    border: 3px solid #4CAF50;
+    box-shadow: 0 0 30px rgba(76, 175, 80, 0.5);
+    animation: scaleIn 0.5s ease;
+}
+
+/* Install Button */
+#installButton {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    display: none;
+    align-items: center;
+    gap: 8px;
+}
+
+#installButton:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+}

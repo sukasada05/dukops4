@@ -1,0 +1,134 @@
+/* ================= RESPONSIVE DESIGN - TABLET ================= */
+@media (max-width: 720px) {
+    #j_hasilPesan {
+        min-height: 600px;
+        max-height: 600px;
+        font-size: 13px;
+        padding: 12px;
+    }
+
+    /* Keep 2-column layout on tablet, smaller gap */
+    .form-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+}
+
+/* ================= RESPONSIVE DESIGN - MOBILE ================= */
+@media (max-width: 480px) {
+    .container {
+        padding: 15px;
+    }
+
+    .header-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .header-image {
+        height: 120px;
+        width: 120px;
+    }
+
+    .header-title {
+        font-size: 15px;
+    }
+
+    .header-subtitle {
+        font-size: 11px;
+    }
+
+    /* Keep 2-column layout on mobile, even smaller gap */
+    .form-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    label {
+        margin-top: 10px;
+        font-size: 14px;
+    }
+
+    select,
+    input,
+    textarea {
+        padding: 6px;
+        font-size: 14px;
+    }
+
+    .reset-btn {
+        padding: 6px 10px !important;
+        font-size: 12px !important;
+    }
+
+    button {
+        padding: 10px;
+    }
+
+    .attendance-filters {
+        flex-direction: column;
+    }
+
+    .attendance-actions {
+        flex-direction: column;
+    }
+
+    .splash-circle {
+        width: 150px;
+        height: 150px;
+    }
+
+    .splash-title {
+        font-size: 28px;
+    }
+
+    .splash-progress-container {
+        width: 250px;
+    }
+
+    .nav-buttons {
+        flex-direction: row !important;
+        flex-wrap: nowrap;
+        gap: 8px;
+    }
+
+    .nav-btn {
+        padding: 10px;
+        flex: 1 1 0;
+        min-width: 0;
+        width: auto;
+    }
+
+    .splash-buttons {
+        flex-direction: column;
+    }
+
+    .splash-btn {
+        padding: 12px;
+    }
+
+    .thankyou-content {
+        padding: 20px;
+        width: 95%;
+    }
+
+    .jadwal-btn {
+        padding: 15px 20px;
+        min-width: 220px;
+    }
+
+    .icon-container {
+        gap: 20px;
+    }
+
+    .whatsapp-icon,
+    .telegram-icon {
+        width: 45px;
+        height: 45px;
+    }
+
+    .whatsapp-icon i,
+    .telegram-icon i {
+        font-size: 22px;
+    }
+}

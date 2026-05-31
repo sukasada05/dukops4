@@ -1,0 +1,54 @@
+/* ================= LAYOUT GRID & FLEXBOX ================= */
+.container {
+    display: none;
+    max-width: 600px;
+    margin: auto;
+    background: #202624;
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid #3a4f41;
+    animation: fadeIn 0.5s ease-in;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.col {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Form Row Layout */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.form-col {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Section Content Layout */
+.section-content {
+    display: block;
+}
+
+@media screen and (min-width: 601px) {
+    .section-content {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .section-content>div {
+        flex: 1;
+        min-width: 250px;
+    }
+}

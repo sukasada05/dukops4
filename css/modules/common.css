@@ -1,0 +1,432 @@
+/* ================= SPLASH SCREEN STYLE ================= */
+.splash-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #000428, #004e92);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    text-align: center;
+    transition: opacity 0.8s ease;
+}
+
+.splash-circle {
+    width: 180px;
+    height: 180px;
+    border: 3px solid rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    position: relative;
+    margin: 0 auto 25px;
+    animation: circlePulse 3s infinite alternate;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+.logo-container {
+    width: 75%;
+    height: 75%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.svg-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 8px rgba(0, 168, 255, 0.6));
+    animation: logoFloat 4s infinite ease-in-out;
+}
+
+.splash-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: white;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    text-shadow:
+        0 0 10px #00a8ff,
+        0 0 20px #00a8ff,
+        0 0 30px #00a8ff;
+    animation: textGlow 2s infinite alternate;
+    line-height: 1.3;
+}
+
+.splash-subtitle {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.8);
+    letter-spacing: 3px;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    font-weight: 300;
+}
+
+.splash-unit {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+/* Tombol Pilihan di Splash Screen */
+.splash-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+    width: 100%;
+    max-width: 500px;
+    padding: 0 20px;
+}
+
+.splash-btn {
+    flex: 1;
+    padding: 20px 25px;
+    border: none;
+    border-radius: 15px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    min-height: 120px;
+}
+
+.splash-btn i {
+    font-size: 48px;
+    transition: transform 0.3s ease;
+}
+
+.splash-btn span {
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.splash-btn-dukops {
+    background: linear-gradient(135deg, #2b4d2b, #3e704a);
+    color: white;
+    border: 2px solid #4CAF50;
+}
+
+.splash-btn-jadwal {
+    background: linear-gradient(135deg, #006600, #008800);
+    color: white;
+    border: 2px solid #4dff4d;
+}
+
+.splash-btn:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><circle cx="16" cy="16" r="14" fill="none" stroke="%234CAF50" stroke-width="2"/><path d="M16 6 L20 14 L28 14 L22 19 L24 27 L16 22 L8 27 L10 19 L4 14 L12 14 Z" fill="%234CAF50"/></svg>') 16 16, auto;
+}
+
+.splash-btn i:hover {
+    transform: scale(1.1) rotate(10deg);
+}
+
+.splash-btn-dukops:hover {
+    background: linear-gradient(135deg, #3e704a, #4CAF50);
+    border-color: #66bb6a;
+}
+
+.splash-btn-jadwal:hover {
+    background: linear-gradient(135deg, #008800, #00aa00);
+    border-color: #66ff66;
+}
+
+.splash-progress-container {
+    width: 300px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    margin: 15px auto;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.splash-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #00a8ff, #9c88ff, #ff6b9d);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+    box-shadow: 0 0 15px rgba(0, 168, 255, 0.7);
+    position: relative;
+}
+
+.progress-percentage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+    z-index: 2;
+}
+
+/* ================= ANIMATIONS ================= */
+@keyframes circlePulse {
+    0% {
+        box-shadow:
+            0 0 20px rgba(0, 168, 255, 0.5),
+            0 0 40px rgba(0, 168, 255, 0.3),
+            inset 0 0 20px rgba(0, 168, 255, 0.1);
+        transform: scale(1);
+    }
+
+    100% {
+        box-shadow:
+            0 0 30px rgba(156, 136, 255, 0.6),
+            0 0 50px rgba(156, 136, 255, 0.4),
+            inset 0 0 20px rgba(156, 136, 255, 0.2);
+        transform: scale(1.05);
+    }
+}
+
+@keyframes textGlow {
+    0% {
+        text-shadow:
+            0 0 10px #00a8ff,
+            0 0 20px #00a8ff,
+            0 0 30px #00a8ff;
+    }
+
+    100% {
+        text-shadow:
+            0 0 15px #9c88ff,
+            0 0 30px #9c88ff,
+            0 0 45px #9c88ff;
+        transform: translateY(-1px);
+    }
+}
+
+@keyframes logoFloat {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+        filter: drop-shadow(0 0 8px rgba(0, 168, 255, 0.6));
+    }
+
+    50% {
+        transform: translateY(-5px) scale(1.02);
+        filter: drop-shadow(0 0 12px rgba(156, 136, 255, 0.8));
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.fade-out {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+/* ================= APP BASE STYLE ================= */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #101415;
+    color: #f5f5f5;
+    line-height: 1.5;
+    overflow-x: hidden;
+}
+
+.container {
+    display: none;
+    max-width: 600px;
+    margin: auto;
+    background: #202624;
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid #3a4f41;
+    animation: fadeIn 0.5s ease-in;
+}
+
+.header-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #3a4f41;
+}
+
+.header-image {
+    height: 150px;
+    width: 150px;
+    border: 1px solid #3a4f41;
+    border-radius: 5px;
+    object-fit: contain;
+}
+
+.header-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.header-title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #b2d8b2;
+    line-height: 1.3;
+}
+
+.header-subtitle {
+    font-size: 12px;
+    margin-top: 5px;
+    color: #9fd49f;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+    color: #b2d8b2;
+}
+
+select,
+input,
+textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: none;
+    background: #333;
+    color: #f5f5f5;
+    font-size: 16px;
+}
+
+textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+button {
+    margin-top: 20px;
+    padding: 12px 15px;
+    background: #2b4d2b;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+button:hover:not(:disabled) {
+    background: #3e704a;
+}
+
+button:disabled {
+    background: #555;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+canvas {
+    display: block;
+    margin-top: 20px;
+    width: 100%;
+    height: auto;
+    border: 1px solid #444;
+    background: #000;
+}
+
+.previewBox {
+    font-size: 14px;
+    color: #a5a5a5;
+    margin-top: 5px;
+    min-height: 1em;
+}
+
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    left: 20px;
+    padding: 12px 15px;
+    border-radius: 5px;
+    z-index: 1000;
+    font-size: 14px;
+    text-align: center;
+}
+
+.notification.success {
+    background: #4CAF50;
+}
+
+.notification.error {
+    background: #f44336;
+}
+
+.notification.warning {
+    background: #FF9800;
+}
+
+.fa-spin {
+    animation: spin 1s infinite linear;
+}

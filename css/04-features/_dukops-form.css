@@ -1,0 +1,57 @@
+/* ================= DUKOPS FORM FEATURE ================= */
+.previewBox {
+    font-size: 14px;
+    color: #a5a5a5;
+    margin-top: 5px;
+    min-height: 1em;
+}
+
+.preview-tanggal-box {
+    background: #1a3a1a;
+    border: 2px solid #4CAF50;
+    border-radius: 5px;
+    padding: 8px 12px;
+    color: #9fd49f;
+    font-size: 12px;
+    font-weight: bold;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#logTerkirim {
+    background: #1d1f1d;
+    padding: 10px;
+    border-radius: 5px;
+    max-height: 150px;
+    overflow-y: auto;
+    font-size: 14px;
+    margin-top: 15px;
+}
+
+.counter-value {
+    font-size: 60px;
+    font-weight: bold;
+    color: #9fd49f;
+}
+
+.log-entry {
+    background: #2a3a2e;
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 5px;
+    font-size: 13px;
+}
+
+.log-time {
+    color: #b2d8b2;
+    font-size: 12px;
+}
+
+.log-filename {
+    font-weight: bold;
+    color: #9fd49f;
+}

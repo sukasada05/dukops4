@@ -1,0 +1,22 @@
+# DAFTAR DESA/KELURAHAN KORAMIL 1609-05/SUKASADA
+# File ini digunakan untuk mengatur daftar desa yang muncul di dropdown
+# Format: satu desa per baris, tanpa prefix Desa/Kelurahan
+# Komentar diawali dengan #
+# PENTING: Hanya tambahkan desa yang memiliki file data/coordinates/[desa].json
+
+--Pilih Desa--
+Gitgit
+Panji
+Panji Anom
+Sukasada
+Pancasari
+Wanagiri
+Ambengan
+Kayu Putih
+Padang Bulia
+Pegadungan
+Pegayaman
+Sambangan
+Selat
+Silangjana
+Tegallinggah

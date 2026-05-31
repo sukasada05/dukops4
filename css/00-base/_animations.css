@@ -1,0 +1,93 @@
+/* ================= ANIMATION KEYFRAMES ================= */
+@keyframes circlePulse {
+    0% {
+        box-shadow:
+            0 0 20px rgba(0, 168, 255, 0.5),
+            0 0 40px rgba(0, 168, 255, 0.3),
+            inset 0 0 20px rgba(0, 168, 255, 0.1);
+        transform: scale(1);
+    }
+
+    100% {
+        box-shadow:
+            0 0 30px rgba(156, 136, 255, 0.6),
+            0 0 50px rgba(156, 136, 255, 0.4),
+            inset 0 0 20px rgba(156, 136, 255, 0.2);
+        transform: scale(1.05);
+    }
+}
+
+@keyframes textGlow {
+    0% {
+        text-shadow:
+            0 0 10px #00a8ff,
+            0 0 20px #00a8ff,
+            0 0 30px #00a8ff;
+    }
+
+    100% {
+        text-shadow:
+            0 0 15px #9c88ff,
+            0 0 30px #9c88ff,
+            0 0 45px #9c88ff;
+        transform: translateY(-1px);
+    }
+}
+
+@keyframes logoFloat {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+        filter: drop-shadow(0 0 8px rgba(0, 168, 255, 0.6));
+    }
+
+    50% {
+        transform: translateY(-5px) scale(1.02);
+        filter: drop-shadow(0 0 12px rgba(156, 136, 255, 0.8));
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.fade-out {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.fa-spin {
+    animation: spin 1s infinite linear;
+}

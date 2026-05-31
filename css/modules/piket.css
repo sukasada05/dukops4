@@ -1,0 +1,271 @@
+/* ================= JADWAL PIKET STYLE ================= */
+#jadwalPiketContainer {
+    display: none;
+    background: black-translucent;
+    color: black-translucent;
+    padding: 10px;
+    border-radius: 0px;
+    margin-top: 20px;
+}
+
+.jadwal-header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid white;
+}
+
+.jadwal-title {
+    color: gold;
+    margin-bottom: 10px;
+    font-size: 24px;
+    text-align: center;
+}
+
+.jadwal-logo {
+    max-width: 100%;
+    height: auto;
+    max-height: 120px;
+    border-radius: 8px;
+    border: 2px;
+    margin-bottom: 15px;
+}
+
+.jadwal-section {
+    background: rgba(0, 60, 0, 0.7);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.jadwal-section h3 {
+    margin: 10px 0;
+    font-size: 16px;
+    text-align: left;
+}
+
+.section-title-koramil {
+    border: 1px solid #0088cc;
+    color: #4dff4d;
+}
+
+.section-title-kediaman {
+    border: 1px solid #0088cc;
+    color: #ffcc00;
+}
+
+.section-title-makodim {
+    border: 1px solid #0088cc;
+    color: #00ccff;
+}
+
+.jadwal-btn {
+    background: red;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    width: 100%;
+    margin-top: 10px;
+    border: 1px solid #4dff4d;
+}
+
+.jadwal-btn:hover {
+    background: green;
+}
+
+.jadwal-toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 80, 0, 0.9);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.3s;
+    max-width: 80%;
+    text-align: center;
+}
+
+.jadwal-toast.show {
+    opacity: 1;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.col {
+    flex: 1;
+    min-width: 0;
+}
+
+.telegram-group-selector {
+    margin-top: 10px;
+    padding: 10px;
+    background: rgba(0, 80, 0, 0.5);
+    border-radius: 5px;
+    border-left: 3px solid #0088cc;
+}
+
+.telegram-group-selector label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #00ccff;
+}
+
+.telegram-group-selector select {
+    background-color: rgba(0, 40, 0, 0.8);
+    color: #e6ffe6;
+    border: 1px solid #0088cc;
+}
+
+.section-content {
+    display: block;
+}
+
+@media screen and (min-width: 601px) {
+    .section-content {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .section-content>div {
+        flex: 1;
+        min-width: 250px;
+    }
+}
+
+.app-loading {
+    text-align: center;
+    padding: 10px;
+    color: #4dff4d;
+    display: none;
+}
+
+/* ================= JADWAL PIKET MESSAGE PREVIEW ================= */
+#j_hasilPesan {
+    width: 100%;
+    min-height: 250px;
+    max-height: 400px;
+    padding: 15px;
+    border-radius: 8px;
+    border: 2px solid #0088cc;
+    background-color: rgba(0, 40, 0, 0.9);
+    color: #e6ffe6;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+    margin-top: 10px;
+    white-space: pre-wrap;
+    overflow-y: auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+#j_hasilPesan::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+}
+
+#j_hasilPesan:focus {
+    outline: none;
+    border-color: #4dff4d;
+    box-shadow: 0 0 10px rgba(77, 255, 77, 0.5);
+}
+
+/* ================= WHATSAPP & TELEGRAM BUTTON ================= */
+.jadwal-btn-share {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 25px 30px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    min-width: 300px;
+    max-width: 350px;
+    margin: 20px auto;
+    background: linear-gradient(135deg, #8B0000 0%, #8B0000 50%, #E8E8E8 50%, #E8E8E8 100%);
+    border: 2px solid #660000;
+    box-shadow: 0 4px 15px rgba(139, 0, 0, 0.2);
+}
+
+.icon-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.whatsapp-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
+}
+
+.telegram-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #0088cc, #0066aa);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(5px);
+    box-shadow: 0 4px 10px rgba(0, 136, 204, 0.3);
+}
+
+.whatsapp-icon i,
+.telegram-icon i {
+    font-size: 30px;
+    color: white;
+}
+
+.platform-name {
+    font-weight: bold;
+    font-size: 18px;
+    letter-spacing: 1px;
+}
+
+.platform-desc {
+    font-size: 12px;
+    opacity: 0.8;
+    margin-top: 5px;
+}
+
+.share-icons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+}
+
+.share-icons i {
+    font-size: 24px;
+}
