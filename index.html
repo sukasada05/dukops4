@@ -1736,7 +1736,7 @@
     <script src="js/services/AdminSettings.js"></script>
     <script src="app.js"></script>
 
-    <!-- ============ JADWAL PIKET BARU SCRIPT ============ -->
+    <!-- ============ JADWAL PIKET BARU SCRIPT (DENGAN PERBAIKAN dayOfYear) ============ -->
     <script>
     (function() {
         const GITHUB_URLS = {
@@ -1793,7 +1793,11 @@
                     if (lines.length) {
                         JadwalData.daftarHanpangan = lines;
                         const today = new Date();
-                        const index = (today.getDate() - 1) % lines.length;
+                        // === PERBAIKAN: Gunakan dayOfYear agar siklus sepanjang tahun ===
+                        const start = new Date(today.getFullYear(), 0, 0);
+                        const dayOfYear = Math.floor((today - start) / (24 * 60 * 60 * 1000));
+                        const index = (dayOfYear - 1) % lines.length;
+                        // =====================================================
                         JadwalData.currentHanpangan = lines[index];
                         updateRunningText();
                         return true;
