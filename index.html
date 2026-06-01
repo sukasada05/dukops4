@@ -1717,179 +1717,181 @@
     <script src="js/services/AdminSettings.js"></script>
     <script src="app.js"></script>
 
-    <!-- ============ JADWAL PIKET BARU SCRIPT (DENGAN PERBAIKAN dayOfYear) ============ -->
-    <script>
-    (function() {
-        const GITHUB_URLS = {
-            HANPANGAN: "data/hanpangan.txt",
-            PIKET: "data/piket.txt"
-        };
+//============ JADWAL PIKET BARU SCRIPT (HANPANGAN EPOCH DAYS - TANPA RESET) ============
+<script>
+(function() {
+    const GITHUB_URLS = {
+        HANPANGAN: "data/hanpangan.txt",
+        PIKET: "data/piket.txt"
+    };
 
-        const JadwalData = { daftarNama: [], daftarHanpangan: [], currentHanpangan: "" };
-        const JADWAL_DROPDOWN_IDS = [
-            'j_nama1a_baru', 'j_nama1b_baru', 'j_nama2a_baru', 'j_nama2b_baru',
-            'j_nama3a_baru', 'j_nama3b_baru', 'j_nama3c_baru', 'j_nama3d_baru',
-            'j_nama4a_baru', 'j_nama4b_baru', 'j_nama4c_baru', 'j_nama4d_baru'
-        ];
+    const JadwalData = { daftarNama: [], daftarHanpangan: [], currentHanpangan: "" };
+    const JADWAL_DROPDOWN_IDS = [
+        'j_nama1a_baru', 'j_nama1b_baru', 'j_nama2a_baru', 'j_nama2b_baru',
+        'j_nama3a_baru', 'j_nama3b_baru', 'j_nama3c_baru', 'j_nama3d_baru',
+        'j_nama4a_baru', 'j_nama4b_baru', 'j_nama4c_baru', 'j_nama4d_baru'
+    ];
 
-        function updateRunningText() {
-            const el = document.getElementById('runningTextJadwalBaru');
-            if (el) el.textContent = JadwalData.currentHanpangan ? '🍽️ JADWAL HANPANGAN HARI INI: ' + JadwalData.currentHanpangan + ' 🍽️' : '🍽️ Memuat jadwal hanpangan... 🍽️';
-        }
+    function updateRunningText() {
+        const el = document.getElementById('runningTextJadwalBaru');
+        if (el) el.textContent = JadwalData.currentHanpangan ? '🍽️ JADWAL HANPANGAN HARI INI: ' + JadwalData.currentHanpangan + ' 🍽️' : '🍽️ Memuat jadwal hanpangan... 🍽️';
+    }
 
-        function fetchFromGitHub(url) {
-            return new Promise(resolve => {
-                const cache = '?t=' + new Date().getTime();
-                fetch(url + cache).then(res => res.ok ? res.text() : null).then(data => resolve(data)).catch(() => resolve(null));
-            });
-        }
+    function fetchFromGitHub(url) {
+        return new Promise(resolve => {
+            const cache = '?t=' + new Date().getTime();
+            fetch(url + cache).then(res => res.ok ? res.text() : null).then(data => resolve(data)).catch(() => resolve(null));
+        });
+    }
 
-        function loadPiketData() {
-            return fetchFromGitHub(GITHUB_URLS.PIKET).then(data => {
-                if (data) {
-                    JadwalData.daftarNama = data.trim().split('\n').filter(l => l.trim()).map(n => n.trim());
-                    JADWAL_DROPDOWN_IDS.forEach(id => {
-                        const select = document.getElementById(id);
-                        if (select) {
-                            select.innerHTML = '<option value="">-- Pilih Nama --</option>';
-                            JadwalData.daftarNama.forEach(nama => { const opt = document.createElement('option'); opt.value = nama; opt.textContent = nama; select.appendChild(opt); });
-                            select.value = "";
-                        }
-                    });
+    function loadPiketData() {
+        return fetchFromGitHub(GITHUB_URLS.PIKET).then(data => {
+            if (data) {
+                JadwalData.daftarNama = data.trim().split('\n').filter(l => l.trim()).map(n => n.trim());
+                JADWAL_DROPDOWN_IDS.forEach(id => {
+                    const select = document.getElementById(id);
+                    if (select) {
+                        select.innerHTML = '<option value="">-- Pilih Nama --</option>';
+                        JadwalData.daftarNama.forEach(nama => { const opt = document.createElement('option'); opt.value = nama; opt.textContent = nama; select.appendChild(opt); });
+                        select.value = "";
+                    }
+                });
+                return true;
+            }
+            return false;
+        });
+    }
+
+    function loadHanpanganData() {
+        return fetchFromGitHub(GITHUB_URLS.HANPANGAN).then(data => {
+            if (data) {
+                const lines = data.trim().split('\n').filter(l => l.trim());
+                if (lines.length) {
+                    JadwalData.daftarHanpangan = lines;
+                    const today = new Date();
+                    // ========== PERBAIKAN: epochDays (tidak reset setiap tahun) ==========
+                    // epochDays = jumlah hari sejak 1 Januari 1970 (UNIX epoch)
+                    const epochDays = Math.floor(today.getTime() / (24 * 60 * 60 * 1000));
+                    const index = epochDays % lines.length;
+                    // ====================================================================
+                    JadwalData.currentHanpangan = lines[index];
+                    updateRunningText();
                     return true;
                 }
-                return false;
-            });
-        }
-
-        function loadHanpanganData() {
-            return fetchFromGitHub(GITHUB_URLS.HANPANGAN).then(data => {
-                if (data) {
-                    const lines = data.trim().split('\n').filter(l => l.trim());
-                    if (lines.length) {
-                        JadwalData.daftarHanpangan = lines;
-                        const today = new Date();
-                        const start = new Date(today.getFullYear(), 0, 0);
-                        const dayOfYear = Math.floor((today - start) / (24 * 60 * 60 * 1000));
-                        const index = (dayOfYear - 1) % lines.length;
-                        JadwalData.currentHanpangan = lines[index];
-                        updateRunningText();
-                        return true;
-                    }
-                }
-                updateRunningText();
-                return false;
-            });
-        }
-
-        function formatTanggal(date) {
-            const days = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
-            const months = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
-            return days[date.getDay()] + ", " + date.getDate() + " " + months[date.getMonth()] + " " + date.getFullYear();
-        }
-
-        function autoResizeTextarea() {
-            const textarea = document.getElementById('j_hasilPesanBaru');
-            if (textarea) {
-                textarea.style.height = 'auto';
-                textarea.style.height = textarea.scrollHeight + 'px';
             }
-        }
-
-        function updatePreview() {
-            const now = new Date(), tomorrow = new Date(); tomorrow.setDate(now.getDate() + 1);
-            let result = "=======================\nKORAMIL 1609-05/SUKASADA\n    JADWAL DINAS DALAM\n=======================\n\n";
-            const getVal = (id) => document.getElementById(id)?.value || "";
-            
-            const sections = [
-                { names: [getVal('j_nama1a_baru'), getVal('j_nama1b_baru')], title: formatTanggal(now), suffix: "" },
-                { names: [getVal('j_nama2a_baru'), getVal('j_nama2b_baru')], title: formatTanggal(tomorrow), suffix: "" },
-                { names: [getVal('j_nama3a_baru'), getVal('j_nama3b_baru')], title: formatTanggal(now), suffix: " (Kediaman)" },
-                { names: [getVal('j_nama3c_baru'), getVal('j_nama3d_baru')], title: formatTanggal(tomorrow), suffix: " (Kediaman)" },
-                { names: [getVal('j_nama4a_baru'), getVal('j_nama4b_baru')], title: formatTanggal(now), suffix: " (Makodim)" },
-                { names: [getVal('j_nama4c_baru'), getVal('j_nama4d_baru')], title: formatTanggal(tomorrow), suffix: " (Makodim)" }
-            ];
-            
-            let sectionCount = 0;
-            for (const s of sections) {
-                const valid = s.names.filter(n => n && n.trim());
-                if (valid.length) {
-                    result += String.fromCharCode(65 + sectionCount) + ". " + s.title + s.suffix + "\n";
-                    valid.forEach((n, i) => result += "   " + (i + 1) + ". " + n + "\n");
-                    result += "\n"; sectionCount++;
-                }
-            }
-            if (JadwalData.currentHanpangan) result += "- Jadwal Hanpangan hari ini : " + JadwalData.currentHanpangan + "\n\n";
-            result += "Demikian MMP.";
-            const preview = document.getElementById('j_hasilPesanBaru');
-            if (preview) {
-                preview.value = result;
-                setTimeout(autoResizeTextarea, 10);
-            }
-        }
-
-        function sendToWhatsApp() {
-            const preview = document.getElementById('j_hasilPesanBaru');
-            const pesan = preview ? preview.value.trim() : "";
-            if (!pesan) return false;
-            window.open("https://wa.me/?text=" + encodeURIComponent(pesan), "_blank");
+            updateRunningText();
             return false;
+        });
+    }
+
+    function formatTanggal(date) {
+        const days = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+        const months = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+        return days[date.getDay()] + ", " + date.getDate() + " " + months[date.getMonth()] + " " + date.getFullYear();
+    }
+
+    function autoResizeTextarea() {
+        const textarea = document.getElementById('j_hasilPesanBaru');
+        if (textarea) {
+            textarea.style.height = 'auto';
+            textarea.style.height = textarea.scrollHeight + 'px';
         }
+    }
 
-        let isLoading = false;
-        function loadAllJadwalData() {
-            if (isLoading) return;
-            isLoading = true;
-            const loading = document.getElementById('j_loadingIndicatorBaru');
-            if (loading) loading.style.display = 'block';
-            Promise.all([loadPiketData(), loadHanpanganData()]).then(() => { updatePreview(); }).finally(() => { if (loading) loading.style.display = 'none'; isLoading = false; });
-        }
-
-        function initJadwalBaru() {
-            JADWAL_DROPDOWN_IDS.forEach(id => { const sel = document.getElementById(id); if (sel) sel.addEventListener('change', updatePreview); });
-            const btn = document.getElementById('whatsappBtnBaru');
-            if (btn) { const newBtn = btn.cloneNode(true); btn.parentNode.replaceChild(newBtn, btn); newBtn.addEventListener('click', (e) => { e.preventDefault(); sendToWhatsApp(); }); }
-            loadAllJadwalData();
-            autoResizeTextarea();
-        }
-
-        window.showJadwalPiketBaru = function() {
-            document.getElementById('dukopsContent').style.display = 'none';
-            document.getElementById('jadwalPiketContainerBaru').style.display = 'block';
-            document.getElementById('absenContent').style.display = 'none';
-            document.getElementById('absenRefreshBtn').style.display = 'none';
-            document.getElementById('btnDukops').classList.remove('active');
-            document.getElementById('btnJadwal').classList.add('active');
-            document.getElementById('btnAbsen').classList.remove('active');
-            initJadwalBaru();
-        };
-
-        window.showDukops = function() {
-            document.getElementById('dukopsContent').style.display = 'block';
-            document.getElementById('jadwalPiketContainerBaru').style.display = 'none';
-            document.getElementById('absenContent').style.display = 'none';
-            document.getElementById('absenRefreshBtn').style.display = 'none';
-            document.getElementById('btnDukops').classList.add('active');
-            document.getElementById('btnJadwal').classList.remove('active');
-            document.getElementById('btnAbsen').classList.remove('active');
-        };
+    function updatePreview() {
+        const now = new Date(), tomorrow = new Date(); tomorrow.setDate(now.getDate() + 1);
+        let result = "=======================\nKORAMIL 1609-05/SUKASADA\n    JADWAL DINAS DALAM\n=======================\n\n";
+        const getVal = (id) => document.getElementById(id)?.value || "";
         
-        window.showAbsenTab = function() {
-            document.getElementById('dukopsContent').style.display = 'none';
-            document.getElementById('jadwalPiketContainerBaru').style.display = 'none';
-            document.getElementById('absenContent').style.display = 'block';
-            document.getElementById('absenRefreshBtn').style.display = 'block';
-            document.getElementById('btnDukops').classList.remove('active');
-            document.getElementById('btnJadwal').classList.remove('active');
-            document.getElementById('btnAbsen').classList.add('active');
-            if (typeof loadAbsenTahun === 'function') loadAbsenTahun();
-        };
+        const sections = [
+            { names: [getVal('j_nama1a_baru'), getVal('j_nama1b_baru')], title: formatTanggal(now), suffix: "" },
+            { names: [getVal('j_nama2a_baru'), getVal('j_nama2b_baru')], title: formatTanggal(tomorrow), suffix: "" },
+            { names: [getVal('j_nama3a_baru'), getVal('j_nama3b_baru')], title: formatTanggal(now), suffix: " (Kediaman)" },
+            { names: [getVal('j_nama3c_baru'), getVal('j_nama3d_baru')], title: formatTanggal(tomorrow), suffix: " (Kediaman)" },
+            { names: [getVal('j_nama4a_baru'), getVal('j_nama4b_baru')], title: formatTanggal(now), suffix: " (Makodim)" },
+            { names: [getVal('j_nama4c_baru'), getVal('j_nama4d_baru')], title: formatTanggal(tomorrow), suffix: " (Makodim)" }
+        ];
+        
+        let sectionCount = 0;
+        for (const s of sections) {
+            const valid = s.names.filter(n => n && n.trim());
+            if (valid.length) {
+                result += String.fromCharCode(65 + sectionCount) + ". " + s.title + s.suffix + "\n";
+                valid.forEach((n, i) => result += "   " + (i + 1) + ". " + n + "\n");
+                result += "\n"; sectionCount++;
+            }
+        }
+        if (JadwalData.currentHanpangan) result += "- Jadwal Hanpangan hari ini : " + JadwalData.currentHanpangan + "\n\n";
+        result += "Demikian MMP.";
+        const preview = document.getElementById('j_hasilPesanBaru');
+        if (preview) {
+            preview.value = result;
+            setTimeout(autoResizeTextarea, 10);
+        }
+    }
 
-        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initJadwalBaru);
-        else initJadwalBaru();
-    })();
+    function sendToWhatsApp() {
+        const preview = document.getElementById('j_hasilPesanBaru');
+        const pesan = preview ? preview.value.trim() : "";
+        if (!pesan) return false;
+        window.open("https://wa.me/?text=" + encodeURIComponent(pesan), "_blank");
+        return false;
+    }
+
+    let isLoading = false;
+    function loadAllJadwalData() {
+        if (isLoading) return;
+        isLoading = true;
+        const loading = document.getElementById('j_loadingIndicatorBaru');
+        if (loading) loading.style.display = 'block';
+        Promise.all([loadPiketData(), loadHanpanganData()]).then(() => { updatePreview(); }).finally(() => { if (loading) loading.style.display = 'none'; isLoading = false; });
+    }
+
+    function initJadwalBaru() {
+        JADWAL_DROPDOWN_IDS.forEach(id => { const sel = document.getElementById(id); if (sel) sel.addEventListener('change', updatePreview); });
+        const btn = document.getElementById('whatsappBtnBaru');
+        if (btn) { const newBtn = btn.cloneNode(true); btn.parentNode.replaceChild(newBtn, btn); newBtn.addEventListener('click', (e) => { e.preventDefault(); sendToWhatsApp(); }); }
+        loadAllJadwalData();
+        autoResizeTextarea();
+    }
+
+    window.showJadwalPiketBaru = function() {
+        document.getElementById('dukopsContent').style.display = 'none';
+        document.getElementById('jadwalPiketContainerBaru').style.display = 'block';
+        document.getElementById('absenContent').style.display = 'none';
+        document.getElementById('absenRefreshBtn').style.display = 'none';
+        document.getElementById('btnDukops').classList.remove('active');
+        document.getElementById('btnJadwal').classList.add('active');
+        document.getElementById('btnAbsen').classList.remove('active');
+        initJadwalBaru();
+    };
+
+    window.showDukops = function() {
+        document.getElementById('dukopsContent').style.display = 'block';
+        document.getElementById('jadwalPiketContainerBaru').style.display = 'none';
+        document.getElementById('absenContent').style.display = 'none';
+        document.getElementById('absenRefreshBtn').style.display = 'none';
+        document.getElementById('btnDukops').classList.add('active');
+        document.getElementById('btnJadwal').classList.remove('active');
+        document.getElementById('btnAbsen').classList.remove('active');
+    };
     
-    // ============ SCRIPT UNTUK TAB ABSEN ============
+    window.showAbsenTab = function() {
+        document.getElementById('dukopsContent').style.display = 'none';
+        document.getElementById('jadwalPiketContainerBaru').style.display = 'none';
+        document.getElementById('absenContent').style.display = 'block';
+        document.getElementById('absenRefreshBtn').style.display = 'block';
+        document.getElementById('btnDukops').classList.remove('active');
+        document.getElementById('btnJadwal').classList.remove('active');
+        document.getElementById('btnAbsen').classList.add('active');
+        if (typeof loadAbsenTahun === 'function') loadAbsenTahun();
+    };
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initJadwalBaru);
+    else initJadwalBaru();
+})();
+<script>
+	    // ============ SCRIPT UNTUK TAB ABSEN ============
     (function() {
         var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcKBFM8Mm0A8e_hWfl48uEUuDhlmxK8okgXF4M-102HLEuROZPN9YZlpmKnkRo8b_SKA/exec';
         var CACHE_KEY_ABSEN = 'absensi_dukops_data';
