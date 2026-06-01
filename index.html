@@ -5,7 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- ========== INSTRUKSI NOINDEX UNTUK MESIN PENCARI ========== -->
     <meta name="robots" content="noindex, nofollow">
+
+    <!-- PWA Configuration -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -13,20 +17,27 @@
     <title>SISTEM PELAPORAN DUKOPS BABINSA dan JADWAL PIKET KORAMIL</title>
     <meta name="theme-color" content="#0a1a3a">
 
+    <!-- ========== FAVICON ========== -->
     <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="shortcut icon" href="favicon.ico" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <link rel="manifest" href="site.webmanifest" />
+    <!-- ============================= -->
 
+    <!-- External Libraries -->
     <script src="https://cdn.polyfill.io/v3/polyfill.min.js?features=default,es6,Promise,fetch,Array.prototype.includes"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- html2canvas untuk fitur screenshot -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    
     <style>
-        /* ============ SPLASH SCREEN MODERN UDAYANA ========== */
+        /* ============ SPLASH SCREEN MODERN UDAYANA - SEMUA CENTER ========== */
         .splash-container-modern {
             position: fixed;
             top: 0;
@@ -50,6 +61,10 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        .splash-logo-center {
+            text-align: center;
+            margin-bottom: 15px;
+        }
         .splash-logo-center img {
             width: 80px;
             height: auto;
@@ -65,13 +80,38 @@
             font-size: 28px;
             font-weight: bold;
             color: #FFD700;
+            letter-spacing: 2px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             margin: 0;
+            line-height: 1.2;
+            text-align: center;
         }
-        .splash-subtitle-center, .splash-unit-center, .splash-kodim-center {
+        .splash-subtitle-center {
             font-size: 11px;
             color: #CCCCCC;
-            margin-top: 5px;
+            letter-spacing: 1px;
+            margin-top: 8px;
+            text-align: center;
+        }
+        .splash-divider-center {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #FFD700, #FF0000, #FFD700);
+            margin: 15px auto;
+            border-radius: 3px;
+        }
+        .splash-unit-center {
+            font-size: 14px;
+            color: #FFFFFF;
+            font-weight: 500;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .splash-kodim-center {
+            font-size: 11px;
+            color: #B0C4DE;
+            margin-top: 4px;
+            text-align: center;
         }
         .splash-progress-center {
             width: 200px;
@@ -85,15 +125,17 @@
             width: 0%;
             height: 100%;
             background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 4px;
             transition: width 0.3s ease;
         }
         .splash-percentage-center {
             font-size: 12px;
             color: #FFD700;
+            font-weight: bold;
             text-align: center;
         }
 
-        /* ============ HEADER DUKOPS ============ */
+        /* ============ HEADER DUKOPS dengan foto profil di samping kiri ============ */
         .dukops-header {
             background: url('header/header-background.png') center/cover no-repeat;
             background-color: #1a472a;
@@ -118,6 +160,7 @@
             display: inline-flex;
             flex-direction: column;
             align-items: center;
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.08);
         }
         .dukops-profile-img {
             width: 100%;
@@ -133,6 +176,7 @@
             color: #f4f5c8;
             margin-top: 6px;
             text-align: center;
+            line-height: 1.2;
         }
         .dukops-title-area {
             flex: 1;
@@ -154,6 +198,7 @@
             align-items: center;
             gap: 8px;
             margin-top: 8px;
+            flex-wrap: wrap;
         }
         .audio-control-btn {
             width: 34px;
@@ -163,13 +208,40 @@
             background: rgba(255,255,255,0.12);
             color: #f4f5c8;
             cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+        .audio-control-btn:hover {
+            background: rgba(255,255,255,0.22);
+            transform: scale(1.05);
         }
         .audio-volume-slider {
             display: none;
             width: 120px;
+            appearance: none;
             height: 6px;
             border-radius: 999px;
             background: rgba(255,255,255,0.25);
+            outline: none;
+        }
+        .audio-volume-slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #ffcc00;
+            cursor: pointer;
+            box-shadow: 0 0 0 2px rgba(255,255,255,0.2);
+        }
+        .audio-volume-slider::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #ffcc00;
+            cursor: pointer;
+            border: none;
         }
         .counter-value {
             font-size: 18px;
@@ -182,7 +254,7 @@
             margin-top: 5px;
         }
 
-        /* ============ RUNNING TEXT TELEGRAM ============ */
+        /* ============ RUNNING TEXT PENERIMA PESAN TELEGRAM ============ */
         .telegram-running-container {
             background: rgba(0, 0, 0, 0.7);
             border-radius: 40px;
@@ -205,32 +277,11 @@
             0% { transform: translateX(100%); }
             100% { transform: translateX(-100%); }
         }
+        .telegram-running-container:hover .telegram-running-text {
+            animation-play-state: paused;
+        }
 
-        /* ============ NAVIGASI ============ */
-        .nav-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .nav-btn {
-            flex: 1;
-            padding: 10px 14px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            background: #2a4a2a;
-            color: #e6ffe6;
-        }
-        .nav-btn.active {
-            background: #4dff4d;
-            color: #003300;
-        }
-        .nav-btn-piket.active { background: #ffcc00; color: #003300; }
-        .nav-btn-absen.active { background: #ff6600; color: #003300; }
-
-        /* ============ JADWAL PIKET ============ */
+        /* ============ JADWAL PIKET BARU STYLES ============ */
         .running-text-container {
             background: rgba(0, 30, 0, 0.7);
             border-radius: 8px;
@@ -251,23 +302,14 @@
         }
         @keyframes marquee {
             0% { transform: translateX(100%); }
+            50% { transform: translateX(0%); }
             100% { transform: translateX(-100%); }
         }
-        .jadwal-section {
-            background: rgba(0, 60, 0, 0.7);
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-        .section-title-koramil { color: #4dff4d; text-align: center; margin: 10px 0; }
-        .section-title-kediaman { color: #ffcc00; text-align: center; margin: 10px 0; }
-        .section-title-makodim { color: #00ccff; text-align: center; margin: 10px 0; }
-        .jadwal-header { text-align: center; margin-bottom: 20px; }
-        .jadwal-title { color: #4dff4d; font-size: 24px; }
-        .jadwal-logo { max-width: 100%; height: auto; max-height: 100px; border-radius: 8px; border: 2px solid #4dff4d; }
+        .running-text-container:hover .running-text { animation-play-state: paused; }
         
         .whatsapp-transparent-btn {
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 8px;
@@ -278,33 +320,141 @@
             width: 100%;
             padding: 12px;
             margin-top: 10px;
+            transition: all 0.2s ease;
+            font-family: inherit;
         }
-        .whatsapp-transparent-btn i { font-size: 28px; color: #25D366; }
-        .whatsapp-transparent-btn span { color: #25D366; font-size: 16px; font-weight: bold; }
+        .whatsapp-transparent-btn i { font-size: 28px; color: #25D366; pointer-events: none; }
+        .whatsapp-transparent-btn span { color: #25D366; font-size: 16px; font-weight: bold; pointer-events: none; }
+        .whatsapp-transparent-btn:hover { background: rgba(37, 211, 102, 0.1); transform: scale(1.02); border-color: #128C7E; }
+        .whatsapp-transparent-btn:hover i, .whatsapp-transparent-btn:hover span { color: #128C7E; }
+        .whatsapp-transparent-btn:active { transform: scale(0.98); }
         
+        .jadwal-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 80, 0, 0.9);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+            max-width: 80%;
+            text-align: center;
+        }
+        .jadwal-toast.show { opacity: 1; }
+        
+        .jadwal-section {
+            background: rgba(0, 60, 0, 0.7);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(0, 200, 127, 0.3);
+        }
+        .section-title-koramil { color: #4dff4d; margin: 10px 0; font-size: 16px; text-align: center; }
+        .section-title-kediaman { color: #ffcc00; margin: 10px 0; font-size: 16px; text-align: center; }
+        .section-title-makodim { color: #00ccff; margin: 10px 0; font-size: 16px; text-align: center; }
+        .jadwal-header { text-align: center; margin-bottom: 20px; }
+        .jadwal-title { color: #4dff4d; font-size: 24px; }
+        .app-logo-container { text-align: center; margin-bottom: 15px; }
+        .jadwal-logo { max-width: 100%; height: auto; max-height: 100px; border-radius: 8px; border: 2px solid #4dff4d; }
+        .app-loading { text-align: center; padding: 10px; color: #4dff4d; display: none; }
+        
+        /* Textarea Auto Height */
         .auto-height-textarea {
             width: 100%;
             padding: 10px;
+            margin-top: 5px;
             border-radius: 5px;
             border: 1px solid #4dff4d;
-            background: rgba(0,40,0,0.8);
+            background-color: rgba(0, 40, 0, 0.8);
             color: #e6ffe6;
+            font-size: 15px;
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.5;
             resize: none;
             overflow-y: hidden;
+            transition: height 0.1s ease;
         }
         
-        .row { display: flex; gap: 10px; margin-bottom: 10px; }
-        .col { flex: 1; }
-        select, input, textarea {
+        /* Navigation Buttons */
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: nowrap;
+            flex-direction: row !important;
+        }
+        .nav-btn {
+            flex: 1 1 0;
+            min-width: 0;
+            padding: 10px 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #2a4a2a;
+            color: #e6ffe6;
+            white-space: normal;
+        }
+        .nav-btn.active {
+            background: #4dff4d;
+            color: #003300;
+        }
+        .nav-btn-dukops.active { background: #4dff4d; color: #003300; }
+        .nav-btn-piket.active { background: #ffcc00; color: #003300; }
+        .nav-btn-absen.active { background: #ff6600; color: #003300; }
+        
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .col { flex: 1; min-width: 0; }
+        select {
             width: 100%;
             padding: 10px;
+            margin-top: 5px;
             border-radius: 5px;
             border: 1px solid #4dff4d;
-            background: rgba(0,40,0,0.8);
+            background-color: rgba(0, 40, 0, 0.8);
             color: #e6ffe6;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        select option { background-color: #003300; color: #e6ffe6; }
+        
+        .telegram-group-selector {
+            background: rgba(0, 60, 0, 0.7);
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        
+        .section-content {
+            display: block;
+        }
+        .section-content > div {
+            margin-bottom: 15px;
+        }
+        @media screen and (min-width: 601px) {
+            .section-content {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+            .section-content > div {
+                flex: 1;
+                min-width: 250px;
+            }
         }
 
-        /* ============ ABSEN STYLES ============ */
+        /* ============ STYLE UNTUK TAB ABSEN ============ */
         .absen-card {
             background: rgba(0, 40, 0, 0.7);
             border-radius: 12px;
@@ -324,8 +474,17 @@
             padding: 10px;
             text-align: center;
         }
-        .absen-stat-value { font-size: 1.5rem; font-weight: bold; }
-        .absen-stat-label { font-size: 0.7rem; color: #aaa; }
+        .absen-stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .absen-stat-label {
+            font-size: 0.7rem;
+            color: #aaa;
+        }
+        .absen-progress-container {
+            margin: 10px 0;
+        }
         .absen-progress-bar {
             background: #333;
             border-radius: 10px;
@@ -336,6 +495,11 @@
             background: linear-gradient(90deg, #4caf50, #8bc34a);
             height: 100%;
             width: 0%;
+            border-radius: 10px;
+        }
+        .absen-desa-list {
+            max-height: none;
+            overflow-y: visible;
         }
         .absen-desa-item {
             padding: 8px 0;
@@ -345,11 +509,29 @@
             gap: 10px;
             cursor: pointer;
         }
-        .absen-desa-name { flex: 2; font-size: 0.75rem; font-weight: 600; }
-        .absen-desa-stats { min-width: 50px; font-size: 0.7rem; text-align: center; }
-        .absen-desa-progress { flex: 1; min-width: 80px; }
-        .absen-desa-progress-bar { background: #333; border-radius: 5px; height: 5px; }
-        .absen-desa-progress-fill { height: 5px; border-radius: 5px; }
+        .absen-desa-name {
+            flex: 2;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .absen-desa-stats {
+            min-width: 50px;
+            font-size: 0.7rem;
+            text-align: center;
+        }
+        .absen-desa-progress {
+            flex: 1;
+            min-width: 80px;
+        }
+        .absen-desa-progress-bar {
+            background: #333;
+            border-radius: 5px;
+            height: 5px;
+        }
+        .absen-desa-progress-fill {
+            height: 5px;
+            border-radius: 5px;
+        }
         .absen-status-badge {
             padding: 2px 8px;
             border-radius: 12px;
@@ -368,8 +550,53 @@
             padding: 8px 12px;
             border-radius: 8px;
             cursor: pointer;
+            font-size: 12px;
         }
-        .absen-btn-primary { background: #1a73e8; }
+        .absen-btn:hover { background: #3a6a3a; }
+        .absen-btn-primary { background: #1a73e8; border-color: #4dff4d; }
+        .button-row-absen {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .button-row-absen button {
+            flex: 1;
+        }
+        .absen-toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 1000;
+            animation: fadeOut 2s ease;
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; visibility: hidden; }
+        }
+        .absen-loading {
+            text-align: center;
+            padding: 20px;
+            color: #4dff4d;
+        }
+        .absen-spinner {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border: 3px solid #4dff4d;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
         .absen-refresh-btn {
             position: fixed;
             bottom: 15px;
@@ -383,90 +610,15 @@
             font-size: 20px;
             cursor: pointer;
             z-index: 100;
-            display: none;
         }
-        .absen-loading { text-align: center; padding: 20px; color: #4dff4d; }
-        .absen-spinner {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            border: 3px solid #4dff4d;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+        .absen-info-text {
+            text-align: center;
+            font-size: 0.6rem;
+            margin-top: 10px;
+            color: #888;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
         
-        /* AI MODAL */
-        .modal-ai {
-            display: none;
-            position: fixed;
-            z-index: 10000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.85);
-        }
-        .modal-ai.show { display: flex; align-items: center; justify-content: center; }
-        .modal-ai-content {
-            background: linear-gradient(145deg, #1a2a1f, #0f1a12);
-            width: 95%;
-            max-width: 700px;
-            height: 85vh;
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        .modal-ai-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 14px 20px;
-            background: #0d2a1d;
-            border-bottom: 1px solid #2e8b57;
-        }
-        .modal-ai-header h3 { margin: 0; color: #9fd49f; }
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 26px;
-            cursor: pointer;
-            color: #9fd49f;
-        }
-        .modal-ai-tabs { padding: 12px; background: #0e1712; }
-        .modal-ai-body {
-            padding: 14px;
-            overflow-y: auto;
-            flex: 1;
-        }
-        .modal-template-item {
-            background: #0f1a12;
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 10px;
-            cursor: pointer;
-            border: 1px solid #2a4a2a;
-        }
-        .modal-template-text { font-size: 0.75rem; color: #c8e6d0; }
-        .narasi-wrapper { position: relative; }
-        .ai-icon-corner {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-        .ai-icon-corner i { color: white; font-size: 17px; }
-        
-        /* Style untuk PNG screenshot */
+        /* Style untuk PNG screenshot - BACKGROUND PUTIH TEXT HITAM */
         .png-container {
             width: 480px;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
@@ -476,21 +628,37 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             color: #000000 !important;
         }
-        .png-container * { color: #000000 !important; }
+        .png-container * {
+            color: #000000 !important;
+        }
         .png-header {
             background: linear-gradient(135deg, #0d47a1, #1a73e8) !important;
             color: white !important;
             padding: 10px;
             text-align: center;
         }
-        .png-header * { color: white !important; }
-        .png-stats { display: flex; gap: 5px; margin-bottom: 8px; }
+        .png-header * {
+            color: white !important;
+        }
+        .png-stats {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 8px;
+        }
         .png-stat-card {
             flex: 1;
             background: #f0f2f5 !important;
             border-radius: 8px;
             padding: 5px;
             text-align: center;
+        }
+        .png-stat-card div:first-child {
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .png-stat-card div:last-child {
+            font-size: 7px;
+            color: #666 !important;
         }
         .png-progress-bar {
             background: #e0e0e0 !important;
@@ -509,45 +677,20 @@
             padding: 4px 0;
             border-bottom: 1px solid #eee;
         }
-        .attendance-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
+        .png-status-lengkap {
+            background: #e8f5e9 !important;
+            color: #2e7d32 !important;
         }
-        .attendance-filters {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 10px;
+        .png-status-bl {
+            background: #fff3e0 !important;
+            color: #ef6c00 !important;
         }
-        .attendance-summary {
-            background: rgba(0,0,0,0.3);
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 10px;
+        .png-status-belum {
+            background: #ffebee !important;
+            color: #c62828 !important;
         }
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-        }
-        .progress-container {
-            background: #333;
-            border-radius: 10px;
-            height: 8px;
-            margin-top: 8px;
-        }
-        .progress-bar {
-            background: #4caf50;
-            height: 8px;
-            border-radius: 10px;
-            width: 0%;
-        }
-        .attendance-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
+
+        /* Install button visibility */
         #installButton {
             display: none;
             margin-bottom: 15px;
@@ -559,39 +702,352 @@
             font-weight: bold;
             width: 100%;
         }
+
+        /* MP3 Player Control Button */
+        .mp3-control-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 15px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #4CAF50;
+            border: 2px solid #ffcc00;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .mp3-control-btn i {
+            pointer-events: none;
+        }
+        .mp3-control-btn.muted {
+            background: #666;
+            opacity: 0.7;
+        }
+
+        /* ============ AI TEMPLATE MODAL STYLES ============ */
+        .modal-ai {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.85);
+            backdrop-filter: blur(4px);
+        }
+        .modal-ai.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-ai-content {
+            background: linear-gradient(145deg, #1a2a1f, #0f1a12);
+            margin: 0 auto;
+            padding: 0;
+            width: 95%;
+            max-width: 700px;
+            height: 85vh;
+            max-height: 600px;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(46,204,113,0.3);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: modalSlideIn 0.25s ease;
+        }
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(-20px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .modal-ai-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #0d2a1d, #0a1f15);
+            border-bottom: 1px solid #2e8b57;
+            flex-shrink: 0;
+        }
+        .modal-ai-header h3 {
+            margin: 0;
+            color: #9fd49f;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        .modal-ai-header h3 i { margin-right: 8px; color: #2ecc71; font-size: 1.1rem; }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 26px;
+            cursor: pointer;
+            color: #9fd49f;
+            transition: all 0.2s;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.1); color: #ff6b6b; }
         
-        @media (max-width: 480px) {
-            .dukops-header-row { flex-direction: column; text-align: center; }
-            .dukops-title-area { text-align: center; }
-            .attendance-filters { flex-direction: column; }
+        .modal-ai-tabs {
+            padding: 12px;
+            background: #0e1712;
+            border-bottom: 1px solid #1e3a2a;
+            flex-shrink: 0;
+        }
+        
+        /* Style untuk dropdown kategori */
+        #categorySelect {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 12px;
+            background: #1a2a1f;
+            color: #e6ffe6;
+            border: 1px solid #2ecc71;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        #categorySelect:hover {
+            border-color: #4dff4d;
+            background: #2a3a2a;
+        }
+        #categorySelect:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(46, 204, 113, 0.3);
+        }
+        
+        .modal-ai-body {
+            padding: 14px;
+            overflow-y: auto;
+            flex: 1;
+            scrollbar-width: thin;
+            scrollbar-color: #2ecc71 #1a2a1f;
+        }
+        .modal-ai-body::-webkit-scrollbar {
+            width: 5px;
+        }
+        .modal-ai-body::-webkit-scrollbar-track {
+            background: #1a2a1f;
+            border-radius: 10px;
+        }
+        .modal-ai-body::-webkit-scrollbar-thumb {
+            background: #2ecc71;
+            border-radius: 10px;
+        }
+        .modal-template-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .modal-template-item {
+            background: #0f1a12;
+            border-radius: 12px;
+            padding: 12px 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #2a4a2a;
+        }
+        .modal-template-item:hover {
+            background: #1a2a1f;
+            border-color: #2ecc71;
+            transform: translateX(4px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .modal-template-text {
+            font-size: 0.75rem;
+            line-height: 1.45;
+            color: #c8e6d0;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .modal-template-item:hover .modal-template-text {
+            -webkit-line-clamp: unset;
+            overflow: visible;
+        }
+        .loading-templates {
+            text-align: center;
+            padding: 40px;
+            color: #9fd49f;
+            font-size: 0.9rem;
+        }
+        .loading-templates i { margin-right: 8px; }
+        
+        .narasi-wrapper {
+            position: relative;
+        }
+        .ai-icon-corner {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .ai-icon-corner:hover {
+            transform: scale(1.08);
+            box-shadow: 0 4px 12px rgba(46,204,113,0.5);
+        }
+        .ai-icon-corner i { color: white; font-size: 17px; }
+        
+        .ai-toast {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            background: #2ecc71;
+            color: #0a1814;
+            padding: 8px 16px;
+            border-radius: 30px;
+            z-index: 10001;
+            font-weight: 500;
+            font-size: 13px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            animation: toastFadeIn 0.25s ease;
+        }
+        @keyframes toastFadeIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Style untuk Attendance Panel */
+        .attendance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .attendance-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .attendance-summary {
+            background: rgba(0, 40, 0, 0.5);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+        .progress-container {
+            background: #333;
+            border-radius: 10px;
+            height: 10px;
+            margin-top: 10px;
+        }
+        .progress-bar {
+            background: #4caf50;
+            border-radius: 10px;
+            height: 100%;
+            width: 0%;
+        }
+        .attendance-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .previewBox {
+            margin-top: 5px;
+            margin-bottom: 10px;
+        }
+
+        @media screen and (max-width: 480px) {
+            .modal-ai-content {
+                width: 98%;
+                height: 90vh;
+                border-radius: 16px;
+            }
+            .modal-template-text {
+                font-size: 0.7rem;
+                -webkit-line-clamp: 2;
+            }
+            .modal-ai-header h3 {
+                font-size: 1rem;
+            }
+            .splash-title-center {
+                font-size: 22px;
+            }
+            .splash-subtitle-center {
+                font-size: 9px;
+            }
+            .splash-logo-center img {
+                width: 60px;
+            }
+            .dukops-header-row {
+                flex-direction: column;
+                text-align: center;
+            }
+            .dukops-title-area {
+                text-align: center;
+            }
+            .dukops-profile-img {
+                width: 100%;
+                height: 72px;
+            }
+            .dukops-header-title {
+                font-size: 14px;
+            }
+            #categorySelect {
+                font-size: 12px;
+                padding: 8px 10px;
+            }
+            .attendance-filters {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 
 <body>
-
-    <!-- SPLASH SCREEN -->
+    <!-- ================= SPLASH SCREEN MODERN UDAYANA (SEMUA CENTER) ================= -->
     <div id="splashScreen" class="splash-container-modern">
         <div class="splash-content">
             <div class="splash-logo-center">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/25/Lambang_Kodam_Udayana.svg" alt="Logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/25/Lambang_Kodam_Udayana.svg"
+                    alt="Lambang Kodam Udayana">
             </div>
-            <div class="splash-title-center">DUKOPS BABINSA SUKASADA</div>
+            <div class="splash-title-center">DUKOPS</div>
+			<div class="splash-title-center">BABINSA SUKASADA</div>
             <div class="splash-subtitle-center">KODIM 1609/BULELENG</div>
             <div class="splash-unit-center">KORAMIL 1609-05/SUKASADA</div>
+            <div class="splash-kodim-center">Sistem Pelaporan Digitalisasi Babinsa</div>
             <div class="splash-progress-center">
-                <div class="splash-progress-bar-center" id="splashProgressBar"></div>
+            <div class="splash-progress-bar-center" id="splashProgressBar"></div>
             </div>
             <div class="splash-percentage-center" id="progressPercentage">20%</div>
         </div>
     </div>
 
-    <audio id="backgroundMusic" loop preload="auto"></audio>
+    <!-- ================= BACKGROUND MP3 PLAYER ================= -->
+    <audio id="backgroundMusic" loop preload="auto">
+        <!-- Tambahkan file lokal di assets/audio/background.mp3 jika ingin musik latar lokal -->
+    </audio>
 
+    <!-- ================= APLIKASI UTAMA ================= -->
     <div id="appContainer" class="container" style="display: none; opacity: 0;">
         <button id="installButton"><i class="fas fa-download"></i> Install App</button>
 
-        <!-- HEADER -->
+        <!-- HEADER DUKOPS DENGAN FOTO PROFIL DI SAMPING KIRI -->
         <div class="dukops-header">
             <div class="dukops-header-row">
                 <div class="dukops-profile-area" id="desaProfileContainerHeader">
@@ -603,27 +1059,36 @@
                     <div class="dukops-header-title">KORAMIL 1609-05/SUKASADA</div>
                     <div class="dukops-header-address">Jl. Jelantik Gingsir No. 32 Sukasada Singaraja-Bali 81161</div>
                     <div class="audio-control-wrapper">
-                        <button id="mp3ControlBtn" class="audio-control-btn"><i class="fas fa-volume-up"></i></button>
-                        <input id="audioVolumeSlider" class="audio-volume-slider" type="range" min="0" max="100" value="30">
+                        <button id="mp3ControlBtn" class="audio-control-btn" type="button" title="Kontrol audio">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                        <input id="audioVolumeSlider" class="audio-volume-slider" type="range" min="0" max="100" value="30" aria-label="Volume audio">
                     </div>
                     <div><span class="counter-value" id="submissionCounter">0</span></div>
                 </div>
             </div>
         </div>
 
-        <!-- RUNNING TEXT TELEGRAM -->
+        <!-- ========== RUNNING TEXT PENERIMA PESAN DARI TELEGRAM ========== -->
         <div class="telegram-running-container">
-            <div class="telegram-running-text" id="telegramRunningMessage">Pengiriman Ke telegram dalam perbaikan...</div>
+            <div class="telegram-running-text" id="telegramRunningMessage">
+                Pengiriman Ke telegram dalam perbaikan...
+            </div>
         </div>
 
-        <!-- NAVIGASI -->
         <div class="nav-buttons">
-            <button class="nav-btn nav-btn-dukops active" id="btnDukops" onclick="showDukops()"><i class="fas fa-file-upload"></i> DUKOPS</button>
-            <button class="nav-btn nav-btn-piket" id="btnJadwal" onclick="showJadwalPiketBaru()"><i class="fas fa-calendar-alt"></i> PIKET</button>
-            <button class="nav-btn nav-btn-absen" id="btnAbsen" onclick="showAbsenTab()"><i class="fas fa-chart-line"></i> ABSEN</button>
+            <button class="nav-btn nav-btn-dukops active" id="btnDukops" onclick="showDukops()">
+                <i class="fas fa-file-upload"></i> DUKOPS
+            </button>
+            <button class="nav-btn nav-btn-piket" id="btnJadwal" onclick="showJadwalPiketBaru()">
+                <i class="fas fa-calendar-alt"></i> PIKET
+            </button>
+            <button class="nav-btn nav-btn-absen" id="btnAbsen" onclick="showAbsenTab()">
+                <i class="fas fa-chart-line"></i> ABSEN
+            </button>
         </div>
 
-        <!-- DUKOPS CONTENT -->
+        <!-- ==================== DUKOPS CONTENT ==================== -->
         <div id="dukopsContent">
             <div style="width: 90%; margin: 0 auto; font-size: 12px;">
                 <label><i class="fas fa-village"></i> Pilih Desa:</label>
@@ -686,12 +1151,12 @@
             </div>
         </div>
 
-        <!-- JADWAL PIKET CONTENT -->
+        <!-- ==================== JADWAL PIKET BARU ==================== -->
         <div id="jadwalPiketContainerBaru" style="display: none;">
             <div class="jadwal-header">
                 <h1 class="jadwal-title">JADWAL PIKET</h1>
                 <div class="app-logo-container">
-                    <img src="LOGO KOREM163 Wirasatya.png" alt="Logo Korem 163" class="jadwal-logo">
+                    <img src="LOGO KOREM163 Wirasatya.png" alt="Logo Korem 163 Wirasatya" class="jadwal-logo">
                 </div>
                 <p>KORAMIL 1609-05/SUKASADA<br>Kodim 1609/Buleleng</p>
             </div>
@@ -751,7 +1216,7 @@
             <div class="app-loading" id="j_loadingIndicatorBaru"><i class="fas fa-spinner fa-spin"></i> Memuat data...</div>
         </div>
 
-        <!-- ABSEN CONTENT -->
+        <!-- ==================== TAB ABSENSI DUKOPS ==================== -->
         <div id="absenContent" style="display: none;">
             <div class="absen-card">
                 <div class="form-group" style="margin-bottom: 15px;">
@@ -774,7 +1239,7 @@
     <button id="absenRefreshBtn" class="absen-refresh-btn" style="display: none;">🔄</button>
     <div id="absenScreenshotArea" style="position: fixed; left: -9999px; top: 0; width: 500px; background: white;"></div>
 
-    <!-- MODAL TEMPLATE AI -->
+    <!-- ==================== MODAL TEMPLATE AI ==================== -->
     <div id="templateModal" class="modal-ai">
         <div class="modal-ai-content">
             <div class="modal-ai-header">
@@ -788,13 +1253,14 @@
 
     <script>
         // ============ KONFIGURASI TELEGRAM BOT ============
+        // GANTI DENGAN TOKEN BOT DAN CHAT ID ANDA
         const BOT_TOKEN = 'YOUR_BOT_TOKEN';
         const CHAT_ID = 'YOUR_CHAT_ID';
         const USE_REAL_BOT = (BOT_TOKEN !== 'YOUR_BOT_TOKEN' && CHAT_ID !== 'YOUR_CHAT_ID');
 
         const runningTextEl = document.getElementById('telegramRunningMessage');
         
-        function updateRunningTextTelegram(message) {
+        function updateRunningText(message) {
             if (runningTextEl) {
                 let displayMsg = message.length > 100 ? message.substring(0, 97) + '...' : message;
                 runningTextEl.textContent = `📨 ${displayMsg}`;
@@ -804,6 +1270,7 @@
 
         async function fetchTelegramMessages() {
             if (!USE_REAL_BOT) {
+                // Mode simulasi: pesan contoh
                 const demoMessages = [
                     "📢 Selamat pagi Babinsa, laporkan kegiatan Dukops hari ini.",
                     "⚠️ Peringatan: batas waktu pelaporan jam 12.00 WIB.",
@@ -811,7 +1278,7 @@
                     "🔄 Periksa kembali foto kegiatan sebelum submit."
                 ];
                 const randomMsg = demoMessages[Math.floor(Math.random() * demoMessages.length)];
-                updateRunningTextTelegram(randomMsg);
+                updateRunningText(randomMsg);
                 return;
             }
             try {
@@ -820,15 +1287,22 @@
                 const data = await response.json();
                 if (data.ok && data.result && data.result.length > 0) {
                     const message = data.result[data.result.length - 1].message;
-                    if (message && message.text) {
-                        updateRunningTextTelegram(message.text);
-                        try {
-                            const evt = new CustomEvent('telegramMessage', { detail: message });
-                            window.dispatchEvent(evt);
-                        } catch (e) {
-                            console.warn('Gagal dispatch telegramMessage event', e);
+                        if (message && message.text) {
+                            updateRunningText(message.text);
+                            try {
+                                const evt = new CustomEvent('telegramMessage', { detail: message });
+                                window.dispatchEvent(evt);
+                            } catch (e) {
+                                console.warn('Gagal dispatch telegramMessage event', e);
+                            }
+                            try {
+                                if (typeof window.handleTelegramMessage === 'function') {
+                                    window.handleTelegramMessage(message);
+                                }
+                            } catch (e) {
+                                console.warn('Gagal memanggil handleTelegramMessage', e);
+                            }
                         }
-                    }
                 }
             } catch (error) {
                 console.error("Gagal ambil pesan Telegram:", error);
@@ -838,7 +1312,7 @@
         setInterval(fetchTelegramMessages, 6000);
         fetchTelegramMessages();
 
-        // ============ DATA DESA ============
+        // ============ DATA DESA DIAMBIL DARI LOKAL ============
         const DESA_LIST_URL = 'data/desa-list.json';
         const PROFILE_BASE_URL = 'profile/';
         const DEFAULT_FAVICON_URL = 'favicon-96x96.png';
@@ -849,19 +1323,23 @@
         async function loadDesaListFromGitHub() {
             const selectDesa = document.getElementById('selectDesa');
             const loadingDesa = document.getElementById('loadingDesa');
+            
             try {
                 const response = await fetch(DESA_LIST_URL + '?t=' + Date.now());
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const data = await response.json();
                 daftarDesaGlobal = data.desaList || [];
-                console.log("✅ Daftar desa berhasil dimuat:", daftarDesaGlobal.length, "desa");
+                console.log("✅ Daftar desa berhasil dimuat dari lokal:", daftarDesaGlobal.length, "desa");
+                
                 daftarDesaGlobal.forEach(desa => {
                     let fileName = desa.toLowerCase() + '.png';
                     profileImagesGlobal[desa] = fileName;
                 });
+                
                 populateDesaDropdown();
+                
             } catch (error) {
-                console.error("Gagal memuat daftar desa:", error);
+                console.error("Gagal memuat daftar desa lokal:", error);
                 if (loadingDesa) {
                     loadingDesa.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Gagal memuat daftar desa. Cek koneksi internet!';
                     loadingDesa.style.color = '#ff6666';
@@ -881,6 +1359,7 @@
         function populateDesaDropdown() {
             const selectDesa = document.getElementById('selectDesa');
             if (!selectDesa) return;
+            
             selectDesa.disabled = false;
             selectDesa.innerHTML = '<option value="">-- Pilih Desa/Kelurahan --</option>';
             daftarDesaGlobal.forEach(desa => {
@@ -889,7 +1368,9 @@
                 option.textContent = desa;
                 selectDesa.appendChild(option);
             });
+            
             selectDesa.value = "";
+            
             const loadingDesa = document.getElementById('loadingDesa');
             if (loadingDesa) loadingDesa.style.display = 'none';
         }
@@ -897,11 +1378,13 @@
         function updateDesaProfile(desaName) {
             const imgElement = document.getElementById('desaProfileImgHeader');
             const nameElement = document.getElementById('desaProfileNameHeader');
+            
             if (!desaName || desaName === "") {
                 imgElement.src = DEFAULT_FAVICON_URL;
                 if (nameElement) nameElement.textContent = "Pilih Desa";
                 return;
             }
+            
             let matchedKey = null;
             for (let key in profileImagesGlobal) {
                 if (desaName.toLowerCase() === key.toLowerCase()) {
@@ -909,13 +1392,15 @@
                     break;
                 }
             }
+            
             if (matchedKey) {
                 const fileName = profileImagesGlobal[matchedKey];
                 const imageUrl = PROFILE_BASE_URL + fileName;
                 imgElement.src = imageUrl;
                 if (nameElement) nameElement.textContent = matchedKey;
+                
                 imgElement.onerror = function() {
-                    console.warn(`Gagal memuat profil untuk ${matchedKey}`);
+                    console.warn(`Gagal memuat profil untuk ${matchedKey}, file tidak ditemukan di folder profile/`);
                     imgElement.src = DEFAULT_FAVICON_URL;
                     if (nameElement) nameElement.textContent = matchedKey;
                 };
@@ -984,9 +1469,90 @@
             }
         }
 
-        // ============ FUNGSI ATTENDANCE (LAPORAN TERKIRIM) ============
-        let attendanceData = [];
+        // ============ FUNGSI LAPORAN TERKIRIM (ATTENDANCE) ============
+        let submissionCounter = 0;
         
+        function updateCounter() {
+            const counterElem = document.getElementById('submissionCounter');
+            const storedData = localStorage.getItem('dukops_submissions');
+            let submissions = storedData ? JSON.parse(storedData) : [];
+            submissionCounter = submissions.length;
+            if (counterElem) counterElem.textContent = submissionCounter;
+        }
+        
+        async function processSubmission() {
+            const selectDesa = document.getElementById('selectDesa');
+            const desa = selectDesa.options[selectDesa.selectedIndex]?.text || "";
+            const gambar = document.getElementById('gambar');
+            const tanggalWaktu = document.getElementById('tanggalWaktu');
+            const narasi = document.getElementById('narasi');
+            
+            if (!desa || !gambar.files.length || !tanggalWaktu.value || !narasi.value.trim()) {
+                alert('Lengkapi semua data terlebih dahulu!');
+                return;
+            }
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+            
+            try {
+                const file = gambar.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = async function(e) {
+                    const imageData = e.target.result;
+                    
+                    const submission = {
+                        id: Date.now(),
+                        desa: desa,
+                        tanggal: tanggalWaktu.value,
+                        narasi: narasi.value,
+                        gambar: imageData,
+                        timestamp: new Date().toISOString()
+                    };
+                    
+                    let existingData = localStorage.getItem('dukops_submissions');
+                    let submissions = existingData ? JSON.parse(existingData) : [];
+                    submissions.push(submission);
+                    localStorage.setItem('dukops_submissions', JSON.stringify(submissions));
+                    
+                    updateCounter();
+                    
+                    document.getElementById('gambar').value = '';
+                    document.getElementById('previewGambar').innerHTML = '';
+                    document.getElementById('tanggalWaktu').value = '';
+                    document.getElementById('previewTanggal').innerHTML = '';
+                    document.getElementById('narasi').value = '';
+                    
+                    alert('✅ Laporan berhasil disimpan!');
+                    
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-download"></i> DOWNLOAD & <i class="fas fa-paper-plane"></i> KIRIM & <i class="fab fa-google-drive"></i> DRIVE';
+                };
+                
+                reader.readAsDataURL(file);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Gagal menyimpan laporan: ' + error.message);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-download"></i> DOWNLOAD & <i class="fas fa-paper-plane"></i> KIRIM & <i class="fab fa-google-drive"></i> DRIVE';
+            }
+        }
+        
+        function resetAll() {
+            document.getElementById('gambar').value = '';
+            document.getElementById('previewGambar').innerHTML = '';
+            document.getElementById('tanggalWaktu').value = '';
+            document.getElementById('previewTanggal').innerHTML = '';
+            document.getElementById('narasi').value = '';
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) submitBtn.disabled = true;
+            alert('Data form telah direset');
+        }
+        
+        // ============ FUNGSI ATTENDANCE (LAPORAN TERKIRIM) ============
         function showAttendance() {
             document.getElementById('attendancePanel').style.display = 'block';
             loadAttendanceData();
@@ -1007,11 +1573,9 @@
             if (summary) summary.style.display = 'none';
             
             try {
-                // Ambil data dari localStorage
                 const storedData = localStorage.getItem('dukops_submissions');
                 let submissions = storedData ? JSON.parse(storedData) : [];
                 
-                // Filter berdasarkan bulan jika ada
                 let filteredData = [...submissions];
                 if (monthFilter && monthFilter.value) {
                     const [year, month] = monthFilter.value.split('-');
@@ -1021,72 +1585,77 @@
                     });
                 }
                 
-                // Hitung statistik per desa
+                if (desaFilter && desaFilter.value) {
+                    filteredData = filteredData.filter(item => item.desa === desaFilter.value);
+                }
+                
                 const desaStats = {};
                 filteredData.forEach(item => {
                     if (!desaStats[item.desa]) {
                         desaStats[item.desa] = { total: 0, files: [] };
                     }
                     desaStats[item.desa].total++;
-                    if (item.files) desaStats[item.desa].files.push(...item.files);
+                    if (item.gambar) desaStats[item.desa].files.push(item.gambar);
                 });
                 
                 const desaList = Object.keys(desaStats);
                 const totalReports = filteredData.length;
-                const totalDesa = desaList.length;
+                const totalDesa = daftarDesaGlobal.length;
                 const targetPerDesa = 9;
-                let desaLengkap = 0;
-                let desaBelumLengkap = 0;
-                let desaBelum = daftarDesaGlobal.length - desaList.length;
                 
-                // Update dropdown desa filter
                 if (desaFilter) {
+                    const currentFilter = desaFilter.value;
                     desaFilter.innerHTML = '<option value="">Semua Desa</option>';
-                    desaList.forEach(desa => {
+                    daftarDesaGlobal.forEach(desa => {
                         const opt = document.createElement('option');
                         opt.value = desa;
                         opt.textContent = desa;
+                        if (currentFilter === desa) opt.selected = true;
                         desaFilter.appendChild(opt);
                     });
                 }
                 
-                // Build details list
                 let detailsHtml = '';
-                for (const desa of desaList) {
+                let totalFiles = 0;
+                let desaLengkap = 0;
+                let desaBelumLengkap = 0;
+                let desaBelum = 0;
+                
+                for (const desa of daftarDesaGlobal) {
                     const stats = desaStats[desa];
-                    const jumlahFile = stats.files ? stats.files.length : 0;
+                    const jumlahFile = stats ? stats.files.length : 0;
                     const persentase = Math.round((jumlahFile / targetPerDesa) * 100);
-                    let status = 'BELUM_LENGKAP';
+                    totalFiles += jumlahFile;
+                    
+                    let status = 'BELUM';
+                    let statusClass = 'absen-status-belum';
+                    let statusText = 'BELUM';
+                    
                     if (jumlahFile >= targetPerDesa) {
                         status = 'LENGKAP';
+                        statusClass = 'absen-status-lengkap';
+                        statusText = 'LENGKAP';
                         desaLengkap++;
                     } else if (jumlahFile > 0) {
                         status = 'BELUM_LENGKAP';
+                        statusClass = 'absen-status-belum-lengkap';
+                        statusText = 'BL';
                         desaBelumLengkap++;
+                    } else {
+                        desaBelum++;
                     }
+                    
+                    const warn = (status === 'LENGKAP') ? '#4caf50' : ((status === 'BELUM_LENGKAP') ? '#ff9800' : '#f44336');
                     
                     detailsHtml += `<div class="absen-desa-item" onclick="showDetailSubmission('${desa}')">
                         <div class="absen-desa-name">${desa}</div>
                         <div class="absen-desa-stats">${jumlahFile}/${targetPerDesa}</div>
-                        <div class="absen-desa-progress"><div class="absen-desa-progress-bar"><div class="absen-desa-progress-fill" style="width:${persentase}%"></div></div></div>
-                        <div class="absen-status-badge ${status === 'LENGKAP' ? 'absen-status-lengkap' : (status === 'BELUM_LENGKAP' ? 'absen-status-belum-lengkap' : 'absen-status-belum')}">${status === 'LENGKAP' ? 'LENGKAP' : (status === 'BELUM_LENGKAP' ? 'BL' : 'BELUM')}</div>
+                        <div class="absen-desa-progress"><div class="absen-desa-progress-bar"><div class="absen-desa-progress-fill" style="width:${persentase}%; background:${warn}"></div></div></div>
+                        <div class="absen-status-badge ${statusClass}">${statusText}</div>
                     </div>`;
                 }
                 
-                for (const desa of daftarDesaGlobal) {
-                    if (!desaStats[desa]) {
-                        detailsHtml += `<div class="absen-desa-item" onclick="showDetailSubmission('${desa}')">
-                            <div class="absen-desa-name">${desa}</div>
-                            <div class="absen-desa-stats">0/${targetPerDesa}</div>
-                            <div class="absen-desa-progress"><div class="absen-desa-progress-bar"><div class="absen-desa-progress-fill" style="width:0%"></div></div></div>
-                            <div class="absen-status-badge absen-status-belum">BELUM</div>
-                        </div>`;
-                        desaBelum++;
-                    }
-                }
-                
                 const totalTarget = daftarDesaGlobal.length * targetPerDesa;
-                const totalFiles = filteredData.reduce((sum, item) => sum + (item.files ? item.files.length : 0), 0);
                 const persenTotal = Math.round((totalFiles / totalTarget) * 100);
                 
                 if (summary) {
@@ -1138,106 +1707,16 @@
             let message = `📋 LAPORAN ${desaName}\n`;
             message += `========================\n`;
             desaSubmissions.forEach((item, idx) => {
-                message += `\n${idx + 1}. 📅 ${item.tanggal}\n`;
+                const tanggal = new Date(item.tanggal).toLocaleString('id-ID');
+                message += `\n${idx + 1}. 📅 ${tanggal}\n`;
                 message += `   📝 ${item.narasi.substring(0, 100)}${item.narasi.length > 100 ? '...' : ''}\n`;
-                if (item.files && item.files.length) {
-                    message += `   📎 ${item.files.length} file foto\n`;
-                }
             });
             alert(message);
         }
         
         window.showDetailSubmission = showDetailSubmission;
 
-        // ============ FUNGSI PROCESS SUBMISSION ============
-        let submissionCounter = 0;
-        
-        function updateCounter() {
-            const counterElem = document.getElementById('submissionCounter');
-            const storedData = localStorage.getItem('dukops_submissions');
-            let submissions = storedData ? JSON.parse(storedData) : [];
-            submissionCounter = submissions.length;
-            if (counterElem) counterElem.textContent = submissionCounter;
-        }
-        
-        async function processSubmission() {
-            const selectDesa = document.getElementById('selectDesa');
-            const desa = selectDesa.options[selectDesa.selectedIndex]?.text || "";
-            const gambar = document.getElementById('gambar');
-            const tanggalWaktu = document.getElementById('tanggalWaktu');
-            const narasi = document.getElementById('narasi');
-            
-            if (!desa || !gambar.files.length || !tanggalWaktu.value || !narasi.value.trim()) {
-                alert('Lengkapi semua data terlebih dahulu!');
-                return;
-            }
-            
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
-            
-            try {
-                // Baca file gambar
-                const file = gambar.files[0];
-                const reader = new FileReader();
-                
-                reader.onload = async function(e) {
-                    const imageData = e.target.result;
-                    
-                    // Simpan ke localStorage
-                    const submission = {
-                        id: Date.now(),
-                        desa: desa,
-                        tanggal: tanggalWaktu.value,
-                        narasi: narasi.value,
-                        gambar: imageData,
-                        timestamp: new Date().toISOString()
-                    };
-                    
-                    let existingData = localStorage.getItem('dukops_submissions');
-                    let submissions = existingData ? JSON.parse(existingData) : [];
-                    submissions.push(submission);
-                    localStorage.setItem('dukops_submissions', JSON.stringify(submissions));
-                    
-                    // Update counter
-                    updateCounter();
-                    
-                    // Reset form
-                    document.getElementById('gambar').value = '';
-                    document.getElementById('previewGambar').innerHTML = '';
-                    document.getElementById('tanggalWaktu').value = '';
-                    document.getElementById('previewTanggal').innerHTML = '';
-                    document.getElementById('narasi').value = '';
-                    
-                    alert('✅ Laporan berhasil disimpan!');
-                    
-                    // Reset button
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<i class="fas fa-download"></i> DOWNLOAD & <i class="fas fa-paper-plane"></i> KIRIM & <i class="fab fa-google-drive"></i> DRIVE';
-                };
-                
-                reader.readAsDataURL(file);
-                
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Gagal menyimpan laporan: ' + error.message);
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-download"></i> DOWNLOAD & <i class="fas fa-paper-plane"></i> KIRIM & <i class="fab fa-google-drive"></i> DRIVE';
-            }
-        }
-        
-        function resetAll() {
-            document.getElementById('gambar').value = '';
-            document.getElementById('previewGambar').innerHTML = '';
-            document.getElementById('tanggalWaktu').value = '';
-            document.getElementById('previewTanggal').innerHTML = '';
-            document.getElementById('narasi').value = '';
-            const submitBtn = document.getElementById('submitBtn');
-            if (submitBtn) submitBtn.disabled = true;
-            alert('Data form telah direset');
-        }
-
-        // ============ SPLASH SCREEN ============
+        // ============ SPLASH SCREEN LOGIC ============
         let splashProgress = 0;
         let splashInterval;
         let loadingComplete = false;
@@ -1245,7 +1724,9 @@
         function startSplashProgress() {
             const progressBar = document.getElementById('splashProgressBar');
             const percentageText = document.getElementById('progressPercentage');
+            
             if (!progressBar || !percentageText) return;
+            
             splashInterval = setInterval(function() {
                 if (splashProgress < 100) {
                     splashProgress += Math.floor(Math.random() * 15) + 5;
@@ -1253,12 +1734,14 @@
                     progressBar.style.width = splashProgress + '%';
                     percentageText.textContent = splashProgress + '%';
                 }
+                
                 if (splashProgress === 100 && !loadingComplete) {
                     clearInterval(splashInterval);
                     loadingComplete = true;
                     setTimeout(function() {
                         const splash = document.getElementById('splashScreen');
                         const appContainer = document.getElementById('appContainer');
+                        
                         if (splash) {
                             splash.style.opacity = '0';
                             setTimeout(function() {
@@ -1279,7 +1762,32 @@
             }, 100);
         }
 
-        // ============ MP3 PLAYER (ORIGINAL) ============
+        document.addEventListener('DOMContentLoaded', function() {
+            startSplashProgress();
+            loadDesaListFromGitHub();
+            updateCounter();
+            
+            const selectDesa = document.getElementById('selectDesa');
+            if (selectDesa) {
+                selectDesa.addEventListener('change', function() {
+                    const selectedText = this.options[this.selectedIndex]?.text || "";
+                    updateDesaProfile(selectedText);
+                    checkInputCompletion();
+                });
+            }
+            
+            const tanggalWaktu = document.getElementById('tanggalWaktu');
+            if (tanggalWaktu) {
+                tanggalWaktu.addEventListener('change', checkInputCompletion);
+            }
+            
+            const narasi = document.getElementById('narasi');
+            if (narasi) {
+                narasi.addEventListener('input', checkInputCompletion);
+            }
+        });
+
+        // ============ MP3 PLAYER ============
         (function() {
             const audio = document.getElementById('backgroundMusic');
             const mp3Btn = document.getElementById('mp3ControlBtn');
@@ -1355,10 +1863,11 @@
             };
         })();
 
-        // ============ INSTALL BUTTON ============
+        // ============ INSTALL BUTTON LOGIC ============
         (function() {
             let deferredPrompt;
             const installBtn = document.getElementById('installButton');
+
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();
                 deferredPrompt = e;
@@ -1366,13 +1875,16 @@
                     installBtn.style.display = 'block';
                 }
             });
+
             window.addEventListener('appinstalled', () => {
                 installBtn.style.display = 'none';
                 deferredPrompt = null;
             });
+
             if (window.matchMedia('(display-mode: standalone)').matches) {
                 installBtn.style.display = 'none';
             }
+
             if (installBtn) {
                 installBtn.addEventListener('click', async () => {
                     if (deferredPrompt) {
@@ -1383,11 +1895,21 @@
                         }
                         deferredPrompt = null;
                     } else {
-                        alert('Install prompt tidak tersedia.');
+                        alert('Install prompt tidak tersedia. Pastikan browser mendukung PWA.');
                     }
                 });
             }
         })();
+
+        // ============ FUNGSI ASLI loadSelectedDesa ============
+        window.loadSelectedDesa = function() {
+            const selectDesa = document.getElementById('selectDesa');
+            const selectedText = selectDesa.options[selectDesa.selectedIndex]?.text || "";
+            updateDesaProfile(selectedText);
+            if (typeof window.triggerPlayMusic === 'function') {
+                window.triggerPlayMusic();
+            }
+        };
 
         // ============ AI TEMPLATE SCRIPT ============
         (function() {
@@ -1412,7 +1934,7 @@
                     if (categoryKeys.length > 0) {
                         activeTab = categoryKeys[0];
                     }
-                    console.log("✅ Template AI berhasil dimuat");
+                    console.log("✅ Template AI berhasil dimuat dari GitHub");
                     return true;
                 } catch (error) {
                     console.error("Gagal memuat template AI:", error);
@@ -1426,11 +1948,14 @@
                     modalTabs.innerHTML = '<div style="color:#999; padding:8px; text-align:center;">Memuat kategori...</div>';
                     return;
                 }
+                
                 const selectWrapper = document.createElement('div');
                 selectWrapper.style.cssText = 'width:100%; margin-bottom:8px;';
+                
                 const selectElement = document.createElement('select');
                 selectElement.id = 'categorySelect';
                 selectElement.style.cssText = 'width:100%; padding:10px; border-radius:12px; background:#1a2a1f; color:#e6ffe6; border:1px solid #2ecc71; font-size:14px; cursor:pointer;';
+                
                 categoryKeys.forEach(key => {
                     const option = document.createElement('option');
                     option.value = key;
@@ -1438,10 +1963,12 @@
                     if (activeTab === key) option.selected = true;
                     selectElement.appendChild(option);
                 });
+                
                 selectElement.onchange = (e) => {
                     activeTab = e.target.value;
                     renderModalTemplateList();
                 };
+                
                 selectWrapper.appendChild(selectElement);
                 modalTabs.appendChild(selectWrapper);
             }
@@ -1465,27 +1992,31 @@
             window.selectTemplate = function(template) {
                 const narasiField = document.getElementById('narasi');
                 const namaDesa = getNamaDesaTerpilih();
+                
                 let finalTemplate = template;
                 if (namaDesa) {
                     finalTemplate = injectDesaKeNarasi(template, namaDesa);
                 }
+                
                 narasiField.value = finalTemplate;
                 modal.classList.remove('show');
+                
                 const event = new Event('input', { bubbles: true });
                 narasiField.dispatchEvent(event);
+                
                 if (typeof checkInputCompletion === 'function') checkInputCompletion();
             };
 
             openModalBtn.onclick = async () => {
                 if (!templateData) {
-                    modalBody.innerHTML = '<div class="loading-templates"><i class="fas fa-spinner fa-pulse"></i> Memuat template...</div>';
+                    modalBody.innerHTML = '<div class="loading-templates"><i class="fas fa-spinner fa-pulse"></i> Memuat template lokal...</div>';
                     modal.classList.add('show');
                     const success = await loadTemplatesFromGitHub();
                     if (success && templateData) {
                         renderModalTabs();
                         renderModalTemplateList();
                     } else {
-                        modalBody.innerHTML = '<div class="loading-templates">❌ Gagal memuat template.</div>';
+                        modalBody.innerHTML = '<div class="loading-templates">❌ Gagal memuat template lokal.</div>';
                     }
                 } else {
                     renderModalTabs();
@@ -1496,55 +2027,9 @@
 
             closeModalBtn.onclick = () => { modal.classList.remove('show'); };
             window.onclick = (e) => { if (e.target === modal) modal.classList.remove('show'); };
+            
             loadTemplatesFromGitHub();
         })();
-
-        // ============ FUNGSI GLOBAL ============
-        window.loadSelectedDesa = function() {
-            const selectDesa = document.getElementById('selectDesa');
-            const selectedText = selectDesa.options[selectDesa.selectedIndex]?.text || "";
-            updateDesaProfile(selectedText);
-            if (typeof window.triggerPlayMusic === 'function') {
-                window.triggerPlayMusic();
-            }
-        };
-
-        window.previewImage = previewImage;
-        window.updateDatePreview = updateDatePreview;
-        window.checkInputCompletion = checkInputCompletion;
-        window.processSubmission = processSubmission;
-        window.resetAll = resetAll;
-        window.showAttendance = showAttendance;
-        window.hideAttendance = hideAttendance;
-        window.loadAttendanceData = loadAttendanceData;
-        window.refreshAttendanceData = refreshAttendanceData;
-        window.downloadAttendanceReport = downloadAttendanceReport;
-
-        // ============ INITIALIZATION ============
-        document.addEventListener('DOMContentLoaded', function() {
-            startSplashProgress();
-            loadDesaListFromGitHub();
-            updateCounter();
-            
-            const selectDesa = document.getElementById('selectDesa');
-            if (selectDesa) {
-                selectDesa.addEventListener('change', function() {
-                    const selectedText = this.options[this.selectedIndex]?.text || "";
-                    updateDesaProfile(selectedText);
-                    checkInputCompletion();
-                });
-            }
-            
-            const tanggalWaktu = document.getElementById('tanggalWaktu');
-            if (tanggalWaktu) {
-                tanggalWaktu.addEventListener('change', checkInputCompletion);
-            }
-            
-            const narasi = document.getElementById('narasi');
-            if (narasi) {
-                narasi.addEventListener('input', checkInputCompletion);
-            }
-        });
     </script>
 
     <!-- ============ JADWAL PIKET BARU SCRIPT (HANPANGAN EPOCH DAYS) ============ -->
@@ -1570,7 +2055,7 @@
             setTimeout(() => toast.classList.remove('show'), duration);
         }
 
-        function updateRunningTextJadwal() {
+        function updateRunningText() {
             const el = document.getElementById('runningTextJadwalBaru');
             if (el) el.textContent = JadwalData.currentHanpangan ? '🍽️ JADWAL HANPANGAN HARI INI: ' + JadwalData.currentHanpangan + ' 🍽️' : '🍽️ Memuat jadwal hanpangan... 🍽️';
         }
@@ -1600,7 +2085,6 @@
             });
         }
 
-        // ========== FUNGSI HANPANGAN DENGAN EPOCH DAYS (HARI INI MULAI SERMA MUJIBURRAHMAN) ==========
         function loadHanpanganData() {
             return fetchFromGitHub(GITHUB_URLS.HANPANGAN).then(data => {
                 if (data) {
@@ -1608,21 +2092,22 @@
                     if (lines.length) {
                         JadwalData.daftarHanpangan = lines;
                         const today = new Date();
+                        // ========== PERBAIKAN: epochDays (tidak reset setiap tahun) ==========
                         const epochDays = Math.floor(today.getTime() / (24 * 60 * 60 * 1000));
                         const targetIndex = 0;
                         const offset = (targetIndex - epochDays) % lines.length;
                         let index = (epochDays + offset) % lines.length;
                         if (index < 0) index += lines.length;
+                        // ====================================================================
                         JadwalData.currentHanpangan = lines[index];
-                        updateRunningTextJadwal();
+                        updateRunningText();
                         return true;
                     }
                 }
-                updateRunningTextJadwal();
+                updateRunningText();
                 return false;
             });
         }
-        // ============================================================================================
 
         function formatTanggal(date) {
             const days = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
@@ -1732,7 +2217,7 @@
         else initJadwalBaru();
     })();
     
-    // ============ SCRIPT UNTUK TAB ABSEN (GOOGLE SCRIPT) ============
+    // ============ SCRIPT UNTUK TAB ABSEN ============
     (function() {
         var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcKBFM8Mm0A8e_hWfl48uEUuDhlmxK8okgXF4M-102HLEuROZPN9YZlpmKnkRo8b_SKA/exec';
         var CACHE_KEY_ABSEN = 'absensi_dukops_data';
@@ -1971,6 +2456,11 @@
                 '</div></div>';
             
             resultContainerAbsen.innerHTML = html;
+            
+            var pngBtn = document.querySelector('#absenResultContainer .absen-btn-primary');
+            if (pngBtn && pngBtn.textContent.includes('PNG')) {
+                pngBtn.onclick = function() { shareAsPNGAbsen(); };
+            }
         }
         
         function createCompactPNGHTMLAbsen() {
