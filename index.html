@@ -1717,7 +1717,7 @@
     <script src="js/services/AdminSettings.js"></script>
     <script src="app.js"></script>
 
-    <!-- ============ JADWAL PIKET BARU SCRIPT (DENGAN PERBAIKAN epochDays) ============ -->
+    <!-- ============ JADWAL PIKET BARU SCRIPT (DENGAN PERBAIKAN epochDays + OFFSET) ============ -->
     <script>
     (function() {
         const GITHUB_URLS = {
@@ -1774,11 +1774,27 @@
                     if (lines.length) {
                         JadwalData.daftarHanpangan = lines;
                         const today = new Date();
-                        // ========== PERBAIKAN: epochDays (tidak reset setiap tahun) ==========
-                        // epochDays = jumlah hari sejak 1 Januari 1970 (UNIX epoch)
+                        
+                        // ========== MENGHITUNG OFFSET AGAR URUTAN SAMA DENGAN dayOfYear ==========
+                        // epochDays = jumlah hari sejak 1 Januari 1970
                         const epochDays = Math.floor(today.getTime() / (24 * 60 * 60 * 1000));
-                        const index = epochDays % lines.length;
+                        
+                        // Hitung dayOfYear untuk tanggal 1 Januari 2024 (sebagai patokan)
+                        // Tujuannya agar offset konsisten sepanjang masa
+                        const referenceDate = new Date(2024, 0, 1); // 1 Januari 2024
+                        const startOfYear2024 = new Date(2024, 0, 0);
+                        const dayOfYearRef = Math.floor((referenceDate - startOfYear2024) / (24 * 60 * 60 * 1000));
+                        
+                        // epochDays untuk 1 Januari 2024
+                        const epochDaysRef = Math.floor(referenceDate.getTime() / (24 * 60 * 60 * 1000));
+                        
+                        // Offset agar epochDays menghasilkan indeks yang sama dengan dayOfYear
+                        const offset = (dayOfYearRef - epochDaysRef) % lines.length;
+                        
+                        // Index final dengan offset
+                        const index = (epochDays + offset) % lines.length;
                         // ====================================================================
+                        
                         JadwalData.currentHanpangan = lines[index];
                         updateRunningText();
                         return true;
