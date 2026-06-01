@@ -26,8 +26,7 @@
     <!-- ============================= -->
 
     <!-- External Libraries -->
-    <script
-        src="https://cdn.polyfill.io/v3/polyfill.min.js?features=default,es6,Promise,fetch,Array.prototype.includes"></script>
+    <script src="https://cdn.polyfill.io/v3/polyfill.min.js?features=default,es6,Promise,fetch,Array.prototype.includes"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -1004,6 +1003,7 @@
             <div class="dukops-header-row">
                 <div class="dukops-profile-area" id="desaProfileContainerHeader">
                     <img id="desaProfileImgHeader" class="dukops-profile-img" src="favicon-96x96.png" alt="Foto Profil">
+                    <div id="desaProfileNameHeader" class="dukops-profile-name">Pilih Desa</div>
                 </div>
                 <div class="dukops-title-area">
                     <div class="dukops-header-title">DUKOPS BABINSA</div>
@@ -1268,7 +1268,8 @@
 
         // ============ DATA DESA DIAMBIL DARI LOKAL ============
         const DESA_LIST_URL = 'data/desa-list.json';
-        const PROFILE_BASE_URL = 'Profile/';
+        // PERBAIKAN: gunakan folder 'profile/' (lowercase) sesuai permintaan user
+        const PROFILE_BASE_URL = 'profile/';
         const DEFAULT_FAVICON_URL = 'favicon-96x96.png';
         
         let daftarDesaGlobal = [];
@@ -1285,8 +1286,10 @@
                 daftarDesaGlobal = data.desaList || [];
                 console.log("✅ Daftar desa berhasil dimuat dari lokal:", daftarDesaGlobal.length, "desa");
                 
+                // PERBAIKAN: mapping nama file ke lowercase + .png, sesuai contoh "padang bulia.png", "ambengan.png"
                 daftarDesaGlobal.forEach(desa => {
-                    let fileName = `${desa}.png`;
+                    // ubah nama desa menjadi lowercase untuk mencari file (contoh: "Padang Bulia" -> "padang bulia.png")
+                    let fileName = desa.toLowerCase() + '.png';
                     profileImagesGlobal[desa] = fileName;
                 });
                 
@@ -1342,11 +1345,12 @@
             
             if (!desaName || desaName === "") {
                 imgElement.src = DEFAULT_FAVICON_URL;
-                nameElement.textContent = "Pilih Desa";
+                if (nameElement) nameElement.textContent = "Pilih Desa";
                 return;
             }
             
             let matchedKey = null;
+            // cari case-insensitive
             for (let key in profileImagesGlobal) {
                 if (desaName.toLowerCase() === key.toLowerCase()) {
                     matchedKey = key;
@@ -1358,16 +1362,16 @@
                 const fileName = profileImagesGlobal[matchedKey];
                 const imageUrl = PROFILE_BASE_URL + fileName;
                 imgElement.src = imageUrl;
-                nameElement.textContent = matchedKey;
+                if (nameElement) nameElement.textContent = matchedKey;
                 
                 imgElement.onerror = function() {
-                    console.warn(`Gagal memuat profil untuk ${matchedKey}, file tidak ditemukan`);
+                    console.warn(`Gagal memuat profil untuk ${matchedKey}, file tidak ditemukan di folder profile/`);
                     imgElement.src = DEFAULT_FAVICON_URL;
-                    nameElement.textContent = matchedKey;
+                    if (nameElement) nameElement.textContent = matchedKey;
                 };
             } else {
                 imgElement.src = DEFAULT_FAVICON_URL;
-                nameElement.textContent = desaName || "Pilih Desa";
+                if (nameElement) nameElement.textContent = desaName || "Pilih Desa";
             }
         }
 
