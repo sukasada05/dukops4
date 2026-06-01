@@ -137,7 +137,9 @@
 
         /* ============ HEADER DUKOPS dengan foto profil di samping kiri ============ */
         .dukops-header {
-            background: linear-gradient(135deg, #1a472a, #0d2618), url('Header/header-background.png') center/cover no-repeat;
+            /* PERUBAHAN: Ganti gradien hijau dengan gambar dari folder 'header' (huruf kecil) */
+            background: url('header/header-background.png') center/cover no-repeat;
+            background-color: #1a472a; /* warna cadangan jika gambar gagal */
             border-radius: 12px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 10px 15px;
@@ -1223,7 +1225,10 @@
             if (!USE_REAL_BOT) {
                 // Mode simulasi: pesan contoh (tanpa banner peringatan)
                 const demoMessages = [
-                   
+                    "📢 Selamat pagi Babinsa, laporkan kegiatan Dukops hari ini.",
+                    "⚠️ Peringatan: batas waktu pelaporan jam 12.00 WIB.",
+                    "✅ Desa Padang Bulia telah mengirimkan laporan lengkap.",
+                    "🔄 Periksa kembali foto kegiatan sebelum submit."
                 ];
                 const randomMsg = demoMessages[Math.floor(Math.random() * demoMessages.length)];
                 updateRunningText(randomMsg);
@@ -1236,18 +1241,13 @@
                 if (data.ok && data.result && data.result.length > 0) {
                     const message = data.result[data.result.length - 1].message;
                         if (message && message.text) {
-                            // Update running text UI
                             updateRunningText(message.text);
-
-                            // Forward message to application logic: dispatch event and call handler if present
                             try {
                                 const evt = new CustomEvent('telegramMessage', { detail: message });
                                 window.dispatchEvent(evt);
                             } catch (e) {
                                 console.warn('Gagal dispatch telegramMessage event', e);
                             }
-
-                            // Optional global handler for direct callback
                             try {
                                 if (typeof window.handleTelegramMessage === 'function') {
                                     window.handleTelegramMessage(message);
@@ -1262,13 +1262,11 @@
             }
         }
 
-        // Polling setiap 6 detik untuk mengambil pesan baru dari Telegram
         setInterval(fetchTelegramMessages, 6000);
         fetchTelegramMessages();
 
         // ============ DATA DESA DIAMBIL DARI LOKAL ============
         const DESA_LIST_URL = 'data/desa-list.json';
-        // PERBAIKAN: gunakan folder 'profile/' (lowercase) sesuai permintaan user
         const PROFILE_BASE_URL = 'profile/';
         const DEFAULT_FAVICON_URL = 'favicon-96x96.png';
         
@@ -1286,9 +1284,7 @@
                 daftarDesaGlobal = data.desaList || [];
                 console.log("✅ Daftar desa berhasil dimuat dari lokal:", daftarDesaGlobal.length, "desa");
                 
-                // PERBAIKAN: mapping nama file ke lowercase + .png, sesuai contoh "padang bulia.png", "ambengan.png"
                 daftarDesaGlobal.forEach(desa => {
-                    // ubah nama desa menjadi lowercase untuk mencari file (contoh: "Padang Bulia" -> "padang bulia.png")
                     let fileName = desa.toLowerCase() + '.png';
                     profileImagesGlobal[desa] = fileName;
                 });
@@ -1305,7 +1301,6 @@
                     selectDesa.innerHTML = '<option value="">-- Gagal memuat desa --</option>';
                     selectDesa.disabled = true;
                 }
-                showToastDesa("❌ Gagal memuat data desa lokal, periksa file dan jalur sumber!");
                 return false;
             } finally {
                 if (loadingDesa && daftarDesaGlobal.length > 0) {
@@ -1327,16 +1322,10 @@
                 selectDesa.appendChild(option);
             });
             
-            // Jangan auto-pilih desa pertama.
             selectDesa.value = "";
             
             const loadingDesa = document.getElementById('loadingDesa');
             if (loadingDesa) loadingDesa.style.display = 'none';
-        }
-
-        function showToastDesa(message) {
-            // Suppressed per user preference: no Desa data toast popups.
-            return;
         }
 
         function updateDesaProfile(desaName) {
@@ -1350,7 +1339,6 @@
             }
             
             let matchedKey = null;
-            // cari case-insensitive
             for (let key in profileImagesGlobal) {
                 if (desaName.toLowerCase() === key.toLowerCase()) {
                     matchedKey = key;
@@ -1630,7 +1618,6 @@
                     return true;
                 } catch (error) {
                     console.error("Gagal memuat template AI:", error);
-                    showAIToast("⚠️ Gagal memuat template lokal.");
                     return false;
                 }
             }
@@ -1698,13 +1685,7 @@
                 narasiField.dispatchEvent(event);
                 
                 if (typeof checkInputCompletion === 'function') checkInputCompletion();
-                showAIToast(`✅ Template diterapkan ${namaDesa ? '(Desa/Kel: ' + namaDesa + ')' : ''}`);
             };
-
-            function showAIToast(message) {
-                // Suppressed per user preference: no AI template toast popups.
-                return;
-            }
 
             openModalBtn.onclick = async () => {
                 if (!templateData) {
@@ -1751,11 +1732,6 @@
             'j_nama4a_baru', 'j_nama4b_baru', 'j_nama4c_baru', 'j_nama4d_baru'
         ];
 
-        function showToast(msg, duration = 3000) {
-            // Suppressed per user preference: no Jadwal Piket toast popups.
-            return;
-        }
-
         function updateRunningText() {
             const el = document.getElementById('runningTextJadwalBaru');
             if (el) el.textContent = JadwalData.currentHanpangan ? '🍽️ JADWAL HANPANGAN HARI INI: ' + JadwalData.currentHanpangan + ' 🍽️' : '🍽️ Memuat jadwal hanpangan... 🍽️';
@@ -1793,11 +1769,9 @@
                     if (lines.length) {
                         JadwalData.daftarHanpangan = lines;
                         const today = new Date();
-                        // === PERBAIKAN: Gunakan dayOfYear agar siklus sepanjang tahun ===
                         const start = new Date(today.getFullYear(), 0, 0);
                         const dayOfYear = Math.floor((today - start) / (24 * 60 * 60 * 1000));
                         const index = (dayOfYear - 1) % lines.length;
-                        // =====================================================
                         JadwalData.currentHanpangan = lines[index];
                         updateRunningText();
                         return true;
@@ -1857,9 +1831,8 @@
         function sendToWhatsApp() {
             const preview = document.getElementById('j_hasilPesanBaru');
             const pesan = preview ? preview.value.trim() : "";
-            if (!pesan) { showToast("Tidak ada pesan untuk dikirim"); return false; }
+            if (!pesan) return false;
             window.open("https://wa.me/?text=" + encodeURIComponent(pesan), "_blank");
-            showToast("Membuka WhatsApp...");
             return false;
         }
 
@@ -1869,7 +1842,7 @@
             isLoading = true;
             const loading = document.getElementById('j_loadingIndicatorBaru');
             if (loading) loading.style.display = 'block';
-            Promise.all([loadPiketData(), loadHanpanganData()]).then(() => { updatePreview(); showToast("Data berhasil dimuat"); }).catch(() => showToast("Gagal memuat data")).finally(() => { if (loading) loading.style.display = 'none'; isLoading = false; });
+            Promise.all([loadPiketData(), loadHanpanganData()]).then(() => { updatePreview(); }).finally(() => { if (loading) loading.style.display = 'none'; isLoading = false; });
         }
 
         function initJadwalBaru() {
@@ -1934,11 +1907,11 @@
         if (tahunSelectAbsen) tahunSelectAbsen.onchange = onTahunChangeAbsen;
         if (refreshBtnAbsen) refreshBtnAbsen.onclick = forceRefreshAbsen;
         
-        window.addEventListener('online', function() { isOnlineAbsen = true; showToastAbsen('📡 Kembali online'); loadAbsenTahun(); });
-        window.addEventListener('offline', function() { isOnlineAbsen = false; showToastAbsen('⚠️ Mode offline'); });
+        window.addEventListener('online', function() { isOnlineAbsen = true; loadAbsenTahun(); });
+        window.addEventListener('offline', function() { isOnlineAbsen = false; });
         
         function forceRefreshAbsen() {
-            if (!isOnlineAbsen) { showToastAbsen('❌ Tidak ada koneksi'); return; }
+            if (!isOnlineAbsen) return;
             localStorage.removeItem(CACHE_KEY_ABSEN);
             loadAbsenTahun();
             if (currentDataAbsen) loadDataAbsen();
@@ -1977,7 +1950,6 @@
                     console.error('Error:', error);
                     if (!cached || !cached.years) {
                         tahunSelectAbsen.innerHTML = '<option>❌ Gagal memuat</option>';
-                        showToastAbsen('Gagal: ' + error.message);
                     }
                 })
                 .finally(function() { if (tahunSelectAbsen) tahunSelectAbsen.disabled = false; });
@@ -2208,29 +2180,22 @@
         }
         
         window.shareAsPNGAbsen = async function() {
-            if (!currentDataAbsen) { showToastAbsen('📊 Pilih data dulu'); return; }
-            showToastAbsen('🖼️ Membuat gambar...');
+            if (!currentDataAbsen) return;
             if (screenshotAreaAbsen) screenshotAreaAbsen.innerHTML = createCompactPNGHTMLAbsen();
             var element = screenshotAreaAbsen ? screenshotAreaAbsen.firstChild : null;
-            if (!element) { showToastAbsen('❌ Gagal membuat gambar'); return; }
+            if (!element) return;
             try {
                 var canvas = await html2canvas(element, { scale: 2, backgroundColor: '#ffffff' });
                 var link = document.createElement('a');
                 link.download = 'Absensi_' + (currentDataAbsen.nama_bulan || '') + '_' + (currentDataAbsen.tahun || '') + '.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
-                showToastAbsen('✅ Gambar siap!');
-            } catch (e) { showToastAbsen('❌ Gagal: ' + e.message); }
+            } catch (e) { console.error(e); }
             setTimeout(function() { if (screenshotAreaAbsen) screenshotAreaAbsen.innerHTML = ''; }, 500);
         };
         
         function getCacheAbsen() { try { var cached = localStorage.getItem(CACHE_KEY_ABSEN); if (cached) return JSON.parse(cached); } catch(e) {} return null; }
         function saveToCacheAbsen(data) { try { localStorage.setItem(CACHE_KEY_ABSEN, JSON.stringify(data)); } catch(e) {} }
-        
-        function showToastAbsen(msg) {
-            // Suppressed per user preference: no Absen toast popups.
-            return;
-        }
         
         function showLoadingAbsen() {
             if (resultContainerAbsen) resultContainerAbsen.innerHTML = '<div class="absen-loading"><div class="absen-spinner"></div><p>Mohon Tunggu ...</p></div>';
