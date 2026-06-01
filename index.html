@@ -137,6 +137,7 @@
 
         /* ============ HEADER DUKOPS dengan foto profil di samping kiri ============ */
         .dukops-header {
+            /* PERUBAHAN 1: Ganti gradien hijau dengan gambar dari folder 'header' (huruf kecil) */
             background: url('header/header-background.png') center/cover no-repeat;
             background-color: #1a472a;
             border-radius: 12px;
@@ -254,7 +255,7 @@
             margin-top: 5px;
         }
 
-        /* ============ RUNNING TEXT PENERIMA PESAN TELEGRAM ============ */
+        /* ============ RUNNING TEXT PENERIMA PESAN TELEGRAM (TANPA MARQUEE KOTAK) ============ */
         .telegram-running-container {
             background: rgba(0, 0, 0, 0.7);
             border-radius: 40px;
@@ -926,51 +927,6 @@
             to { opacity: 1; transform: translateX(0); }
         }
 
-        /* Style untuk Attendance Panel */
-        .attendance-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .attendance-filters {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        .attendance-summary {
-            background: rgba(0, 40, 0, 0.5);
-            border-radius: 8px;
-            padding: 10px;
-            margin-bottom: 15px;
-        }
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 5px 0;
-        }
-        .progress-container {
-            background: #333;
-            border-radius: 10px;
-            height: 10px;
-            margin-top: 10px;
-        }
-        .progress-bar {
-            background: #4caf50;
-            border-radius: 10px;
-            height: 100%;
-            width: 0%;
-        }
-        .attendance-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .previewBox {
-            margin-top: 5px;
-            margin-bottom: 10px;
-        }
-
         @media screen and (max-width: 480px) {
             .modal-ai-content {
                 width: 98%;
@@ -1010,9 +966,6 @@
             #categorySelect {
                 font-size: 12px;
                 padding: 8px 10px;
-            }
-            .attendance-filters {
-                flex-direction: column;
             }
         }
     </style>
@@ -1270,7 +1223,7 @@
 
         async function fetchTelegramMessages() {
             if (!USE_REAL_BOT) {
-                // Mode simulasi: pesan contoh
+                // Mode simulasi: pesan contoh (tanpa banner peringatan)
                 const demoMessages = [
                     "📢 Selamat pagi Babinsa, laporkan kegiatan Dukops hari ini.",
                     "⚠️ Peringatan: batas waktu pelaporan jam 12.00 WIB.",
@@ -1424,298 +1377,6 @@
             return option ? option.text : "";
         }
 
-        // ============ FUNGSI PREVIEW ============
-        function previewImage() {
-            const fileInput = document.getElementById('gambar');
-            const previewDiv = document.getElementById('previewGambar');
-            if (fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    previewDiv.innerHTML = '<img src="' + e.target.result + '" style="max-width: 100%; max-height: 200px; border-radius: 8px; margin-top: 10px;">';
-                }
-                reader.readAsDataURL(fileInput.files[0]);
-            } else {
-                previewDiv.innerHTML = '';
-            }
-            checkInputCompletion();
-        }
-
-        function updateDatePreview() {
-            const dateInput = document.getElementById('tanggalWaktu');
-            const previewDiv = document.getElementById('previewTanggal');
-            if (dateInput.value) {
-                const date = new Date(dateInput.value);
-                previewDiv.innerHTML = '<div class="preview-box"><i class="fas fa-calendar-check"></i> ' + date.toLocaleString('id-ID') + '</div>';
-            } else {
-                previewDiv.innerHTML = '';
-            }
-            checkInputCompletion();
-        }
-
-        function checkInputCompletion() {
-            const selectDesa = document.getElementById('selectDesa');
-            const gambar = document.getElementById('gambar');
-            const tanggalWaktu = document.getElementById('tanggalWaktu');
-            const narasi = document.getElementById('narasi');
-            const submitBtn = document.getElementById('submitBtn');
-            
-            const isDesaSelected = selectDesa && selectDesa.value !== "";
-            const isGambarSelected = gambar && gambar.files && gambar.files.length > 0;
-            const isTanggalSelected = tanggalWaktu && tanggalWaktu.value !== "";
-            const isNarasiFilled = narasi && narasi.value.trim() !== "";
-            
-            if (submitBtn) {
-                submitBtn.disabled = !(isDesaSelected && isGambarSelected && isTanggalSelected && isNarasiFilled);
-            }
-        }
-
-        // ============ FUNGSI LAPORAN TERKIRIM (ATTENDANCE) ============
-        let submissionCounter = 0;
-        
-        function updateCounter() {
-            const counterElem = document.getElementById('submissionCounter');
-            const storedData = localStorage.getItem('dukops_submissions');
-            let submissions = storedData ? JSON.parse(storedData) : [];
-            submissionCounter = submissions.length;
-            if (counterElem) counterElem.textContent = submissionCounter;
-        }
-        
-        async function processSubmission() {
-            const selectDesa = document.getElementById('selectDesa');
-            const desa = selectDesa.options[selectDesa.selectedIndex]?.text || "";
-            const gambar = document.getElementById('gambar');
-            const tanggalWaktu = document.getElementById('tanggalWaktu');
-            const narasi = document.getElementById('narasi');
-            
-            if (!desa || !gambar.files.length || !tanggalWaktu.value || !narasi.value.trim()) {
-                alert('Lengkapi semua data terlebih dahulu!');
-                return;
-            }
-            
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
-            
-            try {
-                const file = gambar.files[0];
-                const reader = new FileReader();
-                
-                reader.onload = async function(e) {
-                    const imageData = e.target.result;
-                    
-                    const submission = {
-                        id: Date.now(),
-                        desa: desa,
-                        tanggal: tanggalWaktu.value,
-                        narasi: narasi.value,
-                        gambar: imageData,
-                        timestamp: new Date().toISOString()
-                    };
-                    
-                    let existingData = localStorage.getItem('dukops_submissions');
-                    let submissions = existingData ? JSON.parse(existingData) : [];
-                    submissions.push(submission);
-                    localStorage.setItem('dukops_submissions', JSON.stringify(submissions));
-                    
-                    updateCounter();
-                    
-                    document.getElementById('gambar').value = '';
-                    document.getElementById('previewGambar').innerHTML = '';
-                    document.getElementById('tanggalWaktu').value = '';
-                    document.getElementById('previewTanggal').innerHTML = '';
-                    document.getElementById('narasi').value = '';
-                    
-                    alert('✅ Laporan berhasil disimpan!');
-                    
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<i class="fas fa-download"></i> DOWNLOAD & <i class="fas fa-paper-plane"></i> KIRIM & <i class="fab fa-google-drive"></i> DRIVE';
-                };
-                
-                reader.readAsDataURL(file);
-                
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Gagal menyimpan laporan: ' + error.message);
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-download"></i> DOWNLOAD & <i class="fas fa-paper-plane"></i> KIRIM & <i class="fab fa-google-drive"></i> DRIVE';
-            }
-        }
-        
-        function resetAll() {
-            document.getElementById('gambar').value = '';
-            document.getElementById('previewGambar').innerHTML = '';
-            document.getElementById('tanggalWaktu').value = '';
-            document.getElementById('previewTanggal').innerHTML = '';
-            document.getElementById('narasi').value = '';
-            const submitBtn = document.getElementById('submitBtn');
-            if (submitBtn) submitBtn.disabled = true;
-            alert('Data form telah direset');
-        }
-        
-        // ============ FUNGSI ATTENDANCE (LAPORAN TERKIRIM) ============
-        function showAttendance() {
-            document.getElementById('attendancePanel').style.display = 'block';
-            loadAttendanceData();
-        }
-        
-        function hideAttendance() {
-            document.getElementById('attendancePanel').style.display = 'none';
-        }
-        
-        async function loadAttendanceData() {
-            const loading = document.getElementById('attendanceLoading');
-            const summary = document.getElementById('attendanceSummary');
-            const list = document.getElementById('attendanceList');
-            const desaFilter = document.getElementById('attendanceDesaFilter');
-            const monthFilter = document.getElementById('attendanceMonthFilter');
-            
-            if (loading) loading.style.display = 'block';
-            if (summary) summary.style.display = 'none';
-            
-            try {
-                const storedData = localStorage.getItem('dukops_submissions');
-                let submissions = storedData ? JSON.parse(storedData) : [];
-                
-                let filteredData = [...submissions];
-                if (monthFilter && monthFilter.value) {
-                    const [year, month] = monthFilter.value.split('-');
-                    filteredData = filteredData.filter(item => {
-                        const itemDate = new Date(item.tanggal);
-                        return itemDate.getFullYear() == year && (itemDate.getMonth() + 1) == month;
-                    });
-                }
-                
-                if (desaFilter && desaFilter.value) {
-                    filteredData = filteredData.filter(item => item.desa === desaFilter.value);
-                }
-                
-                const desaStats = {};
-                filteredData.forEach(item => {
-                    if (!desaStats[item.desa]) {
-                        desaStats[item.desa] = { total: 0, files: [] };
-                    }
-                    desaStats[item.desa].total++;
-                    if (item.gambar) desaStats[item.desa].files.push(item.gambar);
-                });
-                
-                const desaList = Object.keys(desaStats);
-                const totalReports = filteredData.length;
-                const totalDesa = daftarDesaGlobal.length;
-                const targetPerDesa = 9;
-                
-                if (desaFilter) {
-                    const currentFilter = desaFilter.value;
-                    desaFilter.innerHTML = '<option value="">Semua Desa</option>';
-                    daftarDesaGlobal.forEach(desa => {
-                        const opt = document.createElement('option');
-                        opt.value = desa;
-                        opt.textContent = desa;
-                        if (currentFilter === desa) opt.selected = true;
-                        desaFilter.appendChild(opt);
-                    });
-                }
-                
-                let detailsHtml = '';
-                let totalFiles = 0;
-                let desaLengkap = 0;
-                let desaBelumLengkap = 0;
-                let desaBelum = 0;
-                
-                for (const desa of daftarDesaGlobal) {
-                    const stats = desaStats[desa];
-                    const jumlahFile = stats ? stats.files.length : 0;
-                    const persentase = Math.round((jumlahFile / targetPerDesa) * 100);
-                    totalFiles += jumlahFile;
-                    
-                    let status = 'BELUM';
-                    let statusClass = 'absen-status-belum';
-                    let statusText = 'BELUM';
-                    
-                    if (jumlahFile >= targetPerDesa) {
-                        status = 'LENGKAP';
-                        statusClass = 'absen-status-lengkap';
-                        statusText = 'LENGKAP';
-                        desaLengkap++;
-                    } else if (jumlahFile > 0) {
-                        status = 'BELUM_LENGKAP';
-                        statusClass = 'absen-status-belum-lengkap';
-                        statusText = 'BL';
-                        desaBelumLengkap++;
-                    } else {
-                        desaBelum++;
-                    }
-                    
-                    const warn = (status === 'LENGKAP') ? '#4caf50' : ((status === 'BELUM_LENGKAP') ? '#ff9800' : '#f44336');
-                    
-                    detailsHtml += `<div class="absen-desa-item" onclick="showDetailSubmission('${desa}')">
-                        <div class="absen-desa-name">${desa}</div>
-                        <div class="absen-desa-stats">${jumlahFile}/${targetPerDesa}</div>
-                        <div class="absen-desa-progress"><div class="absen-desa-progress-bar"><div class="absen-desa-progress-fill" style="width:${persentase}%; background:${warn}"></div></div></div>
-                        <div class="absen-status-badge ${statusClass}">${statusText}</div>
-                    </div>`;
-                }
-                
-                const totalTarget = daftarDesaGlobal.length * targetPerDesa;
-                const persenTotal = Math.round((totalFiles / totalTarget) * 100);
-                
-                if (summary) {
-                    summary.style.display = 'block';
-                    document.getElementById('totalReports').textContent = totalReports;
-                    document.getElementById('totalDesa').textContent = daftarDesaGlobal.length;
-                    document.getElementById('targetStatus').textContent = persenTotal + '%';
-                    document.getElementById('progressBar').style.width = persenTotal + '%';
-                }
-                
-                if (list) {
-                    list.innerHTML = detailsHtml;
-                }
-                
-            } catch (error) {
-                console.error('Error loading attendance:', error);
-                if (list) list.innerHTML = '<div style="color: red;">Gagal memuat data laporan</div>';
-            } finally {
-                if (loading) loading.style.display = 'none';
-            }
-        }
-        
-        function refreshAttendanceData() {
-            loadAttendanceData();
-        }
-        
-        function downloadAttendanceReport() {
-            const storedData = localStorage.getItem('dukops_submissions');
-            let submissions = storedData ? JSON.parse(storedData) : [];
-            const dataStr = JSON.stringify(submissions, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-            const exportFileDefaultName = 'laporan_dukops_' + new Date().toISOString().slice(0,10) + '.json';
-            const link = document.createElement('a');
-            link.setAttribute('href', dataUri);
-            link.setAttribute('download', exportFileDefaultName);
-            link.click();
-        }
-        
-        function showDetailSubmission(desaName) {
-            const storedData = localStorage.getItem('dukops_submissions');
-            let submissions = storedData ? JSON.parse(storedData) : [];
-            const desaSubmissions = submissions.filter(item => item.desa === desaName);
-            
-            if (desaSubmissions.length === 0) {
-                alert(`Belum ada laporan untuk ${desaName}`);
-                return;
-            }
-            
-            let message = `📋 LAPORAN ${desaName}\n`;
-            message += `========================\n`;
-            desaSubmissions.forEach((item, idx) => {
-                const tanggal = new Date(item.tanggal).toLocaleString('id-ID');
-                message += `\n${idx + 1}. 📅 ${tanggal}\n`;
-                message += `   📝 ${item.narasi.substring(0, 100)}${item.narasi.length > 100 ? '...' : ''}\n`;
-            });
-            alert(message);
-        }
-        
-        window.showDetailSubmission = showDetailSubmission;
-
         // ============ SPLASH SCREEN LOGIC ============
         let splashProgress = 0;
         let splashInterval;
@@ -1765,25 +1426,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             startSplashProgress();
             loadDesaListFromGitHub();
-            updateCounter();
             
             const selectDesa = document.getElementById('selectDesa');
             if (selectDesa) {
                 selectDesa.addEventListener('change', function() {
                     const selectedText = this.options[this.selectedIndex]?.text || "";
                     updateDesaProfile(selectedText);
-                    checkInputCompletion();
                 });
-            }
-            
-            const tanggalWaktu = document.getElementById('tanggalWaktu');
-            if (tanggalWaktu) {
-                tanggalWaktu.addEventListener('change', checkInputCompletion);
-            }
-            
-            const narasi = document.getElementById('narasi');
-            if (narasi) {
-                narasi.addEventListener('input', checkInputCompletion);
             }
         });
 
@@ -1793,6 +1442,7 @@
             const mp3Btn = document.getElementById('mp3ControlBtn');
             const volumeSlider = document.getElementById('audioVolumeSlider');
             let isPlaying = false;
+            let hasUserInteracted = false;
             let sliderVisible = false;
 
             function updateButtonIcon() {
@@ -1822,9 +1472,23 @@
                 }
             }
 
+            function pauseMusic() {
+                if (audio && isPlaying) {
+                    audio.pause();
+                    isPlaying = false;
+                    if (mp3Btn) {
+                        mp3Btn.classList.add('muted');
+                        updateButtonIcon();
+                    }
+                }
+            }
+
             function toggleSliderAndPlay() {
                 if (!audio) return;
-                playMusic();
+                if (!hasUserInteracted) {
+                    hasUserInteracted = true;
+                    playMusic();
+                }
                 showVolumeSlider(!sliderVisible);
             }
 
@@ -1851,7 +1515,7 @@
                     const value = parseInt(this.value, 10) / 100;
                     audio.volume = value;
                     updateButtonIcon();
-                    if (value > 0 && !isPlaying) {
+                    if (value > 0 && !isPlaying && hasUserInteracted) {
                         playMusic();
                     }
                 };
@@ -1859,8 +1523,24 @@
 
             window.triggerPlayMusic = function() {
                 if (!audio) return;
-                playMusic();
+
+                if (!hasUserInteracted) {
+                    hasUserInteracted = true;
+                    playMusic();
+                } else if (!isPlaying) {
+                    playMusic();
+                }
             };
+
+            function firstInteraction() {
+                if (!hasUserInteracted) {
+                    hasUserInteracted = true;
+                    document.removeEventListener('click', firstInteraction);
+                    document.removeEventListener('touchstart', firstInteraction);
+                }
+            }
+            document.addEventListener('click', firstInteraction);
+            document.addEventListener('touchstart', firstInteraction);
         })();
 
         // ============ INSTALL BUTTON LOGIC ============
@@ -2032,7 +1712,12 @@
         })();
     </script>
 
-    <!-- ============ JADWAL PIKET BARU SCRIPT (HANPANGAN EPOCH DAYS) ============ -->
+    <!-- ============ APPLICATION SCRIPTS ============ -->
+    <script src="js/components/FormValidator.js"></script>
+    <script src="js/services/AdminSettings.js"></script>
+    <script src="app.js"></script>
+
+    <!-- ============ JADWAL PIKET BARU SCRIPT (DENGAN PERBAIKAN epochDays + offset) ============ -->
     <script>
     (function() {
         const GITHUB_URLS = {
@@ -2048,11 +1733,8 @@
         ];
 
         function showToast(msg, duration = 3000) {
-            const toast = document.getElementById('j_toastNotificationBaru');
-            if (!toast) return;
-            toast.textContent = msg;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), duration);
+            // Suppressed per user preference: no Jadwal Piket toast popups.
+            return;
         }
 
         function updateRunningText() {
@@ -2085,6 +1767,7 @@
             });
         }
 
+        // ========== PERUBAHAN 2: Hanpangan menggunakan epochDays dengan offset ==========
         function loadHanpanganData() {
             return fetchFromGitHub(GITHUB_URLS.HANPANGAN).then(data => {
                 if (data) {
@@ -2092,13 +1775,13 @@
                     if (lines.length) {
                         JadwalData.daftarHanpangan = lines;
                         const today = new Date();
-                        // ========== PERBAIKAN: epochDays (tidak reset setiap tahun) ==========
+                        // epochDays: jumlah hari sejak 1 Januari 1970 (tidak reset per tahun)
                         const epochDays = Math.floor(today.getTime() / (24 * 60 * 60 * 1000));
+                        // offset agar index 0 = Serma Mujiburrahman (baris pertama file)
                         const targetIndex = 0;
                         const offset = (targetIndex - epochDays) % lines.length;
                         let index = (epochDays + offset) % lines.length;
                         if (index < 0) index += lines.length;
-                        // ====================================================================
                         JadwalData.currentHanpangan = lines[index];
                         updateRunningText();
                         return true;
@@ -2108,6 +1791,7 @@
                 return false;
             });
         }
+        // =================================================================================
 
         function formatTanggal(date) {
             const days = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
