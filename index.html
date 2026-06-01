@@ -1225,8 +1225,10 @@
             if (!USE_REAL_BOT) {
                 // Mode simulasi: pesan contoh (tanpa banner peringatan)
                 const demoMessages = [
-                    "📢 Jika ada muncul eror "gagl" kirim telegram abaikan masih dalam tahap perbaikan",
-                    "🔄 mohon dukungan dalam pengembangan aplikasi dalam permudah dalam bekerja, saran usul aplikasi silahkan hubungi admin"
+                    "📢 Selamat pagi Babinsa, laporkan kegiatan Dukops hari ini.",
+                    "⚠️ Peringatan: batas waktu pelaporan jam 12.00 WIB.",
+                    "✅ Desa Padang Bulia telah mengirimkan laporan lengkap.",
+                    "🔄 Periksa kembali foto kegiatan sebelum submit."
                 ];
                 const randomMsg = demoMessages[Math.floor(Math.random() * demoMessages.length)];
                 updateRunningText(randomMsg);
@@ -1715,7 +1717,7 @@
     <script src="js/services/AdminSettings.js"></script>
     <script src="app.js"></script>
 
-    <!-- ============ JADWAL PIKET BARU SCRIPT (DENGAN PERBAIKAN epochDays + OFFSET) ============ -->
+    <!-- ============ JADWAL PIKET BARU SCRIPT (DENGAN epochDays + OFFSET AGAR URUTAN SESUAI) ============ -->
     <script>
     (function() {
         const GITHUB_URLS = {
@@ -1765,38 +1767,38 @@
             });
         }
 
-function loadHanpanganData() {
-    return fetchFromGitHub(GITHUB_URLS.HANPANGAN).then(data => {
-        if (data) {
-            const lines = data.trim().split('\n').filter(l => l.trim());
-            if (lines.length) {
-                JadwalData.daftarHanpangan = lines;
-                const today = new Date();
-                
-                // epochDays: jumlah hari sejak 1 Januari 1970
-                const epochDays = Math.floor(today.getTime() / (24 * 60 * 60 * 1000));
-                
-                // ========== OFFSET AGAR URUTAN DIMULAI DARI Serma Mujiburrahman (index 1) ==========
-                // Menggunakan tanggal 1 Januari 2024 sebagai patokan
-                const referenceDate = new Date(1970, 0, 1); // 1 Januari 2024
-                const epochDaysRef = Math.floor(referenceDate.getTime() / (24 * 60 * 60 * 1000));
-                
-                // Target index = 1 (Serma Mujiburrahman berada di index 1 sesuai urutan file)
-                const targetIndex = 1;
-                const offset = (targetIndex - epochDaysRef) % lines.length;
-                let index = (epochDays + offset) % lines.length;
-                if (index < 0) index += lines.length;
-                // =================================================================================
-                
-                JadwalData.currentHanpangan = lines[index];
+        function loadHanpanganData() {
+            return fetchFromGitHub(GITHUB_URLS.HANPANGAN).then(data => {
+                if (data) {
+                    const lines = data.trim().split('\n').filter(l => l.trim());
+                    if (lines.length) {
+                        JadwalData.daftarHanpangan = lines;
+                        const today = new Date();
+                        
+                        // ========== MENGHITUNG OFFSET AGAR URUTAN DIMULAI DARI BARIS PERTAMA FILE ==========
+                        // epochDays: jumlah hari sejak 1 Januari 1970 (UNIX epoch)
+                        const epochDays = Math.floor(today.getTime() / (24 * 60 * 60 * 1000));
+                        
+                        // Gunakan tanggal 1 Januari 2024 sebagai patokan offset
+                        const referenceDate = new Date(2024, 0, 1); // 1 Januari 2024
+                        const epochDaysRef = Math.floor(referenceDate.getTime() / (24 * 60 * 60 * 1000));
+                        
+                        // Target index = 0 (baris pertama file: Serma Mujiburrahman)
+                        const targetIndex = 0;
+                        const offset = (targetIndex - epochDaysRef) % lines.length;
+                        let index = (epochDays + offset) % lines.length;
+                        if (index < 0) index += lines.length;
+                        // =================================================================================
+                        
+                        JadwalData.currentHanpangan = lines[index];
+                        updateRunningText();
+                        return true;
+                    }
+                }
                 updateRunningText();
-                return true;
-            }
+                return false;
+            });
         }
-        updateRunningText();
-        return false;
-    });
-}
 
         function formatTanggal(date) {
             const days = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
