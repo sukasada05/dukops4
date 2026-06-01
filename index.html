@@ -756,6 +756,9 @@
         window.loadSelectedDesa = function() {
             const selectDesa = document.getElementById('selectDesa');
             updateDesaProfile(selectDesa?.options[selectDesa.selectedIndex]?.text || "");
+            if (typeof window.triggerPlayMusic === 'function') {
+                window.triggerPlayMusic();
+            }
         };
 
         // ============ SPLASH SCREEN ============
@@ -788,41 +791,121 @@
             if (selectDesa) selectDesa.addEventListener('change', function() { updateDesaProfile(this.options[this.selectedIndex]?.text || ""); });
         });
 
-        // ============ MP3 PLAYER ============
+        // ============ MP3 PLAYER (ORIGINAL - LANGSUNG PLAY SAAT Pilih Desa) ============
         (function() {
             const audio = document.getElementById('backgroundMusic');
             const mp3Btn = document.getElementById('mp3ControlBtn');
             const volumeSlider = document.getElementById('audioVolumeSlider');
-            let isPlaying = false, hasUserInteracted = false, sliderVisible = false;
+            let isPlaying = false;
+            let sliderVisible = false;
+
             function updateButtonIcon() {
                 if (!mp3Btn) return;
-                mp3Btn.innerHTML = (!audio || audio.volume === 0) ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
+                if (!audio || audio.volume === 0) {
+                    mp3Btn.innerHTML = '<i class="fas fa-volume-mute"></i>';
+                } else {
+                    mp3Btn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                }
             }
+
+            function showVolumeSlider(show) {
+                if (!volumeSlider) return;
+                sliderVisible = show;
+                volumeSlider.style.display = show ? 'inline-block' : 'none';
+            }
+
             function playMusic() {
-                if (audio && !isPlaying) { audio.play().then(() => { isPlaying = true; updateButtonIcon(); }).catch(e => console.log(e)); }
+                if (audio && !isPlaying) {
+                    audio.play().then(() => {
+                        isPlaying = true;
+                        if (mp3Btn) {
+                            mp3Btn.classList.remove('muted');
+                            updateButtonIcon();
+                        }
+                    }).catch(err => console.log('Gagal memutar musik:', err));
+                }
             }
+
+            function toggleSliderAndPlay() {
+                if (!audio) return;
+                playMusic();
+                showVolumeSlider(!sliderVisible);
+            }
+
             if (audio) {
-                audio.src = 'assets/audio/Vietnamese Tet Holiday Remix.mp3';
+                if (!audio.src) {
+                    audio.src = 'assets/audio/Vietnamese Tet Holiday Remix.mp3';
+                }
                 audio.volume = 0.3;
-                if (volumeSlider) volumeSlider.value = 30;
+                if (volumeSlider) {
+                    volumeSlider.value = Math.round(audio.volume * 100);
+                }
                 audio.loop = true;
+                audio.load();
             }
+
             if (mp3Btn) {
-                mp3Btn.onclick = function() {
-                    if (!hasUserInteracted) { hasUserInteracted = true; playMusic(); }
-                    sliderVisible = !sliderVisible;
-                    if (volumeSlider) volumeSlider.style.display = sliderVisible ? 'inline-block' : 'none';
-                };
+                mp3Btn.style.display = 'flex';
+                mp3Btn.onclick = toggleSliderAndPlay;
             }
+
             if (volumeSlider) {
                 volumeSlider.oninput = function() {
-                    if (audio) audio.volume = parseInt(this.value, 10) / 100;
+                    if (!audio) return;
+                    const value = parseInt(this.value, 10) / 100;
+                    audio.volume = value;
                     updateButtonIcon();
+                    if (value > 0 && !isPlaying) {
+                        playMusic();
+                    }
                 };
+            }
+
+            window.triggerPlayMusic = function() {
+                if (!audio) return;
+                playMusic();
+            };
+        })();
+
+        // ============ INSTALL BUTTON LOGIC ============
+        (function() {
+            let deferredPrompt;
+            const installBtn = document.getElementById('installButton');
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                if (!window.matchMedia('(display-mode: standalone)').matches) {
+                    installBtn.style.display = 'block';
+                }
+            });
+
+            window.addEventListener('appinstalled', () => {
+                installBtn.style.display = 'none';
+                deferredPrompt = null;
+            });
+
+            if (window.matchMedia('(display-mode: standalone)').matches) {
+                installBtn.style.display = 'none';
+            }
+
+            if (installBtn) {
+                installBtn.addEventListener('click', async () => {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        if (outcome === 'accepted') {
+                            installBtn.style.display = 'none';
+                        }
+                        deferredPrompt = null;
+                    } else {
+                        alert('Install prompt tidak tersedia. Pastikan browser mendukung PWA.');
+                    }
+                });
             }
         })();
 
-        // ============ AI TEMPLATE ============
+        // ============ AI TEMPLATE SCRIPT ============
         (function() {
             const TEMPLATE_JSON_URL = 'template-narasi.json';
             let templateData = null, activeTab = null, categoryKeys = [];
@@ -919,7 +1002,6 @@
                 });
             }
 
-            // ========== FUNGSI HANPANGAN YANG DIPERBAIKI (HARI INI MULAI SERMA MUJIBURRAHMAN) ==========
             function loadHanpanganData() {
                 return fetchFromGitHub(GITHUB_URLS.HANPANGAN).then(data => {
                     if (data) {
@@ -927,18 +1009,11 @@
                         if (lines.length) {
                             JadwalData.daftarHanpangan = lines;
                             const today = new Date();
-                            
-                            // epochDays: jumlah hari sejak 1 Januari 1970 (UNIX epoch)
                             const epochDays = Math.floor(today.getTime() / (24 * 60 * 60 * 1000));
-                            
-                            // ========== OFFSET AGAR HARI INI INDEX = 0 (Serma Mujiburrahman) ==========
-                            // targetIndex = 0 (Serma Mujiburrahman di baris pertama file)
                             const targetIndex = 0;
                             const offset = (targetIndex - epochDays) % lines.length;
                             let index = (epochDays + offset) % lines.length;
                             if (index < 0) index += lines.length;
-                            // ========================================================================
-                            
                             JadwalData.currentHanpangan = lines[index];
                             updateRunningTextJadwal();
                             return true;
@@ -948,7 +1023,6 @@
                     return false;
                 });
             }
-            // =======================================================================================
 
             function formatTanggal(date) {
                 const days = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
