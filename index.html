@@ -137,6 +137,7 @@
 
         /* ============ HEADER DUKOPS dengan foto profil di samping kiri ============ */
         .dukops-header {
+            /* PERUBAHAN 1: Ganti gradien hijau dengan gambar dari folder 'header' (huruf kecil) */
             background: url('header/header-background.png') center/cover no-repeat;
             background-color: #1a472a;
             border-radius: 12px;
@@ -254,7 +255,7 @@
             margin-top: 5px;
         }
 
-        /* ============ RUNNING TEXT PENERIMA PESAN TELEGRAM ============ */
+        /* ============ RUNNING TEXT PENERIMA PESAN TELEGRAM (TANPA MARQUEE KOTAK) ============ */
         .telegram-running-container {
             background: rgba(0, 0, 0, 0.7);
             border-radius: 40px;
@@ -1024,7 +1025,7 @@
         <!-- ========== RUNNING TEXT PENERIMA PESAN DARI TELEGRAM ========== -->
         <div class="telegram-running-container">
             <div class="telegram-running-text" id="telegramRunningMessage">
-                Pengiriman Ke telegram dalam perbaikan...untuk fungsi lain masih berjalan silhakan buat laporan dukopsnya, Trims By Admin
+                Pengiriman Ke telegram dalam perbaikan...
             </div>
         </div>
 
@@ -1224,7 +1225,10 @@
             if (!USE_REAL_BOT) {
                 // Mode simulasi: pesan contoh (tanpa banner peringatan)
                 const demoMessages = [
-                    "✅ Terima Kasih yang telah mengirimkan laporan lengkap dan tepat waktu...Pengiriman ke "TELEGRAM" masih dalam perbaikan"
+                    "📢 Selamat pagi Babinsa, laporkan kegiatan Dukops hari ini.",
+                    "⚠️ Peringatan: batas waktu pelaporan jam 12.00 WIB.",
+                    "✅ Desa Padang Bulia telah mengirimkan laporan lengkap.",
+                    "🔄 Periksa kembali foto kegiatan sebelum submit."
                 ];
                 const randomMsg = demoMessages[Math.floor(Math.random() * demoMessages.length)];
                 updateRunningText(randomMsg);
