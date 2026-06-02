@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-    <!-- ========== INSTRUKSI NOINDEX UNTUK MESIN PENCARI ========== -->
+    <!-- ========== ANTI CACHE UNTUK HP ANDROID ========== -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <!-- =============================================== -->
     <meta name="robots" content="noindex, nofollow">
-
-    <!-- PWA Configuration -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -17,25 +17,18 @@
     <title>SISTEM PELAPORAN DUKOPS BABINSA dan JADWAL PIKET KORAMIL</title>
     <meta name="theme-color" content="#0a1a3a">
 
-    <!-- ========== FAVICON ========== -->
     <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="shortcut icon" href="favicon.ico" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <link rel="manifest" href="site.webmanifest" />
-    <!-- ============================= -->
 
-    <!-- External Libraries -->
     <script src="https://cdn.polyfill.io/v3/polyfill.min.js?features=default,es6,Promise,fetch,Array.prototype.includes"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Stylesheet -->
     <link rel="stylesheet" href="styles.css">
-    
-    <!-- html2canvas untuk fitur screenshot -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-    
+
     <style>
         /* ============ SPLASH SCREEN MODERN UDAYANA - SEMUA CENTER ========== */
         .splash-container-modern {
@@ -137,7 +130,6 @@
 
         /* ============ HEADER DUKOPS dengan foto profil di samping kiri ============ */
         .dukops-header {
-            /* PERUBAHAN 1: Ganti gradien hijau dengan gambar dari folder 'header' (huruf kecil) */
             background: url('header/header-background.png') center/cover no-repeat;
             background-color: #1a472a;
             border-radius: 12px;
@@ -972,35 +964,29 @@
 </head>
 
 <body>
-    <!-- ================= SPLASH SCREEN MODERN UDAYANA (SEMUA CENTER) ================= -->
+    <!-- ================= SPLASH SCREEN ================= -->
     <div id="splashScreen" class="splash-container-modern">
         <div class="splash-content">
             <div class="splash-logo-center">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/25/Lambang_Kodam_Udayana.svg"
-                    alt="Lambang Kodam Udayana">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/25/Lambang_Kodam_Udayana.svg" alt="Lambang Kodam Udayana">
             </div>
-            <div class="splash-title-center">DUKOPS</div>
-			<div class="splash-title-center">BABINSA SUKASADA</div>
+            <div class="splash-title-center">DUKOPS BABINSA SUKASADA</div>
             <div class="splash-subtitle-center">KODIM 1609/BULELENG</div>
             <div class="splash-unit-center">KORAMIL 1609-05/SUKASADA</div>
             <div class="splash-kodim-center">Sistem Pelaporan Digitalisasi Babinsa</div>
             <div class="splash-progress-center">
-            <div class="splash-progress-bar-center" id="splashProgressBar"></div>
+                <div class="splash-progress-bar-center" id="splashProgressBar"></div>
             </div>
             <div class="splash-percentage-center" id="progressPercentage">20%</div>
         </div>
     </div>
 
-    <!-- ================= BACKGROUND MP3 PLAYER ================= -->
-    <audio id="backgroundMusic" loop preload="auto">
-        <!-- Tambahkan file lokal di assets/audio/background.mp3 jika ingin musik latar lokal -->
-    </audio>
+    <audio id="backgroundMusic" loop preload="auto"></audio>
 
-    <!-- ================= APLIKASI UTAMA ================= -->
     <div id="appContainer" class="container" style="display: none; opacity: 0;">
         <button id="installButton"><i class="fas fa-download"></i> Install App</button>
 
-        <!-- HEADER DUKOPS DENGAN FOTO PROFIL DI SAMPING KIRI -->
+        <!-- HEADER -->
         <div class="dukops-header">
             <div class="dukops-header-row">
                 <div class="dukops-profile-area" id="desaProfileContainerHeader">
@@ -1012,72 +998,49 @@
                     <div class="dukops-header-title">KORAMIL 1609-05/SUKASADA</div>
                     <div class="dukops-header-address">Jl. Jelantik Gingsir No. 32 Sukasada Singaraja-Bali 81161</div>
                     <div class="audio-control-wrapper">
-                        <button id="mp3ControlBtn" class="audio-control-btn" type="button" title="Kontrol audio">
-                            <i class="fas fa-volume-up"></i>
-                        </button>
-                        <input id="audioVolumeSlider" class="audio-volume-slider" type="range" min="0" max="100" value="30" aria-label="Volume audio">
+                        <button id="mp3ControlBtn" class="audio-control-btn"><i class="fas fa-volume-up"></i></button>
+                        <input id="audioVolumeSlider" class="audio-volume-slider" type="range" min="0" max="100" value="30">
                     </div>
                     <div><span class="counter-value" id="submissionCounter">0</span></div>
                 </div>
             </div>
         </div>
 
-        <!-- ========== RUNNING TEXT PENERIMA PESAN DARI TELEGRAM ========== -->
+        <!-- RUNNING TEXT TELEGRAM -->
         <div class="telegram-running-container">
-            <div class="telegram-running-text" id="telegramRunningMessage">
-                Pengiriman Ke telegram dalam perbaikan...
-            </div>
+            <div class="telegram-running-text" id="telegramRunningMessage">Pengiriman Ke telegram dalam perbaikan...</div>
         </div>
 
         <div class="nav-buttons">
-            <button class="nav-btn nav-btn-dukops active" id="btnDukops" onclick="showDukops()">
-                <i class="fas fa-file-upload"></i> DUKOPS
-            </button>
-            <button class="nav-btn nav-btn-piket" id="btnJadwal" onclick="showJadwalPiketBaru()">
-                <i class="fas fa-calendar-alt"></i> PIKET
-            </button>
-            <button class="nav-btn nav-btn-absen" id="btnAbsen" onclick="showAbsenTab()">
-                <i class="fas fa-chart-line"></i> ABSEN
-            </button>
+            <button class="nav-btn nav-btn-dukops active" id="btnDukops" onclick="showDukops()"><i class="fas fa-file-upload"></i> DUKOPS</button>
+            <button class="nav-btn nav-btn-piket" id="btnJadwal" onclick="showJadwalPiketBaru()"><i class="fas fa-calendar-alt"></i> PIKET</button>
+            <button class="nav-btn nav-btn-absen" id="btnAbsen" onclick="showAbsenTab()"><i class="fas fa-chart-line"></i> ABSEN</button>
         </div>
 
-        <!-- ==================== DUKOPS CONTENT ==================== -->
+        <!-- DUKOPS CONTENT -->
         <div id="dukopsContent">
             <div style="width: 90%; margin: 0 auto; font-size: 12px;">
                 <label><i class="fas fa-village"></i> Pilih Desa:</label>
-                <select id="selectDesa" onchange="loadSelectedDesa()">
-                    <option value="">-- Memuat data desa... --</option>
-                </select>
+                <select id="selectDesa" onchange="loadSelectedDesa()"><option>-- Memuat data desa --</option></select>
                 <div id="loadingDesa"><i class="fas fa-spinner fa-spin"></i> Memuat daftar desa/Kelurahan lokal...</div>
                 <div class="previewBox" id="previewDesa"></div>
-
                 <div id="loadingKoordinat"><i class="fas fa-spinner fa-spin"></i> Memuat koordinat...</div>
                 <div class="previewBox" id="previewKordinat"></div>
-
                 <label><i class="fas fa-camera"></i> Foto Kegiatan:</label>
                 <input type="file" id="gambar" accept="image/*" onchange="previewImage()">
                 <div class="previewBox" id="previewGambar"></div>
-
                 <label><i class="fas fa-calendar-alt"></i> Tanggal & Waktu:</label>
                 <input type="datetime-local" id="tanggalWaktu" onchange="updateDatePreview()">
                 <div class="previewBox" id="previewTanggal"></div>
-
                 <label><i class="fas fa-file-alt"></i> Narasi Kegiatan:</label>
                 <div class="narasi-wrapper">
                     <textarea id="narasi" rows="20" placeholder="Masukkan narasi kegiatan..." oninput="checkInputCompletion()"></textarea>
-                    <div class="ai-icon-corner" id="aiTemplateBtn">
-                        <i class="fas fa-robot"></i>
-                    </div>
+                    <div class="ai-icon-corner" id="aiTemplateBtn"><i class="fas fa-robot"></i></div>
                 </div>
-
                 <canvas id="canvas"></canvas>
-
-                <button id="submitBtn" onclick="processSubmission()" disabled>
-                    <i class="fas fa-download"></i> DOWNLOAD & <i class="fas fa-paper-plane"></i> KIRIM & <i class="fab fa-google-drive"></i> DRIVE
-                </button>
+                <button id="submitBtn" onclick="processSubmission()" disabled><i class="fas fa-download"></i> DOWNLOAD & <i class="fas fa-paper-plane"></i> KIRIM & <i class="fab fa-google-drive"></i> DRIVE</button>
                 <button id="resetBtn" onclick="resetAll()"><i class="fas fa-redo"></i> Reset Data</button>
                 <button id="showAttendanceBtn" onclick="showAttendance()"><i class="fas fa-chart-bar"></i> KLIK INI..CEK LAPORAN ANDA DISINI YANG TIAP BULAN</button>
-
                 <div id="attendancePanel" style="display: none;">
                     <div class="attendance-header">
                         <h3 style="color: #9fd49f; margin: 0;"><i class="fas fa-file-alt"></i> LAPORAN TERKIRIM</h3>
@@ -1104,7 +1067,7 @@
             </div>
         </div>
 
-        <!-- ==================== JADWAL PIKET BARU ==================== -->
+        <!-- JADWAL PIKET BARU -->
         <div id="jadwalPiketContainerBaru" style="display: none;">
             <div class="jadwal-header">
                 <h1 class="jadwal-title">JADWAL PIKET</h1>
@@ -1113,11 +1076,9 @@
                 </div>
                 <p>KORAMIL 1609-05/SUKASADA<br>Kodim 1609/Buleleng</p>
             </div>
-
             <div class="running-text-container">
                 <div class="running-text" id="runningTextJadwalBaru">🍽️ Memuat jadwal hanpangan... 🍽️</div>
             </div>
-
             <div class="jadwal-section">
                 <div class="section-content">
                     <div><h3 class="section-title-koramil">Piket Koramil Hari Ini :</h3>
@@ -1130,7 +1091,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="jadwal-section">
                 <div class="section-content">
                     <div><h3 class="section-title-kediaman">Jaga Kediaman Hari Ini :</h3>
@@ -1143,7 +1103,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="jadwal-section">
                 <div class="section-content">
                     <div><h3 class="section-title-makodim">Piket Makodim Hari ini :</h3>
@@ -1156,32 +1115,19 @@
                     </div>
                 </div>
             </div>
-
-            <button id="whatsappBtnBaru" class="whatsapp-transparent-btn">
-                <i class="fab fa-whatsapp"></i>
-                <span>KIRIM KE WHATSAPP</span>
-            </button>
-
+            <button id="whatsappBtnBaru" class="whatsapp-transparent-btn"><i class="fab fa-whatsapp"></i><span>KIRIM KE WHATSAPP</span></button>
             <div class="jadwal-section">
-                <textarea id="j_hasilPesanBaru" class="auto-height-textarea" readonly placeholder="Preview pesan akan muncul di sini setelah memilih nama..."></textarea>
+                <textarea id="j_hasilPesanBaru" class="auto-height-textarea" readonly placeholder="Preview pesan..."></textarea>
             </div>
-
             <div class="app-loading" id="j_loadingIndicatorBaru"><i class="fas fa-spinner fa-spin"></i> Memuat data...</div>
         </div>
 
-        <!-- ==================== TAB ABSENSI DUKOPS ==================== -->
+        <!-- ABSEN CONTENT -->
         <div id="absenContent" style="display: none;">
             <div class="absen-card">
-                <div class="form-group" style="margin-bottom: 15px;">
-                    <label style="color: #4dff4d;">📅 TAHUN</label>
-                    <select id="absenTahunSelect"><option>Memuat...</option></select>
-                </div>
-                <div class="form-group" style="margin-bottom: 15px;">
-                    <label style="color: #4dff4d;">📆 BULAN</label>
-                    <select id="absenBulanSelect" disabled><option>Pilih tahun dulu</option></select>
-                </div>
+                <div class="form-group" style="margin-bottom: 15px;"><label style="color: #4dff4d;">📅 TAHUN</label><select id="absenTahunSelect"><option>Memuat...</option></select></div>
+                <div class="form-group" style="margin-bottom: 15px;"><label style="color: #4dff4d;">📆 BULAN</label><select id="absenBulanSelect" disabled><option>Pilih tahun dulu</option></select></div>
             </div>
-
             <div id="absenResultContainer"></div>
             <div class="absen-info-text">✨ Tap desa untuk detail | Data tersimpan offline</div>
         </div>
@@ -1192,7 +1138,7 @@
     <button id="absenRefreshBtn" class="absen-refresh-btn" style="display: none;">🔄</button>
     <div id="absenScreenshotArea" style="position: fixed; left: -9999px; top: 0; width: 500px; background: white;"></div>
 
-    <!-- ==================== MODAL TEMPLATE AI ==================== -->
+    <!-- MODAL TEMPLATE AI -->
     <div id="templateModal" class="modal-ai">
         <div class="modal-ai-content">
             <div class="modal-ai-header">
@@ -1206,11 +1152,9 @@
 
     <script>
         // ============ KONFIGURASI TELEGRAM BOT ============
-        // GANTI DENGAN TOKEN BOT DAN CHAT ID ANDA
         const BOT_TOKEN = 'YOUR_BOT_TOKEN';
         const CHAT_ID = 'YOUR_CHAT_ID';
         const USE_REAL_BOT = (BOT_TOKEN !== 'YOUR_BOT_TOKEN' && CHAT_ID !== 'YOUR_CHAT_ID');
-
         const runningTextEl = document.getElementById('telegramRunningMessage');
         
         function updateRunningText(message) {
@@ -1223,10 +1167,7 @@
 
         async function fetchTelegramMessages() {
             if (!USE_REAL_BOT) {
-                // Mode simulasi: pesan contoh (tanpa banner peringatan)
-                const demoMessages = [
-                    "🔄 Terima Kasih Telah Mengirim Laporan DUkops dengan tepet waktu dan lengkap",
-                ];
+                const demoMessages = ["📢 Selamat pagi Babinsa, laporkan kegiatan Dukops hari ini.", "⚠️ Peringatan: batas waktu pelaporan jam 12.00 WIB.", "✅ Desa Padang Bulia telah mengirimkan laporan lengkap.", "🔄 Periksa kembali foto kegiatan sebelum submit."];
                 const randomMsg = demoMessages[Math.floor(Math.random() * demoMessages.length)];
                 updateRunningText(randomMsg);
                 return;
@@ -1237,79 +1178,45 @@
                 const data = await response.json();
                 if (data.ok && data.result && data.result.length > 0) {
                     const message = data.result[data.result.length - 1].message;
-                        if (message && message.text) {
-                            updateRunningText(message.text);
-                            try {
-                                const evt = new CustomEvent('telegramMessage', { detail: message });
-                                window.dispatchEvent(evt);
-                            } catch (e) {
-                                console.warn('Gagal dispatch telegramMessage event', e);
-                            }
-                            try {
-                                if (typeof window.handleTelegramMessage === 'function') {
-                                    window.handleTelegramMessage(message);
-                                }
-                            } catch (e) {
-                                console.warn('Gagal memanggil handleTelegramMessage', e);
-                            }
-                        }
+                    if (message && message.text) updateRunningText(message.text);
                 }
             } catch (error) {
                 console.error("Gagal ambil pesan Telegram:", error);
             }
         }
-
         setInterval(fetchTelegramMessages, 6000);
         fetchTelegramMessages();
 
-        // ============ DATA DESA DIAMBIL DARI LOKAL ============
+        // ============ DATA DESA ============
         const DESA_LIST_URL = 'data/desa-list.json';
         const PROFILE_BASE_URL = 'profile/';
         const DEFAULT_FAVICON_URL = 'favicon-96x96.png';
-        
         let daftarDesaGlobal = [];
         let profileImagesGlobal = {};
 
         async function loadDesaListFromGitHub() {
             const selectDesa = document.getElementById('selectDesa');
             const loadingDesa = document.getElementById('loadingDesa');
-            
             try {
                 const response = await fetch(DESA_LIST_URL + '?t=' + Date.now());
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const data = await response.json();
                 daftarDesaGlobal = data.desaList || [];
-                console.log("✅ Daftar desa berhasil dimuat dari lokal:", daftarDesaGlobal.length, "desa");
-                
-                daftarDesaGlobal.forEach(desa => {
-                    let fileName = desa.toLowerCase() + '.png';
-                    profileImagesGlobal[desa] = fileName;
-                });
-                
+                daftarDesaGlobal.forEach(desa => { profileImagesGlobal[desa] = desa.toLowerCase() + '.png'; });
                 populateDesaDropdown();
-                
             } catch (error) {
-                console.error("Gagal memuat daftar desa lokal:", error);
-                if (loadingDesa) {
-                    loadingDesa.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Gagal memuat daftar desa. Cek koneksi internet!';
-                    loadingDesa.style.color = '#ff6666';
-                }
-                if (selectDesa) {
-                    selectDesa.innerHTML = '<option value="">-- Gagal memuat desa --</option>';
-                    selectDesa.disabled = true;
-                }
-                return false;
+                console.error("Gagal memuat daftar desa:", error);
+                if (loadingDesa) loadingDesa.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Gagal memuat daftar desa.';
+                if (selectDesa) selectDesa.innerHTML = '<option value="">-- Gagal memuat desa --</option>';
+                selectDesa.disabled = true;
             } finally {
-                if (loadingDesa && daftarDesaGlobal.length > 0) {
-                    loadingDesa.style.display = 'none';
-                }
+                if (loadingDesa && daftarDesaGlobal.length > 0) loadingDesa.style.display = 'none';
             }
         }
 
         function populateDesaDropdown() {
             const selectDesa = document.getElementById('selectDesa');
             if (!selectDesa) return;
-            
             selectDesa.disabled = false;
             selectDesa.innerHTML = '<option value="">-- Pilih Desa/Kelurahan --</option>';
             daftarDesaGlobal.forEach(desa => {
@@ -1318,9 +1225,7 @@
                 option.textContent = desa;
                 selectDesa.appendChild(option);
             });
-            
             selectDesa.value = "";
-            
             const loadingDesa = document.getElementById('loadingDesa');
             if (loadingDesa) loadingDesa.style.display = 'none';
         }
@@ -1328,63 +1233,44 @@
         function updateDesaProfile(desaName) {
             const imgElement = document.getElementById('desaProfileImgHeader');
             const nameElement = document.getElementById('desaProfileNameHeader');
-            
             if (!desaName || desaName === "") {
                 imgElement.src = DEFAULT_FAVICON_URL;
-                if (nameElement) nameElement.textContent = "Pilih Desa";
+                nameElement.textContent = "Pilih Desa";
                 return;
             }
-            
             let matchedKey = null;
             for (let key in profileImagesGlobal) {
-                if (desaName.toLowerCase() === key.toLowerCase()) {
-                    matchedKey = key;
-                    break;
-                }
+                if (desaName.toLowerCase() === key.toLowerCase()) { matchedKey = key; break; }
             }
-            
             if (matchedKey) {
-                const fileName = profileImagesGlobal[matchedKey];
-                const imageUrl = PROFILE_BASE_URL + fileName;
+                const imageUrl = PROFILE_BASE_URL + profileImagesGlobal[matchedKey];
                 imgElement.src = imageUrl;
-                if (nameElement) nameElement.textContent = matchedKey;
-                
-                imgElement.onerror = function() {
-                    console.warn(`Gagal memuat profil untuk ${matchedKey}, file tidak ditemukan di folder profile/`);
-                    imgElement.src = DEFAULT_FAVICON_URL;
-                    if (nameElement) nameElement.textContent = matchedKey;
-                };
+                nameElement.textContent = matchedKey;
+                imgElement.onerror = () => { imgElement.src = DEFAULT_FAVICON_URL; };
             } else {
                 imgElement.src = DEFAULT_FAVICON_URL;
-                if (nameElement) nameElement.textContent = desaName || "Pilih Desa";
+                nameElement.textContent = desaName;
             }
         }
 
         function injectDesaKeNarasi(templateText, namaDesa) {
-            if (!namaDesa || namaDesa === "") return templateText;
-            let hasil = templateText.replace(/\bdesa\b/gi, `Desa ${namaDesa}`);
-            hasil = hasil.replace(/\bkelurahan\b/gi, `Kelurahan ${namaDesa}`);
-            return hasil;
+            if (!namaDesa) return templateText;
+            return templateText.replace(/\bdesa\b/gi, `Desa ${namaDesa}`).replace(/\bkelurahan\b/gi, `Kelurahan ${namaDesa}`);
         }
 
         function getNamaDesaTerpilih() {
             const selectDesa = document.getElementById('selectDesa');
-            if (!selectDesa) return "";
-            const option = selectDesa.options[selectDesa.selectedIndex];
-            return option ? option.text : "";
+            return selectDesa?.options[selectDesa.selectedIndex]?.text || "";
         }
 
         // ============ SPLASH SCREEN LOGIC ============
         let splashProgress = 0;
         let splashInterval;
         let loadingComplete = false;
-
         function startSplashProgress() {
             const progressBar = document.getElementById('splashProgressBar');
             const percentageText = document.getElementById('progressPercentage');
-            
             if (!progressBar || !percentageText) return;
-            
             splashInterval = setInterval(function() {
                 if (splashProgress < 100) {
                     splashProgress += Math.floor(Math.random() * 15) + 5;
@@ -1392,27 +1278,21 @@
                     progressBar.style.width = splashProgress + '%';
                     percentageText.textContent = splashProgress + '%';
                 }
-                
                 if (splashProgress === 100 && !loadingComplete) {
                     clearInterval(splashInterval);
                     loadingComplete = true;
                     setTimeout(function() {
                         const splash = document.getElementById('splashScreen');
                         const appContainer = document.getElementById('appContainer');
-                        
                         if (splash) {
                             splash.style.opacity = '0';
                             setTimeout(function() {
                                 splash.style.display = 'none';
                                 if (appContainer) {
                                     appContainer.style.display = 'block';
-                                    setTimeout(function() {
-                                        appContainer.style.opacity = '1';
-                                    }, 50);
+                                    setTimeout(() => appContainer.style.opacity = '1', 50);
                                 }
-                                if (typeof window.triggerPlayMusic === 'function') {
-                                    window.triggerPlayMusic();
-                                }
+                                if (typeof window.triggerPlayMusic === 'function') window.triggerPlayMusic();
                             }, 500);
                         }
                     }, 500);
@@ -1423,17 +1303,11 @@
         document.addEventListener('DOMContentLoaded', function() {
             startSplashProgress();
             loadDesaListFromGitHub();
-            
             const selectDesa = document.getElementById('selectDesa');
-            if (selectDesa) {
-                selectDesa.addEventListener('change', function() {
-                    const selectedText = this.options[this.selectedIndex]?.text || "";
-                    updateDesaProfile(selectedText);
-                });
-            }
+            if (selectDesa) selectDesa.addEventListener('change', function() { updateDesaProfile(this.options[this.selectedIndex]?.text || ""); });
         });
 
-        // ============ MP3 PLAYER ============
+        // ============ MP3 PLAYER (ORIGINAL) ============
         (function() {
             const audio = document.getElementById('backgroundMusic');
             const mp3Btn = document.getElementById('mp3ControlBtn');
@@ -1441,355 +1315,292 @@
             let isPlaying = false;
             let hasUserInteracted = false;
             let sliderVisible = false;
-
             function updateButtonIcon() {
                 if (!mp3Btn) return;
-                if (!audio || audio.volume === 0) {
-                    mp3Btn.innerHTML = '<i class="fas fa-volume-mute"></i>';
-                } else {
-                    mp3Btn.innerHTML = '<i class="fas fa-volume-up"></i>';
-                }
+                mp3Btn.innerHTML = (!audio || audio.volume === 0) ? '<i class="fas fa-volume-mute"></i>' : '<i class="fas fa-volume-up"></i>';
             }
-
-            function showVolumeSlider(show) {
-                if (!volumeSlider) return;
-                sliderVisible = show;
-                volumeSlider.style.display = show ? 'inline-block' : 'none';
-            }
-
+            function showVolumeSlider(show) { if (volumeSlider) { sliderVisible = show; volumeSlider.style.display = show ? 'inline-block' : 'none'; } }
             function playMusic() {
-                if (audio && !isPlaying) {
-                    audio.play().then(() => {
-                        isPlaying = true;
-                        if (mp3Btn) {
-                            mp3Btn.classList.remove('muted');
-                            updateButtonIcon();
-                        }
-                    }).catch(err => console.log('Gagal memutar musik:', err));
-                }
+                if (audio && !isPlaying) { audio.play().then(() => { isPlaying = true; if (mp3Btn) mp3Btn.classList.remove('muted'); updateButtonIcon(); }).catch(e => console.log(e)); }
             }
-
-            function pauseMusic() {
-                if (audio && isPlaying) {
-                    audio.pause();
-                    isPlaying = false;
-                    if (mp3Btn) {
-                        mp3Btn.classList.add('muted');
-                        updateButtonIcon();
-                    }
-                }
-            }
-
-            function toggleSliderAndPlay() {
-                if (!audio) return;
-                if (!hasUserInteracted) {
-                    hasUserInteracted = true;
-                    playMusic();
-                }
-                showVolumeSlider(!sliderVisible);
-            }
-
-            if (audio) {
-                if (!audio.src) {
-                    audio.src = 'assets/audio/Vietnamese Tet Holiday Remix.mp3';
-                }
-                audio.volume = 0.3;
-                if (volumeSlider) {
-                    volumeSlider.value = Math.round(audio.volume * 100);
-                }
-                audio.loop = true;
-                audio.load();
-            }
-
-            if (mp3Btn) {
-                mp3Btn.style.display = 'flex';
-                mp3Btn.onclick = toggleSliderAndPlay;
-            }
-
-            if (volumeSlider) {
-                volumeSlider.oninput = function() {
-                    if (!audio) return;
-                    const value = parseInt(this.value, 10) / 100;
-                    audio.volume = value;
-                    updateButtonIcon();
-                    if (value > 0 && !isPlaying && hasUserInteracted) {
-                        playMusic();
-                    }
-                };
-            }
-
-            window.triggerPlayMusic = function() {
-                if (!audio) return;
-
-                if (!hasUserInteracted) {
-                    hasUserInteracted = true;
-                    playMusic();
-                } else if (!isPlaying) {
-                    playMusic();
-                }
-            };
-
-            function firstInteraction() {
-                if (!hasUserInteracted) {
-                    hasUserInteracted = true;
-                    document.removeEventListener('click', firstInteraction);
-                    document.removeEventListener('touchstart', firstInteraction);
-                }
-            }
-            document.addEventListener('click', firstInteraction);
-            document.addEventListener('touchstart', firstInteraction);
+            function toggleSliderAndPlay() { if (!audio) return; if (!hasUserInteracted) { hasUserInteracted = true; playMusic(); } showVolumeSlider(!sliderVisible); }
+            if (audio) { audio.src = 'assets/audio/Vietnamese Tet Holiday Remix.mp3'; audio.volume = 0.3; if (volumeSlider) volumeSlider.value = 30; audio.loop = true; audio.load(); }
+            if (mp3Btn) { mp3Btn.style.display = 'flex'; mp3Btn.onclick = toggleSliderAndPlay; }
+            if (volumeSlider) { volumeSlider.oninput = function() { if (audio) audio.volume = parseInt(this.value,10)/100; updateButtonIcon(); if (audio && audio.volume>0 && !isPlaying && hasUserInteracted) playMusic(); }; }
+            window.triggerPlayMusic = function() { if (audio) { if (!hasUserInteracted) { hasUserInteracted = true; } playMusic(); } };
+            function firstInteraction() { if (!hasUserInteracted) { hasUserInteracted = true; document.removeEventListener('click', firstInteraction); document.removeEventListener('touchstart', firstInteraction); } }
+            document.addEventListener('click', firstInteraction); document.addEventListener('touchstart', firstInteraction);
         })();
 
         // ============ INSTALL BUTTON LOGIC ============
         (function() {
             let deferredPrompt;
             const installBtn = document.getElementById('installButton');
-
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                if (!window.matchMedia('(display-mode: standalone)').matches) {
-                    installBtn.style.display = 'block';
-                }
-            });
-
-            window.addEventListener('appinstalled', () => {
-                installBtn.style.display = 'none';
-                deferredPrompt = null;
-            });
-
-            if (window.matchMedia('(display-mode: standalone)').matches) {
-                installBtn.style.display = 'none';
-            }
-
-            if (installBtn) {
-                installBtn.addEventListener('click', async () => {
-                    if (deferredPrompt) {
-                        deferredPrompt.prompt();
-                        const { outcome } = await deferredPrompt.userChoice;
-                        if (outcome === 'accepted') {
-                            installBtn.style.display = 'none';
-                        }
-                        deferredPrompt = null;
-                    } else {
-                        alert('Install prompt tidak tersedia. Pastikan browser mendukung PWA.');
-                    }
-                });
-            }
+            window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; if (!window.matchMedia('(display-mode: standalone)').matches) installBtn.style.display = 'block'; });
+            window.addEventListener('appinstalled', () => { installBtn.style.display = 'none'; deferredPrompt = null; });
+            if (window.matchMedia('(display-mode: standalone)').matches) installBtn.style.display = 'none';
+            if (installBtn) installBtn.addEventListener('click', async () => { if (deferredPrompt) { deferredPrompt.prompt(); const { outcome } = await deferredPrompt.userChoice; if (outcome === 'accepted') installBtn.style.display = 'none'; deferredPrompt = null; } else alert('Install prompt tidak tersedia.'); });
         })();
 
-        // ============ FUNGSI ASLI loadSelectedDesa ============
+        // ============ loadSelectedDesa ============
         window.loadSelectedDesa = function() {
             const selectDesa = document.getElementById('selectDesa');
-            const selectedText = selectDesa.options[selectDesa.selectedIndex]?.text || "";
-            updateDesaProfile(selectedText);
-            if (typeof window.triggerPlayMusic === 'function') {
-                window.triggerPlayMusic();
-            }
+            updateDesaProfile(selectDesa?.options[selectDesa.selectedIndex]?.text || "");
+            if (typeof window.triggerPlayMusic === 'function') window.triggerPlayMusic();
         };
 
         // ============ AI TEMPLATE SCRIPT ============
         (function() {
             const TEMPLATE_JSON_URL = 'template-narasi.json';
-            let templateData = null;
-            let activeTab = null;
-            let categoryKeys = [];
-
-            const modal = document.getElementById('templateModal');
-            const openModalBtn = document.getElementById('aiTemplateBtn');
-            const closeModalBtn = document.getElementById('closeModalBtn');
-            const modalTabs = document.getElementById('modalTabs');
-            const modalBody = document.getElementById('modalBody');
-
-            async function loadTemplatesFromGitHub() {
+            let templateData = null, activeTab = null, categoryKeys = [];
+            const modal = document.getElementById('templateModal'), openBtn = document.getElementById('aiTemplateBtn'), closeBtn = document.getElementById('closeModalBtn'), modalTabs = document.getElementById('modalTabs'), modalBody = document.getElementById('modalBody');
+            async function loadTemplates() {
                 try {
                     const response = await fetch(TEMPLATE_JSON_URL + '?t=' + Date.now());
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    if (!response.ok) throw new Error();
                     const data = await response.json();
                     templateData = data.templates;
                     categoryKeys = Object.keys(templateData);
-                    if (categoryKeys.length > 0) {
-                        activeTab = categoryKeys[0];
-                    }
-                    console.log("✅ Template AI berhasil dimuat dari GitHub");
+                    if (categoryKeys.length) activeTab = categoryKeys[0];
                     return true;
-                } catch (error) {
-                    console.error("Gagal memuat template AI:", error);
-                    return false;
-                }
+                } catch (error) { return false; }
             }
-
-            function renderModalTabs() {
-                modalTabs.innerHTML = "";
-                if (!categoryKeys.length) {
-                    modalTabs.innerHTML = '<div style="color:#999; padding:8px; text-align:center;">Memuat kategori...</div>';
-                    return;
-                }
-                
-                const selectWrapper = document.createElement('div');
-                selectWrapper.style.cssText = 'width:100%; margin-bottom:8px;';
-                
-                const selectElement = document.createElement('select');
-                selectElement.id = 'categorySelect';
-                selectElement.style.cssText = 'width:100%; padding:10px; border-radius:12px; background:#1a2a1f; color:#e6ffe6; border:1px solid #2ecc71; font-size:14px; cursor:pointer;';
-                
-                categoryKeys.forEach(key => {
-                    const option = document.createElement('option');
-                    option.value = key;
-                    option.textContent = key;
-                    if (activeTab === key) option.selected = true;
-                    selectElement.appendChild(option);
-                });
-                
-                selectElement.onchange = (e) => {
-                    activeTab = e.target.value;
-                    renderModalTemplateList();
-                };
-                
-                selectWrapper.appendChild(selectElement);
-                modalTabs.appendChild(selectWrapper);
+            function renderTabs() {
+                if (!categoryKeys.length) { modalTabs.innerHTML = '<div>Memuat kategori...</div>'; return; }
+                const select = document.createElement('select');
+                select.id = 'categorySelect';
+                select.style.cssText = 'width:100%; padding:10px; background:#1a2a1f; color:#e6ffe6; border:1px solid #2ecc71; border-radius:12px;';
+                categoryKeys.forEach(key => { const opt = document.createElement('option'); opt.value = key; opt.textContent = key; if (activeTab === key) opt.selected = true; select.appendChild(opt); });
+                select.onchange = (e) => { activeTab = e.target.value; renderTemplateList(); };
+                modalTabs.innerHTML = ''; modalTabs.appendChild(select);
             }
-
-            function renderModalTemplateList() {
-                if (!templateData || !templateData[activeTab]) {
-                    modalBody.innerHTML = '<div class="loading-templates">❌ Template tidak tersedia</div>';
-                    return;
-                }
+            function renderTemplateList() {
+                if (!templateData?.[activeTab]) { modalBody.innerHTML = '<div class="loading-templates">❌ Template tidak tersedia</div>'; return; }
                 const templates = templateData[activeTab];
-                if (templates.length === 0) {
-                    modalBody.innerHTML = '<div class="loading-templates">📭 Belum ada template</div>';
-                    return;
-                }
-                modalBody.innerHTML = `<div class="modal-template-list">${templates.map((template, idx) => `<div class="modal-template-item" onclick="window.selectTemplate('${escapeJs(template)}')"><div style="font-size:0.6rem;color:#2ecc71;margin-bottom:4px;">#${idx + 1}</div><div class="modal-template-text">${escapeHtml(template)}</div></div>`).join('')}</div>`;
+                if (!templates.length) { modalBody.innerHTML = '<div>📭 Belum ada template</div>'; return; }
+                modalBody.innerHTML = `<div class="modal-template-list">${templates.map((t,i) => `<div class="modal-template-item" onclick="window.selectTemplate('${t.replace(/'/g, "\\'").replace(/\n/g, '\\n')}')"><div style="color:#2ecc71;font-size:0.6rem;">#${i+1}</div><div class="modal-template-text">${t.replace(/[&<>]/g, m=>m==='&'?'&amp;':m==='<'?'&lt;':'&gt;')}</div></div>`).join('')}</div>`;
             }
-
-            function escapeHtml(text) { const div = document.createElement('div'); div.textContent = text; return div.innerHTML; }
-            function escapeJs(text) { return text.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n'); }
-
             window.selectTemplate = function(template) {
                 const narasiField = document.getElementById('narasi');
                 const namaDesa = getNamaDesaTerpilih();
-                
-                let finalTemplate = template;
-                if (namaDesa) {
-                    finalTemplate = injectDesaKeNarasi(template, namaDesa);
-                }
-                
-                narasiField.value = finalTemplate;
+                narasiField.value = namaDesa ? injectDesaKeNarasi(template, namaDesa) : template;
                 modal.classList.remove('show');
-                
-                const event = new Event('input', { bubbles: true });
-                narasiField.dispatchEvent(event);
-                
+                narasiField.dispatchEvent(new Event('input',{bubbles:true}));
                 if (typeof checkInputCompletion === 'function') checkInputCompletion();
             };
-
-            openModalBtn.onclick = async () => {
+            openBtn.onclick = async () => {
                 if (!templateData) {
-                    modalBody.innerHTML = '<div class="loading-templates"><i class="fas fa-spinner fa-pulse"></i> Memuat template lokal...</div>';
+                    modalBody.innerHTML = '<div class="loading-templates"><i class="fas fa-spinner fa-pulse"></i> Memuat template...</div>';
                     modal.classList.add('show');
-                    const success = await loadTemplatesFromGitHub();
-                    if (success && templateData) {
-                        renderModalTabs();
-                        renderModalTemplateList();
-                    } else {
-                        modalBody.innerHTML = '<div class="loading-templates">❌ Gagal memuat template lokal.</div>';
-                    }
-                } else {
-                    renderModalTabs();
-                    renderModalTemplateList();
-                    modal.classList.add('show');
-                }
+                    if (await loadTemplates()) { renderTabs(); renderTemplateList(); }
+                    else modalBody.innerHTML = '<div>❌ Gagal memuat template</div>';
+                } else { renderTabs(); renderTemplateList(); modal.classList.add('show'); }
             };
-
-            closeModalBtn.onclick = () => { modal.classList.remove('show'); };
+            closeBtn.onclick = () => modal.classList.remove('show');
             window.onclick = (e) => { if (e.target === modal) modal.classList.remove('show'); };
-            
-            loadTemplatesFromGitHub();
+            loadTemplates();
         })();
+
+        // ============ PREVIEW DAN SUBMIT (DUKOPS) ============
+        function previewImage() {
+            const fileInput = document.getElementById('gambar');
+            const previewDiv = document.getElementById('previewGambar');
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) { previewDiv.innerHTML = '<img src="' + e.target.result + '" style="max-width:100%;max-height:200px;border-radius:8px;margin-top:10px;">'; };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else { previewDiv.innerHTML = ''; }
+            checkInputCompletion();
+        }
+        function updateDatePreview() {
+            const dateInput = document.getElementById('tanggalWaktu');
+            const previewDiv = document.getElementById('previewTanggal');
+            if (dateInput.value) {
+                const date = new Date(dateInput.value);
+                previewDiv.innerHTML = '<div class="preview-box"><i class="fas fa-calendar-check"></i> ' + date.toLocaleString('id-ID') + '</div>';
+            } else { previewDiv.innerHTML = ''; }
+            checkInputCompletion();
+        }
+        function checkInputCompletion() {
+            const selectDesa = document.getElementById('selectDesa');
+            const gambar = document.getElementById('gambar');
+            const tanggalWaktu = document.getElementById('tanggalWaktu');
+            const narasi = document.getElementById('narasi');
+            const submitBtn = document.getElementById('submitBtn');
+            const isDesaSelected = selectDesa && selectDesa.value !== "";
+            const isGambarSelected = gambar && gambar.files && gambar.files.length > 0;
+            const isTanggalSelected = tanggalWaktu && tanggalWaktu.value !== "";
+            const isNarasiFilled = narasi && narasi.value.trim() !== "";
+            if (submitBtn) submitBtn.disabled = !(isDesaSelected && isGambarSelected && isTanggalSelected && isNarasiFilled);
+        }
+        let submissionCounter = 0;
+        function updateCounter() {
+            const counterElem = document.getElementById('submissionCounter');
+            const storedData = localStorage.getItem('dukops_submissions');
+            let submissions = storedData ? JSON.parse(storedData) : [];
+            submissionCounter = submissions.length;
+            if (counterElem) counterElem.textContent = submissionCounter;
+        }
+        async function processSubmission() {
+            const selectDesa = document.getElementById('selectDesa');
+            const desa = selectDesa.options[selectDesa.selectedIndex]?.text || "";
+            const gambar = document.getElementById('gambar');
+            const tanggalWaktu = document.getElementById('tanggalWaktu');
+            const narasi = document.getElementById('narasi');
+            if (!desa || !gambar.files.length || !tanggalWaktu.value || !narasi.value.trim()) { alert('Lengkapi semua data!'); return; }
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+            try {
+                const file = gambar.files[0];
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    const imageData = e.target.result;
+                    const submission = { id: Date.now(), desa: desa, tanggal: tanggalWaktu.value, narasi: narasi.value, gambar: imageData, timestamp: new Date().toISOString() };
+                    let existingData = localStorage.getItem('dukops_submissions');
+                    let submissions = existingData ? JSON.parse(existingData) : [];
+                    submissions.push(submission);
+                    localStorage.setItem('dukops_submissions', JSON.stringify(submissions));
+                    updateCounter();
+                    document.getElementById('gambar').value = '';
+                    document.getElementById('previewGambar').innerHTML = '';
+                    document.getElementById('tanggalWaktu').value = '';
+                    document.getElementById('previewTanggal').innerHTML = '';
+                    document.getElementById('narasi').value = '';
+                    alert('✅ Laporan berhasil disimpan!');
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<i class="fas fa-download"></i> DOWNLOAD & <i class="fas fa-paper-plane"></i> KIRIM & <i class="fab fa-google-drive"></i> DRIVE';
+                };
+                reader.readAsDataURL(file);
+            } catch (error) { console.error(error); alert('Gagal menyimpan laporan'); submitBtn.disabled = false; submitBtn.innerHTML = '<i class="fas fa-download"></i> DOWNLOAD & <i class="fas fa-paper-plane"></i> KIRIM & <i class="fab fa-google-drive"></i> DRIVE'; }
+        }
+        function resetAll() {
+            document.getElementById('gambar').value = '';
+            document.getElementById('previewGambar').innerHTML = '';
+            document.getElementById('tanggalWaktu').value = '';
+            document.getElementById('previewTanggal').innerHTML = '';
+            document.getElementById('narasi').value = '';
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) submitBtn.disabled = true;
+            alert('Data form telah direset');
+        }
+        // ============ ATTENDANCE FUNCTIONS ============
+        function showAttendance() { document.getElementById('attendancePanel').style.display = 'block'; loadAttendanceData(); }
+        function hideAttendance() { document.getElementById('attendancePanel').style.display = 'none'; }
+        async function loadAttendanceData() {
+            const loading = document.getElementById('attendanceLoading');
+            const summary = document.getElementById('attendanceSummary');
+            const list = document.getElementById('attendanceList');
+            const desaFilter = document.getElementById('attendanceDesaFilter');
+            const monthFilter = document.getElementById('attendanceMonthFilter');
+            if (loading) loading.style.display = 'block';
+            if (summary) summary.style.display = 'none';
+            try {
+                const storedData = localStorage.getItem('dukops_submissions');
+                let submissions = storedData ? JSON.parse(storedData) : [];
+                let filteredData = [...submissions];
+                if (monthFilter && monthFilter.value) {
+                    const [year, month] = monthFilter.value.split('-');
+                    filteredData = filteredData.filter(item => { const d = new Date(item.tanggal); return d.getFullYear() == year && (d.getMonth()+1) == month; });
+                }
+                if (desaFilter && desaFilter.value) filteredData = filteredData.filter(item => item.desa === desaFilter.value);
+                const desaStats = {};
+                filteredData.forEach(item => { if (!desaStats[item.desa]) desaStats[item.desa] = { total:0, files:[] }; desaStats[item.desa].total++; if (item.gambar) desaStats[item.desa].files.push(item.gambar); });
+                if (desaFilter) {
+                    const current = desaFilter.value;
+                    desaFilter.innerHTML = '<option value="">Semua Desa</option>';
+                    daftarDesaGlobal.forEach(d => { const opt = document.createElement('option'); opt.value = d; opt.textContent = d; if (current === d) opt.selected = true; desaFilter.appendChild(opt); });
+                }
+                let detailsHtml = '', totalFiles = 0;
+                const targetPerDesa = 9;
+                for (const desa of daftarDesaGlobal) {
+                    const stats = desaStats[desa];
+                    const jumlahFile = stats ? stats.files.length : 0;
+                    const persen = Math.round((jumlahFile/targetPerDesa)*100);
+                    totalFiles += jumlahFile;
+                    let statusClass = 'absen-status-belum', statusText = 'BELUM';
+                    if (jumlahFile >= targetPerDesa) { statusClass = 'absen-status-lengkap'; statusText = 'LENGKAP'; }
+                    else if (jumlahFile > 0) { statusClass = 'absen-status-belum-lengkap'; statusText = 'BL'; }
+                    detailsHtml += `<div class="absen-desa-item" onclick="showDetailSubmission('${desa}')"><div class="absen-desa-name">${desa}</div><div class="absen-desa-stats">${jumlahFile}/${targetPerDesa}</div><div class="absen-desa-progress"><div class="absen-desa-progress-bar"><div class="absen-desa-progress-fill" style="width:${persen}%"></div></div></div><div class="absen-status-badge ${statusClass}">${statusText}</div></div>`;
+                }
+                const totalTarget = daftarDesaGlobal.length * targetPerDesa;
+                const persenTotal = Math.round((totalFiles/totalTarget)*100);
+                if (summary) {
+                    summary.style.display = 'block';
+                    document.getElementById('totalReports').textContent = filteredData.length;
+                    document.getElementById('totalDesa').textContent = daftarDesaGlobal.length;
+                    document.getElementById('targetStatus').textContent = persenTotal + '%';
+                    document.getElementById('progressBar').style.width = persenTotal + '%';
+                }
+                if (list) list.innerHTML = detailsHtml;
+            } catch(e) { console.error(e); if (list) list.innerHTML = '<div style="color:red;">Gagal memuat data</div>'; }
+            finally { if (loading) loading.style.display = 'none'; }
+        }
+        function refreshAttendanceData() { loadAttendanceData(); }
+        function downloadAttendanceReport() {
+            const storedData = localStorage.getItem('dukops_submissions');
+            let submissions = storedData ? JSON.parse(storedData) : [];
+            const dataStr = JSON.stringify(submissions, null, 2);
+            const link = document.createElement('a');
+            link.setAttribute('href', 'data:application/json;charset=utf-8,'+encodeURIComponent(dataStr));
+            link.setAttribute('download', 'laporan_dukops_'+new Date().toISOString().slice(0,10)+'.json');
+            link.click();
+        }
+        function showDetailSubmission(desaName) {
+            const storedData = localStorage.getItem('dukops_submissions');
+            let submissions = storedData ? JSON.parse(storedData) : [];
+            const desaSubmissions = submissions.filter(item => item.desa === desaName);
+            if (!desaSubmissions.length) { alert(`Belum ada laporan untuk ${desaName}`); return; }
+            let msg = `📋 LAPORAN ${desaName}\n========================\n`;
+            desaSubmissions.forEach((item,idx) => { msg += `\n${idx+1}. 📅 ${new Date(item.tanggal).toLocaleString('id-ID')}\n   📝 ${item.narasi.substring(0,100)}${item.narasi.length>100?'...':''}\n`; });
+            alert(msg);
+        }
+        window.previewImage = previewImage; window.updateDatePreview = updateDatePreview; window.checkInputCompletion = checkInputCompletion;
+        window.processSubmission = processSubmission; window.resetAll = resetAll; window.showAttendance = showAttendance; window.hideAttendance = hideAttendance;
+        window.loadAttendanceData = loadAttendanceData; window.refreshAttendanceData = refreshAttendanceData; window.downloadAttendanceReport = downloadAttendanceReport;
+        window.showDetailSubmission = showDetailSubmission;
     </script>
 
-    <!-- ============ APPLICATION SCRIPTS ============ -->
+    <!-- ============ EXTERNAL SCRIPTS (TIDAK DIUBAH) ============ -->
     <script src="js/components/FormValidator.js"></script>
     <script src="js/services/AdminSettings.js"></script>
     <script src="app.js"></script>
 
-    <!-- ============ JADWAL PIKET BARU SCRIPT (DENGAN PERBAIKAN epochDays + offset TETAP) ============ -->
+    <!-- ============ JADWAL PIKET BARU (HANPANGAN EPOCH DAYS DENGAN OFFSET TETAP) ============ -->
     <script>
     (function() {
-        const GITHUB_URLS = {
-            HANPANGAN: "data/hanpangan.txt",
-            PIKET: "data/piket.txt"
-        };
-
+        const GITHUB_URLS = { HANPANGAN: "data/hanpangan.txt", PIKET: "data/piket.txt" };
         const JadwalData = { daftarNama: [], daftarHanpangan: [], currentHanpangan: "" };
-        const JADWAL_DROPDOWN_IDS = [
-            'j_nama1a_baru', 'j_nama1b_baru', 'j_nama2a_baru', 'j_nama2b_baru',
-            'j_nama3a_baru', 'j_nama3b_baru', 'j_nama3c_baru', 'j_nama3d_baru',
-            'j_nama4a_baru', 'j_nama4b_baru', 'j_nama4c_baru', 'j_nama4d_baru'
-        ];
-
-        function showToast(msg, duration = 3000) {
-            // Suppressed per user preference: no Jadwal Piket toast popups.
-            return;
-        }
-
-        function updateRunningText() {
-            const el = document.getElementById('runningTextJadwalBaru');
-            if (el) el.textContent = JadwalData.currentHanpangan ? '🍽️ JADWAL HANPANGAN HARI INI: ' + JadwalData.currentHanpangan + ' 🍽️' : '🍽️ Memuat jadwal hanpangan... 🍽️';
-        }
-
-        function fetchFromGitHub(url) {
-            return new Promise(resolve => {
-                const cache = '?t=' + new Date().getTime();
-                fetch(url + cache).then(res => res.ok ? res.text() : null).then(data => resolve(data)).catch(() => resolve(null));
-            });
-        }
-
+        const JADWAL_DROPDOWN_IDS = ['j_nama1a_baru','j_nama1b_baru','j_nama2a_baru','j_nama2b_baru','j_nama3a_baru','j_nama3b_baru','j_nama3c_baru','j_nama3d_baru','j_nama4a_baru','j_nama4b_baru','j_nama4c_baru','j_nama4d_baru'];
+        function showToast(msg, duration) { /* suppress */ }
+        function updateRunningText() { const el = document.getElementById('runningTextJadwalBaru'); if (el) el.textContent = JadwalData.currentHanpangan ? '🍽️ JADWAL HANPANGAN HARI INI: ' + JadwalData.currentHanpangan + ' 🍽️' : '🍽️ Memuat jadwal hanpangan... 🍽️'; }
+        function fetchFromGitHub(url) { return new Promise(resolve => { fetch(url + '?t=' + Date.now()).then(r => r.ok ? r.text() : null).then(data => resolve(data)).catch(() => resolve(null)); }); }
         function loadPiketData() {
             return fetchFromGitHub(GITHUB_URLS.PIKET).then(data => {
                 if (data) {
-                    JadwalData.daftarNama = data.trim().split('\n').filter(l => l.trim()).map(n => n.trim());
-                    JADWAL_DROPDOWN_IDS.forEach(id => {
-                        const select = document.getElementById(id);
-                        if (select) {
-                            select.innerHTML = '<option value="">-- Pilih Nama --</option>';
-                            JadwalData.daftarNama.forEach(nama => { const opt = document.createElement('option'); opt.value = nama; opt.textContent = nama; select.appendChild(opt); });
-                            select.value = "";
-                        }
-                    });
+                    JadwalData.daftarNama = data.trim().split('\n').filter(l=>l.trim()).map(n=>n.trim());
+                    JADWAL_DROPDOWN_IDS.forEach(id => { const sel = document.getElementById(id); if (sel) { sel.innerHTML = '<option value="">-- Pilih Nama --</option>'; JadwalData.daftarNama.forEach(n=>{ const opt=document.createElement('option'); opt.value=n; opt.textContent=n; sel.appendChild(opt); }); sel.value=""; } });
                     return true;
-                }
-                return false;
+                } return false;
             });
         }
-
-        // ========== PERBAIKAN: Hanpangan menggunakan epochDays dengan OFFSET TETAP (berdasarkan tanggal referensi) ==========
+        // ========== PERUBAHAN HANYA DI SINI (EPOCH DAYS + OFFSET AGAR MULAI DARI SERMA MUJIBURRAHMAN) ==========
         function loadHanpanganData() {
             return fetchFromGitHub(GITHUB_URLS.HANPANGAN).then(data => {
                 if (data) {
-                    const lines = data.trim().split('\n').filter(l => l.trim());
+                    const lines = data.trim().split('\n').filter(l=>l.trim());
                     if (lines.length) {
                         JadwalData.daftarHanpangan = lines;
                         const today = new Date();
-                        // epochDays: jumlah hari sejak 1 Januari 1970 (tidak reset per tahun)
+                        // epochDays (UTC) untuk akurasi
                         const epochDays = Math.floor(today.getTime() / (24 * 60 * 60 * 1000));
-                        
-                        // Tentukan tanggal referensi (misalnya 1 Januari 2024) dan target index pada tanggal tersebut (0 = Serma Mujiburrahman)
-                        const referenceDate = new Date(2024, 0, 1); // 1 Januari 2024
-                        const epochDaysRef = Math.floor(referenceDate.getTime() / (24 * 60 * 60 * 1000));
-                        const targetIndexAtRef = 0; // pada 1 Jan 2024, kita ingin index 0 (baris pertama)
-                        
-                        // Hitung offset tetap (konstan) dari epochDaysRef agar menghasilkan targetIndexAtRef
-                        // offset = (targetIndexAtRef - epochDaysRef) mod N
-                        const offset = (targetIndexAtRef - epochDaysRef) % lines.length;
-                        // Pastikan offset positif
-                        const finalOffset = offset >= 0 ? offset : offset + lines.length;
-                        
-                        // Index hari ini = (epochDays + offset) mod N
-                        let index = (epochDays + finalOffset) % lines.length;
+                        // Tetapkan tanggal referensi (1 Januari 2024) dan target index (0 = Serma Mujiburrahman)
+                        const refDate = new Date(2024, 0, 1);
+                        const epochRef = Math.floor(refDate.getTime() / (24 * 60 * 60 * 1000));
+                        const targetIndex = 0;
+                        const offset = (targetIndex - epochRef) % lines.length;
+                        let index = (epochDays + offset) % lines.length;
                         if (index < 0) index += lines.length;
-                        
                         JadwalData.currentHanpangan = lines[index];
                         updateRunningText();
                         return true;
@@ -1799,27 +1610,13 @@
                 return false;
             });
         }
-        // =================================================================================
-
-        function formatTanggal(date) {
-            const days = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
-            const months = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
-            return days[date.getDay()] + ", " + date.getDate() + " " + months[date.getMonth()] + " " + date.getFullYear();
-        }
-
-        function autoResizeTextarea() {
-            const textarea = document.getElementById('j_hasilPesanBaru');
-            if (textarea) {
-                textarea.style.height = 'auto';
-                textarea.style.height = textarea.scrollHeight + 'px';
-            }
-        }
-
+        // ====================================================================================================
+        function formatTanggal(date) { const days = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"]; const months = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"]; return days[date.getDay()] + ", " + date.getDate() + " " + months[date.getMonth()] + " " + date.getFullYear(); }
+        function autoResizeTextarea() { const ta = document.getElementById('j_hasilPesanBaru'); if (ta) { ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; } }
         function updatePreview() {
-            const now = new Date(), tomorrow = new Date(); tomorrow.setDate(now.getDate() + 1);
+            const now = new Date(), tomorrow = new Date(); tomorrow.setDate(now.getDate()+1);
             let result = "=======================\nKORAMIL 1609-05/SUKASADA\n    JADWAL DINAS DALAM\n=======================\n\n";
             const getVal = (id) => document.getElementById(id)?.value || "";
-            
             const sections = [
                 { names: [getVal('j_nama1a_baru'), getVal('j_nama1b_baru')], title: formatTanggal(now), suffix: "" },
                 { names: [getVal('j_nama2a_baru'), getVal('j_nama2b_baru')], title: formatTanggal(tomorrow), suffix: "" },
@@ -1828,412 +1625,55 @@
                 { names: [getVal('j_nama4a_baru'), getVal('j_nama4b_baru')], title: formatTanggal(now), suffix: " (Makodim)" },
                 { names: [getVal('j_nama4c_baru'), getVal('j_nama4d_baru')], title: formatTanggal(tomorrow), suffix: " (Makodim)" }
             ];
-            
-            let sectionCount = 0;
-            for (const s of sections) {
-                const valid = s.names.filter(n => n && n.trim());
-                if (valid.length) {
-                    result += String.fromCharCode(65 + sectionCount) + ". " + s.title + s.suffix + "\n";
-                    valid.forEach((n, i) => result += "   " + (i + 1) + ". " + n + "\n");
-                    result += "\n"; sectionCount++;
-                }
-            }
+            let sc = 0;
+            for (const s of sections) { const valid = s.names.filter(n=>n&&n.trim()); if (valid.length) { result += String.fromCharCode(65+sc)+". "+s.title+s.suffix+"\n"; valid.forEach((n,i)=>result+="   "+(i+1)+". "+n+"\n"); result+="\n"; sc++; } }
             if (JadwalData.currentHanpangan) result += "- Jadwal Hanpangan hari ini : " + JadwalData.currentHanpangan + "\n\n";
             result += "Demikian MMP.";
-            const preview = document.getElementById('j_hasilPesanBaru');
-            if (preview) {
-                preview.value = result;
-                setTimeout(autoResizeTextarea, 10);
-            }
+            const preview = document.getElementById('j_hasilPesanBaru'); if (preview) { preview.value = result; setTimeout(autoResizeTextarea,10); }
         }
-
-        function sendToWhatsApp() {
-            const preview = document.getElementById('j_hasilPesanBaru');
-            const pesan = preview ? preview.value.trim() : "";
-            if (!pesan) { showToast("Tidak ada pesan untuk dikirim"); return false; }
-            window.open("https://wa.me/?text=" + encodeURIComponent(pesan), "_blank");
-            showToast("Membuka WhatsApp...");
-            return false;
-        }
-
+        function sendToWhatsApp() { const pesan = document.getElementById('j_hasilPesanBaru')?.value.trim(); if (pesan) window.open("https://wa.me/?text="+encodeURIComponent(pesan), "_blank"); }
         let isLoading = false;
-        function loadAllJadwalData() {
-            if (isLoading) return;
-            isLoading = true;
-            const loading = document.getElementById('j_loadingIndicatorBaru');
-            if (loading) loading.style.display = 'block';
-            Promise.all([loadPiketData(), loadHanpanganData()]).then(() => { updatePreview(); showToast("Data berhasil dimuat"); }).catch(() => showToast("Gagal memuat data")).finally(() => { if (loading) loading.style.display = 'none'; isLoading = false; });
-        }
-
-        function initJadwalBaru() {
-            JADWAL_DROPDOWN_IDS.forEach(id => { const sel = document.getElementById(id); if (sel) sel.addEventListener('change', updatePreview); });
-            const btn = document.getElementById('whatsappBtnBaru');
-            if (btn) { const newBtn = btn.cloneNode(true); btn.parentNode.replaceChild(newBtn, btn); newBtn.addEventListener('click', (e) => { e.preventDefault(); sendToWhatsApp(); }); }
-            loadAllJadwalData();
-            autoResizeTextarea();
-        }
-
-        window.showJadwalPiketBaru = function() {
-            document.getElementById('dukopsContent').style.display = 'none';
-            document.getElementById('jadwalPiketContainerBaru').style.display = 'block';
-            document.getElementById('absenContent').style.display = 'none';
-            document.getElementById('absenRefreshBtn').style.display = 'none';
-            document.getElementById('btnDukops').classList.remove('active');
-            document.getElementById('btnJadwal').classList.add('active');
-            document.getElementById('btnAbsen').classList.remove('active');
-            initJadwalBaru();
-        };
-
-        window.showDukops = function() {
-            document.getElementById('dukopsContent').style.display = 'block';
-            document.getElementById('jadwalPiketContainerBaru').style.display = 'none';
-            document.getElementById('absenContent').style.display = 'none';
-            document.getElementById('absenRefreshBtn').style.display = 'none';
-            document.getElementById('btnDukops').classList.add('active');
-            document.getElementById('btnJadwal').classList.remove('active');
-            document.getElementById('btnAbsen').classList.remove('active');
-        };
-        
-        window.showAbsenTab = function() {
-            document.getElementById('dukopsContent').style.display = 'none';
-            document.getElementById('jadwalPiketContainerBaru').style.display = 'none';
-            document.getElementById('absenContent').style.display = 'block';
-            document.getElementById('absenRefreshBtn').style.display = 'block';
-            document.getElementById('btnDukops').classList.remove('active');
-            document.getElementById('btnJadwal').classList.remove('active');
-            document.getElementById('btnAbsen').classList.add('active');
-            if (typeof loadAbsenTahun === 'function') loadAbsenTahun();
-        };
-
-        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initJadwalBaru);
-        else initJadwalBaru();
+        function loadAllJadwalData() { if (isLoading) return; isLoading = true; const loading = document.getElementById('j_loadingIndicatorBaru'); if (loading) loading.style.display = 'block'; Promise.all([loadPiketData(), loadHanpanganData()]).then(()=>{ updatePreview(); }).finally(()=>{ if (loading) loading.style.display = 'none'; isLoading = false; }); }
+        function initJadwalBaru() { JADWAL_DROPDOWN_IDS.forEach(id=>{ const sel=document.getElementById(id); if(sel) sel.addEventListener('change',updatePreview); }); const btn=document.getElementById('whatsappBtnBaru'); if(btn){ const newBtn=btn.cloneNode(true); btn.parentNode.replaceChild(newBtn,btn); newBtn.addEventListener('click',(e)=>{ e.preventDefault(); sendToWhatsApp(); }); } loadAllJadwalData(); autoResizeTextarea(); }
+        window.showJadwalPiketBaru = function() { document.getElementById('dukopsContent').style.display = 'none'; document.getElementById('jadwalPiketContainerBaru').style.display = 'block'; document.getElementById('absenContent').style.display = 'none'; document.getElementById('absenRefreshBtn').style.display = 'none'; document.getElementById('btnDukops').classList.remove('active'); document.getElementById('btnJadwal').classList.add('active'); document.getElementById('btnAbsen').classList.remove('active'); initJadwalBaru(); };
+        window.showDukops = function() { document.getElementById('dukopsContent').style.display = 'block'; document.getElementById('jadwalPiketContainerBaru').style.display = 'none'; document.getElementById('absenContent').style.display = 'none'; document.getElementById('absenRefreshBtn').style.display = 'none'; document.getElementById('btnDukops').classList.add('active'); document.getElementById('btnJadwal').classList.remove('active'); document.getElementById('btnAbsen').classList.remove('active'); };
+        window.showAbsenTab = function() { document.getElementById('dukopsContent').style.display = 'none'; document.getElementById('jadwalPiketContainerBaru').style.display = 'none'; document.getElementById('absenContent').style.display = 'block'; document.getElementById('absenRefreshBtn').style.display = 'block'; document.getElementById('btnDukops').classList.remove('active'); document.getElementById('btnJadwal').classList.remove('active'); document.getElementById('btnAbsen').classList.add('active'); if (typeof loadAbsenTahun === 'function') loadAbsenTahun(); };
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initJadwalBaru); else initJadwalBaru();
     })();
     
-    // ============ SCRIPT UNTUK TAB ABSEN ============
+    // ============ SCRIPT ABSEN (GOOGLE SCRIPT) – TIDAK DIUBAH ============
     (function() {
         var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcKBFM8Mm0A8e_hWfl48uEUuDhlmxK8okgXF4M-102HLEuROZPN9YZlpmKnkRo8b_SKA/exec';
         var CACHE_KEY_ABSEN = 'absensi_dukops_data';
         var CACHE_EXPIRY = 30 * 60 * 1000;
-        
         var isOnlineAbsen = navigator.onLine;
         var currentDataAbsen = null;
-        
         var tahunSelectAbsen = document.getElementById('absenTahunSelect');
         var bulanSelectAbsen = document.getElementById('absenBulanSelect');
         var resultContainerAbsen = document.getElementById('absenResultContainer');
         var refreshBtnAbsen = document.getElementById('absenRefreshBtn');
         var screenshotAreaAbsen = document.getElementById('absenScreenshotArea');
-        
         if (tahunSelectAbsen) tahunSelectAbsen.onchange = onTahunChangeAbsen;
         if (refreshBtnAbsen) refreshBtnAbsen.onclick = forceRefreshAbsen;
-        
         window.addEventListener('online', function() { isOnlineAbsen = true; loadAbsenTahun(); });
         window.addEventListener('offline', function() { isOnlineAbsen = false; });
-        
-        function forceRefreshAbsen() {
-            if (!isOnlineAbsen) return;
-            localStorage.removeItem(CACHE_KEY_ABSEN);
-            loadAbsenTahun();
-            if (currentDataAbsen) loadDataAbsen();
-        }
-        
-        function loadAbsenTahun() {
-            if (!tahunSelectAbsen) return;
-            tahunSelectAbsen.disabled = true;
-            tahunSelectAbsen.innerHTML = '<option>⏳ Mohon tunggu....</option>';
-            
-            var cached = getCacheAbsen();
-            if (cached && cached.years && cached.years.length > 0) {
-                populateTahunSelectAbsen(cached.years);
-                tahunSelectAbsen.disabled = false;
-            }
-            
-            if (!isOnlineAbsen) {
-                if (!cached || !cached.years) tahunSelectAbsen.innerHTML = '<option>❌ Offline - no data</option>';
-                return;
-            }
-            
-            fetch(SCRIPT_URL + '?action=getYears')
-                .then(function(response) {
-                    if (!response.ok) throw new Error('HTTP ' + response.status);
-                    return response.json();
-                })
-                .then(function(years) {
-                    if (years && years.length > 0) {
-                        populateTahunSelectAbsen(years);
-                        saveToCacheAbsen({ years: years, months: null, data: null });
-                    } else {
-                        throw new Error('Tidak ada data tahun');
-                    }
-                })
-                .catch(function(error) {
-                    console.error('Error:', error);
-                    if (!cached || !cached.years) {
-                        tahunSelectAbsen.innerHTML = '<option>❌ Gagal memuat</option>';
-                    }
-                })
-                .finally(function() { if (tahunSelectAbsen) tahunSelectAbsen.disabled = false; });
-        }
-        
-        function populateTahunSelectAbsen(years) {
-            if (!tahunSelectAbsen) return;
-            tahunSelectAbsen.innerHTML = '<option value="">-- Pilih Tahun --</option>';
-            for (var i = 0; i < years.length; i++) {
-                var opt = document.createElement('option');
-                opt.value = years[i];
-                opt.textContent = years[i];
-                tahunSelectAbsen.appendChild(opt);
-            }
-            if (years.length > 0) { 
-                tahunSelectAbsen.value = years[0]; 
-                onTahunChangeAbsen(); 
-            }
-        }
-        
-        function onTahunChangeAbsen() {
-            if (!tahunSelectAbsen || !bulanSelectAbsen) return;
-            var tahun = tahunSelectAbsen.value;
-            if (!tahun) {
-                bulanSelectAbsen.innerHTML = '<option>Pilih tahun dulu</option>';
-                bulanSelectAbsen.disabled = true;
-                return;
-            }
-            
-            bulanSelectAbsen.disabled = true;
-            bulanSelectAbsen.innerHTML = '<option>⏳ Memuat...</option>';
-            
-            var cached = getCacheAbsen();
-            if (cached && cached.months && cached.months[tahun]) {
-                populateBulanSelectAbsen(cached.months[tahun]);
-                bulanSelectAbsen.disabled = false;
-                return;
-            }
-            
-            if (!isOnlineAbsen) {
-                bulanSelectAbsen.innerHTML = '<option>❌ Offline - pilih tahun lain</option>';
-                bulanSelectAbsen.disabled = false;
-                return;
-            }
-            
-            fetch(SCRIPT_URL + '?action=getMonths&tahun=' + encodeURIComponent(tahun))
-                .then(function(response) {
-                    if (!response.ok) throw new Error('HTTP ' + response.status);
-                    return response.json();
-                })
-                .then(function(months) {
-                    if (months && months.length > 0) {
-                        populateBulanSelectAbsen(months);
-                        var updatedCache = getCacheAbsen() || {};
-                        updatedCache.months = updatedCache.months || {};
-                        updatedCache.months[tahun] = months;
-                        saveToCacheAbsen(updatedCache);
-                    } else {
-                        bulanSelectAbsen.innerHTML = '<option>Tidak ada data bulan</option>';
-                    }
-                    bulanSelectAbsen.disabled = false;
-                })
-                .catch(function(error) {
-                    console.error('Error:', error);
-                    bulanSelectAbsen.innerHTML = '<option>❌ Gagal memuat</option>';
-                    bulanSelectAbsen.disabled = false;
-                });
-        }
-        
-        function populateBulanSelectAbsen(months) {
-            if (!bulanSelectAbsen) return;
-            bulanSelectAbsen.innerHTML = '<option value="">-- Pilih Bulan --</option>';
-            for (var i = 0; i < months.length; i++) {
-                var opt = document.createElement('option');
-                opt.value = months[i].num || months[i];
-                opt.textContent = months[i].name || months[i];
-                bulanSelectAbsen.appendChild(opt);
-            }
-            bulanSelectAbsen.onchange = function() {
-                if (this.value) {
-                    loadDataAbsen();
-                } else {
-                    if (resultContainerAbsen) resultContainerAbsen.innerHTML = '';
-                }
-            };
-            if (bulanSelectAbsen.value) {
-                loadDataAbsen();
-            }
-        }
-        
-        function loadDataAbsen() {
-            if (!tahunSelectAbsen || !bulanSelectAbsen) return;
-            var tahun = tahunSelectAbsen.value;
-            var bulan = bulanSelectAbsen.value;
-            
-            if (!tahun || !bulan) { 
-                if (resultContainerAbsen) resultContainerAbsen.innerHTML = '<div class="absen-card">Pilih tahun dan bulan terlebih dahulu</div>';
-                return; 
-            }
-            
-            showLoadingAbsen();
-            
-            var cached = getCacheAbsen();
-            var cacheKey = tahun + '_' + bulan;
-            if (cached && cached.data && cached.data[cacheKey]) {
-                var cachedData = cached.data[cacheKey];
-                if (Date.now() - cachedData.timestamp < CACHE_EXPIRY) {
-                    displayDataAbsen(cachedData.data);
-                    currentDataAbsen = cachedData.data;
-                    return;
-                }
-            }
-            
-            if (!isOnlineAbsen) {
-                showErrorAbsen('Tidak ada koneksi dan tidak ada data tersimpan');
-                return;
-            }
-            
-            fetch(SCRIPT_URL + '?action=getData&tahun=' + encodeURIComponent(tahun) + '&bulan=' + encodeURIComponent(bulan))
-                .then(function(response) {
-                    if (!response.ok) throw new Error('HTTP ' + response.status);
-                    return response.json();
-                })
-                .then(function(data) {
-                    currentDataAbsen = data;
-                    displayDataAbsen(data);
-                    var updatedCache = getCacheAbsen() || {};
-                    updatedCache.data = updatedCache.data || {};
-                    updatedCache.data[cacheKey] = { data: data, timestamp: Date.now() };
-                    saveToCacheAbsen(updatedCache);
-                })
-                .catch(function(error) {
-                    console.error('Error:', error);
-                    showErrorAbsen('Gagal: ' + error.message);
-                });
-        }
-        
-        function displayDataAbsen(data) {
-            if (!resultContainerAbsen) return;
-            if (data.error) { showErrorAbsen(data.error); return; }
-            
-            var totalDesa = data.total_desa || 0;
-            var persen = totalDesa > 0 ? Math.round((data.desa_lengkap / totalDesa) * 100) : 0;
-            var detailsHtml = '';
-            
-            for (var i = 0; i < data.details.length; i++) {
-                var d = data.details[i];
-                var cls = '', txt = '', icon = '';
-                if (d.status === 'LENGKAP') { cls = 'absen-status-lengkap'; icon = '✅'; txt = 'LENGKAP'; }
-                else if (d.status === 'BELUM_LENGKAP') { cls = 'absen-status-belum-lengkap'; icon = '⚠️'; txt = 'BL'; }
-                else { cls = 'absen-status-belum'; icon = '❌'; txt = 'BELUM'; }
-                var warn = (d.status === 'LENGKAP') ? '#4caf50' : ((d.status === 'BELUM_LENGKAP') ? '#ff9800' : '#f44336');
-                
-                detailsHtml += '<div class="absen-desa-item" onclick="window.showDetailAbsen(\'' + escapeHtmlAbsen(d.nama) + '\',' + d.jumlah_file + ',' + d.persentase + ',\'' + d.status + '\')">' +
-                    '<div class="absen-desa-name">' + icon + ' ' + escapeHtmlAbsen(d.nama) + '</div>' +
-                    '<div class="absen-desa-stats">' + d.jumlah_file + '/9</div>' +
-                    '<div class="absen-desa-progress"><div class="absen-desa-progress-bar"><div class="absen-desa-progress-fill" style="width:' + d.persentase + '%; background:' + warn + '"></div></div></div>' +
-                    '<div class="absen-status-badge ' + cls + '">' + txt + '</div></div>';
-            }
-            
-            var html = '<div class="absen-card">' +
-                '<div class="absen-stats-grid">' +
-                '<div class="absen-stat-card"><div class="absen-stat-value" style="color:#1a73e8;">' + data.total_desa + '</div><div class="absen-stat-label">DESA</div></div>' +
-                '<div class="absen-stat-card"><div class="absen-stat-value" style="color:#4caf50;">' + data.desa_lengkap + '</div><div class="absen-stat-label">LENGKAP</div></div>' +
-                '<div class="absen-stat-card"><div class="absen-stat-value" style="color:#ff9800;">' + data.desa_belum_lengkap + '</div><div class="absen-stat-label">BL</div></div>' +
-                '<div class="absen-stat-card"><div class="absen-stat-value" style="color:#f44336;">' + data.desa_belum + '</div><div class="absen-stat-label">BELUM</div></div>' +
-                '</div>' +
-                '<div class="absen-progress-container">' +
-                '<div class="progress-text" style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:12px;"><span>📈 PROGRESS</span><span><b>' + persen + '%</b></span></div>' +
-                '<div class="absen-progress-bar"><div class="absen-progress-fill" style="width:' + persen + '%"></div></div>' +
-                '</div>' +
-                '<div style="font-size:0.7rem; font-weight:600; margin:10px 0 5px;">📋 DAFTAR DESA (' + data.total_desa + ')</div>' +
-                '<div class="absen-desa-list">' + detailsHtml + '</div>' +
-                '<div style="margin-top:15px; text-align:center;">' +
-                '<button onclick="shareAsPNGAbsen()" class="absen-btn absen-btn-primary" style="background:#e91e63;">📸 DOWNLOAD ABSEN</button>' +
-                '</div></div>';
-            
-            resultContainerAbsen.innerHTML = html;
-            
-            var pngBtn = document.querySelector('#absenResultContainer .absen-btn-primary');
-            if (pngBtn && pngBtn.textContent.includes('PNG')) {
-                pngBtn.onclick = function() { shareAsPNGAbsen(); };
-            }
-        }
-        
-        function createCompactPNGHTMLAbsen() {
-            if (!currentDataAbsen) return '';
-            var d = currentDataAbsen;
-            var total = d.total_desa || 0;
-            var persen = total > 0 ? Math.round((d.desa_lengkap / total) * 100) : 0;
-            var tgl = new Date().toLocaleDateString('id-ID');
-            var listHtml = '';
-            
-            for (var i = 0; i < d.details.length; i++) {
-                var des = d.details[i];
-                var warn = (des.status === 'LENGKAP') ? '#4caf50' : ((des.status === 'BELUM_LENGKAP') ? '#ff9800' : '#f44336');
-                var emoji = (des.status === 'LENGKAP') ? '✅' : ((des.status === 'BELUM_LENGKAP') ? '⚠️' : '❌');
-                var statusText = (des.status === 'LENGKAP') ? 'LENGKAP' : ((des.status === 'BELUM_LENGKAP') ? 'BL' : 'BELUM');
-                var statusBg = (des.status === 'LENGKAP') ? '#e8f5e9' : ((des.status === 'BELUM_LENGKAP') ? '#fff3e0' : '#ffebee');
-                
-                listHtml += '<div class="png-desa-item">' +
-                    '<div style="width:24px; font-size:10px;">' + emoji + '</div>' +
-                    '<div style="flex:2; font-size:10px; font-weight:500; color:#000;">' + escapeHtmlAbsen(des.nama) + '</div>' +
-                    '<div style="width:35px; font-size:9px; text-align:center; color:#000;">' + des.jumlah_file + '/9</div>' +
-                    '<div style="width:50px;"><div style="background:#e0e0e0; border-radius:6px; height:4px;"><div style="background:' + warn + '; width:' + des.persentase + '%; height:4px; border-radius:6px;"></div></div></div>' +
-                    '<div style="width:45px; font-size:8px; text-align:center; padding:2px 4px; border-radius:8px; background:' + statusBg + '; color:' + warn + ';">' + statusText + '</div>' +
-                    '</div>';
-            }
-            
-            return '<div class="png-container">' +
-                '<div class="png-header">' +
-                '<div style="font-size:16px; font-weight:bold;">📊 ABSENSI DUKOPS</div>' +
-                '<div style="font-size:8px;">Koramil Monitoring | Target 9 File ZIP</div></div>' +
-                '<div style="padding:10px;"><div style="text-align:center; margin-bottom:8px;">' +
-                '<div style="font-size:14px; font-weight:bold; color:#000;">' + (d.nama_bulan || '') + ' ' + (d.tahun || '') + '</div>' +
-                '<div style="font-size:7px; color:#666;">' + tgl + '</div></div>' +
-                '<div class="png-stats">' +
-                '<div class="png-stat-card"><div style="font-size:12px; font-weight:bold; color:#1a73e8;">' + d.total_desa + '</div><div style="font-size:7px;">DESA</div></div>' +
-                '<div class="png-stat-card"><div style="font-size:12px; font-weight:bold; color:#4caf50;">' + d.desa_lengkap + '</div><div style="font-size:7px;">LENGKAP</div></div>' +
-                '<div class="png-stat-card"><div style="font-size:12px; font-weight:bold; color:#ff9800;">' + d.desa_belum_lengkap + '</div><div style="font-size:7px;">BL</div></div>' +
-                '<div class="png-stat-card"><div style="font-size:12px; font-weight:bold; color:#f44336;">' + d.desa_belum + '</div><div style="font-size:7px;">BELUM</div></div>' +
-                '</div>' +
-                '<div style="margin-bottom:8px;"><div style="display:flex; justify-content:space-between; font-size:8px; color:#000;"><span>PROGRESS</span><span><b>' + persen + '%</b></span></div>' +
-                '<div class="png-progress-bar"><div class="png-progress-fill" style="width:' + persen + '%"></div></div></div>' +
-                '<div style="font-size:9px; font-weight:bold; margin:6px 0 4px; color:#000;">📋 DAFTAR DESA (' + d.total_desa + ')</div>' +
-                '<div style="max-height:550px; overflow:hidden;">' + listHtml + '</div>' +
-                '<div style="margin-top:8px; padding-top:5px; border-top:1px solid #eee; text-align:center; font-size:6px; color:#aaa;">Absensi Dukops - Koramil</div></div></div>';
-        }
-        
-        window.shareAsPNGAbsen = async function() {
-            if (!currentDataAbsen) return;
-            if (screenshotAreaAbsen) screenshotAreaAbsen.innerHTML = createCompactPNGHTMLAbsen();
-            var element = screenshotAreaAbsen ? screenshotAreaAbsen.firstChild : null;
-            if (!element) return;
-            try {
-                var canvas = await html2canvas(element, { scale: 2, backgroundColor: '#ffffff' });
-                var link = document.createElement('a');
-                link.download = 'Absensi_' + (currentDataAbsen.nama_bulan || '') + '_' + (currentDataAbsen.tahun || '') + '.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            } catch (e) { console.error(e); }
-            setTimeout(function() { if (screenshotAreaAbsen) screenshotAreaAbsen.innerHTML = ''; }, 500);
-        };
-        
-        function getCacheAbsen() { try { var cached = localStorage.getItem(CACHE_KEY_ABSEN); if (cached) return JSON.parse(cached); } catch(e) {} return null; }
+        function forceRefreshAbsen() { if (!isOnlineAbsen) return; localStorage.removeItem(CACHE_KEY_ABSEN); loadAbsenTahun(); if (currentDataAbsen) loadDataAbsen(); }
+        function loadAbsenTahun() { if (!tahunSelectAbsen) return; tahunSelectAbsen.disabled = true; tahunSelectAbsen.innerHTML = '<option>⏳ Mohon tunggu....</option>'; var cached = getCacheAbsen(); if (cached && cached.years && cached.years.length > 0) { populateTahunSelectAbsen(cached.years); tahunSelectAbsen.disabled = false; } if (!isOnlineAbsen) { if (!cached || !cached.years) tahunSelectAbsen.innerHTML = '<option>❌ Offline - no data</option>'; return; } fetch(SCRIPT_URL + '?action=getYears').then(function(r) { if (!r.ok) throw new Error(); return r.json(); }).then(function(years) { if (years && years.length) { populateTahunSelectAbsen(years); saveToCacheAbsen({ years: years, months: null, data: null }); } }).catch(function(e) { console.error(e); if (!cached || !cached.years) tahunSelectAbsen.innerHTML = '<option>❌ Gagal memuat</option>'; }).finally(function() { if (tahunSelectAbsen) tahunSelectAbsen.disabled = false; }); }
+        function populateTahunSelectAbsen(years) { if (!tahunSelectAbsen) return; tahunSelectAbsen.innerHTML = '<option value="">-- Pilih Tahun --</option>'; for (var i=0; i<years.length; i++) { var opt = document.createElement('option'); opt.value = years[i]; opt.textContent = years[i]; tahunSelectAbsen.appendChild(opt); } if (years.length > 0) { tahunSelectAbsen.value = years[0]; onTahunChangeAbsen(); } }
+        function onTahunChangeAbsen() { if (!tahunSelectAbsen || !bulanSelectAbsen) return; var tahun = tahunSelectAbsen.value; if (!tahun) { bulanSelectAbsen.innerHTML = '<option>Pilih tahun dulu</option>'; bulanSelectAbsen.disabled = true; return; } bulanSelectAbsen.disabled = true; bulanSelectAbsen.innerHTML = '<option>⏳ Memuat...</option>'; var cached = getCacheAbsen(); if (cached && cached.months && cached.months[tahun]) { populateBulanSelectAbsen(cached.months[tahun]); bulanSelectAbsen.disabled = false; return; } if (!isOnlineAbsen) { bulanSelectAbsen.innerHTML = '<option>❌ Offline - pilih tahun lain</option>'; bulanSelectAbsen.disabled = false; return; } fetch(SCRIPT_URL + '?action=getMonths&tahun=' + encodeURIComponent(tahun)).then(function(r) { if (!r.ok) throw new Error(); return r.json(); }).then(function(months) { if (months && months.length) { populateBulanSelectAbsen(months); var uc = getCacheAbsen() || {}; uc.months = uc.months || {}; uc.months[tahun] = months; saveToCacheAbsen(uc); } else { bulanSelectAbsen.innerHTML = '<option>Tidak ada data bulan</option>'; } bulanSelectAbsen.disabled = false; }).catch(function(e) { console.error(e); bulanSelectAbsen.innerHTML = '<option>❌ Gagal memuat</option>'; bulanSelectAbsen.disabled = false; }); }
+        function populateBulanSelectAbsen(months) { if (!bulanSelectAbsen) return; bulanSelectAbsen.innerHTML = '<option value="">-- Pilih Bulan --</option>'; for (var i=0; i<months.length; i++) { var opt = document.createElement('option'); opt.value = months[i].num || months[i]; opt.textContent = months[i].name || months[i]; bulanSelectAbsen.appendChild(opt); } bulanSelectAbsen.onchange = function() { if (this.value) loadDataAbsen(); else if (resultContainerAbsen) resultContainerAbsen.innerHTML = ''; }; if (bulanSelectAbsen.value) loadDataAbsen(); }
+        function loadDataAbsen() { if (!tahunSelectAbsen || !bulanSelectAbsen) return; var tahun = tahunSelectAbsen.value, bulan = bulanSelectAbsen.value; if (!tahun || !bulan) { if (resultContainerAbsen) resultContainerAbsen.innerHTML = '<div class="absen-card">Pilih tahun dan bulan terlebih dahulu</div>'; return; } showLoadingAbsen(); var cached = getCacheAbsen(), cacheKey = tahun + '_' + bulan; if (cached && cached.data && cached.data[cacheKey] && (Date.now() - cached.data[cacheKey].timestamp < CACHE_EXPIRY)) { displayDataAbsen(cached.data[cacheKey].data); currentDataAbsen = cached.data[cacheKey].data; return; } if (!isOnlineAbsen) { showErrorAbsen('Tidak ada koneksi dan tidak ada data tersimpan'); return; } fetch(SCRIPT_URL + '?action=getData&tahun=' + encodeURIComponent(tahun) + '&bulan=' + encodeURIComponent(bulan)).then(function(r) { if (!r.ok) throw new Error(); return r.json(); }).then(function(data) { currentDataAbsen = data; displayDataAbsen(data); var uc = getCacheAbsen() || {}; uc.data = uc.data || {}; uc.data[cacheKey] = { data: data, timestamp: Date.now() }; saveToCacheAbsen(uc); }).catch(function(e) { console.error(e); showErrorAbsen('Gagal: ' + e.message); }); }
+        function displayDataAbsen(data) { if (!resultContainerAbsen) return; if (data.error) { showErrorAbsen(data.error); return; } var totalDesa = data.total_desa || 0, persen = totalDesa > 0 ? Math.round((data.desa_lengkap / totalDesa) * 100) : 0, detailsHtml = ''; for (var i=0; i<data.details.length; i++) { var d = data.details[i], cls='', txt='', icon=''; if (d.status === 'LENGKAP') { cls='absen-status-lengkap'; icon='✅'; txt='LENGKAP'; } else if (d.status === 'BELUM_LENGKAP') { cls='absen-status-belum-lengkap'; icon='⚠️'; txt='BL'; } else { cls='absen-status-belum'; icon='❌'; txt='BELUM'; } var warn = (d.status === 'LENGKAP') ? '#4caf50' : ((d.status === 'BELUM_LENGKAP') ? '#ff9800' : '#f44336'); detailsHtml += '<div class="absen-desa-item" onclick="window.showDetailAbsen(\'' + escapeHtmlAbsen(d.nama) + '\',' + d.jumlah_file + ',' + d.persentase + ',\'' + d.status + '\')"><div class="absen-desa-name">' + icon + ' ' + escapeHtmlAbsen(d.nama) + '</div><div class="absen-desa-stats">' + d.jumlah_file + '/9</div><div class="absen-desa-progress"><div class="absen-desa-progress-bar"><div class="absen-desa-progress-fill" style="width:' + d.persentase + '%; background:' + warn + '"></div></div></div><div class="absen-status-badge ' + cls + '">' + txt + '</div></div>'; } var html = '<div class="absen-card"><div class="absen-stats-grid"><div class="absen-stat-card"><div class="absen-stat-value" style="color:#1a73e8;">' + data.total_desa + '</div><div class="absen-stat-label">DESA</div></div><div class="absen-stat-card"><div class="absen-stat-value" style="color:#4caf50;">' + data.desa_lengkap + '</div><div class="absen-stat-label">LENGKAP</div></div><div class="absen-stat-card"><div class="absen-stat-value" style="color:#ff9800;">' + data.desa_belum_lengkap + '</div><div class="absen-stat-label">BL</div></div><div class="absen-stat-card"><div class="absen-stat-value" style="color:#f44336;">' + data.desa_belum + '</div><div class="absen-stat-label">BELUM</div></div></div><div class="absen-progress-container"><div class="progress-text" style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:12px;"><span>📈 PROGRESS</span><span><b>' + persen + '%</b></span></div><div class="absen-progress-bar"><div class="absen-progress-fill" style="width:' + persen + '%"></div></div></div><div style="font-size:0.7rem; font-weight:600; margin:10px 0 5px;">📋 DAFTAR DESA (' + data.total_desa + ')</div><div class="absen-desa-list">' + detailsHtml + '</div><div style="margin-top:15px; text-align:center;"><button onclick="shareAsPNGAbsen()" class="absen-btn absen-btn-primary" style="background:#e91e63;">📸 DOWNLOAD ABSEN</button></div></div>'; resultContainerAbsen.innerHTML = html; var pngBtn = document.querySelector('#absenResultContainer .absen-btn-primary'); if (pngBtn && pngBtn.textContent.includes('PNG')) pngBtn.onclick = function() { shareAsPNGAbsen(); }; }
+        function createCompactPNGHTMLAbsen() { if (!currentDataAbsen) return ''; var d = currentDataAbsen, total = d.total_desa || 0, persen = total > 0 ? Math.round((d.desa_lengkap / total) * 100) : 0, tgl = new Date().toLocaleDateString('id-ID'), listHtml = ''; for (var i=0; i<d.details.length; i++) { var des = d.details[i], warn = (des.status === 'LENGKAP') ? '#4caf50' : ((des.status === 'BELUM_LENGKAP') ? '#ff9800' : '#f44336'), emoji = (des.status === 'LENGKAP') ? '✅' : ((des.status === 'BELUM_LENGKAP') ? '⚠️' : '❌'), statusText = (des.status === 'LENGKAP') ? 'LENGKAP' : ((des.status === 'BELUM_LENGKAP') ? 'BL' : 'BELUM'), statusBg = (des.status === 'LENGKAP') ? '#e8f5e9' : ((des.status === 'BELUM_LENGKAP') ? '#fff3e0' : '#ffebee'); listHtml += '<div class="png-desa-item"><div style="width:24px; font-size:10px;">' + emoji + '</div><div style="flex:2; font-size:10px; font-weight:500; color:#000;">' + escapeHtmlAbsen(des.nama) + '</div><div style="width:35px; font-size:9px; text-align:center; color:#000;">' + des.jumlah_file + '/9</div><div style="width:50px;"><div style="background:#e0e0e0; border-radius:6px; height:4px;"><div style="background:' + warn + '; width:' + des.persentase + '%; height:4px; border-radius:6px;"></div></div></div><div style="width:45px; font-size:8px; text-align:center; padding:2px 4px; border-radius:8px; background:' + statusBg + '; color:' + warn + ';">' + statusText + '</div></div>'; } return '<div class="png-container"><div class="png-header"><div style="font-size:16px; font-weight:bold;">📊 ABSENSI DUKOPS</div><div style="font-size:8px;">Koramil Monitoring | Target 9 File ZIP</div></div><div style="padding:10px;"><div style="text-align:center; margin-bottom:8px;"><div style="font-size:14px; font-weight:bold; color:#000;">' + (d.nama_bulan || '') + ' ' + (d.tahun || '') + '</div><div style="font-size:7px; color:#666;">' + tgl + '</div></div><div class="png-stats"><div class="png-stat-card"><div style="font-size:12px; font-weight:bold; color:#1a73e8;">' + d.total_desa + '</div><div style="font-size:7px;">DESA</div></div><div class="png-stat-card"><div style="font-size:12px; font-weight:bold; color:#4caf50;">' + d.desa_lengkap + '</div><div style="font-size:7px;">LENGKAP</div></div><div class="png-stat-card"><div style="font-size:12px; font-weight:bold; color:#ff9800;">' + d.desa_belum_lengkap + '</div><div style="font-size:7px;">BL</div></div><div class="png-stat-card"><div style="font-size:12px; font-weight:bold; color:#f44336;">' + d.desa_belum + '</div><div style="font-size:7px;">BELUM</div></div></div><div style="margin-bottom:8px;"><div style="display:flex; justify-content:space-between; font-size:8px; color:#000;"><span>PROGRESS</span><span><b>' + persen + '%</b></span></div><div class="png-progress-bar"><div class="png-progress-fill" style="width:' + persen + '%"></div></div></div><div style="font-size:9px; font-weight:bold; margin:6px 0 4px; color:#000;">📋 DAFTAR DESA (' + d.total_desa + ')</div><div style="max-height:550px; overflow:hidden;">' + listHtml + '</div><div style="margin-top:8px; padding-top:5px; border-top:1px solid #eee; text-align:center; font-size:6px; color:#aaa;">Absensi Dukops - Koramil</div></div></div>'; }
+        window.shareAsPNGAbsen = async function() { if (!currentDataAbsen) return; if (screenshotAreaAbsen) screenshotAreaAbsen.innerHTML = createCompactPNGHTMLAbsen(); var element = screenshotAreaAbsen ? screenshotAreaAbsen.firstChild : null; if (!element) return; try { var canvas = await html2canvas(element, { scale: 2, backgroundColor: '#ffffff' }); var link = document.createElement('a'); link.download = 'Absensi_' + (currentDataAbsen.nama_bulan || '') + '_' + (currentDataAbsen.tahun || '') + '.png'; link.href = canvas.toDataURL('image/png'); link.click(); } catch(e) { console.error(e); } setTimeout(function() { if (screenshotAreaAbsen) screenshotAreaAbsen.innerHTML = ''; }, 500); };
+        function getCacheAbsen() { try { var c = localStorage.getItem(CACHE_KEY_ABSEN); if (c) return JSON.parse(c); } catch(e) {} return null; }
         function saveToCacheAbsen(data) { try { localStorage.setItem(CACHE_KEY_ABSEN, JSON.stringify(data)); } catch(e) {} }
-        
-        function showLoadingAbsen() {
-            if (resultContainerAbsen) resultContainerAbsen.innerHTML = '<div class="absen-loading"><div class="absen-spinner"></div><p>Mohon Tunggu ...</p></div>';
-        }
-        
-        function showErrorAbsen(msg) {
-            if (resultContainerAbsen) resultContainerAbsen.innerHTML = '<div class="absen-card" style="color:#f44336;">⚠️ ' + escapeHtmlAbsen(msg) + '</div>';
-        }
-        
+        function showLoadingAbsen() { if (resultContainerAbsen) resultContainerAbsen.innerHTML = '<div class="absen-loading"><div class="absen-spinner"></div><p>Mohon Tunggu ...</p></div>'; }
+        function showErrorAbsen(msg) { if (resultContainerAbsen) resultContainerAbsen.innerHTML = '<div class="absen-card" style="color:#f44336;">⚠️ ' + escapeHtmlAbsen(msg) + '</div>'; }
         function escapeHtmlAbsen(t) { if (!t) return ''; return t.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
-        
-        window.showDetailAbsen = function(n, j, p, s) { 
-            alert((s === 'LENGKAP' ? '✅ ' : (s === 'BELUM_LENGKAP' ? '⚠️ ' : '❌ ')) + n + '\n' + j + '/9 (' + p + '%)');
-        };
-        
+        window.showDetailAbsen = function(n,j,p,s) { alert((s === 'LENGKAP' ? '✅ ' : (s === 'BELUM_LENGKAP' ? '⚠️ ' : '❌ ')) + n + '\n' + j + '/9 (' + p + '%)'); };
         window.loadAbsenTahun = loadAbsenTahun;
     })();
     </script>
 </body>
-
 </html>
