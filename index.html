@@ -1714,7 +1714,7 @@
     <script src="js/services/AdminSettings.js"></script>
     <script src="app.js"></script>
 
-    <!-- ============ JADWAL PIKET BARU SCRIPT (DENGAN PERBAIKAN epochDays + offset) ============ -->
+    <!-- ============ JADWAL PIKET BARU SCRIPT (DENGAN PERBAIKAN epochDays + offset TETAP) ============ -->
     <script>
     (function() {
         const GITHUB_URLS = {
@@ -1764,7 +1764,7 @@
             });
         }
 
-        // ========== PERUBAHAN 2: Hanpangan menggunakan epochDays dengan offset ==========
+        // ========== PERBAIKAN: Hanpangan menggunakan epochDays dengan OFFSET TETAP (berdasarkan tanggal referensi) ==========
         function loadHanpanganData() {
             return fetchFromGitHub(GITHUB_URLS.HANPANGAN).then(data => {
                 if (data) {
@@ -1774,11 +1774,22 @@
                         const today = new Date();
                         // epochDays: jumlah hari sejak 1 Januari 1970 (tidak reset per tahun)
                         const epochDays = Math.floor(today.getTime() / (24 * 60 * 60 * 1000));
-                        // offset agar index 0 = Serma Mujiburrahman (baris pertama file)
-                        const targetIndex = 0;
-                        const offset = (targetIndex - epochDays) % lines.length;
-                        let index = (epochDays + offset) % lines.length;
+                        
+                        // Tentukan tanggal referensi (misalnya 1 Januari 2024) dan target index pada tanggal tersebut (0 = Serma Mujiburrahman)
+                        const referenceDate = new Date(2024, 0, 1); // 1 Januari 2024
+                        const epochDaysRef = Math.floor(referenceDate.getTime() / (24 * 60 * 60 * 1000));
+                        const targetIndexAtRef = 0; // pada 1 Jan 2024, kita ingin index 0 (baris pertama)
+                        
+                        // Hitung offset tetap (konstan) dari epochDaysRef agar menghasilkan targetIndexAtRef
+                        // offset = (targetIndexAtRef - epochDaysRef) mod N
+                        const offset = (targetIndexAtRef - epochDaysRef) % lines.length;
+                        // Pastikan offset positif
+                        const finalOffset = offset >= 0 ? offset : offset + lines.length;
+                        
+                        // Index hari ini = (epochDays + offset) mod N
+                        let index = (epochDays + finalOffset) % lines.length;
                         if (index < 0) index += lines.length;
+                        
                         JadwalData.currentHanpangan = lines[index];
                         updateRunningText();
                         return true;
