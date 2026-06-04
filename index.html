@@ -929,7 +929,7 @@
             to { opacity: 1; transform: translateX(0); }
         }
 
-        /* ============ STYLE UNTUK LIVE CHAT ============ */
+        /* ============ STYLE UNTUK  CHAT ============ */
         .chat-floating-btn {
             position: fixed;
             bottom: 90px;
@@ -1880,7 +1880,8 @@
         async function fetchTelegramMessages() {
             if (!USE_REAL_BOT) {
                 const demoMessages = [
-                    "🔄 Terima Kasih Telah Mengirim Laporan DUkops dengan tepet waktu dan lengkap dan telah hadir Live Chat silahkan klik live chat Icon liveChat jika ada kekurangan mohon maaf dalam pengembangan LiveChat ",
+                "🔄 Terima Kasih Telah Mengirim Laporan DUkops dengan tepet waktu dan lengkap "];
+                "telah hadir LiveChat silahkan klik Icon liveChat",
                 ];
                 const randomMsg = demoMessages[Math.floor(Math.random() * demoMessages.length)];
                 updateRunningText(randomMsg);
