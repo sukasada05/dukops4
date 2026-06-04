@@ -30,6 +30,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Supabase Library untuk Live Chat -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <!-- Stylesheet -->
     <link rel="stylesheet" href="styles.css">
     
@@ -267,7 +270,7 @@
         .telegram-running-text {
             display: inline-block;
             white-space: nowrap;
-            animation: telegramMarquee 13s linear infinite;
+            animation: telegramMarquee 20s linear infinite;
             color: #ffdd44;
             font-weight: bold;
             font-size: 14px;
@@ -294,7 +297,7 @@
         .running-text {
             display: inline-block;
             white-space: nowrap;
-            animation: marquee 10s linear infinite;
+            animation: marquee 15s linear infinite;
             color: #ffcc00;
             font-weight: bold;
             font-size: 14px;
@@ -926,6 +929,293 @@
             to { opacity: 1; transform: translateX(0); }
         }
 
+        /* ============ STYLE UNTUK LIVE CHAT ============ */
+        .chat-floating-btn {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: #25D366;
+            border: 2px solid #ffffff;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 999;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        .chat-floating-btn:hover {
+            transform: scale(1.05);
+            background: #20b859;
+        }
+        
+        .chat-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 10000;
+            backdrop-filter: blur(4px);
+        }
+        
+        .chat-window {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 380px;
+            height: 550px;
+            background: rgba(10, 26, 42, 0.98);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            border: 1px solid rgba(77, 255, 77, 0.3);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chat-header {
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #0d2a1d, #0a1f15);
+            border-bottom: 1px solid #2e8b57;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+        
+        .chat-header h3 {
+            color: #4dff4d;
+            font-size: 14px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .chat-header h3 i {
+            font-size: 16px;
+        }
+        
+        .chat-unread-badge {
+            background: #ff4444;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 8px;
+            font-size: 10px;
+            margin-left: 8px;
+        }
+        
+        .chat-header-actions button {
+            background: none;
+            border: none;
+            color: #9fd49f;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        
+        .chat-header-actions button:hover {
+            background: rgba(255,255,255,0.1);
+            color: #ff8888;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .chat-message {
+            display: flex;
+            flex-direction: column;
+            max-width: 85%;
+        }
+        
+        .chat-message-own {
+            align-self: flex-end;
+        }
+        
+        .chat-message-other {
+            align-self: flex-start;
+        }
+        
+        .chat-message-bubble {
+            padding: 8px 12px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+        
+        .chat-message-own .chat-message-bubble {
+            background: #2e7d32;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .chat-message-other .chat-message-bubble {
+            background: #1a3a6a;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .chat-message-name {
+            font-size: 10px;
+            margin-bottom: 2px;
+            margin-left: 8px;
+        }
+        
+        .chat-message-own .chat-message-name {
+            color: #a5d6a7;
+            text-align: right;
+        }
+        
+        .chat-message-other .chat-message-name {
+            color: #ffcc00;
+        }
+        
+        .chat-message-text {
+            font-size: 13px;
+            color: #e6ffe6;
+            line-height: 1.4;
+        }
+        
+        .chat-message-time {
+            font-size: 9px;
+            color: #888;
+            margin-top: 2px;
+            margin-left: 8px;
+        }
+        
+        .chat-message-own .chat-message-time {
+            text-align: right;
+        }
+        
+        .chat-input-area {
+            padding: 12px;
+            border-top: 1px solid #2a4a2a;
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+            background: rgba(0,0,0,0.3);
+        }
+        
+        .chat-input-area textarea {
+            flex: 1;
+            padding: 10px 14px;
+            border-radius: 20px;
+            border: 1px solid #4dff4d;
+            background: #1a2a1f;
+            color: #e6ffe6;
+            font-size: 13px;
+            outline: none;
+            resize: none;
+            font-family: inherit;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+        
+        .chat-input-area textarea::placeholder {
+            color: #6a8a6a;
+        }
+        
+        .chat-input-area button {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: none;
+            background: #4dff4d;
+            color: #003300;
+            cursor: pointer;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        
+        .chat-input-area button:hover {
+            background: #6aff6a;
+        }
+        
+        .chat-footer {
+            padding: 6px 12px;
+            font-size: 9px;
+            color: #666;
+            text-align: center;
+            border-top: 1px solid #2a4a2a;
+            display: flex;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+        
+        .chat-footer span:last-child {
+            cursor: pointer;
+            color: #4dff4d;
+        }
+        
+        .chat-footer span:last-child:hover {
+            color: #ffcc00;
+        }
+        
+        .chat-connection-status {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .chat-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ff4444;
+        }
+        
+        .chat-status-dot.connected {
+            background: #4caf50;
+            box-shadow: 0 0 4px #4caf50;
+        }
+        
+        .chat-status-dot.connecting {
+            background: #ff9800;
+            animation: pulse 1s infinite;
+        }
+        
+        .chat-empty {
+            text-align: center;
+            color: #888;
+            padding: 30px 20px;
+        }
+        
+        .chat-loading {
+            text-align: center;
+            color: #4dff4d;
+            padding: 30px 20px;
+        }
+        
+        .chat-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .chat-messages::-webkit-scrollbar-track {
+            background: #1a2a1f;
+        }
+        
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #4dff4d;
+            border-radius: 4px;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
         @media screen and (max-width: 480px) {
             .modal-ai-content {
                 width: 98%;
@@ -966,6 +1256,19 @@
                 font-size: 12px;
                 padding: 8px 10px;
             }
+            .chat-window {
+                width: 95%;
+                height: 80%;
+                right: 2.5%;
+                bottom: 10px;
+            }
+            .chat-floating-btn {
+                bottom: 80px;
+                right: 15px;
+                width: 48px;
+                height: 48px;
+                font-size: 20px;
+            }
         }
     </style>
 </head>
@@ -979,7 +1282,7 @@
                     alt="Lambang Kodam Udayana">
             </div>
             <div class="splash-title-center">DUKOPS</div>
-			<div class="splash-title-center">BABINSA SUKASADA</div>
+            <div class="splash-title-center">BABINSA SUKASADA</div>
             <div class="splash-subtitle-center">KODIM 1609/BULELENG</div>
             <div class="splash-unit-center">KORAMIL 1609-05/SUKASADA</div>
             <div class="splash-kodim-center">Sistem Pelaporan Digitalisasi Babinsa</div>
@@ -1072,10 +1375,10 @@
                 <canvas id="canvas"></canvas>
 
                 <button id="submitBtn" onclick="processSubmission()" disabled>
-                    <i class="fas fa-download"></i> DOWNLOAD & <i class="fas fa-paper-plane"></i> KIRIM & <i class="fab fa-google-drive"></i> DRIVE
+                    <i class="fas fa-download"></i><i class="fas fa-paper-plane"></i> KIRIM & <i class="fab fa-google-drive"></i> DRIVE
                 </button>
                 <button id="resetBtn" onclick="resetAll()"><i class="fas fa-redo"></i> Reset Data</button>
-                <button id="showAttendanceBtn" onclick="showAttendance()"><i class="fas fa-chart-bar"></i> KLIK INI..CEK LAPORAN ANDA DISINI YANG TIAP BULAN</button>
+                <button id="showAttendanceBtn" onclick="showAttendance()"><i class="fas fa-chart-bar"></i>CEK FILE YANG DIKIRIM /button>
 
                 <div id="attendancePanel" style="display: none;">
                     <div class="attendance-header">
@@ -1203,6 +1506,361 @@
         </div>
     </div>
 
+    <!-- ==================== LIVE CHAT ==================== -->
+    <div id="chatModal" class="chat-modal">
+        <div class="chat-window">
+            <div class="chat-header">
+                <h3>
+                    <i class="fas fa-comments"></i> LIVE CHAT DUKOPS
+                    <span id="chatUnreadBadge" class="chat-unread-badge" style="display: none;">0</span>
+                </h3>
+                <div class="chat-header-actions">
+                    <button id="deleteAllChatBtn" title="Hapus semua pesan"><i class="fas fa-trash-alt"></i></button>
+                    <button id="closeChatBtn" title="Tutup"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-loading"><i class="fas fa-spinner fa-pulse"></i> Memuat pesan...</div>
+            </div>
+            
+            <div class="chat-input-area">
+                <textarea id="chatMessageInput" rows="1" placeholder="Tulis pesan..."></textarea>
+                <button id="sendChatBtn"><i class="fas fa-paper-plane"></i></button>
+            </div>
+            
+            <div class="chat-footer">
+                <div class="chat-connection-status">
+                    <span class="chat-status-dot connecting" id="chatStatusDot"></span>
+                    <span id="chatStatusText">Menghubungkan...</span>
+                </div>
+                <span id="chatUserNameDisplay"><i class="fas fa-user"></i> Guest</span>
+            </div>
+        </div>
+    </div>
+
+    <button id="openChatBtn" class="chat-floating-btn">
+        <i class="fas fa-comment-dots"></i>
+    </button>
+
+    <!-- ==================== SCRIPTS ==================== -->
+    <script>
+        // ============ KONFIGURASI SUPABASE UNTUK LIVE CHAT ============
+        // GANTI DENGAN URL DAN ANON KEY SUPABASE ANDA
+        const SUPABASE_URL = 'https://qthoexsadattfnnzcawh.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF0aG9leHNhZGF0dGZubnpjYXdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NTMzNTAsImV4cCI6MjA5NjEyOTM1MH0.qZBFjrN8F8vwxoaPKIPLDQIOWbt58BNlPWLOn4J_5_4';
+        
+        let chatSupabase = null;
+        let chatChannel = null;
+        let chatMessages = [];
+        let chatCurrentUser = 'Guest';
+        let chatUnreadCount = 0;
+        let lastMessageCount = 0;
+        let isChatConnected = false;
+        let isChatOpen = false;
+        
+        // ============ LIVE CHAT FUNCTIONS ============
+        
+        function getChatUsername() {
+            try {
+                const selectDesa = document.getElementById('selectDesa');
+                if (selectDesa && selectDesa.options && selectDesa.options[selectDesa.selectedIndex]) {
+                    return selectDesa.options[selectDesa.selectedIndex].text;
+                }
+            } catch(e) {}
+            return 'Guest';
+        }
+        
+        function updateChatUserDisplay() {
+            const display = document.getElementById('chatUserNameDisplay');
+            if (display) display.innerHTML = `<i class="fas fa-user"></i> ${chatCurrentUser.substring(0, 20)}`;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function formatTime(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        }
+        
+        function autoExpandTextarea() {
+            const textarea = document.getElementById('chatMessageInput');
+            if (textarea) {
+                textarea.style.height = 'auto';
+                const newHeight = Math.min(textarea.scrollHeight, 100);
+                textarea.style.height = newHeight + 'px';
+            }
+        }
+        
+        function updateChatConnectionStatus(connected, message = '') {
+            const dot = document.getElementById('chatStatusDot');
+            const text = document.getElementById('chatStatusText');
+            isChatConnected = connected;
+            if (connected) {
+                dot.className = 'chat-status-dot connected';
+                text.textContent = message || 'Terhubung';
+            } else {
+                dot.className = 'chat-status-dot';
+                text.textContent = message || 'Terputus';
+            }
+        }
+        
+        function updateChatUnreadBadge() {
+            const badge = document.getElementById('chatUnreadBadge');
+            if (badge) {
+                if (chatUnreadCount > 0 && !isChatOpen) {
+                    badge.style.display = 'inline-block';
+                    badge.textContent = chatUnreadCount > 99 ? '99+' : chatUnreadCount;
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        }
+        
+        function renderChatMessages() {
+            const container = document.getElementById('chatMessages');
+            if (!container) return;
+            
+            if (chatMessages.length === 0) {
+                container.innerHTML = '<div class="chat-empty">💬 Belum ada pesan. Jadilah yang pertama!</div>';
+                return;
+            }
+            
+            container.innerHTML = chatMessages.map(msg => {
+                const isOwn = msg.username === chatCurrentUser;
+                return `
+                    <div class="chat-message ${isOwn ? 'chat-message-own' : 'chat-message-other'}">
+                        <div class="chat-message-name">${isOwn ? '👤 Anda' : '👤 ' + escapeHtml(msg.username)}</div>
+                        <div class="chat-message-bubble">
+                            <div class="chat-message-text">${escapeHtml(msg.message)}</div>
+                        </div>
+                        <div class="chat-message-time">${formatTime(msg.created_at)}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Auto scroll ke bawah
+            container.scrollTop = container.scrollHeight;
+            
+            // Update unread count
+            if (chatMessages.length > lastMessageCount && !isChatOpen) {
+                chatUnreadCount += chatMessages.length - lastMessageCount;
+                updateChatUnreadBadge();
+            }
+            lastMessageCount = chatMessages.length;
+        }
+        
+        async function loadChatMessages() {
+            if (!chatSupabase) return;
+            
+            try {
+                const { data, error } = await chatSupabase
+                    .from('live_chat')
+                    .select('*')
+                    .order('created_at', { ascending: true });
+                
+                if (error) throw error;
+                
+                chatMessages = data || [];
+                renderChatMessages();
+                updateChatConnectionStatus(true, 'Terhubung');
+            } catch(e) {
+                console.error('Load chat error:', e);
+                updateChatConnectionStatus(false, 'Gagal memuat');
+                document.getElementById('chatMessages').innerHTML = '<div class="chat-empty" style="color:#ff6666;">❌ Gagal memuat pesan</div>';
+            }
+        }
+        
+        function subscribeToChat() {
+            if (!chatSupabase) return;
+            
+            if (chatChannel) {
+                chatSupabase.removeChannel(chatChannel);
+            }
+            
+            chatChannel = chatSupabase
+                .channel('live_chat_channel')
+                .on('postgres_changes', 
+                    { event: 'INSERT', schema: 'public', table: 'live_chat' }, 
+                    (payload) => {
+                        chatMessages.push(payload.new);
+                        renderChatMessages();
+                    }
+                )
+                .on('postgres_changes', 
+                    { event: 'DELETE', schema: 'public', table: 'live_chat' }, 
+                    () => {
+                        loadChatMessages();
+                    }
+                )
+                .subscribe((status) => {
+                    if (status === 'SUBSCRIBED') {
+                        updateChatConnectionStatus(true, 'Real-time aktif');
+                    } else if (status === 'CHANNEL_ERROR') {
+                        updateChatConnectionStatus(false, 'Koneksi real-time putus');
+                    }
+                });
+        }
+        
+        async function sendChatMessage() {
+            const input = document.getElementById('chatMessageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            if (!chatSupabase) {
+                alert('Chat tidak tersedia');
+                return;
+            }
+            
+            try {
+                const { error } = await chatSupabase
+                    .from('live_chat')
+                    .insert([{
+                        username: chatCurrentUser,
+                        message: message
+                    }]);
+                
+                if (error) throw error;
+                
+                input.value = '';
+                autoExpandTextarea();
+                chatUnreadCount = 0;
+                updateChatUnreadBadge();
+            } catch(e) {
+                console.error('Send error:', e);
+                alert('Gagal mengirim: ' + e.message);
+            }
+        }
+        
+        async function deleteAllChatMessages() {
+            if (!chatSupabase) return;
+            if (confirm('⚠️ PERINGATAN! Semua pesan chat akan dihapus permanen. Lanjutkan?')) {
+                try {
+                    const { error } = await chatSupabase
+                        .from('live_chat')
+                        .delete()
+                        .neq('id', 0);
+                    
+                    if (error) throw error;
+                    
+                    chatMessages = [];
+                    renderChatMessages();
+                    alert('✅ Semua pesan telah dihapus');
+                } catch(e) {
+                    console.error('Delete error:', e);
+                    alert('Gagal menghapus: ' + e.message);
+                }
+            }
+        }
+        
+        function initChatSupabase() {
+            if (SUPABASE_URL.includes('YOUR_PROJECT')) {
+                updateChatConnectionStatus(false, 'Konfigurasi belum diisi');
+                document.getElementById('chatMessages').innerHTML = '<div class="chat-empty" style="color:#ffaa00;">⚠️ Konfigurasi Supabase belum diisi. Edit file dan ganti SUPABASE_URL dan SUPABASE_ANON_KEY</div>';
+                return false;
+            }
+            
+            try {
+                chatSupabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log('✅ Chat Supabase terhubung');
+                loadChatMessages();
+                subscribeToChat();
+                return true;
+            } catch(e) {
+                console.error('Init chat error:', e);
+                updateChatConnectionStatus(false, 'Gagal koneksi');
+                document.getElementById('chatMessages').innerHTML = '<div class="chat-empty" style="color:#ff6666;">❌ Gagal koneksi ke database</div>';
+                return false;
+            }
+        }
+        
+        // ============ CHAT UI CONTROLS ============
+        function openChat() {
+            const modal = document.getElementById('chatModal');
+            modal.style.display = 'block';
+            isChatOpen = true;
+            chatUnreadCount = 0;
+            updateChatUnreadBadge();
+            renderChatMessages();
+            document.getElementById('chatMessageInput').focus();
+        }
+        
+        function closeChat() {
+            const modal = document.getElementById('chatModal');
+            modal.style.display = 'none';
+            isChatOpen = false;
+        }
+        
+        // ============ UPDATE USERNAME WHEN DESA CHANGES ============
+        function updateChatUsername() {
+            const newUsername = getChatUsername();
+            if (newUsername !== chatCurrentUser) {
+                chatCurrentUser = newUsername;
+                updateChatUserDisplay();
+                renderChatMessages();
+            }
+        }
+        
+        // ============ SETUP SCROLL LISTENER ============
+        function setupChatScrollListener() {
+            const container = document.getElementById('chatMessages');
+            if (container) {
+                container.addEventListener('scroll', () => {
+                    const isAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 50;
+                    if (isAtBottom) {
+                        chatUnreadCount = 0;
+                        updateChatUnreadBadge();
+                    }
+                });
+            }
+        }
+        
+        // ============ EVENT LISTENERS ============
+        document.addEventListener('DOMContentLoaded', function() {
+            // Init chat
+            chatCurrentUser = getChatUsername();
+            updateChatUserDisplay();
+            setupChatScrollListener();
+            initChatSupabase();
+            
+            // Auto-expand textarea
+            const chatInput = document.getElementById('chatMessageInput');
+            if (chatInput) {
+                chatInput.addEventListener('input', autoExpandTextarea);
+                chatInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        sendChatMessage();
+                    }
+                });
+            }
+            
+            // Chat controls
+            document.getElementById('openChatBtn').onclick = openChat;
+            document.getElementById('closeChatBtn').onclick = closeChat;
+            document.getElementById('sendChatBtn').onclick = sendChatMessage;
+            document.getElementById('deleteAllChatBtn').onclick = deleteAllChatMessages;
+            
+            // Close modal when clicking outside
+            document.getElementById('chatModal').onclick = function(e) {
+                if (e.target === this) closeChat();
+            };
+            
+            // Update username when desa changes
+            const selectDesa = document.getElementById('selectDesa');
+            if (selectDesa) {
+                selectDesa.addEventListener('change', updateChatUsername);
+            }
+            
+            // Periodic username sync
+            setInterval(updateChatUsername, 5000);
+        });
+    </script>
+
     <script>
         // ============ KONFIGURASI TELEGRAM BOT ============
         const BOT_TOKEN = 'YOUR_BOT_TOKEN';
@@ -1222,7 +1880,7 @@
         async function fetchTelegramMessages() {
             if (!USE_REAL_BOT) {
                 const demoMessages = [
-                    "🔄 Terima Kasih Telah Mengirim Laporan DUkops dengan tepat waktu dan lengkap",
+                    "🔄 Terima Kasih Telah Mengirim Laporan DUkops dengan tepet waktu dan lengkap",
                 ];
                 const randomMsg = demoMessages[Math.floor(Math.random() * demoMessages.length)];
                 updateRunningText(randomMsg);
@@ -1763,8 +2421,7 @@
             });
         }
 
-        // ========== SISTEM HANPANGAN EPOCH DAYS dengan URL sukasada05/dukops4 ==========
-        // Urutan nama yang diinginkan agar Serda I Putu Suwidana Yasa muncul hari ini
+        // ========== SISTEM HANPANGAN EPOCH DAYS ==========
         function loadHanpanganData() {
             return fetchFromGitHub(GITHUB_URLS.HANPANGAN).then(data => {
                 if (data) {
@@ -1772,19 +2429,14 @@
                     if (lines.length) {
                         JadwalData.daftarHanpangan = lines;
                         const today = new Date();
-                        // epochDays: jumlah hari sejak 1 Januari 1970
                         const epochDays = Math.floor(today.getTime() / (24 * 60 * 60 * 1000));
-                        
-                        // Tentukan tanggal referensi (1 Januari 2024) 
                         const referenceDate = new Date(2024, 0, 1);
                         const epochDaysRef = Math.floor(referenceDate.getTime() / (24 * 60 * 60 * 1000));
                         const targetIndexAtRef = 0;
                         
-                        // Hitung offset tetap
                         let offset = (targetIndexAtRef - epochDaysRef) % lines.length;
                         if (offset < 0) offset += lines.length;
                         
-                        // Index hari ini
                         let index = (epochDays + offset) % lines.length;
                         if (index < 0) index += lines.length;
                         
@@ -1793,18 +2445,18 @@
                         return true;
                     }
                 }
-                // DATA DEFAULT (10 nama sesuai urutan agar Serda muncul hari ini)
+                // DATA DEFAULT
                 const defaultHanpangan = [
+                    "Serka Satriyo",
+                    "Serka I Made Widiasa",
+                    "Serka Nyoman Join Amitaba",
+                    "Serka I Nyoman Arta",
                     "Serka Wahyu Hidayat",
                     "Pelda I Komang Karia",
                     "Serma Mujiburrahman",
                     "Sertu Nyoman Warsa",
                     "Serma I Kadek Teges Suardana",
-                    "Serda I Putu Suwidana Yasa",
-                    "Serka Satriyo",
-                    "Serka I Made Widiasa",
-                    "Serka Nyoman Join Amitaba",
-                    "Serka I Nyoman Arta"
+                    "Serda I Putu Suwidana Yasa"
                 ];
                 JadwalData.daftarHanpangan = defaultHanpangan;
                 const today = new Date();
@@ -1820,7 +2472,6 @@
                 return false;
             });
         }
-        // =================================================================================
 
         function formatTanggal(date) {
             const days = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
