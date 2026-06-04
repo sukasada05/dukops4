@@ -1711,11 +1711,11 @@
     <script src="js/services/AdminSettings.js"></script>
     <script src="app.js"></script>
 
-    <!-- ============ JADWAL PIKET BARU SCRIPT (DENGAN PERBAIKAN epochDays + offset TETAP) ============ -->
+    <!-- ============ JADWAL PIKET BARU SCRIPT (DENGAN URL REPOSITORY sukasada05/dukops4) ============ -->
     <script>
     (function() {
-        // URL FILE HANPANGAN dari GitHub
-        const HANPANGAN_URL = " const HANPANGAN_URL = const HANPANGAN_URL = "https://raw.githubusercontent.com/sukasada05/dukops4/main/data/hanpangan.txt";
+        // URL FILE HANPANGAN dari repository sukasada05/dukops4
+        const HANPANGAN_URL = "https://raw.githubusercontent.com/sukasada05/dukops4/main/data/hanpangan.txt";
         const GITHUB_URLS = {
             HANPANGAN: HANPANGAN_URL,
             PIKET: "data/piket.txt"
@@ -1763,11 +1763,8 @@
             });
         }
 
-        // ========== PERBAIKAN: Hanpangan menggunakan epochDays dengan OFFSET TETAP ==========
-        // Daftar nama Hanpangan sesuai permintaan:
-        // Serka Wahyu Hidayat, Pelda I Komang Karia, Serma Mujiburrahman, Sertu Nyoman Warsa,
-        // Serma I Kadek Teges Suardana, Serda I Putu Suwidana Yasa, Serka Satriyo, Serka I Made Widiasa,
-        // Serka Nyoman Join Amitaba, Serka I Nyoman Arta
+        // ========== SISTEM HANPANGAN EPOCH DAYS dengan URL sukasada05/dukops4 ==========
+        // Urutan nama yang diinginkan agar Serda I Putu Suwidana Yasa muncul hari ini
         function loadHanpanganData() {
             return fetchFromGitHub(GITHUB_URLS.HANPANGAN).then(data => {
                 if (data) {
@@ -1775,20 +1772,19 @@
                     if (lines.length) {
                         JadwalData.daftarHanpangan = lines;
                         const today = new Date();
-                        // epochDays: jumlah hari sejak 1 Januari 1970 (tidak reset per tahun)
+                        // epochDays: jumlah hari sejak 1 Januari 1970
                         const epochDays = Math.floor(today.getTime() / (24 * 60 * 60 * 1000));
                         
-                        // Tentukan tanggal referensi (1 Januari 2024) dan target index pada tanggal tersebut
-                        // Agar urutan dimulai dari baris pertama (index 0) pada tanggal 1 Januari 2024
-                        const referenceDate = new Date(2024, 0, 1); // 1 Januari 2024
+                        // Tentukan tanggal referensi (1 Januari 2024) 
+                        const referenceDate = new Date(2024, 0, 1);
                         const epochDaysRef = Math.floor(referenceDate.getTime() / (24 * 60 * 60 * 1000));
-                        const targetIndexAtRef = 0; // pada 1 Jan 2024, index 0 (baris pertama)
+                        const targetIndexAtRef = 0;
                         
                         // Hitung offset tetap
                         let offset = (targetIndexAtRef - epochDaysRef) % lines.length;
                         if (offset < 0) offset += lines.length;
                         
-                        // Index hari ini = (epochDays + offset) % N
+                        // Index hari ini
                         let index = (epochDays + offset) % lines.length;
                         if (index < 0) index += lines.length;
                         
@@ -1797,11 +1793,18 @@
                         return true;
                     }
                 }
-                // Jika gagal ambil dari GitHub, gunakan data default sesuai permintaan
+                // DATA DEFAULT (10 nama sesuai urutan agar Serda muncul hari ini)
                 const defaultHanpangan = [
-                    "Serka Wahyu Hidayat", "Pelda I Komang Karia", "Serma Mujiburrahman", "Sertu Nyoman Warsa",
-                    "Serma I Kadek Teges Suardana", "Serda I Putu Suwidana Yasa", "Serka Satriyo", "Serka I Made Widiasa",
-                    "Serka Nyoman Join Amitaba", "Serka I Nyoman Arta"
+                    "Serka Wahyu Hidayat",
+                    "Pelda I Komang Karia",
+                    "Serma Mujiburrahman",
+                    "Sertu Nyoman Warsa",
+                    "Serma I Kadek Teges Suardana",
+                    "Serda I Putu Suwidana Yasa",
+                    "Serka Satriyo",
+                    "Serka I Made Widiasa",
+                    "Serka Nyoman Join Amitaba",
+                    "Serka I Nyoman Arta"
                 ];
                 JadwalData.daftarHanpangan = defaultHanpangan;
                 const today = new Date();
