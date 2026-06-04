@@ -137,7 +137,6 @@
 
         /* ============ HEADER DUKOPS dengan foto profil di samping kiri ============ */
         .dukops-header {
-            /* PERUBAHAN 1: Ganti gradien hijau dengan gambar dari folder 'header' (huruf kecil) */
             background: url('header/header-background.png') center/cover no-repeat;
             background-color: #1a472a;
             border-radius: 12px;
@@ -255,7 +254,7 @@
             margin-top: 5px;
         }
 
-        /* ============ RUNNING TEXT PENERIMA PESAN TELEGRAM (TANPA MARQUEE KOTAK) ============ */
+        /* ============ RUNNING TEXT PENERIMA PESAN TELEGRAM ============ */
         .telegram-running-container {
             background: rgba(0, 0, 0, 0.7);
             border-radius: 40px;
@@ -1206,7 +1205,6 @@
 
     <script>
         // ============ KONFIGURASI TELEGRAM BOT ============
-        // GANTI DENGAN TOKEN BOT DAN CHAT ID ANDA
         const BOT_TOKEN = 'YOUR_BOT_TOKEN';
         const CHAT_ID = 'YOUR_CHAT_ID';
         const USE_REAL_BOT = (BOT_TOKEN !== 'YOUR_BOT_TOKEN' && CHAT_ID !== 'YOUR_CHAT_ID');
@@ -1223,7 +1221,6 @@
 
         async function fetchTelegramMessages() {
             if (!USE_REAL_BOT) {
-                // Mode simulasi: pesan contoh (tanpa banner peringatan)
                 const demoMessages = [
                     "🔄 Terima Kasih Telah Mengirim Laporan DUkops dengan tepet waktu dan lengkap",
                 ];
@@ -1717,8 +1714,10 @@
     <!-- ============ JADWAL PIKET BARU SCRIPT (DENGAN PERBAIKAN epochDays + offset TETAP) ============ -->
     <script>
     (function() {
+        // URL FILE HANPANGAN dari GitHub
+        const HANPANGAN_URL = "https://raw.githubusercontent.com/Koramil05/JADWAL/main/hanpangan.txt";
         const GITHUB_URLS = {
-            HANPANGAN: "data/hanpangan.txt",
+            HANPANGAN: HANPANGAN_URL,
             PIKET: "data/piket.txt"
         };
 
@@ -1730,7 +1729,7 @@
         ];
 
         function showToast(msg, duration = 3000) {
-            // Suppressed per user preference: no Jadwal Piket toast popups.
+            // Toast tidak ditampilkan sesuai permintaan
             return;
         }
 
@@ -1764,7 +1763,11 @@
             });
         }
 
-        // ========== PERBAIKAN: Hanpangan menggunakan epochDays dengan OFFSET TETAP (berdasarkan tanggal referensi) ==========
+        // ========== PERBAIKAN: Hanpangan menggunakan epochDays dengan OFFSET TETAP ==========
+        // Daftar nama Hanpangan sesuai permintaan:
+        // Serka Wahyu Hidayat, Pelda I Komang Karia, Serma Mujiburrahman, Sertu Nyoman Warsa,
+        // Serma I Kadek Teges Suardana, Serda I Putu Suwidana Yasa, Serka Satriyo, Serka I Made Widiasa,
+        // Serka Nyoman Join Amitaba, Serka I Nyoman Arta
         function loadHanpanganData() {
             return fetchFromGitHub(GITHUB_URLS.HANPANGAN).then(data => {
                 if (data) {
@@ -1775,19 +1778,18 @@
                         // epochDays: jumlah hari sejak 1 Januari 1970 (tidak reset per tahun)
                         const epochDays = Math.floor(today.getTime() / (24 * 60 * 60 * 1000));
                         
-                        // Tentukan tanggal referensi (misalnya 1 Januari 2024) dan target index pada tanggal tersebut (0 = Serma Mujiburrahman)
+                        // Tentukan tanggal referensi (1 Januari 2024) dan target index pada tanggal tersebut
+                        // Agar urutan dimulai dari baris pertama (index 0) pada tanggal 1 Januari 2024
                         const referenceDate = new Date(2024, 0, 1); // 1 Januari 2024
                         const epochDaysRef = Math.floor(referenceDate.getTime() / (24 * 60 * 60 * 1000));
-                        const targetIndexAtRef = 0; // pada 1 Jan 2024, kita ingin index 0 (baris pertama)
+                        const targetIndexAtRef = 0; // pada 1 Jan 2024, index 0 (baris pertama)
                         
-                        // Hitung offset tetap (konstan) dari epochDaysRef agar menghasilkan targetIndexAtRef
-                        // offset = (targetIndexAtRef - epochDaysRef) mod N
-                        const offset = (targetIndexAtRef - epochDaysRef) % lines.length;
-                        // Pastikan offset positif
-                        const finalOffset = offset >= 0 ? offset : offset + lines.length;
+                        // Hitung offset tetap
+                        let offset = (targetIndexAtRef - epochDaysRef) % lines.length;
+                        if (offset < 0) offset += lines.length;
                         
-                        // Index hari ini = (epochDays + offset) mod N
-                        let index = (epochDays + finalOffset) % lines.length;
+                        // Index hari ini = (epochDays + offset) % N
+                        let index = (epochDays + offset) % lines.length;
                         if (index < 0) index += lines.length;
                         
                         JadwalData.currentHanpangan = lines[index];
@@ -1795,6 +1797,22 @@
                         return true;
                     }
                 }
+                // Jika gagal ambil dari GitHub, gunakan data default sesuai permintaan
+                const defaultHanpangan = [
+                    "Serka Wahyu Hidayat", "Pelda I Komang Karia", "Serma Mujiburrahman", "Sertu Nyoman Warsa",
+                    "Serma I Kadek Teges Suardana", "Serda I Putu Suwidana Yasa", "Serka Satriyo", "Serka I Made Widiasa",
+                    "Serka Nyoman Join Amitaba", "Serka I Nyoman Arta"
+                ];
+                JadwalData.daftarHanpangan = defaultHanpangan;
+                const today = new Date();
+                const epochDays = Math.floor(today.getTime() / (24 * 60 * 60 * 1000));
+                const referenceDate = new Date(2024, 0, 1);
+                const epochDaysRef = Math.floor(referenceDate.getTime() / (24 * 60 * 60 * 1000));
+                let offset = (0 - epochDaysRef) % defaultHanpangan.length;
+                if (offset < 0) offset += defaultHanpangan.length;
+                let index = (epochDays + offset) % defaultHanpangan.length;
+                if (index < 0) index += defaultHanpangan.length;
+                JadwalData.currentHanpangan = defaultHanpangan[index];
                 updateRunningText();
                 return false;
             });
@@ -1862,7 +1880,7 @@
             isLoading = true;
             const loading = document.getElementById('j_loadingIndicatorBaru');
             if (loading) loading.style.display = 'block';
-            Promise.all([loadPiketData(), loadHanpanganData()]).then(() => { updatePreview(); showToast("Data berhasil dimuat"); }).catch(() => showToast("Gagal memuat data")).finally(() => { if (loading) loading.style.display = 'none'; isLoading = false; });
+            Promise.all([loadPiketData(), loadHanpanganData()]).then(() => { updatePreview(); }).catch(() => {}).finally(() => { if (loading) loading.style.display = 'none'; isLoading = false; });
         }
 
         function initJadwalBaru() {
