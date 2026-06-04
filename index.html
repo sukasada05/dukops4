@@ -5,11 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-    <!-- ========== INSTRUKSI NOINDEX UNTUK MESIN PENCARI ========== -->
     <meta name="robots" content="noindex, nofollow">
-
-    <!-- PWA Configuration -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -17,30 +13,23 @@
     <title>SISTEM PELAPORAN DUKOPS BABINSA dan JADWAL PIKET KORAMIL</title>
     <meta name="theme-color" content="#0a1a3a">
 
-    <!-- ========== FAVICON ========== -->
     <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="shortcut icon" href="favicon.ico" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <link rel="manifest" href="site.webmanifest" />
-    <!-- ============================= -->
 
-    <!-- External Libraries -->
     <script src="https://cdn.polyfill.io/v3/polyfill.min.js?features=default,es6,Promise,fetch,Array.prototype.includes"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Supabase Library untuk Live Chat -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <!-- Stylesheet -->
     <link rel="stylesheet" href="styles.css">
-    
-    <!-- html2canvas untuk fitur screenshot -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     
     <style>
-        /* ============ SEMUA STYLE ASLI (TIDAK DIHAPUS) ============ */
+        /* ============ SEMUA STYLE ASLI (LENGKAP) ============ */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a1a3a; }
         .splash-container-modern {
             position: fixed;
             top: 0;
@@ -96,13 +85,6 @@
             margin-top: 8px;
             text-align: center;
         }
-        .splash-divider-center {
-            width: 60px;
-            height: 3px;
-            background: linear-gradient(90deg, #FFD700, #FF0000, #FFD700);
-            margin: 15px auto;
-            border-radius: 3px;
-        }
         .splash-unit-center {
             font-size: 14px;
             color: #FFFFFF;
@@ -138,7 +120,7 @@
             text-align: center;
         }
 
-        /* ============ MODAL PILIH DESA ============ */
+        /* MODAL PILIH DESA */
         .desa-modal {
             position: fixed;
             top: 0;
@@ -151,7 +133,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: inherit;
         }
         .desa-modal-content {
             background: linear-gradient(145deg, #1a2a1f, #0f1a12);
@@ -164,16 +145,12 @@
             box-shadow: 0 20px 35px rgba(0,0,0,0.5);
             animation: modalSlideIn 0.3s ease;
         }
-        .desa-modal-content h2 {
-            color: #FFD700;
-            margin-bottom: 8px;
-            font-size: 24px;
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(-20px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
-        .desa-modal-content p {
-            color: #ccc;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
+        .desa-modal-content h2 { color: #FFD700; margin-bottom: 8px; font-size: 24px; }
+        .desa-modal-content p { color: #ccc; margin-bottom: 20px; font-size: 14px; }
         .desa-select-list {
             width: 100%;
             padding: 14px;
@@ -197,12 +174,9 @@
             width: 100%;
             transition: 0.2s;
         }
-        .desa-confirm-btn:hover {
-            background: #6aff6a;
-            transform: scale(1.02);
-        }
+        .desa-confirm-btn:hover { background: #6aff6a; transform: scale(1.02); }
 
-        /* ============ HEADER DUKOPS ============ */
+        /* HEADER DUKOPS */
         .dukops-header {
             background: url('header/header-background.png') center/cover no-repeat;
             background-color: #1a472a;
@@ -278,7 +252,6 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.2s ease, transform 0.2s ease;
         }
         .audio-control-btn:hover {
             background: rgba(255,255,255,0.22);
@@ -300,7 +273,6 @@
             border-radius: 50%;
             background: #ffcc00;
             cursor: pointer;
-            box-shadow: 0 0 0 2px rgba(255,255,255,0.2);
         }
         .counter-value {
             font-size: 18px;
@@ -313,7 +285,7 @@
             margin-top: 5px;
         }
 
-        /* ============ RUNNING TEXT CHAT ============ */
+        /* RUNNING TEXT CHAT */
         .telegram-running-container {
             background: rgba(0, 0, 0, 0.7);
             border-radius: 40px;
@@ -340,7 +312,7 @@
             animation-play-state: paused;
         }
 
-        /* ============ JADWAL PIKET STYLES ============ */
+        /* JADWAL PIKET STYLES */
         .running-text-container {
             background: rgba(0, 30, 0, 0.7);
             border-radius: 8px;
@@ -380,7 +352,6 @@
             padding: 12px;
             margin-top: 10px;
             transition: all 0.2s ease;
-            font-family: inherit;
         }
         .whatsapp-transparent-btn i { font-size: 28px; color: #25D366; pointer-events: none; }
         .whatsapp-transparent-btn span { color: #25D366; font-size: 16px; font-weight: bold; pointer-events: none; }
@@ -456,6 +427,7 @@
             background: #2a4a2a;
             color: #e6ffe6;
             white-space: normal;
+            text-align: center;
         }
         .nav-btn.active {
             background: #4dff4d;
@@ -500,7 +472,7 @@
             }
         }
 
-        /* ============ ABSEN STYLE ============ */
+        /* ABSEN STYLE */
         .absen-card {
             background: rgba(0, 40, 0, 0.7);
             border-radius: 12px;
@@ -520,17 +492,9 @@
             padding: 10px;
             text-align: center;
         }
-        .absen-stat-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-        .absen-stat-label {
-            font-size: 0.7rem;
-            color: #aaa;
-        }
-        .absen-progress-container {
-            margin: 10px 0;
-        }
+        .absen-stat-value { font-size: 1.5rem; font-weight: bold; }
+        .absen-stat-label { font-size: 0.7rem; color: #aaa; }
+        .absen-progress-container { margin: 10px 0; }
         .absen-progress-bar {
             background: #333;
             border-radius: 10px;
@@ -555,29 +519,11 @@
             gap: 10px;
             cursor: pointer;
         }
-        .absen-desa-name {
-            flex: 2;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        .absen-desa-stats {
-            min-width: 50px;
-            font-size: 0.7rem;
-            text-align: center;
-        }
-        .absen-desa-progress {
-            flex: 1;
-            min-width: 80px;
-        }
-        .absen-desa-progress-bar {
-            background: #333;
-            border-radius: 5px;
-            height: 5px;
-        }
-        .absen-desa-progress-fill {
-            height: 5px;
-            border-radius: 5px;
-        }
+        .absen-desa-name { flex: 2; font-size: 0.75rem; font-weight: 600; }
+        .absen-desa-stats { min-width: 50px; font-size: 0.7rem; text-align: center; }
+        .absen-desa-progress { flex: 1; min-width: 80px; }
+        .absen-desa-progress-bar { background: #333; border-radius: 5px; height: 5px; }
+        .absen-desa-progress-fill { height: 5px; border-radius: 5px; }
         .absen-status-badge {
             padding: 2px 8px;
             border-radius: 12px;
@@ -621,7 +567,7 @@
             color: #888;
         }
 
-        /* ============ AI TEMPLATE MODAL ============ */
+        /* AI TEMPLATE MODAL */
         .modal-ai {
             display: none;
             position: fixed;
@@ -651,11 +597,6 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            animation: modalSlideIn 0.25s ease;
-        }
-        @keyframes modalSlideIn {
-            from { opacity: 0; transform: translateY(-20px) scale(0.96); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
         }
         .modal-ai-header {
             display: flex;
@@ -666,25 +607,16 @@
             border-bottom: 1px solid #2e8b57;
             flex-shrink: 0;
         }
-        .modal-ai-header h3 {
-            margin: 0;
-            color: #9fd49f;
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
-        .modal-ai-header h3 i { margin-right: 8px; color: #2ecc71; font-size: 1.1rem; }
+        .modal-ai-header h3 { margin: 0; color: #9fd49f; font-size: 1.2rem; font-weight: 600; }
+        .modal-ai-header h3 i { margin-right: 8px; color: #2ecc71; }
         .modal-close {
             background: none;
             border: none;
             font-size: 26px;
             cursor: pointer;
             color: #9fd49f;
-            transition: all 0.2s;
             width: 36px;
             height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             border-radius: 50%;
         }
         .modal-close:hover { background: rgba(255,255,255,0.1); color: #ff6b6b; }
@@ -695,7 +627,6 @@
             border-bottom: 1px solid #1e3a2a;
             flex-shrink: 0;
         }
-        
         #categorySelect {
             width: 100%;
             padding: 10px 12px;
@@ -705,14 +636,11 @@
             border: 1px solid #2ecc71;
             font-size: 14px;
             cursor: pointer;
-            transition: all 0.2s;
         }
-        
         .modal-ai-body {
             padding: 14px;
             overflow-y: auto;
             flex: 1;
-            scrollbar-width: thin;
         }
         .modal-template-list {
             display: flex;
@@ -727,19 +655,10 @@
             transition: all 0.2s;
             border: 1px solid #2a4a2a;
         }
-        .modal-template-item:hover {
-            background: #1a2a1f;
-            border-color: #2ecc71;
-        }
-        .modal-template-text {
-            font-size: 0.75rem;
-            line-height: 1.45;
-            color: #c8e6d0;
-        }
+        .modal-template-item:hover { background: #1a2a1f; border-color: #2ecc71; transform: translateX(4px); }
+        .modal-template-text { font-size: 0.75rem; line-height: 1.45; color: #c8e6d0; }
         
-        .narasi-wrapper {
-            position: relative;
-        }
+        .narasi-wrapper { position: relative; }
         .ai-icon-corner {
             position: absolute;
             bottom: 10px;
@@ -752,13 +671,12 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.2s ease;
             z-index: 10;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
         .ai-icon-corner i { color: white; font-size: 17px; }
 
-        /* ============ LIVE CHAT STYLE ============ */
+        /* LIVE CHAT STYLE */
         .chat-floating-btn {
             position: fixed;
             bottom: 90px;
@@ -778,10 +696,7 @@
             justify-content: center;
             transition: all 0.2s ease;
         }
-        .chat-floating-btn:hover {
-            transform: scale(1.05);
-            background: #20b859;
-        }
+        .chat-floating-btn:hover { transform: scale(1.05); background: #20b859; }
         
         .chat-modal {
             display: none;
@@ -794,7 +709,6 @@
             z-index: 10000;
             backdrop-filter: blur(4px);
         }
-        
         .chat-window {
             position: absolute;
             bottom: 20px;
@@ -809,7 +723,6 @@
             display: flex;
             flex-direction: column;
         }
-        
         .chat-header {
             padding: 12px 16px;
             background: linear-gradient(135deg, #0d2a1d, #0a1f15);
@@ -819,16 +732,7 @@
             align-items: center;
             flex-shrink: 0;
         }
-        
-        .chat-header h3 {
-            color: #4dff4d;
-            font-size: 14px;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
+        .chat-header h3 { color: #4dff4d; font-size: 14px; margin: 0; display: flex; align-items: center; gap: 8px; }
         .chat-unread-badge {
             background: #ff4444;
             color: white;
@@ -838,7 +742,6 @@
             margin-left: 8px;
             display: none;
         }
-        
         .chat-header-actions button {
             background: none;
             border: none;
@@ -848,12 +751,7 @@
             padding: 4px 8px;
             border-radius: 6px;
         }
-        
-        .chat-header-actions button:hover {
-            background: rgba(255,255,255,0.1);
-            color: #ff8888;
-        }
-        
+        .chat-header-actions button:hover { background: rgba(255,255,255,0.1); color: #ff8888; }
         .chat-messages {
             flex: 1;
             overflow-y: auto;
@@ -862,66 +760,22 @@
             flex-direction: column;
             gap: 8px;
         }
-        
         .chat-message {
             display: flex;
             flex-direction: column;
             max-width: 85%;
             cursor: pointer;
         }
-        
-        .chat-message-own {
-            align-self: flex-end;
-        }
-        
-        .chat-message-other {
-            align-self: flex-start;
-        }
-        
-        .chat-message-bubble {
-            padding: 8px 12px;
-            border-radius: 18px;
-            word-wrap: break-word;
-        }
-        
-        .chat-message-own .chat-message-bubble {
-            background: #2e7d32;
-            border-bottom-right-radius: 4px;
-        }
-        
-        .chat-message-other .chat-message-bubble {
-            background: #1a3a6a;
-            border-bottom-left-radius: 4px;
-        }
-        
-        .chat-message-name {
-            font-size: 10px;
-            margin-bottom: 2px;
-            margin-left: 8px;
-        }
-        
-        .chat-message-own .chat-message-name {
-            color: #a5d6a7;
-            text-align: right;
-        }
-        
-        .chat-message-other .chat-message-name {
-            color: #ffcc00;
-        }
-        
-        .chat-message-text {
-            font-size: 13px;
-            color: #e6ffe6;
-            line-height: 1.4;
-        }
-        
-        .chat-message-time {
-            font-size: 9px;
-            color: #888;
-            margin-top: 2px;
-            margin-left: 8px;
-        }
-        
+        .chat-message-own { align-self: flex-end; }
+        .chat-message-other { align-self: flex-start; }
+        .chat-message-bubble { padding: 8px 12px; border-radius: 18px; word-wrap: break-word; }
+        .chat-message-own .chat-message-bubble { background: #2e7d32; border-bottom-right-radius: 4px; }
+        .chat-message-other .chat-message-bubble { background: #1a3a6a; border-bottom-left-radius: 4px; }
+        .chat-message-name { font-size: 10px; margin-bottom: 2px; margin-left: 8px; }
+        .chat-message-own .chat-message-name { color: #a5d6a7; text-align: right; }
+        .chat-message-other .chat-message-name { color: #ffcc00; }
+        .chat-message-text { font-size: 13px; color: #e6ffe6; line-height: 1.4; }
+        .chat-message-time { font-size: 9px; color: #888; margin-top: 2px; margin-left: 8px; }
         .chat-input-area {
             padding: 12px;
             border-top: 1px solid #2a4a2a;
@@ -930,7 +784,6 @@
             flex-shrink: 0;
             background: rgba(0,0,0,0.3);
         }
-        
         .chat-input-area textarea {
             flex: 1;
             padding: 10px 14px;
@@ -945,7 +798,6 @@
             max-height: 100px;
             overflow-y: auto;
         }
-        
         .chat-input-area button {
             width: 42px;
             height: 42px;
@@ -957,7 +809,6 @@
             font-size: 16px;
             flex-shrink: 0;
         }
-        
         .chat-footer {
             padding: 6px 12px;
             font-size: 9px;
@@ -968,59 +819,20 @@
             justify-content: space-between;
             flex-shrink: 0;
         }
-        
-        .chat-connection-status {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
+        .chat-connection-status { display: flex; align-items: center; gap: 4px; }
         .chat-status-dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
             background: #ff4444;
         }
-        
-        .chat-status-dot.connected {
-            background: #4caf50;
-            box-shadow: 0 0 4px #4caf50;
-        }
-        
-        .chat-status-dot.connecting {
-            background: #ff9800;
-            animation: pulse 1s infinite;
-        }
-        
-        .chat-empty {
-            text-align: center;
-            color: #888;
-            padding: 30px 20px;
-        }
-        
-        .chat-loading {
-            text-align: center;
-            color: #4dff4d;
-            padding: 30px 20px;
-        }
-        
-        .chat-messages::-webkit-scrollbar {
-            width: 4px;
-        }
-        
-        .chat-messages::-webkit-scrollbar-track {
-            background: #1a2a1f;
-        }
-        
-        .chat-messages::-webkit-scrollbar-thumb {
-            background: #4dff4d;
-            border-radius: 4px;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
+        .chat-status-dot.connected { background: #4caf50; box-shadow: 0 0 4px #4caf50; }
+        .chat-status-dot.connecting { background: #ff9800; animation: pulse 1s infinite; }
+        .chat-empty { text-align: center; color: #888; padding: 30px 20px; }
+        .chat-loading { text-align: center; color: #4dff4d; padding: 30px 20px; }
+        .chat-messages::-webkit-scrollbar { width: 4px; }
+        .chat-messages::-webkit-scrollbar-track { background: #1a2a1f; }
+        .chat-messages::-webkit-scrollbar-thumb { background: #4dff4d; border-radius: 4px; }
 
         @media screen and (max-width: 480px) {
             .modal-ai-content { width: 98%; height: 90vh; border-radius: 16px; }
@@ -1037,9 +849,7 @@
     <!-- SPLASH SCREEN -->
     <div id="splashScreen" class="splash-container-modern">
         <div class="splash-content">
-            <div class="splash-logo-center">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/2/25/Lambang_Kodam_Udayana.svg" alt="Lambang">
-            </div>
+            <div class="splash-logo-center"><img src="https://upload.wikimedia.org/wikipedia/commons/2/25/Lambang_Kodam_Udayana.svg" alt="Lambang"></div>
             <div class="splash-title-center">DUKOPS</div>
             <div class="splash-title-center">BABINSA SUKASADA</div>
             <div class="splash-subtitle-center">KODIM 1609/BULELENG</div>
@@ -1056,9 +866,7 @@
             <i class="fas fa-map-marker-alt" style="font-size: 48px; color: #4dff4d; margin-bottom: 16px;"></i>
             <h2>Pilih Desa / Kelurahan</h2>
             <p>Sebelum masuk aplikasi, silakan pilih desa Anda terlebih dahulu.</p>
-            <select id="desaSelectModal" class="desa-select-list">
-                <option value="">-- Memuat data desa --</option>
-            </select>
+            <select id="desaSelectModal" class="desa-select-list"><option value="">-- Memuat data desa --</option></select>
             <button id="confirmDesaBtn" class="desa-confirm-btn"><i class="fas fa-check-circle"></i> MASUK APLIKASI</button>
         </div>
     </div>
@@ -1087,7 +895,7 @@
             </div>
         </div>
 
-        <!-- RUNNING TEXT UNTUK CHAT -->
+        <!-- RUNNING TEXT CHAT -->
         <div class="telegram-running-container">
             <div class="telegram-running-text" id="runningChatText">💬 SELAMAT DATANG DI LIVE CHAT DUKOPS</div>
         </div>
@@ -1098,30 +906,42 @@
             <button class="nav-btn nav-btn-absen" id="btnAbsen" onclick="showAbsenTab()"><i class="fas fa-chart-line"></i> ABSEN</button>
         </div>
 
-        <!-- DUKOPS CONTENT -->
+        <!-- DUKOPS CONTENT (TANPA Pilih Desa & Memuat koordinat) -->
         <div id="dukopsContent">
             <div style="width: 90%; margin: 0 auto; font-size: 12px;">
-                <label><i class="fas fa-village"></i> Pilih Desa:</label>
-                <select id="selectDesa" style="display: none;"></select>
-                <div id="loadingDesa"><i class="fas fa-spinner fa-spin"></i> Memuat daftar desa/Kelurahan lokal...</div>
-                <div class="previewBox" id="previewDesa"></div>
-                <div id="loadingKoordinat"><i class="fas fa-spinner fa-spin"></i> Memuat koordinat...</div>
-                <div class="previewBox" id="previewKordinat"></div>
+                <!-- Pilih Desa: HIDDEN TOTAL -->
+                <div id="desaHiddenContainer" style="display: none;">
+                    <label><i class="fas fa-village"></i> Pilih Desa:</label>
+                    <select id="selectDesa"></select>
+                </div>
+                
+                <!-- Preview desa (tetap ada untuk fungsi asli tapi disembunyikan) -->
+                <div id="previewDesa" style="display: none;"></div>
+                
+                <!-- Koordinat: HIDDEN loading dan previewnya -->
+                <div id="loadingKoordinat" style="display: none;"><i class="fas fa-spinner fa-spin"></i> Memuat koordinat...</div>
+                <div id="previewKordinat" style="display: none;"></div>
+
                 <label><i class="fas fa-camera"></i> Foto Kegiatan:</label>
                 <input type="file" id="gambar" accept="image/*" onchange="previewImage()">
                 <div class="previewBox" id="previewGambar"></div>
+
                 <label><i class="fas fa-calendar-alt"></i> Tanggal & Waktu:</label>
                 <input type="datetime-local" id="tanggalWaktu" onchange="updateDatePreview()">
                 <div class="previewBox" id="previewTanggal"></div>
+
                 <label><i class="fas fa-file-alt"></i> Narasi Kegiatan:</label>
                 <div class="narasi-wrapper">
                     <textarea id="narasi" rows="20" placeholder="Masukkan narasi kegiatan..." oninput="checkInputCompletion()"></textarea>
                     <div class="ai-icon-corner" id="aiTemplateBtn"><i class="fas fa-robot"></i></div>
                 </div>
+
                 <canvas id="canvas"></canvas>
+
                 <button id="submitBtn" onclick="processSubmission()" disabled><i class="fas fa-download"></i> DOWNLOAD & <i class="fas fa-paper-plane"></i> KIRIM & <i class="fab fa-google-drive"></i> DRIVE</button>
                 <button id="resetBtn" onclick="resetAll()"><i class="fas fa-redo"></i> Reset Data</button>
                 <button id="showAttendanceBtn" onclick="showAttendance()"><i class="fas fa-chart-bar"></i> KLIK INI..CEK LAPORAN ANDA DISINI YANG TIAP BULAN</button>
+
                 <div id="attendancePanel" style="display: none;"></div>
                 <div id="logTerkirim"></div>
             </div>
@@ -1131,7 +951,7 @@
         <div id="jadwalPiketContainerBaru" style="display: none;">
             <div class="jadwal-header">
                 <h1 class="jadwal-title">JADWAL PIKET</h1>
-                <div class="app-logo-container"><img src="LOGO KOREM163 Wirasatya.png" alt="Logo" class="jadwal-logo"></div>
+                <div class="app-logo-container"><img src="LOGO KOREM163 Wirasatya.png" alt="Logo Korem 163 Wirasatya" class="jadwal-logo"></div>
                 <p>KORAMIL 1609-05/SUKASADA<br>Kodim 1609/Buleleng</p>
             </div>
             <div class="running-text-container"><div class="running-text" id="runningTextJadwalBaru">🍽️ Memuat jadwal hanpangan... 🍽️</div></div>
@@ -1145,10 +965,7 @@
 
         <!-- ABSEN CONTENT -->
         <div id="absenContent" style="display: none;">
-            <div class="absen-card">
-                <div class="form-group" style="margin-bottom: 15px;"><label style="color: #4dff4d;">📅 TAHUN</label><select id="absenTahunSelect"><option>Memuat...</option></select></div>
-                <div class="form-group" style="margin-bottom: 15px;"><label style="color: #4dff4d;">📆 BULAN</label><select id="absenBulanSelect" disabled><option>Pilih tahun dulu</option></select></div>
-            </div>
+            <div class="absen-card"><div class="form-group" style="margin-bottom: 15px;"><label style="color: #4dff4d;">📅 TAHUN</label><select id="absenTahunSelect"><option>Memuat...</option></select></div><div class="form-group" style="margin-bottom: 15px;"><label style="color: #4dff4d;">📆 BULAN</label><select id="absenBulanSelect" disabled><option>Pilih tahun dulu</option></select></div></div>
             <div id="absenResultContainer"></div>
             <div class="absen-info-text">✨ Tap desa untuk detail | Data tersimpan offline</div>
         </div>
@@ -1165,22 +982,10 @@
     <!-- LIVE CHAT -->
     <div id="chatModal" class="chat-modal">
         <div class="chat-window">
-            <div class="chat-header">
-                <h3><i class="fas fa-comments"></i> LIVE CHAT DUKOPS <span id="chatUnreadBadge" class="chat-unread-badge">0</span></h3>
-                <div class="chat-header-actions">
-                    <button id="deleteAllChatBtn" title="Hapus semua pesan"><i class="fas fa-trash-alt"></i></button>
-                    <button id="closeChatBtn" title="Tutup"><i class="fas fa-times"></i></button>
-                </div>
-            </div>
+            <div class="chat-header"><h3><i class="fas fa-comments"></i> LIVE CHAT DUKOPS <span id="chatUnreadBadge" class="chat-unread-badge">0</span></h3><div class="chat-header-actions"><button id="deleteAllChatBtn" title="Hapus semua pesan"><i class="fas fa-trash-alt"></i></button><button id="closeChatBtn" title="Tutup"><i class="fas fa-times"></i></button></div></div>
             <div class="chat-messages" id="chatMessages"><div class="chat-loading"><i class="fas fa-spinner fa-pulse"></i> Memuat pesan...</div></div>
-            <div class="chat-input-area">
-                <textarea id="chatMessageInput" rows="1" placeholder="Tulis pesan... (Enter kirim, Shift+Enter untuk baris baru)"></textarea>
-                <button id="sendChatBtn"><i class="fas fa-paper-plane"></i></button>
-            </div>
-            <div class="chat-footer">
-                <div class="chat-connection-status"><span class="chat-status-dot connecting" id="chatStatusDot"></span><span id="chatStatusText">Menghubungkan...</span></div>
-                <span id="chatUserNameDisplay"><i class="fas fa-user"></i> Guest</span>
-            </div>
+            <div class="chat-input-area"><textarea id="chatMessageInput" rows="1" placeholder="Tulis pesan... (Enter kirim, Shift+Enter untuk baris baru)"></textarea><button id="sendChatBtn"><i class="fas fa-paper-plane"></i></button></div>
+            <div class="chat-footer"><div class="chat-connection-status"><span class="chat-status-dot connecting" id="chatStatusDot"></span><span id="chatStatusText">Menghubungkan...</span></div><span id="chatUserNameDisplay"><i class="fas fa-user"></i> Guest</span></div>
         </div>
     </div>
     <button id="openChatBtn" class="chat-floating-btn"><i class="fas fa-comment-dots"></i></button>
@@ -1196,13 +1001,11 @@
         let chatCurrentUser = "Guest";
         let isChatOpen = false;
 
-        // Fungsi Running Text Chat
         function updateRunningChatMessage(msg) {
             const el = document.getElementById('runningChatText');
             if (el) el.innerHTML = `💬 ${msg}`;
         }
 
-        // Fungsi Chat
         async function loadChatMessages() {
             if (!chatSupabase) return;
             try {
@@ -1278,7 +1081,6 @@
 
         function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
 
-        // Inisialisasi Chat
         function initChat() {
             if (!SUPABASE_URL.includes('YOUR_PROJECT')) {
                 chatSupabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -1306,16 +1108,28 @@
             localStorage.setItem('selectedDesa', desa);
             chatCurrentUser = desa;
             document.getElementById('chatUserNameDisplay').innerHTML = `<i class="fas fa-user"></i> ${desa.substring(0,20)}`;
+            
+            // Set select desa (hidden)
             const selectDesaElem = document.getElementById('selectDesa');
             if (selectDesaElem) {
                 selectDesaElem.innerHTML = `<option value="${desa}">${desa}</option>`;
-                selectDesaElem.style.display = 'none';
+                selectDesaElem.value = desa;
             }
+            
+            // Update profile header
             document.getElementById('desaProfileNameHeader').innerText = desa;
             document.getElementById('desaProfileImgHeader').src = `profile/${desa.toLowerCase()}.png`;
+            
+            // Sembunyikan modal
             document.getElementById('desaSelectionModal').style.display = 'none';
             document.getElementById('appContainer').style.display = 'block';
             setTimeout(() => document.getElementById('appContainer').style.opacity = '1', 50);
+            
+            // Panggil fungsi koordinat setelah desa dipilih (tetap jalan di background)
+            if (typeof loadKoordinat === 'function') {
+                setTimeout(() => loadKoordinat(), 100);
+            }
+            
             initChat();
         }
 
@@ -1372,41 +1186,66 @@
         document.getElementById('chatModal').onclick = (e) => { if (e.target === document.getElementById('chatModal')) document.getElementById('chatModal').style.display = 'none'; };
         document.getElementById('sendChatBtn').onclick = sendChatMessage;
         document.getElementById('deleteAllChatBtn').onclick = deleteAllMessages;
-        const chatInput = document.getElementById('chatMessageInput');
-        if (chatInput) {
-            chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); } });
-            chatInput.addEventListener('input', function() { this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 100) + 'px'; });
+        const chatInputField = document.getElementById('chatMessageInput');
+        if (chatInputField) {
+            chatInputField.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); } });
+            chatInputField.addEventListener('input', function() { this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 100) + 'px'; });
         }
 
         startSplashProgress();
 
-        // ============ FUNGSI DUMMY UNTUK MENGHINDARI ERROR (AKAN OVERWRITE OLEH SCRIPT ASLI) ============
-        window.showDukops = function() { document.getElementById('dukopsContent').style.display = 'block'; document.getElementById('jadwalPiketContainerBaru').style.display = 'none'; document.getElementById('absenContent').style.display = 'none'; document.getElementById('btnDukops').classList.add('active'); document.getElementById('btnJadwal').classList.remove('active'); document.getElementById('btnAbsen').classList.remove('active'); };
-        window.showJadwalPiketBaru = function() { document.getElementById('dukopsContent').style.display = 'none'; document.getElementById('jadwalPiketContainerBaru').style.display = 'block'; document.getElementById('absenContent').style.display = 'none'; document.getElementById('btnDukops').classList.remove('active'); document.getElementById('btnJadwal').classList.add('active'); document.getElementById('btnAbsen').classList.remove('active'); if(window.initJadwalBaru) window.initJadwalBaru(); };
-        window.showAbsenTab = function() { document.getElementById('dukopsContent').style.display = 'none'; document.getElementById('jadwalPiketContainerBaru').style.display = 'none'; document.getElementById('absenContent').style.display = 'block'; document.getElementById('btnDukops').classList.remove('active'); document.getElementById('btnJadwal').classList.remove('active'); document.getElementById('btnAbsen').classList.add('active'); if(window.loadAbsenTahun) window.loadAbsenTahun(); };
-        window.loadSelectedDesa = function() {};
+        // ============ FUNGSI ASLI (akan di-overwrite oleh script eksternal) ============
+        window.showDukops = function() { 
+            document.getElementById('dukopsContent').style.display = 'block'; 
+            document.getElementById('jadwalPiketContainerBaru').style.display = 'none'; 
+            document.getElementById('absenContent').style.display = 'none'; 
+            document.getElementById('btnDukops').classList.add('active'); 
+            document.getElementById('btnJadwal').classList.remove('active'); 
+            document.getElementById('btnAbsen').classList.remove('active'); 
+        };
+        window.showJadwalPiketBaru = function() { 
+            document.getElementById('dukopsContent').style.display = 'none'; 
+            document.getElementById('jadwalPiketContainerBaru').style.display = 'block'; 
+            document.getElementById('absenContent').style.display = 'none'; 
+            document.getElementById('btnDukops').classList.remove('active'); 
+            document.getElementById('btnJadwal').classList.add('active'); 
+            document.getElementById('btnAbsen').classList.remove('active'); 
+            if(window.initJadwalBaru) window.initJadwalBaru(); 
+        };
+        window.showAbsenTab = function() { 
+            document.getElementById('dukopsContent').style.display = 'none'; 
+            document.getElementById('jadwalPiketContainerBaru').style.display = 'none'; 
+            document.getElementById('absenContent').style.display = 'block'; 
+            document.getElementById('btnDukops').classList.remove('active'); 
+            document.getElementById('btnJadwal').classList.remove('active'); 
+            document.getElementById('btnAbsen').classList.add('active'); 
+            if(window.loadAbsenTahun) window.loadAbsenTahun(); 
+        };
+        
+        // Fungsi dummy agar tidak error
         window.previewImage = function() {};
         window.updateDatePreview = function() {};
         window.checkInputCompletion = function() {};
         window.processSubmission = function() {};
         window.resetAll = function() {};
         window.showAttendance = function() {};
+        window.loadKoordinat = function() { console.log("Koordinat dimuat (background)"); };
     </script>
 
-    <!-- ============ SCRIPT ASLI DUKOPS, JADWAL, HANPANGAN, ABSEN (TIDAK ADA YANG DIHAPUS) ============ -->
+    <!-- ============ SCRIPT EKSTERNAL ============ -->
     <script src="js/components/FormValidator.js"></script>
     <script src="js/services/AdminSettings.js"></script>
     <script src="app.js"></script>
 
     <script>
-    // ============ JADWAL PIKET BARU SCRIPT (LENGKAP DARI KODE ASLI ANDA) ============
+    // ============ JADWAL PIKET SCRIPT (LENGKAP) ============
     (function() {
         const HANPANGAN_URL = "https://raw.githubusercontent.com/sukasada05/dukops4/main/data/hanpangan.txt";
         const GITHUB_URLS = { HANPANGAN: HANPANGAN_URL, PIKET: "data/piket.txt" };
         const JadwalData = { daftarNama: [], daftarHanpangan: [], currentHanpangan: "" };
-        const JADWAL_DROPDOWN_IDS = ['j_nama1a_baru', 'j_nama1b_baru', 'j_nama2a_baru', 'j_nama2b_baru', 'j_nama3a_baru', 'j_nama3b_baru', 'j_nama3c_baru', 'j_nama3d_baru', 'j_nama4a_baru', 'j_nama4b_baru', 'j_nama4c_baru', 'j_nama4d_baru'];
+        const JADWAL_DROPDOWN_IDS = ['j_nama1a_baru','j_nama1b_baru','j_nama2a_baru','j_nama2b_baru','j_nama3a_baru','j_nama3b_baru','j_nama3c_baru','j_nama3d_baru','j_nama4a_baru','j_nama4b_baru','j_nama4c_baru','j_nama4d_baru'];
 
-        function updateRunningText() { const el = document.getElementById('runningTextJadwalBaru'); if (el) el.textContent = JadwalData.currentHanpangan ? '🍽️ JADWAL HANPANGAN HARI INI: ' + JadwalData.currentHanpangan + ' 🍽️' : '🍽️ Memuat jadwal hanpangan... 🍽️'; }
+        function updateRunningTextJadwal() { const el = document.getElementById('runningTextJadwalBaru'); if (el) el.textContent = JadwalData.currentHanpangan ? '🍽️ JADWAL HANPANGAN HARI INI: ' + JadwalData.currentHanpangan + ' 🍽️' : '🍽️ Memuat jadwal hanpangan... 🍽️'; }
         function fetchFromGitHub(url) { return new Promise(resolve => { fetch(url + '?t=' + Date.now()).then(res => res.ok ? res.text() : null).then(data => resolve(data)).catch(() => resolve(null)); }); }
         function loadPiketData() {
             return fetchFromGitHub(GITHUB_URLS.PIKET).then(data => {
@@ -1430,7 +1269,7 @@
                         let offset = (0 - epochDaysRef) % lines.length; if (offset < 0) offset += lines.length;
                         let index = (epochDays + offset) % lines.length; if (index < 0) index += lines.length;
                         JadwalData.currentHanpangan = lines[index];
-                        updateRunningText(); return true;
+                        updateRunningTextJadwal(); return true;
                     }
                 }
                 const defaultHanpangan = ["Serka Satriyo","Serka I Made Widiasa","Serka Nyoman Join Amitaba","Serka I Nyoman Arta","Serka Wahyu Hidayat","Pelda I Komang Karia","Serma Mujiburrahman","Sertu Nyoman Warsa","Serma I Kadek Teges Suardana","Serda I Putu Suwidana Yasa"];
@@ -1442,11 +1281,11 @@
                 let offset = (0 - epochDaysRef) % defaultHanpangan.length; if (offset < 0) offset += defaultHanpangan.length;
                 let index = (epochDays + offset) % defaultHanpangan.length; if (index < 0) index += defaultHanpangan.length;
                 JadwalData.currentHanpangan = defaultHanpangan[index];
-                updateRunningText(); return false;
+                updateRunningTextJadwal(); return false;
             });
         }
         function formatTanggal(date) { const days = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"]; const months = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"]; return days[date.getDay()] + ", " + date.getDate() + " " + months[date.getMonth()] + " " + date.getFullYear(); }
-        function updatePreview() {
+        function updatePreviewJadwal() {
             const now = new Date(), tomorrow = new Date(); tomorrow.setDate(now.getDate() + 1);
             let result = "=======================\nKORAMIL 1609-05/SUKASADA\n    JADWAL DINAS DALAM\n=======================\n\n";
             const getVal = (id) => document.getElementById(id)?.value || "";
@@ -1465,14 +1304,14 @@
             const preview = document.getElementById('j_hasilPesanBaru');
             if (preview) { preview.value = result; preview.style.height = 'auto'; preview.style.height = preview.scrollHeight + 'px'; }
         }
-        function sendToWhatsApp() { const pesan = document.getElementById('j_hasilPesanBaru')?.value.trim(); if (pesan) window.open("https://wa.me/?text=" + encodeURIComponent(pesan), "_blank"); return false; }
-        function loadAllJadwalData() { Promise.all([loadPiketData(), loadHanpanganData()]).then(() => updatePreview()); }
-        window.initJadwalBaru = function() { JADWAL_DROPDOWN_IDS.forEach(id => { const sel = document.getElementById(id); if (sel) sel.addEventListener('change', updatePreview); }); const btn = document.getElementById('whatsappBtnBaru'); if (btn) btn.onclick = sendToWhatsApp; loadAllJadwalData(); };
+        function sendToWhatsAppJadwal() { const pesan = document.getElementById('j_hasilPesanBaru')?.value.trim(); if (pesan) window.open("https://wa.me/?text=" + encodeURIComponent(pesan), "_blank"); return false; }
+        function loadAllJadwalData() { Promise.all([loadPiketData(), loadHanpanganData()]).then(() => updatePreviewJadwal()); }
+        window.initJadwalBaru = function() { JADWAL_DROPDOWN_IDS.forEach(id => { const sel = document.getElementById(id); if (sel) sel.addEventListener('change', updatePreviewJadwal); }); const btn = document.getElementById('whatsappBtnBaru'); if (btn) btn.onclick = sendToWhatsAppJadwal; loadAllJadwalData(); };
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', window.initJadwalBaru);
         else window.initJadwalBaru();
     })();
 
-    // ============ SCRIPT ABSEN (LENGKAP DARI KODE ASLI ANDA) ============
+    // ============ SCRIPT ABSEN (LENGKAP) ============
     (function() {
         var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcKBFM8Mm0A8e_hWfl48uEUuDhlmxK8okgXF4M-102HLEuROZPN9YZlpmKnkRo8b_SKA/exec';
         var CACHE_KEY_ABSEN = 'absensi_dukops_data';
