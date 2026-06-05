@@ -23,6 +23,56 @@
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     
     <style>
+        /* ============ COVER IMAGE DI PALING BELAKANG ============ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        /* Background cover image */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('cover/cover.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            z-index: -2;
+        }
+        
+        /* Fallback PNG */
+        body::before {
+            background-image: url('cover/cover.png');
+        }
+        
+        /* Overlay gelap agar teks terbaca */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 26, 58, 0.85);
+            z-index: -1;
+        }
+        
+        /* Jika tidak ada cover image, background default */
+        body {
+            background-color: #0a1a3a;
+        }
+
         /* ============ SPLASH SCREEN ============ */
         .splash-container-modern {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -47,10 +97,10 @@
         .splash-btn-masuk:disabled { opacity: 0.5; cursor: not-allowed; }
         .splash-loading-desa { margin-top: 10px; font-size: 11px; color: #ffaa00; }
 
-        /* ============ HEADER ============ */
+        /* ============ HEADER DUKOPS ============ */
         .dukops-header {
-            background: url('header/header-background.png') center/cover no-repeat;
-            background-color: #1a472a;
+            background: rgba(26, 71, 42, 0.9);
+            backdrop-filter: blur(5px);
             border-radius: 12px;
             border: 1px solid rgba(255,255,255,0.2);
             padding: 10px 15px;
@@ -75,15 +125,15 @@
 
         /* ============ NAVIGASI TAB ============ */
         .nav-buttons { display: flex; gap: 10px; margin-bottom: 20px; }
-        .nav-btn { flex: 1; padding: 10px 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; background: #2a4a2a; color: #e6ffe6; text-align: center; }
+        .nav-btn { flex: 1; padding: 10px 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; background: rgba(42, 74, 42, 0.9); backdrop-filter: blur(3px); color: #e6ffe6; text-align: center; }
         .nav-btn.active { background: #4dff4d; color: #003300; }
 
         /* ============ DUKOPS FORM ============ */
         .dukops-form-container { width: 90%; max-width: 500px; margin: 0 auto; font-size: 14px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; color: #4dff4d; font-weight: bold; }
-        select, input, textarea { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #4dff4d; background: #1a2a1f; color: #e6ffe6; font-size: 14px; outline: none; }
-        canvas { width: 100%; background: #0f1a12; border-radius: 10px; margin-bottom: 15px; border: 1px solid #4dff4d; display: none; }
+        select, input, textarea { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #4dff4d; background: rgba(26, 42, 31, 0.9); color: #e6ffe6; font-size: 14px; outline: none; }
+        canvas { width: 100%; background: rgba(15, 26, 18, 0.9); border-radius: 10px; margin-bottom: 15px; border: 1px solid #4dff4d; display: none; }
         .btn-submit { background: #2a4a2a; color: #ccc; width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
         .btn-reset { background: #4a2a2a; color: #ffaaaa; width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
         .btn-attendance { background: #1a3a6a; color: #ffcc00; width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
@@ -226,7 +276,7 @@
             <button class="nav-btn" id="btnAbsen" onclick="showAbsenTab()"><i class="fas fa-chart-line"></i> ABSEN</button>
         </div>
 
-        <!-- DUKOPS CONTENT (Pilih Desa & Koordinat DISEMBUNYIKAN) -->
+        <!-- DUKOPS CONTENT -->
         <div id="dukopsContent">
             <div class="dukops-form-container">
                 <!-- Pilih Desa - HIDDEN -->
@@ -404,7 +454,7 @@
             return '-8.1155°, 115.0885°';
         }
 
-        // ============ UPDATE CANVAS (SATU, TANPA DOUBLE) ============
+        // ============ UPDATE CANVAS ============
         async function updateCanvasWithKoordinat(desa) {
             const canvas = document.getElementById('canvas');
             if (!canvas) return;
@@ -417,35 +467,29 @@
             canvas.height = 160;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Background
             ctx.fillStyle = '#0f1a12';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Border
             ctx.strokeStyle = '#4dff4d';
             ctx.lineWidth = 1;
             ctx.strokeRect(2, 2, canvas.width - 4, canvas.height - 4);
             
-            // Judul
             ctx.fillStyle = '#ffcc00';
             ctx.font = 'bold 12px Arial';
             ctx.fillText('📋 RINGKASAN KEGIATAN', 10, 20);
             
-            // Garis pemisah
             ctx.strokeStyle = '#4dff4d';
             ctx.beginPath();
             ctx.moveTo(10, 28);
             ctx.lineTo(canvas.width - 10, 28);
             ctx.stroke();
             
-            // Informasi desa dan koordinat
             ctx.fillStyle = '#4dff4d';
             ctx.font = '10px Arial';
             ctx.fillText(`📍 Desa: ${desa}`, 10, 45);
             ctx.fillStyle = '#00ccff';
             ctx.fillText(`🗺️ Koordinat: ${koordinat}`, 10, 60);
             
-            // Cek gambar
             const fileInput = document.getElementById('gambar');
             
             if (fileInput && fileInput.files && fileInput.files[0]) {
@@ -463,7 +507,6 @@
                 };
                 reader.readAsDataURL(file);
             } else {
-                // Placeholder
                 ctx.fillStyle = '#2a4a2a';
                 ctx.fillRect(canvas.width - 110, 35, 100, 75);
                 ctx.fillStyle = '#666';
@@ -472,14 +515,12 @@
                 ctx.fillText('Upload foto di atas', canvas.width - 100, 92);
             }
             
-            // Garis pemisah bawah
             ctx.strokeStyle = '#2a4a2a';
             ctx.beginPath();
             ctx.moveTo(10, canvas.height - 15);
             ctx.lineTo(canvas.width - 10, canvas.height - 15);
             ctx.stroke();
             
-            // Timestamp
             const now = new Date();
             ctx.fillStyle = '#666';
             ctx.font = '7px Arial';
@@ -769,14 +810,9 @@
         loadDesaListForSplash();
     </script>
 
-    <!-- LOAD EXTERNAL JS (Optional) -->
+    <!-- LOAD EXTERNAL JS -->
     <script>
-        // Load external scripts if they exist (no error if not found)
-        const scripts = [
-            'js/components/FormValidator.js',
-            'js/services/AdminSettings.js',
-            'app.js'
-        ];
+        const scripts = ['js/components/FormValidator.js', 'js/services/AdminSettings.js', 'app.js'];
         scripts.forEach(src => {
             const script = document.createElement('script');
             script.src = src;
