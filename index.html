@@ -24,61 +24,89 @@
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     
     <style>
-        /* ============ SPLASH SCREEN MODERN UDAYANA - SEMUA CENTER ========== */
-        .splash-container-modern {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #0a1a3a 0%, #1a3a6a 50%, #0a2a4a 100%);
-            display: flex; align-items: center; justify-content: center; z-index: 9999;
-            transition: opacity 0.5s ease;
-        }
+        /* SEMUA STYLE ASLI (TIDAK BERUBAH) */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a1a3a; }
+        .splash-container-modern { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0a1a3a 0%, #1a3a6a 50%, #0a2a4a 100%); display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.5s ease; }
         .splash-content { text-align: center; padding: 20px; max-width: 85%; animation: fadeInUp 0.6s ease; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        .splash-logo-center img { width: 80px; height: auto; animation: pulse 1.5s infinite; }
+        .splash-logo-center img { width: 80px; height: auto; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3)); animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(1); opacity: 0.9; } }
-        .splash-title-center { font-size: 28px; font-weight: bold; color: #FFD700; text-align: center; }
+        .splash-title-center { font-size: 28px; font-weight: bold; color: #FFD700; letter-spacing: 2px; text-align: center; }
         .splash-subtitle-center { font-size: 11px; color: #CCCCCC; margin-top: 8px; text-align: center; }
         .splash-unit-center { font-size: 14px; color: #FFFFFF; font-weight: 500; margin-top: 10px; text-align: center; }
         .splash-kodim-center { font-size: 11px; color: #B0C4DE; margin-top: 4px; text-align: center; }
-        .splash-desa-form { margin-top: 25px; width: 100%; }
-        .splash-desa-select { width: 100%; padding: 14px 16px; border-radius: 50px; border: 2px solid #4dff4d; background: rgba(0,0,0,0.6); color: #e6ffe6; font-size: 16px; text-align: center; cursor: pointer; outline: none; }
-        .splash-desa-select:focus { border-color: #ffcc00; }
-        .splash-btn-masuk { width: 100%; padding: 14px; margin-top: 15px; border-radius: 50px; border: none; background: linear-gradient(90deg, #4dff4d, #2ecc71); color: #003300; font-size: 16px; font-weight: bold; cursor: pointer; }
-        .splash-btn-masuk:hover { transform: scale(1.02); }
-        .splash-btn-masuk:disabled { opacity: 0.5; cursor: not-allowed; }
-        .splash-loading-desa { margin-top: 10px; font-size: 11px; color: #ffaa00; }
+        .splash-progress-center { width: 200px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 4px; margin: 25px auto 10px; overflow: hidden; }
+        .splash-progress-bar-center { width: 0%; height: 100%; background: linear-gradient(90deg, #FFD700, #FFA500); border-radius: 4px; transition: width 0.3s ease; }
+        .splash-percentage-center { font-size: 12px; color: #FFD700; font-weight: bold; text-align: center; }
 
-        /* ============ HEADER DUKOPS ============ */
-        .dukops-header { background: url('header/header-background.png') center/cover no-repeat; background-color: #1a472a; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2); padding: 10px 15px; margin-bottom: 20px; }
+        /* MODAL PILIH DESA */
+        .desa-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(8px);
+            z-index: 10050;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .desa-modal-content {
+            background: linear-gradient(145deg, #1a2a1f, #0f1a12);
+            border-radius: 32px;
+            padding: 24px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            border: 1px solid #4dff4d;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.5);
+            animation: modalSlideIn 0.3s ease;
+        }
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(-20px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .desa-modal-content h2 { color: #FFD700; margin-bottom: 8px; font-size: 24px; }
+        .desa-modal-content p { color: #ccc; margin-bottom: 20px; font-size: 14px; }
+        .desa-select-list { width: 100%; padding: 14px; margin-bottom: 20px; border-radius: 16px; background: #2a3a2a; color: #e6ffe6; border: 1px solid #4dff4d; font-size: 16px; cursor: pointer; }
+        .desa-confirm-btn { background: #4dff4d; color: #003300; border: none; padding: 12px 24px; border-radius: 40px; font-weight: bold; font-size: 16px; cursor: pointer; width: 100%; transition: 0.2s; }
+        .desa-confirm-btn:hover { background: #6aff6a; transform: scale(1.02); }
+
+        /* HEADER DUKOPS */
+        .dukops-header { background: url('header/header-background.png') center/cover no-repeat; background-color: #1a472a; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.2); padding: 10px 15px; margin-bottom: 20px; }
         .dukops-header-row { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; }
         .dukops-profile-area { flex-shrink: 0; text-align: center; background: rgba(255,255,255,0.08); padding: 6px; border-radius: 18px; width: 98px; display: inline-flex; flex-direction: column; align-items: center; }
-        .dukops-profile-img { width: 100%; height: 90px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.18); object-fit: cover; background-color: #102214; }
+        .dukops-profile-img { width: 100%; height: 90px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.18); object-fit: cover; background-color: #102214; }
         .dukops-profile-name { font-size: 11px; font-weight: bold; color: #f4f5c8; margin-top: 6px; text-align: center; }
         .dukops-title-area { flex: 1; text-align: left; }
         .dukops-header-title { font-size: 16px; font-weight: bold; color: #ffcc00; margin: 2px 0; }
         .dukops-header-address { font-size: 9px; color: #aaffaa; margin-top: 3px; }
-        .audio-control-wrapper { display: inline-flex; align-items: center; gap: 8px; margin-top: 8px; }
+        .audio-control-wrapper { display: inline-flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
         .audio-control-btn { width: 34px; height: 34px; border-radius: 12px; border: none; background: rgba(255,255,255,0.12); color: #f4f5c8; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
-        .audio-volume-slider { display: none; width: 120px; height: 6px; border-radius: 999px; background: rgba(255,255,255,0.25); }
+        .audio-volume-slider { display: none; width: 120px; appearance: none; height: 6px; border-radius: 999px; background: rgba(255,255,255,0.25); outline: none; }
         .counter-value { font-size: 18px; font-weight: bold; color: #ffcc00; background: rgba(0,0,0,0.5); display: inline-block; padding: 2px 10px; border-radius: 20px; margin-top: 5px; }
 
-        /* ============ RUNNING TEXT CHAT ============ */
-        .telegram-running-container { background: rgba(0,0,0,0.7); border-radius: 40px; padding: 10px 18px; margin-bottom: 16px; border: 1px solid #ffcc00; overflow: hidden; white-space: nowrap; }
+        /* RUNNING TEXT CHAT */
+        .telegram-running-container { background: rgba(0, 0, 0, 0.7); border-radius: 40px; padding: 10px 18px; margin-bottom: 16px; border: 1px solid #ffcc00; overflow: hidden; white-space: nowrap; }
         .telegram-running-text { display: inline-block; white-space: nowrap; animation: telegramMarquee 13s linear infinite; color: #ffdd44; font-weight: bold; font-size: 14px; padding-right: 50px; }
         @keyframes telegramMarquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
         .telegram-running-container:hover .telegram-running-text { animation-play-state: paused; }
 
-        /* ============ JADWAL PIKET ============ */
-        .running-text-container { background: rgba(0,30,0,0.7); border-radius: 8px; padding: 10px; margin: 10px 0; border: 1px solid #ffcc00; overflow: hidden; white-space: nowrap; }
+        /* JADWAL PIKET STYLES */
+        .running-text-container { background: rgba(0, 30, 0, 0.7); border-radius: 8px; padding: 10px; margin: 10px 0; border: 1px solid #ffcc00; overflow: hidden; white-space: nowrap; }
         .running-text { display: inline-block; white-space: nowrap; animation: marquee 10s linear infinite; color: #ffcc00; font-weight: bold; font-size: 14px; padding-right: 50px; }
         @keyframes marquee { 0% { transform: translateX(100%); } 50% { transform: translateX(0%); } 100% { transform: translateX(-100%); } }
         .running-text-container:hover .running-text { animation-play-state: paused; }
         
-        .whatsapp-transparent-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; background: transparent; border: 2px solid #25D366; border-radius: 12px; cursor: pointer; width: 100%; padding: 12px; margin-top: 10px; }
-        .whatsapp-transparent-btn i { font-size: 28px; color: #25D366; }
-        .whatsapp-transparent-btn span { color: #25D366; font-size: 16px; font-weight: bold; }
-        .jadwal-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: rgba(0,80,0,0.9); color: white; padding: 12px 20px; border-radius: 8px; z-index: 1000; opacity: 0; transition: opacity 0.3s; max-width: 80%; text-align: center; }
+        .whatsapp-transparent-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; background: transparent; border: 2px solid #25D366; border-radius: 12px; cursor: pointer; width: 100%; padding: 12px; margin-top: 10px; transition: all 0.2s ease; }
+        .whatsapp-transparent-btn i { font-size: 28px; color: #25D366; pointer-events: none; }
+        .whatsapp-transparent-btn span { color: #25D366; font-size: 16px; font-weight: bold; pointer-events: none; }
+        .whatsapp-transparent-btn:hover { background: rgba(37, 211, 102, 0.1); transform: scale(1.02); border-color: #128C7E; }
+        .jadwal-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background-color: rgba(0, 80, 0, 0.9); color: white; padding: 12px 20px; border-radius: 8px; z-index: 1000; opacity: 0; transition: opacity 0.3s; max-width: 80%; text-align: center; }
         .jadwal-toast.show { opacity: 1; }
-        
         .jadwal-section { background: rgba(0, 60, 0, 0.7); border-radius: 8px; padding: 15px; margin-bottom: 15px; border: 1px solid rgba(0, 200, 127, 0.3); }
         .section-title-koramil { color: #4dff4d; margin: 10px 0; font-size: 16px; text-align: center; }
         .section-title-kediaman { color: #ffcc00; margin: 10px 0; font-size: 16px; text-align: center; }
@@ -88,28 +116,28 @@
         .app-logo-container { text-align: center; margin-bottom: 15px; }
         .jadwal-logo { max-width: 100%; height: auto; max-height: 100px; border-radius: 8px; border: 2px solid #4dff4d; }
         .app-loading { text-align: center; padding: 10px; color: #4dff4d; display: none; }
-        .auto-height-textarea { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #4dff4d; background-color: rgba(0,40,0,0.8); color: #e6ffe6; font-size: 15px; font-family: 'Times New Roman', Times, serif; line-height: 1.5; resize: none; overflow-y: hidden; transition: height 0.1s ease; }
+        .auto-height-textarea { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #4dff4d; background-color: rgba(0, 40, 0, 0.8); color: #e6ffe6; font-size: 15px; font-family: 'Times New Roman', Times, serif; line-height: 1.5; resize: none; overflow-y: hidden; transition: height 0.1s ease; }
         
-        /* Navigation Buttons */
         .nav-buttons { display: flex; gap: 10px; margin-bottom: 20px; }
-        .nav-btn { flex: 1; padding: 10px 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; background: #2a4a2a; color: #e6ffe6; text-align: center; }
+        .nav-btn { flex: 1; padding: 10px 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: all 0.3s ease; background: #2a4a2a; color: #e6ffe6; text-align: center; }
         .nav-btn.active { background: #4dff4d; color: #003300; }
         
         .row { display: flex; gap: 10px; margin-bottom: 10px; }
         .col { flex: 1; }
-        select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #4dff4d; background-color: rgba(0,40,0,0.8); color: #e6ffe6; font-size: 16px; cursor: pointer; }
+        select { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #4dff4d; background-color: rgba(0, 40, 0, 0.8); color: #e6ffe6; font-size: 16px; cursor: pointer; }
         select option { background-color: #003300; color: #e6ffe6; }
         
         .section-content { display: block; }
         .section-content > div { margin-bottom: 15px; }
         @media screen and (min-width: 601px) { .section-content { display: flex; flex-wrap: wrap; gap: 15px; } .section-content > div { flex: 1; min-width: 250px; } }
 
-        /* ============ ABSEN ============ */
-        .absen-card { background: rgba(0,40,0,0.7); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #4dff4d; }
+        /* ABSEN STYLE */
+        .absen-card { background: rgba(0, 40, 0, 0.7); border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #4dff4d; }
         .absen-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 15px 0; }
-        .absen-stat-card { background: rgba(0,0,0,0.5); border-radius: 10px; padding: 10px; text-align: center; }
+        .absen-stat-card { background: rgba(0, 0, 0, 0.5); border-radius: 10px; padding: 10px; text-align: center; }
         .absen-stat-value { font-size: 1.5rem; font-weight: bold; }
         .absen-stat-label { font-size: 0.7rem; color: #aaa; }
+        .absen-progress-container { margin: 10px 0; }
         .absen-progress-bar { background: #333; border-radius: 10px; height: 8px; overflow: hidden; }
         .absen-progress-fill { background: linear-gradient(90deg, #4caf50, #8bc34a); height: 100%; width: 0%; border-radius: 10px; }
         .absen-desa-list { max-height: none; overflow-y: visible; }
@@ -124,41 +152,46 @@
         .absen-status-belum-lengkap { background: #e65100; color: #ffcc80; }
         .absen-status-belum { background: #b71c1c; color: #ef9a9a; }
         .absen-btn { background: #2a4a2a; color: #e6ffe6; border: 1px solid #4dff4d; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 12px; }
-        .absen-btn:hover { background: #3a6a3a; }
         .absen-btn-primary { background: #1a73e8; border-color: #4dff4d; }
         .absen-refresh-btn { position: fixed; bottom: 15px; right: 15px; width: 44px; height: 44px; border-radius: 50%; background: #2a4a2a; border: 1px solid #4dff4d; color: #4dff4d; font-size: 20px; cursor: pointer; z-index: 100; }
         .absen-info-text { text-align: center; font-size: 0.6rem; margin-top: 10px; color: #888; }
-        .absen-loading { text-align: center; padding: 20px; color: #4dff4d; }
-        .absen-spinner { display: inline-block; width: 30px; height: 30px; border: 3px solid #4dff4d; border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* PNG SCREENSHOT */
-        .png-container { width: 480px; background: white !important; border-radius: 16px; overflow: hidden; color: #000000 !important; }
+        /* PNG STYLE */
+        .png-container { width: 480px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; background: white !important; border-radius: 16px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); color: #000000 !important; }
+        .png-container * { color: #000000 !important; }
         .png-header { background: linear-gradient(135deg, #0d47a1, #1a73e8) !important; color: white !important; padding: 10px; text-align: center; }
+        .png-stats { display: flex; gap: 5px; margin-bottom: 8px; }
+        .png-stat-card { flex: 1; background: #f0f2f5 !important; border-radius: 8px; padding: 5px; text-align: center; }
+        .png-progress-bar { background: #e0e0e0 !important; border-radius: 8px; height: 5px; }
+        .png-progress-fill { background: linear-gradient(90deg, #4caf50, #8bc34a) !important; height: 5px; border-radius: 8px; }
+        .png-desa-item { display: flex; align-items: center; gap: 6px; padding: 4px 0; border-bottom: 1px solid #eee; }
 
         #installButton { display: none; margin-bottom: 15px; background: #4CAF50; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; width: 100%; }
         .mp3-control-btn { position: fixed; bottom: 80px; right: 15px; width: 44px; height: 44px; border-radius: 50%; background: #4CAF50; border: 2px solid #ffcc00; color: white; font-size: 20px; cursor: pointer; z-index: 100; display: none; }
 
-        /* AI MODAL */
+        /* AI TEMPLATE MODAL */
         .modal-ai { display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(4px); }
         .modal-ai.show { display: flex; align-items: center; justify-content: center; }
-        .modal-ai-content { background: linear-gradient(145deg, #1a2a1f, #0f1a12); margin: 0 auto; width: 95%; max-width: 700px; height: 85vh; max-height: 600px; border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; }
+        .modal-ai-content { background: linear-gradient(145deg, #1a2a1f, #0f1a12); margin: 0 auto; padding: 0; width: 95%; max-width: 700px; height: 85vh; max-height: 600px; border-radius: 20px; display: flex; flex-direction: column; overflow: hidden; }
         .modal-ai-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; background: linear-gradient(135deg, #0d2a1d, #0a1f15); border-bottom: 1px solid #2e8b57; }
         .modal-ai-header h3 { margin: 0; color: #9fd49f; font-size: 1.2rem; }
         .modal-close { background: none; border: none; font-size: 26px; cursor: pointer; color: #9fd49f; width: 36px; height: 36px; border-radius: 50%; }
         .modal-ai-tabs { padding: 12px; background: #0e1712; border-bottom: 1px solid #1e3a2a; }
         #categorySelect { width: 100%; padding: 10px; border-radius: 12px; background: #1a2a1f; color: #e6ffe6; border: 1px solid #2ecc71; }
         .modal-ai-body { padding: 14px; overflow-y: auto; flex: 1; }
-        .modal-template-item { background: #0f1a12; border-radius: 12px; padding: 12px 14px; cursor: pointer; border: 1px solid #2a4a2a; margin-bottom: 8px; }
+        .modal-template-list { display: flex; flex-direction: column; gap: 10px; }
+        .modal-template-item { background: #0f1a12; border-radius: 12px; padding: 12px 14px; cursor: pointer; border: 1px solid #2a4a2a; }
+        .modal-template-item:hover { background: #1a2a1f; border-color: #2ecc71; }
         .modal-template-text { font-size: 0.75rem; color: #c8e6d0; }
         .narasi-wrapper { position: relative; }
-        .ai-icon-corner { position: absolute; bottom: 12px; right: 12px; background: linear-gradient(135deg, #2ecc71, #27ae60); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; }
-        .ai-icon-corner i { color: white; font-size: 16px; }
+        .ai-icon-corner { position: absolute; bottom: 10px; right: 10px; background: linear-gradient(135deg, #2ecc71, #27ae60); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; }
+        .ai-icon-corner i { color: white; font-size: 17px; }
 
-        /* LIVE CHAT */
-        .chat-floating-btn { position: fixed; bottom: 90px; right: 20px; width: 52px; height: 52px; border-radius: 50%; background: #25D366; border: 2px solid #fff; color: white; font-size: 24px; cursor: pointer; z-index: 999; display: flex; align-items: center; justify-content: center; }
+        /* LIVE CHAT STYLE */
+        .chat-floating-btn { position: fixed; bottom: 90px; right: 20px; width: 52px; height: 52px; border-radius: 50%; background: #25D366; border: 2px solid #ffffff; color: white; font-size: 24px; cursor: pointer; z-index: 999; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; }
+        .chat-floating-btn:hover { transform: scale(1.05); background: #20b859; }
         .chat-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 10000; backdrop-filter: blur(4px); }
-        .chat-window { position: absolute; bottom: 20px; right: 20px; width: 380px; height: 550px; background: rgba(10,26,42,0.98); border-radius: 20px; overflow: hidden; border: 1px solid #4dff4d; display: flex; flex-direction: column; }
+        .chat-window { position: absolute; bottom: 20px; right: 20px; width: 380px; height: 550px; background: rgba(10, 26, 42, 0.98); border-radius: 20px; overflow: hidden; border: 1px solid #4dff4d; display: flex; flex-direction: column; }
         .chat-header { padding: 12px 16px; background: linear-gradient(135deg, #0d2a1d, #0a1f15); border-bottom: 1px solid #2e8b57; display: flex; justify-content: space-between; align-items: center; }
         .chat-header h3 { color: #4dff4d; font-size: 14px; margin: 0; display: flex; align-items: center; gap: 8px; }
         .chat-unread-badge { background: #ff4444; color: white; border-radius: 10px; padding: 2px 8px; font-size: 10px; margin-left: 8px; display: none; }
@@ -176,70 +209,90 @@
         .chat-message-text { font-size: 13px; color: #e6ffe6; }
         .chat-message-time { font-size: 9px; color: #888; margin-top: 2px; margin-left: 8px; }
         .chat-input-area { padding: 12px; border-top: 1px solid #2a4a2a; display: flex; gap: 8px; background: rgba(0,0,0,0.3); }
-        .chat-input-area textarea { flex: 1; padding: 10px 14px; border-radius: 20px; border: 1px solid #4dff4d; background: #1a2a1f; color: #e6ffe6; font-size: 13px; resize: none; max-height: 100px; }
+        .chat-input-area textarea { flex: 1; padding: 10px 14px; border-radius: 20px; border: 1px solid #4dff4d; background: #1a2a1f; color: #e6ffe6; font-size: 13px; resize: none; font-family: inherit; max-height: 100px; }
         .chat-input-area button { width: 42px; height: 42px; border-radius: 50%; border: none; background: #4dff4d; color: #003300; cursor: pointer; }
         .chat-footer { padding: 6px 12px; font-size: 9px; color: #666; border-top: 1px solid #2a4a2a; display: flex; justify-content: space-between; }
         .chat-connection-status { display: flex; align-items: center; gap: 4px; }
         .chat-status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ff4444; }
         .chat-status-dot.connected { background: #4caf50; }
         .chat-empty { text-align: center; color: #888; padding: 30px 20px; }
-
+        .chat-loading { text-align: center; color: #4dff4d; padding: 30px 20px; }
+        .chat-messages::-webkit-scrollbar { width: 4px; }
+        .chat-messages::-webkit-scrollbar-track { background: #1a2a1f; }
+        .chat-messages::-webkit-scrollbar-thumb { background: #4dff4d; border-radius: 4px; }
+        
         @media (max-width: 480px) {
             .chat-window { width: 95%; height: 80%; right: 2.5%; bottom: 10px; }
-            .nav-btn { font-size: 12px; padding: 8px 4px; }
-            .splash-title-center { font-size: 22px; }
+            .chat-floating-btn { bottom: 80px; right: 15px; width: 48px; height: 48px; font-size: 20px; }
         }
     </style>
 </head>
+
 <body>
-    <!-- SPLASH SCREEN -->
     <div id="splashScreen" class="splash-container-modern">
         <div class="splash-content">
-            <div class="splash-logo-center"><img src="https://upload.wikimedia.org/wikipedia/commons/2/25/Lambang_Kodam_Udayana.svg" alt="Logo"></div>
+            <div class="splash-logo-center"><img src="https://upload.wikimedia.org/wikipedia/commons/2/25/Lambang_Kodam_Udayana.svg" alt="Lambang"></div>
             <div class="splash-title-center">DUKOPS BABINSA SUKASADA</div>
             <div class="splash-subtitle-center">KODIM 1609/BULELENG</div>
             <div class="splash-unit-center">KORAMIL 1609-05/SUKASADA</div>
             <div class="splash-kodim-center">Sistem Pelaporan Digitalisasi Babinsa</div>
-            <div class="splash-desa-form">
-                <select id="splashDesaSelect" class="splash-desa-select"><option value="">-- Memuat data desa --</option></select>
-                <div id="splashLoadingDesa" class="splash-loading-desa"><i class="fas fa-spinner fa-spin"></i> Memuat daftar desa...</div>
-                <button id="splashBtnMasuk" class="splash-btn-masuk" disabled><i class="fas fa-arrow-right-to-bracket"></i> MASUK APLIKASI</button>
-            </div>
+            <div class="splash-progress-center"><div class="splash-progress-bar-center" id="splashProgressBar"></div></div>
+            <div class="splash-percentage-center" id="progressPercentage">20%</div>
         </div>
     </div>
 
-    <audio id="backgroundMusic" loop preload="auto"><source src="assets/audio/background.mp3" type="audio/mpeg"></audio>
+    <!-- MODAL PILIH DESA -->
+    <div id="desaSelectionModal" class="desa-modal" style="display: none;">
+        <div class="desa-modal-content">
+            <i class="fas fa-map-marker-alt" style="font-size: 48px; color: #4dff4d; margin-bottom: 16px;"></i>
+            <h2>Pilih Desa / Kelurahan</h2>
+            <p>Sebelum masuk aplikasi, silakan pilih desa Anda terlebih dahulu.</p>
+            <select id="desaSelectModal" class="desa-select-list"><option value="">-- Memuat data desa --</option></select>
+            <button id="confirmDesaBtn" class="desa-confirm-btn"><i class="fas fa-check-circle"></i> MASUK APLIKASI</button>
+        </div>
+    </div>
 
-    <div id="appContainer" style="display: none; opacity: 0; padding: 16px;">
+    <audio id="backgroundMusic" loop preload="auto"></audio>
+
+    <div id="appContainer" style="display: none; opacity: 0;">
         <button id="installButton"><i class="fas fa-download"></i> Install App</button>
 
         <div class="dukops-header">
             <div class="dukops-header-row">
-                <div class="dukops-profile-area"><img id="desaProfileImgHeader" class="dukops-profile-img" src="favicon-96x96.png"><div id="desaProfileNameHeader" class="dukops-profile-name">Pilih Desa</div></div>
+                <div class="dukops-profile-area">
+                    <img id="desaProfileImgHeader" class="dukops-profile-img" src="favicon-96x96.png" alt="Foto Profil">
+                    <div id="desaProfileNameHeader" class="dukops-profile-name">Pilih Desa</div>
+                </div>
                 <div class="dukops-title-area">
                     <div class="dukops-header-title">DUKOPS BABINSA</div>
                     <div class="dukops-header-title">KORAMIL 1609-05/SUKASADA</div>
                     <div class="dukops-header-address">Jl. Jelantik Gingsir No. 32 Sukasada Singaraja-Bali 81161</div>
-                    <div class="audio-control-wrapper"><button id="mp3ControlBtn" class="audio-control-btn"><i class="fas fa-volume-up"></i></button><input id="audioVolumeSlider" class="audio-volume-slider" type="range" min="0" max="100" value="30"></div>
+                    <div class="audio-control-wrapper">
+                        <button id="mp3ControlBtn" class="audio-control-btn"><i class="fas fa-volume-up"></i></button>
+                        <input id="audioVolumeSlider" class="audio-volume-slider" type="range" min="0" max="100" value="30">
+                    </div>
                     <div><span class="counter-value" id="submissionCounter">0</span></div>
                 </div>
             </div>
         </div>
 
-        <div class="telegram-running-container"><div class="telegram-running-text" id="runningChatText">💬 SELAMAT DATANG DI LIVE CHAT DUKOPS</div></div>
-
-        <div class="nav-buttons">
-            <button class="nav-btn" id="btnDukops" onclick="showDukops()"><i class="fas fa-file-upload"></i> DUKOPS</button>
-            <button class="nav-btn" id="btnJadwal" onclick="showJadwalPiketBaru()"><i class="fas fa-calendar-alt"></i> PIKET</button>
-            <button class="nav-btn" id="btnAbsen" onclick="showAbsenTab()"><i class="fas fa-chart-line"></i> ABSEN</button>
+        <!-- RUNNING TEXT CHAT (Format: Desa : pesan) -->
+        <div class="telegram-running-container">
+            <div class="telegram-running-text" id="runningChatText">💬 SELAMAT DATANG DI LIVE CHAT DUKOPS</div>
         </div>
 
-        <!-- DUKOPS CONTENT -->
+        <div class="nav-buttons">
+            <button class="nav-btn nav-btn-dukops active" id="btnDukops" onclick="showDukops()"><i class="fas fa-file-upload"></i> DUKOPS</button>
+            <button class="nav-btn nav-btn-piket" id="btnJadwal" onclick="showJadwalPiketBaru()"><i class="fas fa-calendar-alt"></i> PIKET</button>
+            <button class="nav-btn nav-btn-absen" id="btnAbsen" onclick="showAbsenTab()"><i class="fas fa-chart-line"></i> ABSEN</button>
+        </div>
+
+        <!-- DUKOPS CONTENT (Select Desa di-HIDDEN) -->
         <div id="dukopsContent">
             <div style="width: 90%; margin: 0 auto; font-size: 12px;">
                 <label><i class="fas fa-village"></i> Pilih Desa:</label>
-                <select id="selectDesa" onchange="loadSelectedDesa()"><option value="">-- Memuat data desa... --</option></select>
-                <div id="loadingDesa"><i class="fas fa-spinner fa-spin"></i> Memuat daftar desa/Kelurahan lokal...</div>
+                <select id="selectDesa" onchange="loadSelectedDesa()" style="display: none;"></select>
+                <div id="loadingDesa" style="display: none;"><i class="fas fa-spinner fa-spin"></i> Memuat daftar desa...</div>
                 <div class="previewBox" id="previewDesa"></div>
                 <div id="loadingKoordinat"><i class="fas fa-spinner fa-spin"></i> Memuat koordinat...</div>
                 <div class="previewBox" id="previewKordinat"></div>
@@ -250,7 +303,10 @@
                 <input type="datetime-local" id="tanggalWaktu" onchange="updateDatePreview()">
                 <div class="previewBox" id="previewTanggal"></div>
                 <label><i class="fas fa-file-alt"></i> Narasi Kegiatan:</label>
-                <div class="narasi-wrapper"><textarea id="narasi" rows="20" placeholder="Masukkan narasi kegiatan..." oninput="checkInputCompletion()"></textarea><div class="ai-icon-corner" id="aiTemplateBtn"><i class="fas fa-robot"></i></div></div>
+                <div class="narasi-wrapper">
+                    <textarea id="narasi" rows="20" placeholder="Masukkan narasi kegiatan..." oninput="checkInputCompletion()"></textarea>
+                    <div class="ai-icon-corner" id="aiTemplateBtn"><i class="fas fa-robot"></i></div>
+                </div>
                 <canvas id="canvas"></canvas>
                 <button id="submitBtn" onclick="processSubmission()" disabled><i class="fas fa-download"></i> DOWNLOAD & KIRIM</button>
                 <button id="resetBtn" onclick="resetAll()"><i class="fas fa-redo"></i> Reset Data</button>
@@ -260,9 +316,9 @@
             </div>
         </div>
 
-        <!-- JADWAL PIKET -->
+        <!-- JADWAL PIKET BARU -->
         <div id="jadwalPiketContainerBaru" style="display: none;">
-            <div class="jadwal-header"><h1 class="jadwal-title">JADWAL PIKET</h1><img src="LOGO KOREM163 Wirasatya.png" class="jadwal-logo"><p>KORAMIL 1609-05/SUKASADA<br>Kodim 1609/Buleleng</p></div>
+            <div class="jadwal-header"><h1 class="jadwal-title">JADWAL PIKET</h1><div class="app-logo-container"><img src="LOGO KOREM163 Wirasatya.png" class="jadwal-logo"></div><p>KORAMIL 1609-05/SUKASADA<br>Kodim 1609/Buleleng</p></div>
             <div class="running-text-container"><div class="running-text" id="runningTextJadwalBaru">🍽️ Memuat jadwal hanpangan...</div></div>
             <div class="jadwal-section"><div class="section-content"><div><h3 class="section-title-koramil">Piket Koramil Hari Ini :</h3><div class="row"><div class="col"><select id="j_nama1a_baru"><option value="">-- Pilih Nama --</option></select></div><div class="col"><select id="j_nama1b_baru"><option value="">-- Pilih Nama --</option></select></div></div></div><div><h3 class="section-title-koramil">Piket Koramil Besok :</h3><div class="row"><div class="col"><select id="j_nama2a_baru"><option value="">-- Pilih Nama --</option></select></div><div class="col"><select id="j_nama2b_baru"><option value="">-- Pilih Nama --</option></select></div></div></div></div></div>
             <div class="jadwal-section"><div class="section-content"><div><h3 class="section-title-kediaman">Jaga Kediaman Hari Ini :</h3><div class="row"><div class="col"><select id="j_nama3a_baru"><option value="">-- Pilih Nama --</option></select></div><div class="col"><select id="j_nama3b_baru"><option value="">-- Pilih Nama --</option></select></div></div></div><div><h3 class="section-title-kediaman">Jaga Kediaman Besok :</h3><div class="row"><div class="col"><select id="j_nama3c_baru"><option value="">-- Pilih Nama --</option></select></div><div class="col"><select id="j_nama3d_baru"><option value="">-- Pilih Nama --</option></select></div></div></div></div></div>
@@ -274,7 +330,7 @@
 
         <!-- ABSEN CONTENT -->
         <div id="absenContent" style="display: none;">
-            <div class="absen-card"><div><label style="color:#4dff4d;">📅 TAHUN</label><select id="absenTahunSelect"><option>Memuat...</option></select></div><div><label style="color:#4dff4d;">📆 BULAN</label><select id="absenBulanSelect" disabled><option>Pilih tahun dulu</option></select></div></div>
+            <div class="absen-card"><div class="form-group"><label style="color:#4dff4d;">📅 TAHUN</label><select id="absenTahunSelect"><option>Memuat...</option></select></div><div class="form-group"><label style="color:#4dff4d;">📆 BULAN</label><select id="absenBulanSelect" disabled><option>Pilih tahun dulu</option></select></div></div>
             <div id="absenResultContainer"></div>
             <div class="absen-info-text">✨ Tap desa untuk detail | Data tersimpan offline</div>
         </div>
@@ -284,13 +340,22 @@
     <button id="absenRefreshBtn" class="absen-refresh-btn" style="display: none;">🔄</button>
     <div id="absenScreenshotArea" style="position: fixed; left: -9999px; top: 0; width: 500px; background: white;"></div>
 
+    <!-- AI TEMPLATE MODAL -->
     <div id="templateModal" class="modal-ai"><div class="modal-ai-content"><div class="modal-ai-header"><h3><i class="fas fa-robot"></i> Template Narasi AI</h3><button class="modal-close" id="closeModalBtn">&times;</button></div><div class="modal-ai-tabs" id="modalTabs"></div><div class="modal-ai-body" id="modalBody"></div></div></div>
 
-    <div id="chatModal" class="chat-modal"><div class="chat-window"><div class="chat-header"><h3><i class="fas fa-comments"></i> LIVE CHAT DUKOPS <span id="chatUnreadBadge" class="chat-unread-badge">0</span></h3><div class="chat-header-actions"><button id="deleteAllChatBtn"><i class="fas fa-trash-alt"></i></button><button id="closeChatBtn"><i class="fas fa-times"></i></button></div></div><div class="chat-messages" id="chatMessages"><div class="chat-loading">Memuat pesan...</div></div><div class="chat-input-area"><textarea id="chatMessageInput" rows="1" placeholder="Tulis pesan..."></textarea><button id="sendChatBtn"><i class="fas fa-paper-plane"></i></button></div><div class="chat-footer"><div class="chat-connection-status"><span class="chat-status-dot" id="chatStatusDot"></span><span id="chatStatusText">Menghubungkan</span></div><span id="chatUserNameDisplay"><i class="fas fa-user"></i> Guest</span></div></div></div>
+    <!-- LIVE CHAT -->
+    <div id="chatModal" class="chat-modal">
+        <div class="chat-window">
+            <div class="chat-header"><h3><i class="fas fa-comments"></i> LIVE CHAT DUKOPS <span id="chatUnreadBadge" class="chat-unread-badge">0</span></h3><div class="chat-header-actions"><button id="deleteAllChatBtn" title="Hapus semua pesan"><i class="fas fa-trash-alt"></i></button><button id="closeChatBtn" title="Tutup"><i class="fas fa-times"></i></button></div></div>
+            <div class="chat-messages" id="chatMessages"><div class="chat-loading"><i class="fas fa-spinner fa-pulse"></i> Memuat pesan...</div></div>
+            <div class="chat-input-area"><textarea id="chatMessageInput" rows="1" placeholder="Tulis pesan... (Enter kirim)"></textarea><button id="sendChatBtn"><i class="fas fa-paper-plane"></i></button></div>
+            <div class="chat-footer"><div class="chat-connection-status"><span class="chat-status-dot connecting" id="chatStatusDot"></span><span id="chatStatusText">Menghubungkan...</span></div><span id="chatUserNameDisplay"><i class="fas fa-user"></i> Guest</span></div>
+        </div>
+    </div>
     <button id="openChatBtn" class="chat-floating-btn"><i class="fas fa-comment-dots"></i></button>
 
     <script>
-        // ============ KONFIGURASI SUPABASE ============
+        // ============ KONFIGURASI SUPABASE LIVE CHAT ============
         const SUPABASE_URL = 'https://qthoexsadattfnnzcawh.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF0aG9leHNhZGF0dGZubnpjYXdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NTMzNTAsImV4cCI6MjA5NjEyOTM1MH0.qZBFjrN8F8vwxoaPKIPLDQIOWbt58BNlPWLOn4J_5_4';
         const CHAT_DELETE_PIN = "2024";
@@ -298,110 +363,25 @@
         let chatSupabase = null;
         let chatMessages = [];
         let chatCurrentUser = "Guest";
-        let daftarDesaGlobal = [];
+        let isChatOpen = false;
 
-        // ============ LOAD DESA UNTUK SPLASH ============
-        async function loadDesaListForSplash() {
-            const splashSelect = document.getElementById('splashDesaSelect');
-            const splashLoading = document.getElementById('splashLoadingDesa');
-            const splashBtn = document.getElementById('splashBtnMasuk');
-            try {
-                const response = await fetch('data/desa-list.json?t=' + Date.now());
-                const data = await response.json();
-                daftarDesaGlobal = data.desaList || [];
-                splashSelect.innerHTML = '<option value="">-- Pilih Desa/Kelurahan --</option>' + daftarDesaGlobal.map(d => `<option value="${d}">${d}</option>`).join('');
-                splashLoading.style.display = 'none';
-                splashSelect.disabled = false;
-                splashSelect.onchange = () => { splashBtn.disabled = !splashSelect.value; };
-            } catch(e) {
-                splashLoading.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Gagal memuat daftar desa';
-            }
-        }
-
-        // ============ INIT APLIKASI ============
-        function initAppAfterDesa(desa) {
-            localStorage.setItem('selectedDesa', desa);
-            chatCurrentUser = desa;
-            document.getElementById('chatUserNameDisplay').innerHTML = `<i class="fas fa-user"></i> ${desa}`;
-            
-            const selectDesaElem = document.getElementById('selectDesa');
-            if (selectDesaElem && daftarDesaGlobal.length > 0) {
-                selectDesaElem.innerHTML = '<option value="">-- Pilih Desa/Kelurahan --</option>' + daftarDesaGlobal.map(d => `<option value="${d}">${d}</option>`).join('');
-                selectDesaElem.value = desa;
-                if (typeof loadSelectedDesa === 'function') setTimeout(() => loadSelectedDesa(), 200);
-            }
-            
-            document.getElementById('desaProfileNameHeader').innerText = desa;
-            document.getElementById('desaProfileImgHeader').src = `profile/${desa.toLowerCase()}.png`;
-            
-            const splash = document.getElementById('splashScreen');
-            splash.style.opacity = '0';
-            setTimeout(() => {
-                splash.style.display = 'none';
-                document.getElementById('appContainer').style.display = 'block';
-                setTimeout(() => { document.getElementById('appContainer').style.opacity = '1'; }, 50);
-                showDukops();
-            }, 500);
-            
-            initChat();
-        }
-
-        // ============ TAB FUNCTIONS ============
-        const dukopsContainer = document.getElementById('dukopsContent');
-        const piketContainer = document.getElementById('jadwalPiketContainerBaru');
-        const absenContainer = document.getElementById('absenContent');
-        const btnDukops = document.getElementById('btnDukops');
-        const btnPiket = document.getElementById('btnJadwal');
-        const btnAbsen = document.getElementById('btnAbsen');
-
-        function hideAllContainers() {
-            if (dukopsContainer) dukopsContainer.style.display = 'none';
-            if (piketContainer) piketContainer.style.display = 'none';
-            if (absenContainer) absenContainer.style.display = 'none';
-        }
-
-        function removeAllActiveClasses() {
-            if (btnDukops) btnDukops.classList.remove('active');
-            if (btnPiket) btnPiket.classList.remove('active');
-            if (btnAbsen) btnAbsen.classList.remove('active');
-        }
-
-        window.showDukops = function() {
-            hideAllContainers();
-            removeAllActiveClasses();
-            if (dukopsContainer) dukopsContainer.style.display = 'block';
-            if (btnDukops) btnDukops.classList.add('active');
-            console.log('Tab DUKOPS aktif');
-        };
-
-        window.showJadwalPiketBaru = function() {
-            hideAllContainers();
-            removeAllActiveClasses();
-            if (piketContainer) piketContainer.style.display = 'block';
-            if (btnPiket) btnPiket.classList.add('active');
-            if (typeof initJadwalBaru === 'function') setTimeout(initJadwalBaru, 50);
-            console.log('Tab PIKET aktif');
-        };
-
-        window.showAbsenTab = function() {
-            hideAllContainers();
-            removeAllActiveClasses();
-            if (absenContainer) absenContainer.style.display = 'block';
-            if (btnAbsen) btnAbsen.classList.add('active');
-            if (typeof loadAbsenTahun === 'function') setTimeout(loadAbsenTahun, 50);
-            console.log('Tab ABSEN aktif');
-        };
-
-        // ============ CHAT FUNCTIONS ============
+        // Running text dengan format "Desa : pesan"
         function updateRunningChatMessage(desa, pesan) {
             const el = document.getElementById('runningChatText');
-            if (el) el.innerHTML = `💬 ${desa} : ${pesan.substring(0, 60)}${pesan.length > 60 ? '...' : ''}`;
+            if (el) {
+                let shortPesan = pesan.length > 60 ? pesan.substring(0, 57) + '...' : pesan;
+                el.innerHTML = `💬 ${desa} : ${shortPesan}`;
+            }
         }
 
         async function loadChatMessages() {
             if (!chatSupabase) return;
-            const { data } = await chatSupabase.from('live_chat').select('*').order('created_at', { ascending: true });
-            if (data) { chatMessages = data; renderChatMessages(); }
+            try {
+                const { data, error } = await chatSupabase.from('live_chat').select('*').order('created_at', { ascending: true });
+                if (error) throw error;
+                chatMessages = data || [];
+                renderChatMessages();
+            } catch(e) { console.error('Load chat error:', e); }
         }
 
         function subscribeToChat() {
@@ -412,30 +392,54 @@
                     renderChatMessages();
                     updateRunningChatMessage(payload.new.username, payload.new.message);
                 })
+                .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'live_chat' }, () => {
+                    loadChatMessages();
+                    updateRunningChatMessage('Sistem', 'Pesan telah dihapus');
+                })
                 .subscribe();
         }
 
         async function sendChatMessage() {
             const input = document.getElementById('chatMessageInput');
-            if (!input.value.trim()) return;
-            await chatSupabase.from('live_chat').insert([{ username: chatCurrentUser, message: input.value.trim() }]);
-            input.value = '';
+            const message = input.value.trim();
+            if (!message || !chatSupabase) return;
+            try {
+                await chatSupabase.from('live_chat').insert([{ username: chatCurrentUser, message: message }]);
+                input.value = '';
+                input.style.height = 'auto';
+            } catch(e) { alert('Gagal kirim: ' + e.message); }
+        }
+
+        async function deleteSingleMessage(id) {
+            const pin = prompt("🔒 MASUKKAN PIN 4 DIGIT UNTUK HAPUS PESAN INI:");
+            if (pin === CHAT_DELETE_PIN) {
+                await chatSupabase.from('live_chat').delete().eq('id', id);
+            } else { alert("PIN SALAH! Pesan tidak dihapus."); }
         }
 
         async function deleteAllMessages() {
-            const pin = prompt("🔒 MASUKKAN PIN 4 DIGIT UNTUK HAPUS SEMUA PESAN:");
+            const pin = prompt("⚠️ HAPUS SEMUA PESAN! Masukkan PIN 4 digit:");
             if (pin === CHAT_DELETE_PIN) {
                 await chatSupabase.from('live_chat').delete().neq('id', 0);
-                loadChatMessages();
-                updateRunningChatMessage('Sistem', 'Semua pesan dihapus');
-            } else alert("PIN SALAH!");
+            } else { alert("PIN SALAH! Tidak jadi menghapus."); }
         }
 
         function renderChatMessages() {
             const container = document.getElementById('chatMessages');
             if (!container) return;
-            if (chatMessages.length === 0) { container.innerHTML = '<div class="chat-empty">💬 Belum ada pesan</div>'; return; }
-            container.innerHTML = chatMessages.map(msg => `<div class="chat-message ${msg.username === chatCurrentUser ? 'chat-message-own' : 'chat-message-other'}"><div class="chat-message-name">${msg.username === chatCurrentUser ? 'Anda' : msg.username}</div><div class="chat-message-bubble"><div class="chat-message-text">${escapeHtml(msg.message)}</div></div><div class="chat-message-time">${new Date(msg.created_at).toLocaleTimeString()}</div></div>`).join('');
+            if (chatMessages.length === 0) { container.innerHTML = '<div class="chat-empty">💬 Belum ada pesan.</div>'; return; }
+            container.innerHTML = chatMessages.map(msg => `
+                <div class="chat-message ${msg.username === chatCurrentUser ? 'chat-message-own' : 'chat-message-other'}" data-id="${msg.id}" data-username="${msg.username}">
+                    <div class="chat-message-name">${msg.username === chatCurrentUser ? '👤 Anda' : '👤 ' + escapeHtml(msg.username)}</div>
+                    <div class="chat-message-bubble"><div class="chat-message-text">${escapeHtml(msg.message)}</div></div>
+                    <div class="chat-message-time">${new Date(msg.created_at).toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' })}</div>
+                </div>
+            `).join('');
+            document.querySelectorAll('.chat-message').forEach(el => {
+                if (el.dataset.username === chatCurrentUser) {
+                    el.addEventListener('contextmenu', (e) => { e.preventDefault(); const id = parseInt(el.dataset.id); if (id) deleteSingleMessage(id); });
+                }
+            });
             container.scrollTop = container.scrollHeight;
         }
 
@@ -449,85 +453,140 @@
             document.getElementById('chatStatusText').innerText = 'Terhubung';
         }
 
-        // ============ MP3 PLAYER ============
-        (function() {
-            const audio = document.getElementById('backgroundMusic');
-            const btn = document.getElementById('mp3ControlBtn');
-            const slider = document.getElementById('audioVolumeSlider');
-            if (audio && btn) {
-                audio.volume = 0.3;
-                if (slider) slider.value = 30;
-                btn.onclick = () => {
-                    if (audio.paused) audio.play().catch(e => console.log('MP3 tidak ditemukan, pastikan file ada di assets/audio/background.mp3'));
-                    else audio.pause();
-                };
-                if (slider) slider.oninput = () => { audio.volume = slider.value / 100; };
-            }
-        })();
+        // ============ ALUR PILIH DESA ============
+        let globalDesaList = [];
+        async function loadDesaListForModal() {
+            try {
+                const response = await fetch('data/desa-list.json?t=' + Date.now());
+                const data = await response.json();
+                globalDesaList = data.desaList || [];
+                const modalSelect = document.getElementById('desaSelectModal');
+                modalSelect.innerHTML = '<option value="">-- Pilih Desa/Kelurahan --</option>' + globalDesaList.map(d => `<option value="${d}">${d}</option>`).join('');
+                document.getElementById('desaSelectionModal').style.display = 'flex';
+            } catch(e) { console.error('Gagal load desa:', e); }
+        }
 
-        // ============ INSTALL BUTTON ============
-        (function() {
-            let deferredPrompt;
-            const installBtn = document.getElementById('installButton');
-            window.addEventListener('beforeinstallprompt', (e) => {
-                e.preventDefault();
-                deferredPrompt = e;
-                if (!window.matchMedia('(display-mode: standalone)').matches) {
-                    installBtn.style.display = 'block';
+        function initAppAfterDesa(desa) {
+            localStorage.setItem('selectedDesa', desa);
+            chatCurrentUser = desa;
+            document.getElementById('chatUserNameDisplay').innerHTML = `<i class="fas fa-user"></i> ${desa.substring(0,20)}`;
+            
+            // Set select desa (hidden) tapi fungsinya tetap berjalan
+            const selectDesaElem = document.getElementById('selectDesa');
+            if (selectDesaElem) {
+                selectDesaElem.innerHTML = `<option value="${desa}">${desa}</option>`;
+                selectDesaElem.value = desa;
+                // Panggil loadSelectedDesa agar koordinat dan canvas tetap berfungsi
+                if (typeof loadSelectedDesa === 'function') {
+                    setTimeout(() => loadSelectedDesa(), 100);
                 }
-            });
-            window.addEventListener('appinstalled', () => { installBtn.style.display = 'none'; deferredPrompt = null; });
-            if (window.matchMedia('(display-mode: standalone)').matches) installBtn.style.display = 'none';
-            if (installBtn) {
-                installBtn.addEventListener('click', async () => {
-                    if (deferredPrompt) {
-                        deferredPrompt.prompt();
-                        const { outcome } = await deferredPrompt.userChoice;
-                        if (outcome === 'accepted') installBtn.style.display = 'none';
-                        deferredPrompt = null;
-                    } else alert('Install prompt tidak tersedia. Pastikan browser mendukung PWA.');
-                });
             }
-        })();
+            
+            // Update profile header
+            document.getElementById('desaProfileNameHeader').innerText = desa;
+            document.getElementById('desaProfileImgHeader').src = `profile/${desa.toLowerCase()}.png`;
+            
+            document.getElementById('desaSelectionModal').style.display = 'none';
+            document.getElementById('appContainer').style.display = 'block';
+            setTimeout(() => document.getElementById('appContainer').style.opacity = '1', 50);
+            
+            initChat();
+        }
 
-        // ============ EVENT ============
-        document.getElementById('splashBtnMasuk').onclick = () => {
-            const selected = document.getElementById('splashDesaSelect').value;
+        document.getElementById('confirmDesaBtn').onclick = () => {
+            const selected = document.getElementById('desaSelectModal').value;
             if (selected) initAppAfterDesa(selected);
-            else alert("Pilih desa terlebih dahulu!");
+            else alert("Silakan pilih desa/kelurahan terlebih dahulu!");
         };
 
-        document.getElementById('openChatBtn').onclick = () => document.getElementById('chatModal').style.display = 'block';
-        document.getElementById('closeChatBtn').onclick = () => document.getElementById('chatModal').style.display = 'none';
+        // ============ SPLASH SCREEN ============
+        let splashProgress = 0;
+        let splashInterval;
+        let loadingComplete = false;
+        function startSplashProgress() {
+            const progressBar = document.getElementById('splashProgressBar');
+            const percentageText = document.getElementById('progressPercentage');
+            splashInterval = setInterval(function() {
+                if (splashProgress < 100) {
+                    splashProgress += Math.floor(Math.random() * 15) + 5;
+                    if (splashProgress > 100) splashProgress = 100;
+                    progressBar.style.width = splashProgress + '%';
+                    percentageText.textContent = splashProgress + '%';
+                }
+                if (splashProgress === 100 && !loadingComplete) {
+                    clearInterval(splashInterval);
+                    loadingComplete = true;
+                    setTimeout(function() {
+                        const splash = document.getElementById('splashScreen');
+                        splash.style.opacity = '0';
+                        setTimeout(function() {
+                            splash.style.display = 'none';
+                            if (localStorage.getItem('selectedDesa')) {
+                                initAppAfterDesa(localStorage.getItem('selectedDesa'));
+                            } else {
+                                loadDesaListForModal();
+                            }
+                        }, 500);
+                    }, 500);
+                }
+            }, 100);
+        }
+
+        // ============ EVENT LISTENER CHAT ============
+        document.getElementById('openChatBtn').onclick = () => {
+            document.getElementById('chatModal').style.display = 'block';
+            isChatOpen = true;
+            document.getElementById('chatUnreadBadge').style.display = 'none';
+            renderChatMessages();
+        };
+        document.getElementById('closeChatBtn').onclick = () => { document.getElementById('chatModal').style.display = 'none'; isChatOpen = false; };
         document.getElementById('chatModal').onclick = (e) => { if (e.target === document.getElementById('chatModal')) document.getElementById('chatModal').style.display = 'none'; };
         document.getElementById('sendChatBtn').onclick = sendChatMessage;
         document.getElementById('deleteAllChatBtn').onclick = deleteAllMessages;
-        document.getElementById('chatMessageInput').addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); sendChatMessage(); } });
-        document.getElementById('chatMessageInput').addEventListener('input', function() { this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 100) + 'px'; });
+        const chatInputField = document.getElementById('chatMessageInput');
+        if (chatInputField) {
+            chatInputField.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); } });
+            chatInputField.addEventListener('input', function() { this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 100) + 'px'; });
+        }
 
-        // ============ DUMMY FUNCTIONS ============
-        window.loadSelectedDesa = function() {
-            const selectDesa = document.getElementById('selectDesa');
-            const selectedText = selectDesa.options[selectDesa.selectedIndex]?.text || "";
-            document.getElementById('desaProfileNameHeader').innerText = selectedText;
-            document.getElementById('desaProfileImgHeader').src = `profile/${selectedText.toLowerCase()}.png`;
+        startSplashProgress();
+
+        // ============ FUNGSI ORIGINAL ============
+        window.showDukops = function() { 
+            document.getElementById('dukopsContent').style.display = 'block'; 
+            document.getElementById('jadwalPiketContainerBaru').style.display = 'none'; 
+            document.getElementById('absenContent').style.display = 'none'; 
+            document.getElementById('btnDukops').classList.add('active'); 
+            document.getElementById('btnJadwal').classList.remove('active'); 
+            document.getElementById('btnAbsen').classList.remove('active'); 
         };
-        window.previewImage = function() {};
-        window.updateDatePreview = function() {};
-        window.checkInputCompletion = function() {};
-        window.processSubmission = function() {};
-        window.resetAll = function() {};
-        window.showAttendance = function() {};
-
-        loadDesaListForSplash();
+        window.showJadwalPiketBaru = function() { 
+            document.getElementById('dukopsContent').style.display = 'none'; 
+            document.getElementById('jadwalPiketContainerBaru').style.display = 'block'; 
+            document.getElementById('absenContent').style.display = 'none'; 
+            document.getElementById('btnDukops').classList.remove('active'); 
+            document.getElementById('btnJadwal').classList.add('active'); 
+            document.getElementById('btnAbsen').classList.remove('active'); 
+            if(window.initJadwalBaru) window.initJadwalBaru(); 
+        };
+        window.showAbsenTab = function() { 
+            document.getElementById('dukopsContent').style.display = 'none'; 
+            document.getElementById('jadwalPiketContainerBaru').style.display = 'none'; 
+            document.getElementById('absenContent').style.display = 'block'; 
+            document.getElementById('btnDukops').classList.remove('active'); 
+            document.getElementById('btnJadwal').classList.remove('active'); 
+            document.getElementById('btnAbsen').classList.add('active'); 
+            if(window.loadAbsenTahun) window.loadAbsenTahun(); 
+        };
     </script>
 
+    <!-- ============ SCRIPT ORIGINAL ============ -->
     <script src="js/components/FormValidator.js"></script>
     <script src="js/services/AdminSettings.js"></script>
     <script src="app.js"></script>
 
-    <!-- JADWAL PIKET SCRIPT -->
     <script>
+    // ============ JADWAL PIKET SCRIPT ============
     (function() {
         const HANPANGAN_URL = "https://raw.githubusercontent.com/sukasada05/dukops4/main/data/hanpangan.txt";
         const GITHUB_URLS = { HANPANGAN: HANPANGAN_URL, PIKET: "data/piket.txt" };
@@ -536,7 +595,6 @@
 
         function updateRunningTextJadwal() { const el = document.getElementById('runningTextJadwalBaru'); if (el) el.textContent = JadwalData.currentHanpangan ? '🍽️ JADWAL HANPANGAN HARI INI: ' + JadwalData.currentHanpangan + ' 🍽️' : '🍽️ Memuat jadwal hanpangan... 🍽️'; }
         function fetchFromGitHub(url) { return new Promise(resolve => { fetch(url + '?t=' + Date.now()).then(res => res.ok ? res.text() : null).then(data => resolve(data)).catch(() => resolve(null)); }); }
-        
         function loadPiketData() {
             return fetchFromGitHub(GITHUB_URLS.PIKET).then(data => {
                 if (data) {
@@ -546,7 +604,6 @@
                 } return false;
             });
         }
-
         function loadHanpanganData() {
             return fetchFromGitHub(GITHUB_URLS.HANPANGAN).then(data => {
                 if (data) {
@@ -575,9 +632,7 @@
                 updateRunningTextJadwal(); return false;
             });
         }
-
         function formatTanggal(date) { const days = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"]; const months = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"]; return days[date.getDay()] + ", " + date.getDate() + " " + months[date.getMonth()] + " " + date.getFullYear(); }
-        
         function updatePreviewJadwal() {
             const now = new Date(), tomorrow = new Date(); tomorrow.setDate(now.getDate() + 1);
             let result = "=======================\nKORAMIL 1609-05/SUKASADA\n    JADWAL DINAS DALAM\n=======================\n\n";
@@ -597,18 +652,14 @@
             const preview = document.getElementById('j_hasilPesanBaru');
             if (preview) { preview.value = result; preview.style.height = 'auto'; preview.style.height = preview.scrollHeight + 'px'; }
         }
-
         function sendToWhatsAppJadwal() { const pesan = document.getElementById('j_hasilPesanBaru')?.value.trim(); if (pesan) window.open("https://wa.me/?text=" + encodeURIComponent(pesan), "_blank"); return false; }
         function loadAllJadwalData() { Promise.all([loadPiketData(), loadHanpanganData()]).then(() => updatePreviewJadwal()); }
-        
         window.initJadwalBaru = function() { JADWAL_DROPDOWN_IDS.forEach(id => { const sel = document.getElementById(id); if (sel) sel.addEventListener('change', updatePreviewJadwal); }); const btn = document.getElementById('whatsappBtnBaru'); if (btn) btn.onclick = sendToWhatsAppJadwal; loadAllJadwalData(); };
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', window.initJadwalBaru);
         else window.initJadwalBaru();
     })();
-    </script>
 
-    <!-- ABSEN SCRIPT -->
-    <script>
+    // ============ SCRIPT ABSEN ============
     (function() {
         var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcKBFM8Mm0A8e_hWfl48uEUuDhlmxK8okgXF4M-102HLEuROZPN9YZlpmKnkRo8b_SKA/exec';
         var CACHE_KEY_ABSEN = 'absensi_dukops_data';
@@ -627,7 +678,6 @@
         window.addEventListener('offline', function() { isOnlineAbsen = false; });
         
         function forceRefreshAbsen() { if (!isOnlineAbsen) return; localStorage.removeItem(CACHE_KEY_ABSEN); loadAbsenTahun(); if (currentDataAbsen) loadDataAbsen(); }
-        
         function loadAbsenTahun() {
             if (!tahunSelectAbsen) return;
             tahunSelectAbsen.disabled = true;
@@ -637,9 +687,7 @@
             if (!isOnlineAbsen) { if (!cached || !cached.years) tahunSelectAbsen.innerHTML = '<option>❌ Offline - no data</option>'; return; }
             fetch(SCRIPT_URL + '?action=getYears').then(function(response) { if (!response.ok) throw new Error('HTTP ' + response.status); return response.json(); }).then(function(years) { if (years && years.length > 0) { populateTahunSelectAbsen(years); saveToCacheAbsen({ years: years, months: null, data: null }); } else { throw new Error('Tidak ada data tahun'); } }).catch(function(error) { console.error('Error:', error); if (!cached || !cached.years) { tahunSelectAbsen.innerHTML = '<option>❌ Gagal memuat</option>'; } }).finally(function() { if (tahunSelectAbsen) tahunSelectAbsen.disabled = false; });
         }
-        
         function populateTahunSelectAbsen(years) { if (!tahunSelectAbsen) return; tahunSelectAbsen.innerHTML = '<option value="">-- Pilih Tahun --</option>'; for (var i = 0; i < years.length; i++) { var opt = document.createElement('option'); opt.value = years[i]; opt.textContent = years[i]; tahunSelectAbsen.appendChild(opt); } if (years.length > 0) { tahunSelectAbsen.value = years[0]; onTahunChangeAbsen(); } }
-        
         function onTahunChangeAbsen() {
             if (!tahunSelectAbsen || !bulanSelectAbsen) return;
             var tahun = tahunSelectAbsen.value;
@@ -651,23 +699,16 @@
             if (!isOnlineAbsen) { bulanSelectAbsen.innerHTML = '<option>❌ Offline - pilih tahun lain</option>'; bulanSelectAbsen.disabled = false; return; }
             fetch(SCRIPT_URL + '?action=getMonths&tahun=' + encodeURIComponent(tahun)).then(function(response) { if (!response.ok) throw new Error('HTTP ' + response.status); return response.json(); }).then(function(months) { if (months && months.length > 0) { populateBulanSelectAbsen(months); var updatedCache = getCacheAbsen() || {}; updatedCache.months = updatedCache.months || {}; updatedCache.months[tahun] = months; saveToCacheAbsen(updatedCache); } else { bulanSelectAbsen.innerHTML = '<option>Tidak ada data bulan</option>'; } bulanSelectAbsen.disabled = false; }).catch(function(error) { console.error('Error:', error); bulanSelectAbsen.innerHTML = '<option>❌ Gagal memuat</option>'; bulanSelectAbsen.disabled = false; });
         }
-        
         function populateBulanSelectAbsen(months) { if (!bulanSelectAbsen) return; bulanSelectAbsen.innerHTML = '<option value="">-- Pilih Bulan --</option>'; for (var i = 0; i < months.length; i++) { var opt = document.createElement('option'); opt.value = months[i].num || months[i]; opt.textContent = months[i].name || months[i]; bulanSelectAbsen.appendChild(opt); } bulanSelectAbsen.onchange = function() { if (this.value) { loadDataAbsen(); } else { if (resultContainerAbsen) resultContainerAbsen.innerHTML = ''; } }; if (bulanSelectAbsen.value) { loadDataAbsen(); } }
-        
         function loadDataAbsen() { if (!tahunSelectAbsen || !bulanSelectAbsen) return; var tahun = tahunSelectAbsen.value; var bulan = bulanSelectAbsen.value; if (!tahun || !bulan) { if (resultContainerAbsen) resultContainerAbsen.innerHTML = '<div class="absen-card">Pilih tahun dan bulan terlebih dahulu</div>'; return; } showLoadingAbsen(); var cached = getCacheAbsen(); var cacheKey = tahun + '_' + bulan; if (cached && cached.data && cached.data[cacheKey]) { var cachedData = cached.data[cacheKey]; if (Date.now() - cachedData.timestamp < CACHE_EXPIRY) { displayDataAbsen(cachedData.data); currentDataAbsen = cachedData.data; return; } } if (!isOnlineAbsen) { showErrorAbsen('Tidak ada koneksi dan tidak ada data tersimpan'); return; } fetch(SCRIPT_URL + '?action=getData&tahun=' + encodeURIComponent(tahun) + '&bulan=' + encodeURIComponent(bulan)).then(function(response) { if (!response.ok) throw new Error('HTTP ' + response.status); return response.json(); }).then(function(data) { currentDataAbsen = data; displayDataAbsen(data); var updatedCache = getCacheAbsen() || {}; updatedCache.data = updatedCache.data || {}; updatedCache.data[cacheKey] = { data: data, timestamp: Date.now() }; saveToCacheAbsen(updatedCache); }).catch(function(error) { console.error('Error:', error); showErrorAbsen('Gagal: ' + error.message); }); }
-        
         function displayDataAbsen(data) { if (!resultContainerAbsen) return; if (data.error) { showErrorAbsen(data.error); return; } var totalDesa = data.total_desa || 0; var persen = totalDesa > 0 ? Math.round((data.desa_lengkap / totalDesa) * 100) : 0; var detailsHtml = ''; for (var i = 0; i < data.details.length; i++) { var d = data.details[i]; var cls = '', txt = '', icon = ''; if (d.status === 'LENGKAP') { cls = 'absen-status-lengkap'; icon = '✅'; txt = 'LENGKAP'; } else if (d.status === 'BELUM_LENGKAP') { cls = 'absen-status-belum-lengkap'; icon = '⚠️'; txt = 'BL'; } else { cls = 'absen-status-belum'; icon = '❌'; txt = 'BELUM'; } var warn = (d.status === 'LENGKAP') ? '#4caf50' : ((d.status === 'BELUM_LENGKAP') ? '#ff9800' : '#f44336'); detailsHtml += '<div class="absen-desa-item" onclick="window.showDetailAbsen(\'' + escapeHtmlAbsen(d.nama) + '\',' + d.jumlah_file + ',' + d.persentase + ',\'' + d.status + '\')"><div class="absen-desa-name">' + icon + ' ' + escapeHtmlAbsen(d.nama) + '</div><div class="absen-desa-stats">' + d.jumlah_file + '/9</div><div class="absen-desa-progress"><div class="absen-desa-progress-bar"><div class="absen-desa-progress-fill" style="width:' + d.persentase + '%; background:' + warn + '"></div></div></div><div class="absen-status-badge ' + cls + '">' + txt + '</div></div>'; } var html = '<div class="absen-card"><div class="absen-stats-grid"><div class="absen-stat-card"><div class="absen-stat-value" style="color:#1a73e8;">' + data.total_desa + '</div><div class="absen-stat-label">DESA</div></div><div class="absen-stat-card"><div class="absen-stat-value" style="color:#4caf50;">' + data.desa_lengkap + '</div><div class="absen-stat-label">LENGKAP</div></div><div class="absen-stat-card"><div class="absen-stat-value" style="color:#ff9800;">' + data.desa_belum_lengkap + '</div><div class="absen-stat-label">BL</div></div><div class="absen-stat-card"><div class="absen-stat-value" style="color:#f44336;">' + data.desa_belum + '</div><div class="absen-stat-label">BELUM</div></div></div><div class="absen-progress-container"><div class="progress-text" style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:12px;"><span>📈 PROGRESS</span><span><b>' + persen + '%</b></span></div><div class="absen-progress-bar"><div class="absen-progress-fill" style="width:' + persen + '%"></div></div></div><div style="font-size:0.7rem; font-weight:600; margin:10px 0 5px;">📋 DAFTAR DESA (' + data.total_desa + ')</div><div class="absen-desa-list">' + detailsHtml + '</div><div style="margin-top:15px; text-align:center;"><button onclick="shareAsPNGAbsen()" class="absen-btn absen-btn-primary" style="background:#e91e63;">📸 DOWNLOAD ABSEN</button></div></div>'; resultContainerAbsen.innerHTML = html; }
-        
         function createCompactPNGHTMLAbsen() { if (!currentDataAbsen) return ''; var d = currentDataAbsen; var total = d.total_desa || 0; var persen = total > 0 ? Math.round((d.desa_lengkap / total) * 100) : 0; var tgl = new Date().toLocaleDateString('id-ID'); var listHtml = ''; for (var i = 0; i < d.details.length; i++) { var des = d.details[i]; var warn = (des.status === 'LENGKAP') ? '#4caf50' : ((des.status === 'BELUM_LENGKAP') ? '#ff9800' : '#f44336'); var emoji = (des.status === 'LENGKAP') ? '✅' : ((des.status === 'BELUM_LENGKAP') ? '⚠️' : '❌'); var statusText = (des.status === 'LENGKAP') ? 'LENGKAP' : ((des.status === 'BELUM_LENGKAP') ? 'BL' : 'BELUM'); var statusBg = (des.status === 'LENGKAP') ? '#e8f5e9' : ((des.status === 'BELUM_LENGKAP') ? '#fff3e0' : '#ffebee'); listHtml += '<div class="png-desa-item"><div style="width:24px; font-size:10px;">' + emoji + '</div><div style="flex:2; font-size:10px; font-weight:500; color:#000;">' + escapeHtmlAbsen(des.nama) + '</div><div style="width:35px; font-size:9px; text-align:center; color:#000;">' + des.jumlah_file + '/9</div><div style="width:50px;"><div style="background:#e0e0e0; border-radius:6px; height:4px;"><div style="background:' + warn + '; width:' + des.persentase + '%; height:4px; border-radius:6px;"></div></div></div><div style="width:45px; font-size:8px; text-align:center; padding:2px 4px; border-radius:8px; background:' + statusBg + '; color:' + warn + ';">' + statusText + '</div></div>'; } return '<div class="png-container"><div class="png-header"><div style="font-size:16px; font-weight:bold;">📊 ABSENSI DUKOPS</div><div style="font-size:8px;">Koramil Monitoring | Target 9 File ZIP</div></div><div style="padding:10px;"><div style="text-align:center; margin-bottom:8px;"><div style="font-size:14px; font-weight:bold; color:#000;">' + (d.nama_bulan || '') + ' ' + (d.tahun || '') + '</div><div style="font-size:7px; color:#666;">' + tgl + '</div></div><div class="png-stats"><div class="png-stat-card"><div style="font-size:12px; font-weight:bold; color:#1a73e8;">' + d.total_desa + '</div><div style="font-size:7px;">DESA</div></div><div class="png-stat-card"><div style="font-size:12px; font-weight:bold; color:#4caf50;">' + d.desa_lengkap + '</div><div style="font-size:7px;">LENGKAP</div></div><div class="png-stat-card"><div style="font-size:12px; font-weight:bold; color:#ff9800;">' + d.desa_belum_lengkap + '</div><div style="font-size:7px;">BL</div></div><div class="png-stat-card"><div style="font-size:12px; font-weight:bold; color:#f44336;">' + d.desa_belum + '</div><div style="font-size:7px;">BELUM</div></div></div><div style="margin-bottom:8px;"><div style="display:flex; justify-content:space-between; font-size:8px; color:#000;"><span>PROGRESS</span><span><b>' + persen + '%</b></span></div><div class="png-progress-bar"><div class="png-progress-fill" style="width:' + persen + '%"></div></div></div><div style="font-size:9px; font-weight:bold; margin:6px 0 4px; color:#000;">📋 DAFTAR DESA (' + d.total_desa + ')</div><div style="max-height:550px; overflow:hidden;">' + listHtml + '</div><div style="margin-top:8px; padding-top:5px; border-top:1px solid #eee; text-align:center; font-size:6px; color:#aaa;">Absensi Dukops - Koramil</div></div></div>'; }
-        
         window.shareAsPNGAbsen = async function() { if (!currentDataAbsen) return; if (screenshotAreaAbsen) screenshotAreaAbsen.innerHTML = createCompactPNGHTMLAbsen(); var element = screenshotAreaAbsen ? screenshotAreaAbsen.firstChild : null; if (!element) return; try { var canvas = await html2canvas(element, { scale: 2, backgroundColor: '#ffffff' }); var link = document.createElement('a'); link.download = 'Absensi_' + (currentDataAbsen.nama_bulan || '') + '_' + (currentDataAbsen.tahun || '') + '.png'; link.href = canvas.toDataURL('image/png'); link.click(); } catch (e) { console.error(e); } setTimeout(function() { if (screenshotAreaAbsen) screenshotAreaAbsen.innerHTML = ''; }, 500); };
-        
         function getCacheAbsen() { try { var cached = localStorage.getItem(CACHE_KEY_ABSEN); if (cached) return JSON.parse(cached); } catch(e) {} return null; }
         function saveToCacheAbsen(data) { try { localStorage.setItem(CACHE_KEY_ABSEN, JSON.stringify(data)); } catch(e) {} }
         function showLoadingAbsen() { if (resultContainerAbsen) resultContainerAbsen.innerHTML = '<div class="absen-loading"><div class="absen-spinner"></div><p>Mohon Tunggu ...</p></div>'; }
         function showErrorAbsen(msg) { if (resultContainerAbsen) resultContainerAbsen.innerHTML = '<div class="absen-card" style="color:#f44336;">⚠️ ' + escapeHtmlAbsen(msg) + '</div>'; }
         function escapeHtmlAbsen(t) { if (!t) return ''; return t.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
-        
         window.showDetailAbsen = function(n, j, p, s) { alert((s === 'LENGKAP' ? '✅ ' : (s === 'BELUM_LENGKAP' ? '⚠️ ' : '❌ ')) + n + '\n' + j + '/9 (' + p + '%)'); };
         window.loadAbsenTahun = loadAbsenTahun;
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadAbsenTahun);
