@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Chat DUKOPS</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -21,7 +22,6 @@
             overflow: hidden;
         }
         
-        /* Container chat */
         .chat-container {
             display: flex;
             flex-direction: column;
@@ -30,37 +30,82 @@
             backdrop-filter: blur(10px);
         }
         
-        /* Header */
+        /* Header dengan online users */
         .chat-header {
             padding: 12px 16px;
             background: linear-gradient(135deg, #0d2a1d, #0a1f15);
             border-bottom: 1px solid #2e8b57;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             flex-shrink: 0;
         }
         
-        .chat-header h3 {
+        .online-users {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .online-label {
+            font-size: 11px;
             color: #4dff4d;
-            font-size: 14px;
+            background: rgba(77, 255, 77, 0.15);
+            padding: 2px 8px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .online-label i {
+            font-size: 8px;
+            color: #4caf50;
+        }
+        
+        .user-avatar {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(255,255,255,0.1);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            color: #e6ffe6;
+        }
+        
+        .user-avatar i {
+            font-size: 10px;
+            color: #4caf50;
+        }
+        
+        .user-avatar.online i {
+            color: #4caf50;
+            text-shadow: 0 0 4px #4caf50;
+        }
+        
+        .chat-header h3 {
+            color: #ffcc00;
+            font-size: 12px;
             margin: 0;
             display: flex;
             align-items: center;
-            gap: 8px;
-        }
-        
-        .chat-header h3 i {
-            font-size: 16px;
+            gap: 6px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 8px;
         }
         
         .chat-badge {
             background: #ff4444;
             color: white;
             border-radius: 10px;
-            padding: 2px 8px;
-            font-size: 10px;
-            margin-left: 8px;
+            padding: 2px 6px;
+            font-size: 9px;
+        }
+        
+        .chat-actions {
+            position: absolute;
+            top: 12px;
+            right: 12px;
         }
         
         .chat-actions button {
@@ -87,7 +132,6 @@
             gap: 8px;
         }
         
-        /* Bubble pesan */
         .message {
             display: flex;
             flex-direction: column;
@@ -122,15 +166,27 @@
             font-size: 10px;
             margin-bottom: 2px;
             margin-left: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
         
         .message-own .message-name {
             color: #a5d6a7;
-            text-align: right;
+            justify-content: flex-end;
         }
         
         .message-other .message-name {
             color: #ffcc00;
+        }
+        
+        .online-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4caf50;
+            display: inline-block;
+            box-shadow: 0 0 4px #4caf50;
         }
         
         .message-text {
@@ -150,7 +206,6 @@
             text-align: right;
         }
         
-        /* Input area */
         .chat-input-area {
             padding: 12px;
             border-top: 1px solid #2a4a2a;
@@ -190,7 +245,6 @@
             background: #6aff6a;
         }
         
-        /* Footer */
         .chat-footer {
             padding: 6px 12px;
             font-size: 9px;
@@ -210,7 +264,6 @@
             color: #ff8888;
         }
         
-        /* Loading & empty state */
         .empty-chat {
             text-align: center;
             color: #888;
@@ -223,7 +276,6 @@
             padding: 30px 20px;
         }
         
-        /* Scrollbar */
         .chat-messages::-webkit-scrollbar {
             width: 4px;
         }
@@ -236,13 +288,24 @@
             background: #4dff4d;
             border-radius: 4px;
         }
+        
+        .no-online {
+            color: #888;
+            font-size: 11px;
+        }
     </style>
 </head>
 <body>
     <div class="chat-container">
         <div class="chat-header">
+            <div class="online-users" id="onlineUsersContainer">
+                <span class="online-label"><i class="fas fa-circle"></i> ONLINE</span>
+                <div id="onlineUsersList" style="display: flex; flex-wrap: wrap; gap: 6px;">
+                    <span class="no-online">Memuat...</span>
+                </div>
+            </div>
             <h3>
-                <i class="fas fa-comments"></i> LIVE CHAT DUKOPS
+                <i class="fas fa-comments"></i> LIVE CHAT
                 <span id="unreadBadge" class="chat-badge" style="display: none;">0</span>
             </h3>
             <div class="chat-actions">
@@ -267,9 +330,8 @@
 
     <script>
         // ============ KONFIGURASI SUPABASE ============
-        // GANTI DENGAN URL DAN ANON KEY SUPABASE ANDA
-        const SUPABASE_URL = 'https://YOUR_PROJECT.supabase.co';
-        const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY';
+        const SUPABASE_URL = 'https://qthoexsadattfnnzcawh.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF0aG9leHNhZGF0dGZubnpjYXdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NTMzNTAsImV4cCI6MjA5NjEyOTM1MH0.qZBFjrN8F8vwxoaPKIPLDQIOWbt58BNlPWLOn4J_5_4';
         
         let supabase = null;
         let currentUser = 'Guest';
@@ -278,19 +340,23 @@
         let lastMessageCount = 0;
         let chatChannel = null;
         
-        // Ambil username dari localStorage (dikirim dari parent window)
+        // Data online users
+        let onlineUsers = new Set(); // Set of usernames
+        let lastActivity = new Map(); // username -> timestamp
+        
+        // Update interval untuk online status (setiap 30 detik)
+        let onlineInterval = null;
+        
+        // Ambil username dari berbagai sumber
         function getUsername() {
             try {
-                // Coba ambil dari URL parameter
                 const urlParams = new URLSearchParams(window.location.search);
                 const urlUser = urlParams.get('user');
                 if (urlUser) return decodeURIComponent(urlUser);
                 
-                // Coba dari localStorage
                 const stored = localStorage.getItem('dukops_username');
                 if (stored) return stored;
                 
-                // Coba dari parent window (iframe)
                 if (window.parent && window.parent.document) {
                     const selectDesa = window.parent.document.getElementById('selectDesa');
                     if (selectDesa && selectDesa.options && selectDesa.options[selectDesa.selectedIndex]) {
@@ -305,6 +371,107 @@
         function updateUserDisplay() {
             const display = document.getElementById('userNameDisplay');
             if (display) display.innerHTML = `<i class="fas fa-user"></i> ${currentUser.substring(0, 20)}`;
+        }
+        
+        // Update online users di header
+        function updateOnlineUsersDisplay() {
+            const container = document.getElementById('onlineUsersList');
+            if (!container) return;
+            
+            const onlineList = Array.from(onlineUsers).filter(u => u !== 'Guest' && u !== currentUser);
+            
+            if (onlineList.length === 0) {
+                container.innerHTML = '<span class="no-online">Tidak ada user lain online</span>';
+                return;
+            }
+            
+            container.innerHTML = onlineList.map(user => `
+                <span class="user-avatar online">
+                    <i class="fas fa-circle"></i> ${escapeHtml(user.substring(0, 15))}
+                </span>
+            `).join('');
+        }
+        
+        // Update aktivitas user (setiap kali ada interaksi)
+        function updateUserActivity(username) {
+            if (!username || username === 'Guest') return;
+            lastActivity.set(username, Date.now());
+            
+            // Tambah ke online users jika belum ada
+            if (!onlineUsers.has(username)) {
+                onlineUsers.add(username);
+                updateOnlineUsersDisplay();
+            }
+        }
+        
+        // Cek user yang tidak aktif (lebih dari 1 menit)
+        function checkInactiveUsers() {
+            const now = Date.now();
+            let changed = false;
+            
+            onlineUsers.forEach(user => {
+                const lastActive = lastActivity.get(user);
+                if (lastActive && (now - lastActive) > 60000) { // 60 detik
+                    onlineUsers.delete(user);
+                    lastActivity.delete(user);
+                    changed = true;
+                }
+            });
+            
+            if (changed) {
+                updateOnlineUsersDisplay();
+            }
+        }
+        
+        // Kirim pesan heartbeart ke Supabase (untuk online status)
+        async function sendHeartbeat() {
+            if (!supabase || !currentUser || currentUser === 'Guest') return;
+            
+            try {
+                // Simpan aktivitas ke tabel online_users (buat dulu jika belum)
+                // Alternatif: update last_active di tabel terpisah
+                const { error } = await supabase
+                    .from('online_users')
+                    .upsert({ 
+                        username: currentUser, 
+                        last_active: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    }, { onConflict: 'username' });
+                
+                if (error && error.code !== '42P01') { // Table not found
+                    console.log('Heartbeat error:', error.message);
+                }
+            } catch(e) { /* Table mungkin belum dibuat */ }
+        }
+        
+        // Load online users dari Supabase
+        async function loadOnlineUsers() {
+            if (!supabase) return;
+            
+            try {
+                const { data, error } = await supabase
+                    .from('online_users')
+                    .select('username, last_active')
+                    .gte('last_active', new Date(Date.now() - 60000).toISOString());
+                
+                if (error && error.code !== '42P01') {
+                    console.log('Load online users error:', error);
+                    return;
+                }
+                
+                if (data && data.length > 0) {
+                    const newOnlineSet = new Set();
+                    data.forEach(user => {
+                        if (user.username !== 'Guest') {
+                            newOnlineSet.add(user.username);
+                            lastActivity.set(user.username, new Date(user.last_active).getTime());
+                        }
+                    });
+                    
+                    onlineUsers = newOnlineSet;
+                    updateOnlineUsersDisplay();
+                }
+            } catch(e) { console.log('Load online users error:', e); }
         }
         
         // Escape HTML
@@ -332,9 +499,13 @@
             
             container.innerHTML = messages.map(msg => {
                 const isOwn = msg.username === currentUser;
+                const isOnline = onlineUsers.has(msg.username);
                 return `
                     <div class="message ${isOwn ? 'message-own' : 'message-other'}">
-                        <div class="message-name">${isOwn ? '👤 Anda' : '👤 ' + escapeHtml(msg.username)}</div>
+                        <div class="message-name">
+                            ${isOwn ? '👤 Anda' : '👤 ' + escapeHtml(msg.username)}
+                            ${!isOwn && isOnline ? '<span class="online-dot" title="Online"></span>' : ''}
+                        </div>
                         <div class="message-bubble">
                             <div class="message-text">${escapeHtml(msg.message)}</div>
                         </div>
@@ -343,10 +514,8 @@
                 `;
             }).join('');
             
-            // Scroll ke bawah
             container.scrollTop = container.scrollHeight;
             
-            // Update unread count jika pesan baru
             if (messages.length > lastMessageCount) {
                 const isScrolledToBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 50;
                 if (!isScrolledToBottom) {
@@ -400,6 +569,8 @@
                     (payload) => {
                         messages.push(payload.new);
                         renderMessages();
+                        // Update aktivitas user yang mengirim pesan
+                        updateUserActivity(payload.new.username);
                     }
                 )
                 .on('postgres_changes', 
@@ -433,9 +604,12 @@
                 if (error) throw error;
                 
                 input.value = '';
-                // Reset unread karena kita sudah melihat
                 unreadCount = 0;
                 updateUnreadBadge();
+                // Update aktivitas user
+                updateUserActivity(currentUser);
+                // Kirim heartbeat
+                sendHeartbeat();
             } catch(e) {
                 console.error('Send error:', e);
                 alert('Gagal mengirim: ' + e.message);
@@ -478,6 +652,13 @@
             }
         }
         
+        // Buat tabel online_users jika belum ada
+        async function createOnlineUsersTable() {
+            // Catatan: Ini hanya simulasi, sebaiknya buat tabel manual di Supabase SQL Editor
+            // SQL: CREATE TABLE online_users (username TEXT PRIMARY KEY, last_active TIMESTAMP, updated_at TIMESTAMP);
+            console.log('Pastikan tabel online_users sudah dibuat di Supabase');
+        }
+        
         // Inisialisasi Supabase
         function initSupabase() {
             if (SUPABASE_URL.includes('YOUR_PROJECT')) {
@@ -490,6 +671,22 @@
                 console.log('✅ Supabase terhubung');
                 loadMessages();
                 subscribeToChat();
+                loadOnlineUsers();
+                createOnlineUsersTable();
+                
+                // Mulai heartbeat interval (setiap 30 detik)
+                setInterval(() => {
+                    sendHeartbeat();
+                    checkInactiveUsers();
+                    loadOnlineUsers();
+                }, 30000);
+                
+                // Kirim heartbeat pertama
+                setTimeout(() => {
+                    sendHeartbeat();
+                    updateUserActivity(currentUser);
+                }, 1000);
+                
                 return true;
             } catch(e) {
                 console.error('Init error:', e);
@@ -498,7 +695,7 @@
             }
         }
         
-        // Kirim username ke parent (agar sinkron)
+        // Kirim username ke parent
         function syncUsernameToParent() {
             try {
                 if (window.parent && window.parent !== window) {
@@ -514,6 +711,8 @@
                 localStorage.setItem('dukops_username', currentUser);
                 updateUserDisplay();
                 syncUsernameToParent();
+                updateUserActivity(currentUser);
+                sendHeartbeat();
             }
         });
         
@@ -525,10 +724,13 @@
             setupScrollListener();
             initSupabase();
             
-            // Kirim username ke parent
+            setTimeout(() => {
+                updateUserActivity(currentUser);
+                sendHeartbeat();
+            }, 500);
+            
             setTimeout(syncUsernameToParent, 500);
             
-            // Event listeners
             document.getElementById('sendBtn').onclick = sendMessage;
             document.getElementById('deleteAllBtn').onclick = deleteAllMessages;
             document.getElementById('messageInput').addEventListener('keypress', (e) => {
