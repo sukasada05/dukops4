@@ -264,7 +264,7 @@
     </style>
 </head>
 <body>
-    <!-- ================= SPLASH SCREEN MODERN UDAYANA (SEMUA CENTER) ================= -->
+    <!-- ================= SPLASH SCREEN ================= -->
     <div id="splashScreen" class="splash-container-modern">
         <div class="splash-content">
             <div class="splash-logo-center">
@@ -610,7 +610,7 @@
         function renderChatMessages() {
             const container = document.getElementById('chatMessages');
             if (!container) return;
-            if (chatMessages.length === 0) { container.innerHTML = '<div class="chat-empty">💬 Belum ada pesan. Kirim pesan pertama!</div>'; return; }
+            if (chatMessages.length === 0) { container.innerHTML = '<div class="chat-empty">💬 Belum ada pesan. Kirim pesan primeiro!</div>'; return; }
             container.innerHTML = chatMessages.map(msg => `
                 <div class="chat-message ${msg.username === chatCurrentUser ? 'chat-message-own' : 'chat-message-other'}" data-id="${msg.id}" data-username="${msg.username}">
                     <div class="chat-message-name">${msg.username === chatCurrentUser ? '👤 Anda' : '👤 ' + escapeHtml(msg.username)}</div>
