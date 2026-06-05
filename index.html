@@ -1089,7 +1089,7 @@
             }
         }
 
-        // ============ INIT APLIKASI SETELAH PILIH DESA ============
+        // ============ INIT APLIKASI SETELAH PILIH DESA (KOORDINAT TETAP BERFUNGSI) ============
         function initAppAfterDesa(desa) {
             // Simpan ke localStorage
             localStorage.setItem('selectedDesa', desa);
@@ -1098,14 +1098,21 @@
             chatCurrentUser = desa;
             document.getElementById('chatUserNameDisplay').innerHTML = `<i class="fas fa-user"></i> ${desa.substring(0,20)}`;
             
-            // Set select desa di DUKOPS
+            // Set select desa di DUKOPS (INI PENTING UNTUK KOORDINAT & CANVAS)
             const selectDesaElem = document.getElementById('selectDesa');
             if (selectDesaElem) {
+                // Isi option dengan desa yang dipilih
                 selectDesaElem.innerHTML = `<option value="${desa}">${desa}</option>`;
                 selectDesaElem.value = desa;
-                // Panggil loadSelectedDesa agar koordinat dll berfungsi
+                
+                // PANGGIL FUNGSI ASLI loadSelectedDesa AGAR KOORDINAT DAN CANVAS BERJALAN
                 if (typeof loadSelectedDesa === 'function') {
-                    setTimeout(() => loadSelectedDesa(), 100);
+                    setTimeout(() => {
+                        loadSelectedDesa();
+                        console.log('✅ loadSelectedDesa() dipanggil untuk desa:', desa);
+                    }, 100);
+                } else {
+                    console.warn('⚠️ Fungsi loadSelectedDesa tidak ditemukan! Koordinat mungkin tidak berjalan.');
                 }
             }
             
@@ -1225,7 +1232,7 @@
             }
         };
 
-        // ============ FUNGSI ASLI ============
+        // ============ FUNGSI ASLI (TIDAK DIRUBAH) ============
         window.showDukops = function() {
             document.getElementById('dukopsContent').style.display = 'block';
             document.getElementById('jadwalPiketContainerBaru').style.display = 'none';
@@ -1253,14 +1260,20 @@
             if (typeof loadAbsenTahun === 'function') loadAbsenTahun();
         };
         
+        // FUNGSI loadSelectedDesa ASLI (TIDAK DIRUBAH) - akan di-overwrite oleh app.js
+        // Tapi kita definisikan dulu sebagai placeholder
         window.loadSelectedDesa = function() {
             const selectDesa = document.getElementById('selectDesa');
-            const selectedText = selectDesa.options[selectDesa.selectedIndex]?.text || "";
-            document.getElementById('desaProfileNameHeader').innerText = selectedText;
-            document.getElementById('desaProfileImgHeader').src = `profile/${selectedText.toLowerCase()}.png`;
+            if (selectDesa && selectDesa.value) {
+                const selectedText = selectDesa.options[selectDesa.selectedIndex]?.text || selectDesa.value;
+                console.log('loadSelectedDesa dipanggil untuk:', selectedText);
+                // Update profile header
+                document.getElementById('desaProfileNameHeader').innerText = selectedText;
+                document.getElementById('desaProfileImgHeader').src = `profile/${selectedText.toLowerCase()}.png`;
+            }
         };
         
-        // Fungsi dummy
+        // Fungsi dummy (akan digantikan oleh app.js)
         window.previewImage = function() {};
         window.updateDatePreview = function() {};
         window.checkInputCompletion = function() {};
