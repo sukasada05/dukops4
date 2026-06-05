@@ -133,7 +133,7 @@
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; color: #4dff4d; font-weight: bold; }
         select, input, textarea { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #4dff4d; background: rgba(26, 42, 31, 0.9); color: #e6ffe6; font-size: 14px; outline: none; }
-        canvas { width: 100%; background: rgba(15, 26, 18, 0.9); border-radius: 10px; margin-bottom: 15px; border: 1px solid #4dff4d; display: none; }
+        canvas { width: 100%; background: #0f1a12; border-radius: 10px; margin-bottom: 15px; border: 1px solid #4dff4d; display: none; }
         .btn-submit { background: #2a4a2a; color: #ccc; width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
         .btn-reset { background: #4a2a2a; color: #ffaaaa; width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
         .btn-attendance { background: #1a3a6a; color: #ffcc00; width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: bold; cursor: pointer; margin-bottom: 10px; }
@@ -454,7 +454,7 @@
             return '-8.1155°, 115.0885°';
         }
 
-        // ============ UPDATE CANVAS ============
+        // ============ UPDATE CANVAS (SESUAI ORIGINAL) ============
         async function updateCanvasWithKoordinat(desa) {
             const canvas = document.getElementById('canvas');
             if (!canvas) return;
@@ -463,68 +463,72 @@
             currentKoordinat = koordinat;
             
             const ctx = canvas.getContext('2d');
+            
+            // Set ukuran canvas
             canvas.width = canvas.clientWidth;
-            canvas.height = 160;
+            canvas.height = 120;
+            
+            // Bersihkan canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
+            // Background gelap
             ctx.fillStyle = '#0f1a12';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
+            // Border hijau
             ctx.strokeStyle = '#4dff4d';
             ctx.lineWidth = 1;
             ctx.strokeRect(2, 2, canvas.width - 4, canvas.height - 4);
             
-            ctx.fillStyle = '#ffcc00';
-            ctx.font = 'bold 12px Arial';
-            ctx.fillText('📋 RINGKASAN KEGIATAN', 10, 20);
-            
-            ctx.strokeStyle = '#4dff4d';
-            ctx.beginPath();
-            ctx.moveTo(10, 28);
-            ctx.lineTo(canvas.width - 10, 28);
-            ctx.stroke();
-            
+            // Tampilkan teks koordinat
             ctx.fillStyle = '#4dff4d';
-            ctx.font = '10px Arial';
-            ctx.fillText(`📍 Desa: ${desa}`, 10, 45);
+            ctx.font = '11px Arial';
+            ctx.fillText(`📍 ${desa}`, 10, 25);
+            
             ctx.fillStyle = '#00ccff';
-            ctx.fillText(`🗺️ Koordinat: ${koordinat}`, 10, 60);
+            ctx.fillText(`🗺️ ${koordinat}`, 10, 45);
             
+            // Tampilkan tanggal/waktu sekarang
+            const now = new Date();
+            ctx.fillStyle = '#888';
+            ctx.font = '9px Arial';
+            ctx.fillText(`📅 ${now.toLocaleDateString('id-ID')} ${now.toLocaleTimeString()}`, 10, 65);
+            
+            // Tampilkan thumbnail foto jika ada
             const fileInput = document.getElementById('gambar');
-            
             if (fileInput && fileInput.files && fileInput.files[0]) {
                 const file = fileInput.files[0];
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const img = new Image();
                     img.onload = function() {
-                        ctx.drawImage(img, canvas.width - 110, 35, 100, 75);
-                        ctx.fillStyle = '#aaa';
-                        ctx.font = '8px Arial';
-                        ctx.fillText('📸 Foto Kegiatan', canvas.width - 90, 118);
+                        const imgWidth = 80;
+                        const imgHeight = 60;
+                        const x = canvas.width - imgWidth - 10;
+                        const y = 10;
+                        ctx.drawImage(img, x, y, imgWidth, imgHeight);
+                        ctx.strokeStyle = '#4dff4d';
+                        ctx.strokeRect(x, y, imgWidth, imgHeight);
                     };
                     img.src = e.target.result;
                 };
                 reader.readAsDataURL(file);
             } else {
+                // Placeholder jika belum ada foto
                 ctx.fillStyle = '#2a4a2a';
-                ctx.fillRect(canvas.width - 110, 35, 100, 75);
+                ctx.fillRect(canvas.width - 90, 10, 80, 60);
                 ctx.fillStyle = '#666';
                 ctx.font = '8px Arial';
-                ctx.fillText('📷 Belum ada foto', canvas.width - 100, 78);
-                ctx.fillText('Upload foto di atas', canvas.width - 100, 92);
+                ctx.fillText('📷 Belum ada', canvas.width - 85, 35);
+                ctx.fillText('foto', canvas.width - 85, 48);
             }
             
+            // Garis pemisah bawah
             ctx.strokeStyle = '#2a4a2a';
             ctx.beginPath();
             ctx.moveTo(10, canvas.height - 15);
             ctx.lineTo(canvas.width - 10, canvas.height - 15);
             ctx.stroke();
-            
-            const now = new Date();
-            ctx.fillStyle = '#666';
-            ctx.font = '7px Arial';
-            ctx.fillText(`Dibuat: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`, 10, canvas.height - 5);
             
             canvas.style.display = 'block';
         }
