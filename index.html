@@ -12,14 +12,12 @@
     <title>SISTEM PELAPORAN DUKOPS BABINSA dan JADWAL PIKET KORAMIL</title>
     <meta name="theme-color" content="#0a1a3a">
     
-    <!-- Favicon (akan dibaca dari folder jika ada) -->
     <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="shortcut icon" href="favicon.ico" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <link rel="manifest" href="site.webmanifest" />
     
-    <!-- External Libraries -->
     <script src="https://cdn.polyfill.io/v3/polyfill.min.js?features=default,es6,Promise,fetch,Array.prototype.includes"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -27,7 +25,7 @@
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     
     <style>
-        /* ============ SPLASH SCREEN MODERN UDAYANA ============ */
+        /* ============ SPLASH SCREEN ============ */
         .splash-container-modern {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(135deg, #0a1a3a 0%, #1a3a6a 50%, #0a2a4a 100%);
@@ -51,7 +49,7 @@
         .splash-btn-masuk:disabled { opacity: 0.5; cursor: not-allowed; }
         .splash-loading-desa { margin-top: 10px; font-size: 11px; color: #ffaa00; }
 
-        /* ============ HEADER DUKOPS ============ */
+        /* ============ HEADER ============ */
         .dukops-header {
             background: url('header/header-background.png') center/cover no-repeat;
             background-color: #1a472a;
@@ -359,12 +357,12 @@
         let daftarDesaGlobal = [];
         let profileImagesGlobal = {};
 
-        // ============ LOAD CSS EKSTERNAL ============
+        // ============ LOAD EXTERNAL CSS ============
         function loadExternalCSS() {
             const link = document.createElement('link');
             link.rel = 'stylesheet';
             link.href = 'styles.css';
-            link.onerror = () => console.log('styles.css tidak ditemukan, menggunakan style bawaan');
+            link.onerror = () => console.log('styles.css tidak ditemukan');
             document.head.appendChild(link);
         }
         loadExternalCSS();
@@ -378,7 +376,7 @@
                 if (!response.ok) throw new Error('HTTP ' + response.status);
                 const data = await response.json();
                 daftarDesaGlobal = data.desaList || [];
-                console.log("✅ Daftar desa berhasil dimuat:", daftarDesaGlobal.length, "desa");
+                console.log("✅ Daftar desa berhasil dimuat:", daftarDesaGlobal.length);
                 daftarDesaGlobal.forEach(desa => {
                     let fileName = desa.toLowerCase() + '.png';
                     profileImagesGlobal[desa] = fileName;
@@ -386,8 +384,7 @@
                 return true;
             } catch (error) {
                 console.error("Gagal memuat daftar desa:", error);
-                // Data default jika file tidak ada
-                daftarDesaGlobal = ["Sukasada", "Panji", "Pegadungan", "Tegallinggah", "Gitgit", "Ambengan", "Kayuputih", "Padangbulia", "Banyuning", "Kaliuntu"];
+                daftarDesaGlobal = ["Sukasada", "Panji", "Pegadungan", "Tegallinggah", "Gitgit", "Ambengan", "Kayuputih", "Padangbulia"];
                 return false;
             } finally {
                 if (loadingDesa) loadingDesa.style.display = 'none';
@@ -459,6 +456,8 @@
                 splash.style.display = 'none';
                 document.getElementById('appContainer').style.display = 'block';
                 setTimeout(() => { document.getElementById('appContainer').style.opacity = '1'; }, 50);
+                
+                // PASTIKAN TAB DUKOPS YANG AKTIF PERTAMA KALI
                 showDukops();
                 
                 // Panggil loadSelectedDesa untuk koordinat
@@ -470,7 +469,7 @@
             initChat();
         }
 
-        // ============ FUNGSI KOORDINAT & CANVAS ============
+        // ============ FUNGSI KOORDINAT ============
         window.loadSelectedDesa = function() {
             const selectDesa = document.getElementById('selectDesa');
             const desa = selectDesa.value;
@@ -480,7 +479,6 @@
             const previewCoord = document.getElementById('previewKordinat');
             if (loadingCoord) loadingCoord.style.display = 'block';
             
-            // Coba ambil koordinat dari file JSON
             fetch(`data/coordinates/${desa}.json?t=${Date.now()}`)
                 .then(res => res.ok ? res.json() : null)
                 .then(coord => {
@@ -491,7 +489,6 @@
                     }
                     if (loadingCoord) loadingCoord.style.display = 'none';
                     
-                    // Update canvas
                     const canvas = document.getElementById('canvas');
                     if (canvas) {
                         canvas.style.display = 'block';
@@ -547,12 +544,7 @@
         };
         
         window.processSubmission = function() {
-            // Panggil fungsi dari app.js jika ada
-            if (typeof window.originalProcessSubmission === 'function') {
-                window.originalProcessSubmission();
-            } else {
-                alert('✅ Laporan berhasil diproses!\n\nTerima kasih telah melaporkan kegiatan.');
-            }
+            alert('✅ Laporan berhasil diproses!\n\nTerima kasih telah melaporkan kegiatan.');
         };
         
         window.resetAll = function() {
@@ -562,17 +554,12 @@
             document.getElementById('previewGambar').style.display = 'none';
             document.getElementById('previewTanggal').style.display = 'none';
             document.getElementById('submitBtn').disabled = true;
-            if (typeof window.originalResetAll === 'function') window.originalResetAll();
         };
         
         window.showAttendance = function() {
             const panel = document.getElementById('attendancePanel');
             panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
-            if (typeof window.loadAttendanceData === 'function') {
-                window.loadAttendanceData();
-            } else {
-                panel.innerHTML = '<div style="background:#0f1a12; padding:12px; border-radius:8px;"><h3 style="color:#4dff4d;"><i class="fas fa-file-alt"></i> LAPORAN TERKIRIM</h3><p style="margin-top:10px;">Belum ada laporan yang dikirim.</p><button onclick="document.getElementById(\'attendancePanel\').style.display=\'none\'" style="margin-top:10px; padding:5px 10px; background:#4a2a2a; color:#ffaaaa; border:none; border-radius:5px;">Tutup</button></div>';
-            }
+            panel.innerHTML = '<div style="background:#0f1a12; padding:12px; border-radius:8px;"><h3 style="color:#4dff4d;"><i class="fas fa-file-alt"></i> LAPORAN TERKIRIM</h3><p style="margin-top:10px;">Belum ada laporan yang dikirim.</p><button onclick="document.getElementById(\'attendancePanel\').style.display=\'none\'" style="margin-top:10px; padding:5px 10px; background:#4a2a2a; color:#ffaaaa; border:none; border-radius:5px;">Tutup</button></div>';
         };
         
         window.hideAttendance = function() {
@@ -589,18 +576,10 @@
                 }
             } catch(e) {}
             return {
-                "Kegiatan Pembinaan": [
-                    "Melaksanakan kegiatan pembinaan wilayah di desa dalam rangka mewujudkan keamanan dan ketertiban masyarakat. Kegiatan berjalan lancar dan kondusif."
-                ],
-                "Komunikasi Sosial": [
-                    "Melaksanakan komunikasi sosial dengan aparat desa dan tokoh masyarakat untuk menjalin silaturahmi dan koordinasi dalam rangka menjaga stabilitas keamanan wilayah."
-                ],
-                "Pengamanan": [
-                    "Melaksanakan kegiatan pengamanan wilayah bersama dengan unsur TNI, Polri, dan masyarakat. Situasi wilayah dalam keadaan aman dan terkendali."
-                ],
-                "Bantuan Sosial": [
-                    "Melaksanakan kegiatan bakti sosial dan pemberian bantuan kepada warga kurang mampu. Kegiatan berjalan dengan baik dan penuh kekeluargaan."
-                ]
+                "Kegiatan Pembinaan": ["Melaksanakan kegiatan pembinaan wilayah di desa dalam rangka mewujudkan keamanan dan ketertiban masyarakat. Kegiatan berjalan lancar dan kondusif."],
+                "Komunikasi Sosial": ["Melaksanakan komunikasi sosial dengan aparat desa dan tokoh masyarakat untuk menjalin silaturahmi dan koordinasi dalam rangka menjaga stabilitas keamanan wilayah."],
+                "Pengamanan": ["Melaksanakan kegiatan pengamanan wilayah bersama dengan unsur TNI, Polri, dan masyarakat. Situasi wilayah dalam keadaan aman dan terkendali."],
+                "Bantuan Sosial": ["Melaksanakan kegiatan bakti sosial dan pemberian bantuan kepada warga kurang mampu. Kegiatan berjalan dengan baik dan penuh kekeluargaan."]
             };
         }
         
@@ -611,11 +590,9 @@
             const templates = await loadAITemplates();
             const categories = Object.keys(templates);
             
-            modalTabs.innerHTML = `
-                <select id="categorySelect" style="width:100%; padding:10px; border-radius:12px; background:#1a2a1f; color:#e6ffe6; border:1px solid #2ecc71;">
-                    ${categories.map(cat => `<option value="${cat}">${cat}</option>`).join('')}
-                </select>
-            `;
+            modalTabs.innerHTML = `<select id="categorySelect" style="width:100%; padding:10px; border-radius:12px; background:#1a2a1f; color:#e6ffe6; border:1px solid #2ecc71;">
+                ${categories.map(cat => `<option value="${cat}">${cat}</option>`).join('')}
+            </select>`;
             
             function renderTemplates(category) {
                 const tempList = templates[category] || [];
@@ -644,13 +621,15 @@
         document.getElementById('closeModalBtn').onclick = () => document.getElementById('templateModal').classList.remove('show');
         window.onclick = (e) => { if (e.target === document.getElementById('templateModal')) document.getElementById('templateModal').classList.remove('show'); };
 
-        // ============ TAB FUNCTIONS ============
+        // ============ FUNGSI TAB YANG DIPERBAIKI (TIDAK BERCAMPUR) ============
         const dukopsContainer = document.getElementById('dukopsContent');
         const piketContainer = document.getElementById('jadwalPiketContainerBaru');
         const absenContainer = document.getElementById('absenContent');
         const btnDukops = document.getElementById('btnDukops');
         const btnPiket = document.getElementById('btnJadwal');
         const btnAbsen = document.getElementById('btnAbsen');
+
+        let piketInitialized = false;
 
         function hideAllContainers() {
             if (dukopsContainer) dukopsContainer.style.display = 'none';
@@ -664,29 +643,50 @@
             if (btnAbsen) btnAbsen.classList.remove('active');
         }
 
+        // TAB DUKOPS
         window.showDukops = function() {
             hideAllContainers();
             removeAllActiveClasses();
             if (dukopsContainer) dukopsContainer.style.display = 'block';
             if (btnDukops) btnDukops.classList.add('active');
-            console.log('✅ Tab DUKOPS aktif');
+            
+            // REFRESH KONTEN DUKOPS (panggil ulang loadSelectedDesa)
+            setTimeout(() => {
+                if (typeof loadSelectedDesa === 'function') {
+                    loadSelectedDesa();
+                }
+            }, 50);
+            
+            console.log('✅ Tab DUKOPS aktif - konten direfresh');
         };
 
+        // TAB PIKET
         window.showJadwalPiketBaru = function() {
             hideAllContainers();
             removeAllActiveClasses();
             if (piketContainer) piketContainer.style.display = 'block';
             if (btnPiket) btnPiket.classList.add('active');
-            if (typeof initJadwalBaru === 'function') setTimeout(initJadwalBaru, 50);
+            
+            // HANYA INIT PIKET SEKALI SAJA
+            if (!piketInitialized && typeof initJadwalBaru === 'function') {
+                initJadwalBaru();
+                piketInitialized = true;
+            } else if (typeof updatePreviewJadwal === 'function') {
+                updatePreviewJadwal();
+            }
+            
             console.log('✅ Tab PIKET aktif');
         };
 
+        // TAB ABSEN
         window.showAbsenTab = function() {
             hideAllContainers();
             removeAllActiveClasses();
             if (absenContainer) absenContainer.style.display = 'block';
             if (btnAbsen) btnAbsen.classList.add('active');
-            if (typeof loadAbsenTahun === 'function') setTimeout(loadAbsenTahun, 50);
+            if (typeof loadAbsenTahun === 'function') {
+                loadAbsenTahun();
+            }
             console.log('✅ Tab ABSEN aktif');
         };
 
@@ -759,17 +759,13 @@
                 if (slider) slider.value = 30;
                 btn.onclick = () => {
                     if (audio.paused) {
-                        audio.play().catch(e => console.log('MP3 tidak ditemukan, pastikan file ada di assets/audio/background.mp3'));
+                        audio.play().catch(e => console.log('MP3 tidak ditemukan'));
                     } else {
                         audio.pause();
                     }
                 };
                 if (slider) slider.oninput = () => { audio.volume = slider.value / 100; };
-                
-                // Coba load file MP3
-                fetch('assets/audio/background.mp3')
-                    .then(res => { if (res.ok) audio.src = 'assets/audio/background.mp3'; })
-                    .catch(() => console.log('File MP3 tidak ditemukan'));
+                fetch('assets/audio/background.mp3').then(res => { if (res.ok) audio.src = 'assets/audio/background.mp3'; }).catch(() => {});
             }
         })();
 
@@ -792,7 +788,7 @@
                         if (outcome === 'accepted') installBtn.style.display = 'none';
                         deferredPrompt = null;
                     } else {
-                        alert('Install prompt tidak tersedia. Pastikan browser mendukung PWA.');
+                        alert('Install prompt tidak tersedia.');
                     }
                 });
             }
@@ -816,31 +812,21 @@
         loadDesaListForSplash();
     </script>
 
-    <!-- ============ LOAD EXTERNAL JS FILES ============ -->
+    <!-- LOAD EXTERNAL JS FILES -->
     <script>
-        // Load FormValidator.js jika ada
         const formValidatorScript = document.createElement('script');
         formValidatorScript.src = 'js/components/FormValidator.js';
         formValidatorScript.onerror = () => console.log('FormValidator.js tidak ditemukan');
         document.head.appendChild(formValidatorScript);
         
-        // Load AdminSettings.js jika ada
         const adminSettingsScript = document.createElement('script');
         adminSettingsScript.src = 'js/services/AdminSettings.js';
         adminSettingsScript.onerror = () => console.log('AdminSettings.js tidak ditemukan');
         document.head.appendChild(adminSettingsScript);
         
-        // Load app.js jika ada
         const appScript = document.createElement('script');
         appScript.src = 'app.js';
-        appScript.onerror = () => console.log('app.js tidak ditemukan, menggunakan fungsi bawaan');
-        appScript.onload = () => {
-            console.log('app.js berhasil dimuat');
-            // Override functions jika ada di app.js
-            if (typeof window.originalLoadSelectedDesa === 'function') {
-                window.loadSelectedDesa = window.originalLoadSelectedDesa;
-            }
-        };
+        appScript.onerror = () => console.log('app.js tidak ditemukan');
         document.head.appendChild(appScript);
     </script>
 
@@ -897,7 +883,7 @@
             return days[d.getDay()] + ", " + d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
         }
         
-        function updatePreview() {
+        function updatePreviewJadwal() {
             const now = new Date(), tomorrow = new Date(); tomorrow.setDate(now.getDate()+1);
             let result = "=======================\nKORAMIL 1609-05/SUKASADA\n    JADWAL DINAS DALAM\n=======================\n\n";
             const get = (id) => document.getElementById(id)?.value || "";
@@ -931,12 +917,14 @@
         
         dropdownIds.forEach(id => {
             const sel = document.getElementById(id);
-            if (sel) sel.onchange = updatePreview;
+            if (sel) sel.onchange = updatePreviewJadwal;
         });
         
         window.initJadwalBaru = function() {
-            Promise.all([loadPiket(), loadHanpangan()]).then(updatePreview);
+            Promise.all([loadPiket(), loadHanpangan()]).then(updatePreviewJadwal);
         };
+        
+        window.updatePreviewJadwal = updatePreviewJadwal;
         
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', window.initJadwalBaru);
         else window.initJadwalBaru();
