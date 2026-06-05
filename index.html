@@ -80,7 +80,7 @@
         .nav-btn { flex: 1; padding: 10px 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; background: #2a4a2a; color: #e6ffe6; text-align: center; }
         .nav-btn.active { background: #4dff4d; color: #003300; }
 
-        /* ============ DUKOPS FORM ============ */
+        /* ============ DUKOPS FORM (Pilih Desa & Koordinat DISEMBUNYIKAN) ============ */
         .dukops-form-container { width: 90%; max-width: 500px; margin: 0 auto; font-size: 14px; }
         .form-group { margin-bottom: 15px; }
         label { display: block; margin-bottom: 5px; color: #4dff4d; font-weight: bold; }
@@ -93,6 +93,11 @@
         .narasi-wrapper { position: relative; }
         .ai-icon-corner { position: absolute; bottom: 12px; right: 12px; background: linear-gradient(135deg, #2ecc71, #27ae60); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; }
         .ai-icon-corner i { color: white; font-size: 16px; }
+        
+        /* Sembunyikan elemen Pilih Desa dan Koordinat di tab DUKOPS */
+        .hidden-desa, .hidden-koordinat {
+            display: none !important;
+        }
 
         /* ============ JADWAL PIKET ============ */
         .running-text-container { background: rgba(0,30,0,0.7); border-radius: 8px; padding: 10px; margin: 10px 0; border: 1px solid #ffcc00; overflow: hidden; white-space: nowrap; }
@@ -226,24 +231,26 @@
             <button class="nav-btn" id="btnAbsen" onclick="showAbsenTab()"><i class="fas fa-chart-line"></i> ABSEN</button>
         </div>
 
-        <!-- DUKOPS CONTENT -->
+        <!-- DUKOPS CONTENT (Pilih Desa & Koordinat DISEMBUNYIKAN) -->
         <div id="dukopsContent">
             <div class="dukops-form-container">
-                <div class="form-group">
+                <!-- Pilih Desa - DISEMBUNYIKAN tapi tetap ada di DOM -->
+                <div class="form-group hidden-desa" id="desaSelectGroup" style="display: none;">
                     <label><i class="fas fa-village"></i> Pilih Desa:</label>
                     <select id="selectDesa" onchange="loadSelectedDesa()"><option value="">-- Pilih Desa --</option></select>
                     <div id="loadingDesa" style="display: none;"><i class="fas fa-spinner fa-spin"></i> Memuat...</div>
                     <div id="previewDesa" class="preview-box"></div>
                 </div>
 
-                <div class="form-group">
+                <!-- Koordinat - DISEMBUNYIKAN -->
+                <div class="form-group hidden-koordinat" id="koordinatGroup" style="display: none;">
                     <div id="loadingKoordinat" style="font-size: 12px; color: #ffaa00;"><i class="fas fa-spinner fa-spin"></i> Memuat koordinat...</div>
                     <div id="previewKordinat" class="preview-box"></div>
                 </div>
 
                 <div class="form-group">
                     <label><i class="fas fa-camera"></i> Foto Kegiatan:</label>
-                    <input type="file" id="gambar" accept="image/*" onchange="previewImage()">
+                    <input type="file" id="gambar" accept="image/*" onchange="handleImageUpload()">
                     <div id="previewGambar" class="preview-box"></div>
                 </div>
 
@@ -355,6 +362,7 @@
         let chatMessages = [];
         let chatCurrentUser = "Guest";
         let daftarDesaGlobal = [];
+        let currentKoordinat = "";
         let profileImagesGlobal = {};
 
         // ============ LOAD EXTERNAL CSS ============
@@ -370,7 +378,6 @@
         // ============ LOAD DESA LIST ============
         async function loadDesaListFromGitHub() {
             const selectDesa = document.getElementById('selectDesa');
-            const loadingDesa = document.getElementById('loadingDesa');
             try {
                 const response = await fetch('data/desa-list.json?t=' + Date.now());
                 if (!response.ok) throw new Error('HTTP ' + response.status);
@@ -387,7 +394,9 @@
                 daftarDesaGlobal = ["Sukasada", "Panji", "Pegadungan", "Tegallinggah", "Gitgit", "Ambengan", "Kayuputih", "Padangbulia"];
                 return false;
             } finally {
-                if (loadingDesa) loadingDesa.style.display = 'none';
+                if (selectDesa && daftarDesaGlobal.length > 0) {
+                    selectDesa.innerHTML = '<option value="">-- Pilih Desa/Kelurahan --</option>' + daftarDesaGlobal.map(d => `<option value="${d}">${d}</option>`).join('');
+                }
             }
         }
 
@@ -436,93 +445,99 @@
             }
         }
 
-        // ============ INIT APLIKASI ============
-        function initAppAfterDesa(desa) {
-            localStorage.setItem('selectedDesa', desa);
-            chatCurrentUser = desa;
-            document.getElementById('chatUserNameDisplay').innerHTML = `<i class="fas fa-user"></i> ${desa.substring(0,20)}`;
-            
-            const selectDesaElem = document.getElementById('selectDesa');
-            if (selectDesaElem && daftarDesaGlobal.length > 0) {
-                selectDesaElem.innerHTML = '<option value="">-- Pilih Desa/Kelurahan --</option>' + daftarDesaGlobal.map(d => `<option value="${d}">${d}</option>`).join('');
-                selectDesaElem.value = desa;
-            }
-            
-            updateDesaProfile(desa);
-            
-            const splash = document.getElementById('splashScreen');
-            splash.style.opacity = '0';
-            setTimeout(() => {
-                splash.style.display = 'none';
-                document.getElementById('appContainer').style.display = 'block';
-                setTimeout(() => { document.getElementById('appContainer').style.opacity = '1'; }, 50);
-                
-                // PASTIKAN TAB DUKOPS YANG AKTIF PERTAMA KALI
-                showDukops();
-                
-                // Panggil loadSelectedDesa untuk koordinat
-                setTimeout(() => {
-                    if (typeof loadSelectedDesa === 'function') loadSelectedDesa();
-                }, 200);
-            }, 500);
-            
-            initChat();
+        // ============ AMBIL KOORDINAT ============
+        async function getKoordinat(desa) {
+            try {
+                const response = await fetch(`data/coordinates/${desa}.json?t=${Date.now()}`);
+                if (response.ok) {
+                    const coord = await response.json();
+                    return `${coord.lat}, ${coord.lng}`;
+                }
+            } catch(e) {}
+            return '-8.1155°, 115.0885°';
         }
 
-        // ============ FUNGSI KOORDINAT ============
-        window.loadSelectedDesa = function() {
-            const selectDesa = document.getElementById('selectDesa');
-            const desa = selectDesa.value;
-            if (!desa) return;
+        // ============ TAMPILKAN KOORDINAT KE CANVAS ============
+        async function updateCanvasWithKoordinat(desa) {
+            const canvas = document.getElementById('canvas');
+            if (!canvas) return;
             
-            const loadingCoord = document.getElementById('loadingKoordinat');
-            const previewCoord = document.getElementById('previewKordinat');
-            if (loadingCoord) loadingCoord.style.display = 'block';
+            const koordinat = await getKoordinat(desa);
+            currentKoordinat = koordinat;
             
-            fetch(`data/coordinates/${desa}.json?t=${Date.now()}`)
-                .then(res => res.ok ? res.json() : null)
-                .then(coord => {
-                    let koordinat = coord ? `${coord.lat}, ${coord.lng}` : '-8.1155°, 115.0885°';
-                    if (previewCoord) {
-                        previewCoord.innerHTML = `<i class="fas fa-map-marker-alt"></i> Koordinat: ${koordinat} (${desa})`;
-                        previewCoord.style.display = 'block';
-                    }
-                    if (loadingCoord) loadingCoord.style.display = 'none';
-                    
-                    const canvas = document.getElementById('canvas');
-                    if (canvas) {
-                        canvas.style.display = 'block';
-                        const ctx = canvas.getContext('2d');
-                        canvas.width = canvas.clientWidth;
-                        canvas.height = 100;
-                        ctx.fillStyle = '#e6ffe6';
-                        ctx.font = '12px Arial';
-                        ctx.fillText(`Koordinat ${desa}: ${koordinat}`, 10, 30);
-                    }
-                })
-                .catch(() => {
-                    if (previewCoord) {
-                        previewCoord.innerHTML = `<i class="fas fa-map-marker-alt"></i> Koordinat: -8.1155°, 115.0885° (${desa})`;
-                        previewCoord.style.display = 'block';
-                    }
-                    if (loadingCoord) loadingCoord.style.display = 'none';
-                });
-        };
-        
-        window.previewImage = function() {
+            canvas.style.display = 'block';
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.clientWidth;
+            canvas.height = 120;
+            ctx.fillStyle = '#0f1a12';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#e6ffe6';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText(`📍 LOKASI KEGIATAN`, 10, 25);
+            ctx.font = '12px Arial';
+            ctx.fillStyle = '#ffcc00';
+            ctx.fillText(`Desa: ${desa}`, 10, 50);
+            ctx.fillStyle = '#4dff4d';
+            ctx.fillText(`Koordinat: ${koordinat}`, 10, 75);
+            
+            // Cek apakah ada gambar yang sudah diupload
+            const fileInput = document.getElementById('gambar');
+            if (fileInput && fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        ctx.drawImage(img, 10, 90, 100, 80);
+                        ctx.fillStyle = '#aaa';
+                        ctx.font = '10px Arial';
+                        ctx.fillText('Foto kegiatan', 120, 140);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+        }
+
+        // ============ HANDLE UPLOAD GAMBAR ============
+        async function handleImageUpload() {
             const file = document.getElementById('gambar').files[0];
             const preview = document.getElementById('previewGambar');
+            const selectDesa = document.getElementById('selectDesa');
+            const desa = selectDesa ? selectDesa.value : 'Desa';
+            
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     preview.innerHTML = `<img src="${e.target.result}" style="max-width:100%; max-height:150px; border-radius:8px;">`;
                     preview.style.display = 'block';
+                    // Update canvas dengan koordinat dan gambar
+                    updateCanvasWithKoordinat(desa);
                 };
                 reader.readAsDataURL(file);
             } else {
                 preview.style.display = 'none';
+                updateCanvasWithKoordinat(desa);
+            }
+            checkInputCompletion();
+        }
+
+        // ============ LOAD SELECTED DESA (dipanggil saat desa berubah) ============
+        window.loadSelectedDesa = async function() {
+            const selectDesa = document.getElementById('selectDesa');
+            const desa = selectDesa ? selectDesa.value : null;
+            if (!desa) return;
+            
+            // Update canvas dengan koordinat
+            await updateCanvasWithKoordinat(desa);
+            
+            // Update hidden preview koordinat (untuk keperluan backend jika ada)
+            const previewCoord = document.getElementById('previewKordinat');
+            if (previewCoord) {
+                previewCoord.innerHTML = `<i class="fas fa-map-marker-alt"></i> Koordinat: ${currentKoordinat} (${desa})`;
             }
         };
+        
+        window.previewImage = handleImageUpload;
         
         window.updateDatePreview = function() {
             const tanggal = document.getElementById('tanggalWaktu').value;
@@ -554,6 +569,10 @@
             document.getElementById('previewGambar').style.display = 'none';
             document.getElementById('previewTanggal').style.display = 'none';
             document.getElementById('submitBtn').disabled = true;
+            const selectDesa = document.getElementById('selectDesa');
+            if (selectDesa && selectDesa.value) {
+                updateCanvasWithKoordinat(selectDesa.value);
+            }
         };
         
         window.showAttendance = function() {
@@ -650,14 +669,15 @@
             if (dukopsContainer) dukopsContainer.style.display = 'block';
             if (btnDukops) btnDukops.classList.add('active');
             
-            // REFRESH KONTEN DUKOPS (panggil ulang loadSelectedDesa)
-            setTimeout(() => {
-                if (typeof loadSelectedDesa === 'function') {
-                    loadSelectedDesa();
+            // Refresh koordinat dan canvas
+            setTimeout(async () => {
+                const selectDesa = document.getElementById('selectDesa');
+                if (selectDesa && selectDesa.value) {
+                    await updateCanvasWithKoordinat(selectDesa.value);
                 }
-            }, 50);
+            }, 100);
             
-            console.log('✅ Tab DUKOPS aktif - konten direfresh');
+            console.log('✅ Tab DUKOPS aktif');
         };
 
         // TAB PIKET
@@ -667,7 +687,6 @@
             if (piketContainer) piketContainer.style.display = 'block';
             if (btnPiket) btnPiket.classList.add('active');
             
-            // HANYA INIT PIKET SEKALI SAJA
             if (!piketInitialized && typeof initJadwalBaru === 'function') {
                 initJadwalBaru();
                 piketInitialized = true;
@@ -684,11 +703,43 @@
             removeAllActiveClasses();
             if (absenContainer) absenContainer.style.display = 'block';
             if (btnAbsen) btnAbsen.classList.add('active');
+            
+            // Reset konten absen agar tidak tercampur
             if (typeof loadAbsenTahun === 'function') {
                 loadAbsenTahun();
             }
+            
             console.log('✅ Tab ABSEN aktif');
         };
+
+        // ============ INIT APLIKASI SETELAH PILIH DESA ============
+        async function initAppAfterDesa(desa) {
+            localStorage.setItem('selectedDesa', desa);
+            chatCurrentUser = desa;
+            document.getElementById('chatUserNameDisplay').innerHTML = `<i class="fas fa-user"></i> ${desa.substring(0,20)}`;
+            
+            const selectDesaElem = document.getElementById('selectDesa');
+            if (selectDesaElem && daftarDesaGlobal.length > 0) {
+                selectDesaElem.innerHTML = '<option value="">-- Pilih Desa/Kelurahan --</option>' + daftarDesaGlobal.map(d => `<option value="${d}">${d}</option>`).join('');
+                selectDesaElem.value = desa;
+            }
+            
+            updateDesaProfile(desa);
+            
+            // Load koordinat ke canvas
+            await updateCanvasWithKoordinat(desa);
+            
+            const splash = document.getElementById('splashScreen');
+            splash.style.opacity = '0';
+            setTimeout(() => {
+                splash.style.display = 'none';
+                document.getElementById('appContainer').style.display = 'block';
+                setTimeout(() => { document.getElementById('appContainer').style.opacity = '1'; }, 50);
+                showDukops();
+            }, 500);
+            
+            initChat();
+        }
 
         // ============ CHAT FUNCTIONS ============
         function updateRunningChatMessage(desa, pesan) {
@@ -826,7 +877,7 @@
         
         const appScript = document.createElement('script');
         appScript.src = 'app.js';
-        appScript.onerror = () => console.log('app.js tidak ditemukan');
+        appScript.onerror = () => console.log('app.js tidak ditemukan, menggunakan fungsi bawaan');
         document.head.appendChild(appScript);
     </script>
 
