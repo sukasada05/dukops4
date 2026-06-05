@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>JADWAL PIKET KORAMIL</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: transparent;
+            padding: 16px;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(10, 26, 42, 0.8);
+            border-radius: 16px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .jadwal-header { text-align: center; margin-bottom: 20px; }
+        .jadwal-title { color: #4dff4d; font-size: 24px; }
+        .jadwal-logo { max-width: 80px; margin: 10px auto; }
+        .running-text-container {
+            background: rgba(0,30,0,0.7); border-radius: 8px; padding: 10px;
+            margin: 10px 0; border: 1px solid #ffcc00; overflow: hidden;
+        }
+        .running-text {
+            white-space: nowrap; animation: marquee 10s linear infinite;
+            color: #ffcc00; font-weight: bold; font-size: 14px;
+        }
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .jadwal-section {
+            background: rgba(0,60,0,0.7); border-radius: 8px; padding: 15px;
+            margin-bottom: 15px; border: 1px solid rgba(0,200,127,0.3);
+        }
+        .section-title-koramil { color: #4dff4d; text-align: center; margin-bottom: 10px; }
+        .section-title-kediaman { color: #ffcc00; text-align: center; margin-bottom: 10px; }
+        .section-title-makodim { color: #00ccff; text-align: center; margin-bottom: 10px; }
+        .row { display: flex; gap: 10px; margin-bottom: 10px; }
+        .col { flex: 1; }
+        select {
+            width: 100%; padding: 10px; border-radius: 8px;
+            border: 1px solid #4dff4d; background: #1a2a1f; color: #e6ffe6;
+        }
+        .whatsapp-btn {
+            display: flex; align-items: center; justify-content: center;
+            gap: 8px; background: transparent; border: 2px solid #25D366;
+            border-radius: 12px; cursor: pointer; width: 100%;
+            padding: 12px; margin: 10px 0;
+        }
+        .whatsapp-btn i { font-size: 24px; color: #25D366; }
+        .whatsapp-btn span { color: #25D366; font-weight: bold; }
+        textarea {
+            width: 100%; padding: 10px; border-radius: 8px;
+            border: 1px solid #4dff4d; background: #1a2a1f; color: #e6ffe6;
+            resize: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="jadwal-header">
+            <h1 class="jadwal-title">JADWAL PIKET</h1>
+            <img src="LOGO KOREM163 Wirasatya.png" class="jadwal-logo" onerror="this.style.display='none'">
+            <p>KORAMIL 1609-05/SUKASADA<br>Kodim 1609/Buleleng</p>
+        </div>
+
+        <div class="running-text-container">
+            <div class="running-text" id="runningTextJadwal">🍽️ Memuat jadwal hanpangan...</div>
+        </div>
+
+        <div class="jadwal-section">
+            <h3 class="section-title-koramil">Piket Koramil Hari Ini :</h3>
+            <div class="row"><div class="col"><select id="j_nama1a"><option value="">-- Pilih Nama --</option></select></div><div class="col"><select id="j_nama1b"><option value="">-- Pilih Nama --</option></select></div></div>
+            <h3 class="section-title-koramil">Piket Koramil Besok :</h3>
+            <div class="row"><div class="col"><select id="j_nama2a"><option value="">-- Pilih Nama --</option></select></div><div class="col"><select id="j_nama2b"><option value="">-- Pilih Nama --</option></select></div></div>
+        </div>
+
+        <div class="jadwal-section">
+            <h3 class="section-title-kediaman">Jaga Kediaman Hari Ini :</h3>
+            <div class="row"><div class="col"><select id="j_nama3a"><option value="">-- Pilih Nama --</option></select></div><div class="col"><select id="j_nama3b"><option value="">-- Pilih Nama --</option></select></div></div>
+            <h3 class="section-title-kediaman">Jaga Kediaman Besok :</h3>
+            <div class="row"><div class="col"><select id="j_nama3c"><option value="">-- Pilih Nama --</option></select></div><div class="col"><select id="j_nama3d"><option value="">-- Pilih Nama --</option></select></div></div>
+        </div>
+
+        <div class="jadwal-section">
+            <h3 class="section-title-makodim">Piket Makodim Hari ini :</h3>
+            <div class="row"><div class="col"><select id="j_nama4a"><option value="">-- Pilih Nama --</option></select></div><div class="col"><select id="j_nama4b"><option value="">-- Pilih Nama --</option></select></div></div>
+            <h3 class="section-title-makodim">Piket Makodim Besok :</h3>
+            <div class="row"><div class="col"><select id="j_nama4c"><option value="">-- Pilih Nama --</option></select></div><div class="col"><select id="j_nama4d"><option value="">-- Pilih Nama --</option></select></div></div>
+        </div>
+
+        <button id="whatsappBtn" class="whatsapp-btn"><i class="fab fa-whatsapp"></i><span>KIRIM KE WHATSAPP</span></button>
+
+        <textarea id="j_hasilPesan" rows="6" readonly placeholder="Preview pesan akan muncul di sini..."></textarea>
+    </div>
+
+    <script>
+        const HANPANGAN_URL = "https://raw.githubusercontent.com/sukasada05/dukops4/main/data/hanpangan.txt";
+        const PIKET_URL = "data/piket.txt";
+        let currentHanpangan = "";
+        const dropdownIds = ['j_nama1a','j_nama1b','j_nama2a','j_nama2b','j_nama3a','j_nama3b','j_nama3c','j_nama3d','j_nama4a','j_nama4b','j_nama4c','j_nama4d'];
+        
+        async function fetchFile(url) {
+            try { const res = await fetch(url + '?t=' + Date.now()); if (res.ok) return await res.text(); } catch(e) { return null; }
+        }
+        
+        async function loadPiket() {
+            const data = await fetchFile(PIKET_URL);
+            if (data) {
+                const names = data.trim().split('\n').filter(l => l.trim());
+                dropdownIds.forEach(id => {
+                    const sel = document.getElementById(id);
+                    if (sel) {
+                        sel.innerHTML = '<option value="">-- Pilih Nama --</option>';
+                        names.forEach(n => { const opt = document.createElement('option'); opt.value = n; opt.textContent = n; sel.appendChild(opt); });
+                    }
+                });
+            }
+        }
+        
+        async function loadHanpangan() {
+            const data = await fetchFile(HANPANGAN_URL);
+            let lines = ["Serka Wahyu Hidayat","Pelda I Komang Karia","Serma Mujiburrahman","Sertu Nyoman Warsa","Serma I Kadek Teges Suardana","Serda I Putu Suwidana Yasa","Serka Satriyo","Serka I Made Widiasa","Serka Nyoman Join Amitaba","Serka I Nyoman Arta"];
+            if (data) { const d = data.trim().split('\n').filter(l => l.trim()); if (d.length) lines = d; }
+            const today = new Date();
+            const epoch = Math.floor(today.getTime() / 86400000);
+            const ref = new Date(2024,0,1);
+            const refEpoch = Math.floor(ref.getTime() / 86400000);
+            let idx = (epoch - refEpoch) % lines.length;
+            if (idx < 0) idx += lines.length;
+            currentHanpangan = lines[idx];
+            const el = document.getElementById('runningTextJadwal');
+            if (el) el.textContent = '🍽️ JADWAL HANPANGAN HARI INI: ' + currentHanpangan + ' 🍽️';
+        }
+        
+        function formatDate(d) {
+            const days = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
+            const months = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
+            return days[d.getDay()] + ", " + d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+        }
+        
+        function updatePreview() {
+            const now = new Date(), tomorrow = new Date(); tomorrow.setDate(now.getDate()+1);
+            let result = "=======================\nKORAMIL 1609-05/SUKASADA\n    JADWAL DINAS DALAM\n=======================\n\n";
+            const get = (id) => document.getElementById(id)?.value || "";
+            const sections = [
+                { names: [get('j_nama1a'), get('j_nama1b')], title: formatDate(now), suffix: "" },
+                { names: [get('j_nama2a'), get('j_nama2b')], title: formatDate(tomorrow), suffix: "" },
+                { names: [get('j_nama3a'), get('j_nama3b')], title: formatDate(now), suffix: " (Kediaman)" },
+                { names: [get('j_nama3c'), get('j_nama3d')], title: formatDate(tomorrow), suffix: " (Kediaman)" },
+                { names: [get('j_nama4a'), get('j_nama4b')], title: formatDate(now), suffix: " (Makodim)" },
+                { names: [get('j_nama4c'), get('j_nama4d')], title: formatDate(tomorrow), suffix: " (Makodim)" }
+            ];
+            let cnt = 0;
+            for (const s of sections) {
+                const valid = s.names.filter(n => n);
+                if (valid.length) {
+                    result += String.fromCharCode(65+cnt) + ". " + s.title + s.suffix + "\n";
+                    valid.forEach((n,i) => result += "   " + (i+1) + ". " + n + "\n");
+                    result += "\n"; cnt++;
+                }
+            }
+            if (currentHanpangan) result += "- Jadwal Hanpangan hari ini : " + currentHanpangan + "\n\n";
+            result += "Demikian MMP.";
+            const ta = document.getElementById('j_hasilPesan');
+            if (ta) { ta.value = result; ta.style.height = 'auto'; ta.style.height = ta.scrollHeight + 'px'; }
+        }
+        
+        document.getElementById('whatsappBtn').onclick = () => {
+            const pesan = document.getElementById('j_hasilPesan')?.value;
+            if (pesan) window.open("https://wa.me/?text=" + encodeURIComponent(pesan));
+        };
+        
+        dropdownIds.forEach(id => {
+            const sel = document.getElementById(id);
+            if (sel) sel.onchange = updatePreview;
+        });
+        
+        Promise.all([loadPiket(), loadHanpangan()]).then(updatePreview);
+    </script>
+</body>
+</html>
