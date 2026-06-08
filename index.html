@@ -891,7 +891,7 @@
                         <select id="attendanceDesaFilter" onchange="loadAttendanceData()"><option value="">Semua Desa</option></select>
                         <input type="month" id="attendanceMonthFilter" onchange="loadAttendanceData()">
                     </div>
-                    <div id="attendanceLoading" style="display: none; text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> 🪖 Tunggu..laporan akan di tampilkan</div>
+                    <div id="attendanceLoading" style="display: none; text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> 🪖 Tunggu beberapa detik..laporan akan di tampilkan</div>
                     <div id="attendanceSummary" class="attendance-summary" style="display: none;">
                         <div class="summary-row"><span>Total Laporan:</span><span id="totalReports" style="font-weight: bold; color: #9fd49f;">0</span></div>
                         <div class="summary-row"><span>Total Desa:</span><span id="totalDesa" style="font-weight: bold; color: #9fd49f;">0</span></div>
@@ -1027,7 +1027,7 @@
         async function fetchTelegramMessages() {
             if (!USE_REAL_BOT) {
                 const demoMessages = [
-                    "🔄 Terima Kasih Telah Mengirim Laporan DUkops dengan tepat waktu dan lengkap",
+                    "🔄 Terima Kasih Telah Mengirim Laporan DUkoPs silahkan cek 900 cair bulan juni 2026",
                 ];
                 const randomMsg = demoMessages[Math.floor(Math.random() * demoMessages.length)];
                 updateRunningText(randomMsg);
