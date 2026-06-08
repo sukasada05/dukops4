@@ -5,37 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-    <!-- ========== INSTRUKSI NOINDEX UNTUK MESIN PENCARI ========== -->
     <meta name="robots" content="noindex, nofollow">
-
-    <!-- PWA Configuration -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="DUKOPS">
     <title>SISTEM PELAPORAN DUKOPS BABINSA dan JADWAL PIKET KORAMIL</title>
     <meta name="theme-color" content="#0a1a3a">
-
-    <!-- ========== FAVICON ========== -->
     <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="shortcut icon" href="favicon.ico" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <link rel="manifest" href="site.webmanifest" />
-    <!-- ============================= -->
-
-    <!-- External Libraries -->
     <script src="https://cdn.polyfill.io/v3/polyfill.min.js?features=default,es6,Promise,fetch,Array.prototype.includes"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Stylesheet -->
     <link rel="stylesheet" href="styles.css">
-    
-    <!-- html2canvas untuk fitur screenshot -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-    
     <style>
         /* ============ SPLASH SCREEN MODERN UDAYANA - SEMUA CENTER ========== */
         .splash-container-modern {
@@ -215,7 +201,7 @@
             box-shadow: 0 4px 15px rgba(255,215,0,0.3);
         }
 
-        /* ============ HEADER DUKOPS dengan foto profil di samping kiri ============ */
+        /* ============ HEADER DUKOPS ============ */
         .dukops-header {
             background: url('header/header-background.png') center/cover no-repeat;
             background-color: #1a472a;
@@ -766,13 +752,10 @@
 </head>
 
 <body>
-<body>
-    <!-- ================= SPLASH SCREEN MODERN UDAYANA ================= -->
     <div id="splashScreen" class="splash-container-modern">
         <div class="splash-content">
-            <div class="splash-logo">
-    <img src="favicon-96x96.png" alt="Lambang Kodam Udayana" style="width: 80px; height: auto;">
-</div>
+            <div class="splash-logo-center">
+                <img src="favicon-96x96.png" alt="Lambang Kodam Udayana" style="width: 80px; height: auto;">
             </div>
             <div class="splash-title-center">DUKOPS</div>
             <div class="splash-title-center">BABINSA SUKASADA</div>
@@ -786,7 +769,6 @@
         </div>
     </div>
 
-    <!-- ================= MODAL PILIH DESA (SETELAH SPLASH) ================= -->
     <div id="modalPilihDesa" class="modal-pilih-desa">
         <div class="modal-desa-card">
             <h2>🏘️ Pilih Wilayah Binaan</h2>
@@ -798,14 +780,11 @@
         </div>
     </div>
 
-    <!-- ================= BACKGROUND MP3 PLAYER ================= -->
     <audio id="backgroundMusic" loop preload="auto"></audio>
 
-    <!-- ================= APLIKASI UTAMA ================= -->
     <div id="appContainer" class="container" style="display: none; opacity: 0;">
         <button id="installButton"><i class="fas fa-download"></i> Install App</button>
 
-        <!-- HEADER DUKOPS -->
         <div class="dukops-header">
             <div class="dukops-header-row">
                 <div class="dukops-profile-area" id="desaProfileContainerHeader">
@@ -827,7 +806,6 @@
             </div>
         </div>
 
-        <!-- RUNNING TEXT TELEGRAM -->
         <div class="telegram-running-container">
             <div class="telegram-running-text" id="telegramRunningMessage">
                 Pengiriman Ke telegram dalam perbaikan...
@@ -846,7 +824,6 @@
             </button>
         </div>
 
-        <!-- DUKOPS CONTENT -->
         <div id="dukopsContent">
             <div style="width: 90%; margin: 0 auto; font-size: 12px;">
                 <label><i class="fas fa-village"></i> Pilih Desa:</label>
@@ -908,7 +885,6 @@
             </div>
         </div>
 
-        <!-- JADWAL PIKET BARU -->
         <div id="jadwalPiketContainerBaru" style="display: none;">
             <div class="jadwal-header">
                 <h1 class="jadwal-title">JADWAL PIKET</h1>
@@ -973,7 +949,6 @@
             <div class="app-loading" id="j_loadingIndicatorBaru"><i class="fas fa-spinner fa-spin"></i> Memuat data...</div>
         </div>
 
-        <!-- TAB ABSENSI DUKOPS -->
         <div id="absenContent" style="display: none;">
             <div class="absen-card">
                 <div class="form-group" style="margin-bottom: 15px;">
@@ -985,7 +960,6 @@
                     <select id="absenBulanSelect" disabled><option>Pilih tahun dulu</option></select>
                 </div>
             </div>
-
             <div id="absenResultContainer"></div>
             <div class="absen-info-text">✨ Tap desa untuk detail | Data tersimpan offline</div>
         </div>
@@ -996,7 +970,6 @@
     <button id="absenRefreshBtn" class="absen-refresh-btn" style="display: none;">🔄</button>
     <div id="absenScreenshotArea" style="position: fixed; left: -9999px; top: 0; width: 500px; background: white;"></div>
 
-    <!-- MODAL TEMPLATE AI -->
     <div id="templateModal" class="modal-ai">
         <div class="modal-ai-content">
             <div class="modal-ai-header">
@@ -1084,7 +1057,6 @@
                     loadingDesa.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Gagal memuat daftar desa. Cek koneksi internet!';
                     loadingDesa.style.color = '#ff6666';
                 }
-                // Fallback data desa
                 daftarDesaGlobal = ["Sukasada", "Ambengan", "Gitgit", "Kayuputih", "Panji", "Pegadungan", "Pegayaman", "Pancasari", "Tegal Linggah", "Tirtasari"];
                 populateDesaDropdown();
                 populateModalDesaDropdown();
@@ -1205,7 +1177,6 @@
                             splash.style.visibility = 'hidden';
                             setTimeout(function() {
                                 splash.style.display = 'none';
-                                // Tampilkan modal pilih desa
                                 const modal = document.getElementById('modalPilihDesa');
                                 if (modal) modal.classList.add('active');
                             }, 500);
@@ -1227,7 +1198,6 @@
             
             isDesaSelected = true;
             
-            // Set ke select desa asli
             const selectAsli = document.getElementById('selectDesa');
             if (selectAsli) {
                 selectAsli.value = selectedValue;
@@ -1238,23 +1208,18 @@
                 selectAsli.dispatchEvent(changeEvent);
             }
             
-            // Update header profile
             updateDesaProfile(selectedText);
             
-            // Simpan ke localStorage
             localStorage.setItem('selectedDesa', selectedValue);
             localStorage.setItem('selectedDesaName', selectedText);
             
-            // Sembunyikan modal
             const modal = document.getElementById('modalPilihDesa');
             modal.classList.remove('active');
             
-            // Tampilkan dashboard
             const appContainer = document.getElementById('appContainer');
             appContainer.style.display = 'block';
             setTimeout(() => { appContainer.style.opacity = '1'; }, 50);
             
-            // Trigger audio
             if (typeof window.triggerPlayMusic === 'function') {
                 window.triggerPlayMusic();
             }
@@ -1291,7 +1256,6 @@
             return false;
         }
 
-        // ============ LOAD SELECTED DESA ============
         window.loadSelectedDesa = function() {
             const selectDesa = document.getElementById('selectDesa');
             const selectedText = selectDesa.options[selectDesa.selectedIndex]?.text || "";
@@ -1520,13 +1484,21 @@
             loadTemplatesFromGitHub();
         })();
 
-        // ============ JADWAL PIKET BARU SCRIPT ============
+        // ============ JADWAL PIKET BARU SCRIPT (dengan modifikasi Hanpangan) ============
         (function() {
             const HANPANGAN_URL = "https://raw.githubusercontent.com/sukasada05/dukops4/main/data/hanpangan.txt";
             const GITHUB_URLS = {
                 HANPANGAN: HANPANGAN_URL,
                 PIKET: "data/piket.txt"
             };
+
+            // ========== TAMBAHAN: Fungsi epoch berdasarkan tanggal lokal (00:00 waktu setempat) ==========
+            function getLocalDateEpoch() {
+                const now = new Date();
+                const localDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                return Math.floor(localDate.getTime() / (24 * 60 * 60 * 1000));
+            }
+            // ========================================================================================
 
             const JadwalData = { daftarNama: [], daftarHanpangan: [], currentHanpangan: "" };
             const JADWAL_DROPDOWN_IDS = [
@@ -1574,40 +1546,42 @@
                 });
             }
 
+            // ========== FUNGSI LOAD HANPANGAN YANG SUDAH DIMODIFIKASI ==========
             function loadHanpanganData() {
                 return fetchFromGitHub(GITHUB_URLS.HANPANGAN).then(data => {
                     if (data) {
                         const lines = data.trim().split('\n').filter(l => l.trim());
                         if (lines.length) {
                             JadwalData.daftarHanpangan = lines;
-                            const today = new Date();
-                            const epochDays = Math.floor(today.getTime() / (24 * 60 * 60 * 1000));
-                            const referenceDate = new Date(2024, 0, 1);
+                            // Gunakan epoch hari lokal (bukan UTC)
+                            const todayEpoch = getLocalDateEpoch();
+                            const referenceDate = new Date(2024, 0, 1); // 1 Januari 2024 waktu lokal
                             const epochDaysRef = Math.floor(referenceDate.getTime() / (24 * 60 * 60 * 1000));
                             let offset = (0 - epochDaysRef) % lines.length;
                             if (offset < 0) offset += lines.length;
-                            let index = (epochDays + offset) % lines.length;
+                            let index = (todayEpoch + offset) % lines.length;
                             if (index < 0) index += lines.length;
                             JadwalData.currentHanpangan = lines[index];
                             updateRunningTextJadwal();
                             return true;
                         }
                     }
+                    // Fallback default
                     const defaultHanpangan = ["Serka Wahyu Hidayat", "Pelda I Komang Karia", "Serma Mujiburrahman", "Sertu Nyoman Warsa", "Serma I Kadek Teges Suardana", "Serda I Putu Suwidana Yasa", "Serka Satriyo", "Serka I Made Widiasa", "Serka Nyoman Join Amitaba", "Serka I Nyoman Arta"];
                     JadwalData.daftarHanpangan = defaultHanpangan;
-                    const today = new Date();
-                    const epochDays = Math.floor(today.getTime() / (24 * 60 * 60 * 1000));
+                    const todayEpoch = getLocalDateEpoch();
                     const referenceDate = new Date(2024, 0, 1);
                     const epochDaysRef = Math.floor(referenceDate.getTime() / (24 * 60 * 60 * 1000));
                     let offset = (0 - epochDaysRef) % defaultHanpangan.length;
                     if (offset < 0) offset += defaultHanpangan.length;
-                    let index = (epochDays + offset) % defaultHanpangan.length;
+                    let index = (todayEpoch + offset) % defaultHanpangan.length;
                     if (index < 0) index += defaultHanpangan.length;
                     JadwalData.currentHanpangan = defaultHanpangan[index];
                     updateRunningTextJadwal();
                     return false;
                 });
             }
+            // ====================================================================
 
             function formatTanggal(date) {
                 const days = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
@@ -2083,7 +2057,7 @@
             document.getElementById('narasi').value = '';
             document.getElementById('previewGambar').innerHTML = '';
             document.getElementById('previewTanggal').innerHTML = '';
-            document.getElementById('checkInputCompletion')?.();
+            if (typeof checkInputCompletion === 'function') checkInputCompletion();
         };
 
         window.showAttendance = function() {
@@ -2117,7 +2091,6 @@
                 btnMasuk.addEventListener('click', handleMasukAplikasi);
             }
             
-            // Cek apakah sudah pernah pilih desa sebelumnya
             setTimeout(() => {
                 if (!checkPreviousDesaSelection() && daftarDesaGlobal.length > 0) {
                     // Modal akan ditampilkan oleh splash setelah selesai
