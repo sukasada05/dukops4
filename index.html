@@ -3,8 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <!-- ========== PERUBAHAN HANYA DI VIEWPORT UNTUK FULL LAYAR ========== -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <!-- ========== INSTRUKSI NOINDEX UNTUK MESIN PENCARI ========== -->
@@ -37,55 +36,6 @@
     <!-- html2canvas untuk fitur screenshot -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     
-    <!-- ========== TAMBAHAN CSS FULL LAYAR (HANYA INI YANG DITAMBAH, TIDAK MENGUBAH APAPUN) ========== -->
-    <style>
-        /* FULL LAYAR UNTUK MONITOR BESAR & ANDROID - TIDAK MENGHAPUS SATU FUNGSI PUN */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        html, body {
-            width: 100%;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        
-        /* Container utama memenuhi seluruh lebar layar */
-        .container {
-            width: 100%;
-            max-width: 100%;
-            margin: 0 auto;
-            padding: 20px 24px;
-        }
-        
-        /* Untuk layar Full HD (1920px ke atas) */
-        @media screen and (min-width: 1600px) {
-            .container {
-                padding: 28px 48px;
-            }
-        }
-        
-        /* Untuk tablet dan mobile */
-        @media screen and (max-width: 768px) {
-            .container {
-                padding: 16px 18px;
-            }
-        }
-        
-        /* Pastikan semua konten memenuhi lebar */
-        .dukops-header,
-        .telegram-running-container,
-        .nav-buttons,
-        .jadwal-section,
-        .absen-card,
-        .action-buttons {
-            width: 100%;
-        }
-    </style>
-    
-    <!-- ========== STYLE ASLI ANDA (DARI KODE AWAL) - PERTAHANKAN SEMUA ========== -->
     <style>
         /* ============ SPLASH SCREEN MODERN UDAYANA - SEMUA CENTER ========== */
         .splash-container-modern {
@@ -376,6 +326,7 @@
         .whatsapp-transparent-btn i { font-size: 28px; color: #25D366; pointer-events: none; }
         .whatsapp-transparent-btn span { color: #25D366; font-size: 16px; font-weight: bold; pointer-events: none; }
         .whatsapp-transparent-btn:hover { background: rgba(37, 211, 102, 0.1); transform: scale(1.02); border-color: #128C7E; }
+        .whatsapp-transparent-btn:hover i, .whatsapp-transparent-btn:hover span { color: #128C7E; }
         .whatsapp-transparent-btn:active { transform: scale(0.98); }
         
         .jadwal-toast {
@@ -1004,6 +955,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- ================= SPLASH SCREEN MODERN UDAYANA (SEMUA CENTER) ================= -->
     <div id="splashScreen" class="splash-container-modern">
