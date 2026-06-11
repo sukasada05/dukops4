@@ -2048,7 +2048,7 @@
             const div = document.createElement('div');
             div.className = 'chat-message ' + type;
             const time = timestamp ? new Date(timestamp).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}) : getCurrentTime();
-            div.innerHTML = (sender && sender !== 'Admin DUKOPS' ? '<div style="font-size:10px;color:#666;margin-bottom:3px;">'+sender+'</div>' : '') + text + '<div class="chat-time">'+time+'</div>';
+            div.innerHTML = (sender && sender !== 'Admin DUKOPS' ? '<div style="font-size:10px;color:#ffd700;margin-bottom:3px;">'+sender+'</div>' : '') + text + '<div class="chat-time">'+time+'</div>';
             document.getElementById('chatBody').appendChild(div);
             document.getElementById('chatBody').scrollTop = document.getElementById('chatBody').scrollHeight;
         }
