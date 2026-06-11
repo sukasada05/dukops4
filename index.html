@@ -30,6 +30,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <!-- Stylesheet -->
     <link rel="stylesheet" href="styles.css">
     
@@ -953,6 +956,263 @@
                 padding: 8px 10px;
             }
         }
+
+        /* ============ FLOATING CHAT WIDGET ============ */
+        .floating-chat-wrapper {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .chat-toggle-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            position: relative;
+            animation: floatPulse 2s infinite;
+        }
+        @keyframes floatPulse {
+            0%, 100% { box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4); }
+            50% { box-shadow: 0 4px 25px rgba(37, 211, 102, 0.7); }
+        }
+        .chat-toggle-btn:hover {
+            transform: scale(1.08);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
+        }
+        .chat-toggle-btn i {
+            color: white;
+            font-size: 28px;
+        }
+        .chat-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff4444;
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 2px solid white;
+            animation: badgePop 0.3s ease;
+        }
+        @keyframes badgePop {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+        .chat-status-indicator {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 14px;
+            height: 14px;
+            background: #4CAF50;
+            border-radius: 50%;
+            border: 2px solid white;
+            animation: statusPulse 2s infinite;
+        }
+        @keyframes statusPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+            50% { box-shadow: 0 0 0 6px rgba(76, 175, 80, 0); }
+        }
+        .chat-panel {
+            position: absolute;
+            bottom: 75px;
+            right: 0;
+            width: 320px;
+            height: 420px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chat-panel.active {
+            display: flex;
+        }
+        .chat-header {
+            background: linear-gradient(135deg, #075E54, #128C7E);
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+        }
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .chat-header-info {
+            flex: 1;
+        }
+        .chat-header-name {
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .chat-header-status {
+            font-size: 11px;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .chat-header-status .online-dot {
+            width: 8px;
+            height: 8px;
+            background: #4CAF50;
+            border-radius: 50%;
+        }
+        .chat-close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+        .chat-close-btn:hover {
+            opacity: 1;
+        }
+        .chat-body {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background: #e5ddd5;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .chat-message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            line-height: 1.4;
+            word-wrap: break-word;
+            animation: msgIn 0.3s ease;
+        }
+        @keyframes msgIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chat-message.received {
+            background: #2a2a2a;
+            color: #ffd700;
+            align-self: flex-start;
+            border-top-left-radius: 2px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .chat-message.sent {
+            background: #1a3a1a;
+            color: #ffffff;
+            align-self: flex-end;
+            border-top-right-radius: 2px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .chat-time {
+            font-size: 10px;
+            color: #4dff4d;
+            text-align: right;
+            margin-top: 3px;
+        }
+        .chat-footer {
+            padding: 10px 15px;
+            background: #f0f0f0;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            border-top: 1px solid #ddd;
+        }
+        .chat-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            font-size: 13px;
+            transition: border-color 0.3s;
+        }
+        .chat-input:focus {
+            border-color: #128C7E;
+        }
+        .chat-send-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #25D366;
+            border: none;
+            cursor: pointer;
+            color: white;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .chat-send-btn:hover {
+            background: #128C7E;
+            transform: scale(1.05);
+        }
+        .chat-tooltip {
+            position: absolute;
+            bottom: 70px;
+            right: 10px;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            font-size: 13px;
+            white-space: nowrap;
+            animation: tooltipIn 0.3s ease;
+            display: none;
+        }
+        .chat-tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            right: 20px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 8px solid white;
+        }
+        @keyframes tooltipIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @media screen and (max-width: 480px) {
+            .chat-panel { width: 290px; height: 380px; right: -10px; }
+            .chat-toggle-btn { width: 50px; height: 50px; }
+            .chat-toggle-btn i { font-size: 24px; }
+        }
     </style>
 </head>
 
@@ -1182,6 +1442,33 @@
             <div class="modal-ai-tabs" id="modalTabs"></div>
             <div class="modal-ai-body" id="modalBody"></div>
         </div>
+    </div>
+
+    <!-- ==================== FLOATING CHAT WIDGET ==================== -->
+    <div class="floating-chat-wrapper" id="floatingChat">
+        <div class="chat-tooltip" id="chatTooltip">💬 Ada yang bisa dibantu? <strong>🟢 Siap Online</strong></div>
+        <div class="chat-panel" id="chatPanel">
+            <div class="chat-header">
+                <div class="chat-avatar">🪖</div>
+                <div class="chat-header-info">
+                    <div class="chat-header-name">Admin DUKOPS</div>
+                    <div class="chat-header-status"><span class="online-dot"></span> <span id="chatOnlineText">Online Sekarang</span></div>
+                </div>
+                <button class="chat-close-btn" onclick="toggleChat()">✕</button>
+            </div>
+            <div class="chat-body" id="chatBody">
+                <div class="chat-message received">Selamat datang di DUKOPS BABINSA! 🎯<br>Kami <strong>🟢 siap online</strong> 24/7.<br>Ada yang bisa kami bantu?<div class="chat-time" id="welcomeTime"></div></div>
+            </div>
+            <div class="chat-footer">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Ketik pesan..." onkeypress="if(event.key==='Enter')sendChatMessage()">
+                <button class="chat-send-btn" onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+        <button class="chat-toggle-btn" id="chatToggleBtn" onclick="toggleChat()">
+            <i class="fas fa-comment-dots"></i>
+            <span class="chat-status-indicator" title="Siap Online"></span>
+            <span class="chat-badge" id="chatBadge" style="display: none;">0</span>
+        </button>
     </div>
 
     <script>
@@ -1693,540 +1980,122 @@
     <!-- ============ JADWAL PIKET BARU SCRIPT (DENGAN URL REPOSITORY sukasada05/dukops4) ============ -->
     <script>
     (function() {
-        // URL FILE HANPANGAN dari repository sukasada05/dukops4
         const HANPANGAN_URL = "https://raw.githubusercontent.com/sukasada05/dukops4/main/data/hanpangan.txt";
-        const GITHUB_URLS = {
-            HANPANGAN: HANPANGAN_URL,
-            PIKET: "data/piket.txt"
-        };
-
+        const GITHUB_URLS = { HANPANGAN: HANPANGAN_URL, PIKET: "data/piket.txt" };
         const JadwalData = { daftarNama: [], daftarHanpangan: [], currentHanpangan: "" };
-        const JADWAL_DROPDOWN_IDS = [
-            'j_nama1a_baru', 'j_nama1b_baru', 'j_nama2a_baru', 'j_nama2b_baru',
-            'j_nama3a_baru', 'j_nama3b_baru', 'j_nama3c_baru', 'j_nama3d_baru',
-            'j_nama4a_baru', 'j_nama4b_baru', 'j_nama4c_baru', 'j_nama4d_baru'
-        ];
+        const JADWAL_DROPDOWN_IDS = ['j_nama1a_baru','j_nama1b_baru','j_nama2a_baru','j_nama2b_baru','j_nama3a_baru','j_nama3b_baru','j_nama3c_baru','j_nama3d_baru','j_nama4a_baru','j_nama4b_baru','j_nama4c_baru','j_nama4d_baru'];
 
-        function showToast(msg, duration = 3000) {
-            // Toast tidak ditampilkan sesuai permintaan
-            return;
-        }
+        function updateRunningText() { const el = document.getElementById('runningTextJadwalBaru'); if (el) el.textContent = JadwalData.currentHanpangan ? '🍽️ JADWAL HANPANGAN HARI INI: ' + JadwalData.currentHanpangan + ' 🍽️' : '🍽️ Memuat jadwal hanpangan... 🍽️'; }
+        function fetchFromGitHub(url) { return new Promise(resolve => { fetch(url + '?t=' + new Date().getTime()).then(res => res.ok ? res.text() : null).then(data => resolve(data)).catch(() => resolve(null)); }); }
 
-        function updateRunningText() {
-            const el = document.getElementById('runningTextJadwalBaru');
-            if (el) el.textContent = JadwalData.currentHanpangan ? '🍽️ JADWAL HANPANGAN HARI INI: ' + JadwalData.currentHanpangan + ' 🍽️' : '🍽️ Memuat jadwal hanpangan... 🍽️';
-        }
+        function loadPiketData() { return fetchFromGitHub(GITHUB_URLS.PIKET).then(data => { if (data) { JadwalData.daftarNama = data.trim().split('\n').filter(l => l.trim()).map(n => n.trim()); JADWAL_DROPDOWN_IDS.forEach(id => { const select = document.getElementById(id); if (select) { select.innerHTML = '<option value="">-- Pilih Nama --</option>'; JadwalData.daftarNama.forEach(nama => { const opt = document.createElement('option'); opt.value = nama; opt.textContent = nama; select.appendChild(opt); }); select.value = ""; } }); return true; } return false; }); }
 
-        function fetchFromGitHub(url) {
-            return new Promise(resolve => {
-                const cache = '?t=' + new Date().getTime();
-                fetch(url + cache).then(res => res.ok ? res.text() : null).then(data => resolve(data)).catch(() => resolve(null));
-            });
-        }
+        function loadHanpanganData() { return fetchFromGitHub(GITHUB_URLS.HANPANGAN).then(data => { if (data) { const lines = data.trim().split('\n').filter(l => l.trim()); if (lines.length) { JadwalData.daftarHanpangan = lines; const today = new Date(); const epochDays = Math.floor(today.getTime() / (24 * 60 * 60 * 1000)); const referenceDate = new Date(2024, 0, 1); const epochDaysRef = Math.floor(referenceDate.getTime() / (24 * 60 * 60 * 1000)); let offset = (0 - epochDaysRef) % lines.length; if (offset < 0) offset += lines.length; let index = (epochDays + offset) % lines.length; if (index < 0) index += lines.length; JadwalData.currentHanpangan = lines[index]; updateRunningText(); return true; } } const defaultHanpangan = ["Serka Wahyu Hidayat","Pelda I Komang Karia","Serma Mujiburrahman","Sertu Nyoman Warsa","Serma I Kadek Teges Suardana","Serda I Putu Suwidana Yasa","Serka Satriyo","Serka I Made Widiasa","Serka Nyoman Join Amitaba","Serka I Nyoman Arta"]; JadwalData.daftarHanpangan = defaultHanpangan; const today = new Date(); const epochDays = Math.floor(today.getTime() / (24 * 60 * 60 * 1000)); const referenceDate = new Date(2024, 0, 1); const epochDaysRef = Math.floor(referenceDate.getTime() / (24 * 60 * 60 * 1000)); let offset = (0 - epochDaysRef) % defaultHanpangan.length; if (offset < 0) offset += defaultHanpangan.length; let index = (epochDays + offset) % defaultHanpangan.length; if (index < 0) index += defaultHanpangan.length; JadwalData.currentHanpangan = defaultHanpangan[index]; updateRunningText(); return false; }); }
 
-        function loadPiketData() {
-            return fetchFromGitHub(GITHUB_URLS.PIKET).then(data => {
-                if (data) {
-                    JadwalData.daftarNama = data.trim().split('\n').filter(l => l.trim()).map(n => n.trim());
-                    JADWAL_DROPDOWN_IDS.forEach(id => {
-                        const select = document.getElementById(id);
-                        if (select) {
-                            select.innerHTML = '<option value="">-- Pilih Nama --</option>';
-                            JadwalData.daftarNama.forEach(nama => { const opt = document.createElement('option'); opt.value = nama; opt.textContent = nama; select.appendChild(opt); });
-                            select.value = "";
-                        }
-                    });
-                    return true;
-                }
-                return false;
-            });
-        }
+        function formatTanggal(date) { const days = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"]; const months = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"]; return days[date.getDay()] + ", " + date.getDate() + " " + months[date.getMonth()] + " " + date.getFullYear(); }
+        function autoResizeTextarea() { const textarea = document.getElementById('j_hasilPesanBaru'); if (textarea) { textarea.style.height = 'auto'; textarea.style.height = textarea.scrollHeight + 'px'; } }
 
-        // ========== SISTEM HANPANGAN EPOCH DAYS dengan URL sukasada05/dukops4 ==========
-        // Urutan nama yang diinginkan agar Serda I Putu Suwidana Yasa muncul hari ini
-        function loadHanpanganData() {
-            return fetchFromGitHub(GITHUB_URLS.HANPANGAN).then(data => {
-                if (data) {
-                    const lines = data.trim().split('\n').filter(l => l.trim());
-                    if (lines.length) {
-                        JadwalData.daftarHanpangan = lines;
-                        const today = new Date();
-                        // epochDays: jumlah hari sejak 1 Januari 1970
-                        const epochDays = Math.floor(today.getTime() / (24 * 60 * 60 * 1000));
-                        
-                        // Tentukan tanggal referensi (1 Januari 2024) 
-                        const referenceDate = new Date(2024, 0, 1);
-                        const epochDaysRef = Math.floor(referenceDate.getTime() / (24 * 60 * 60 * 1000));
-                        const targetIndexAtRef = 0;
-                        
-                        // Hitung offset tetap
-                        let offset = (targetIndexAtRef - epochDaysRef) % lines.length;
-                        if (offset < 0) offset += lines.length;
-                        
-                        // Index hari ini
-                        let index = (epochDays + offset) % lines.length;
-                        if (index < 0) index += lines.length;
-                        
-                        JadwalData.currentHanpangan = lines[index];
-                        updateRunningText();
-                        return true;
-                    }
-                }
-                // DATA DEFAULT (10 nama sesuai urutan agar Serda muncul hari ini)
-                const defaultHanpangan = [
-                    "Serka Wahyu Hidayat",
-                    "Pelda I Komang Karia",
-                    "Serma Mujiburrahman",
-                    "Sertu Nyoman Warsa",
-                    "Serma I Kadek Teges Suardana",
-                    "Serda I Putu Suwidana Yasa",
-                    "Serka Satriyo",
-                    "Serka I Made Widiasa",
-                    "Serka Nyoman Join Amitaba",
-                    "Serka I Nyoman Arta"
-                ];
-                JadwalData.daftarHanpangan = defaultHanpangan;
-                const today = new Date();
-                const epochDays = Math.floor(today.getTime() / (24 * 60 * 60 * 1000));
-                const referenceDate = new Date(2024, 0, 1);
-                const epochDaysRef = Math.floor(referenceDate.getTime() / (24 * 60 * 60 * 1000));
-                let offset = (0 - epochDaysRef) % defaultHanpangan.length;
-                if (offset < 0) offset += defaultHanpangan.length;
-                let index = (epochDays + offset) % defaultHanpangan.length;
-                if (index < 0) index += defaultHanpangan.length;
-                JadwalData.currentHanpangan = defaultHanpangan[index];
-                updateRunningText();
-                return false;
-            });
-        }
-        // =================================================================================
+        function updatePreview() { const now = new Date(), tomorrow = new Date(); tomorrow.setDate(now.getDate() + 1); let result = "=======================\nKORAMIL 1609-05/SUKASADA\n    JADWAL DINAS DALAM\n=======================\n\n"; const getVal = (id) => document.getElementById(id)?.value || ""; const sections = [{ names: [getVal('j_nama1a_baru'),getVal('j_nama1b_baru')], title: formatTanggal(now), suffix: "" },{ names: [getVal('j_nama2a_baru'),getVal('j_nama2b_baru')], title: formatTanggal(tomorrow), suffix: "" },{ names: [getVal('j_nama3a_baru'),getVal('j_nama3b_baru')], title: formatTanggal(now), suffix: " (Kediaman)" },{ names: [getVal('j_nama3c_baru'),getVal('j_nama3d_baru')], title: formatTanggal(tomorrow), suffix: " (Kediaman)" },{ names: [getVal('j_nama4a_baru'),getVal('j_nama4b_baru')], title: formatTanggal(now), suffix: " (Makodim)" },{ names: [getVal('j_nama4c_baru'),getVal('j_nama4d_baru')], title: formatTanggal(tomorrow), suffix: " (Makodim)" }]; let sectionCount = 0; for (const s of sections) { const valid = s.names.filter(n => n && n.trim()); if (valid.length) { result += String.fromCharCode(65 + sectionCount) + ". " + s.title + s.suffix + "\n"; valid.forEach((n, i) => result += "   " + (i + 1) + ". " + n + "\n"); result += "\n"; sectionCount++; } } if (JadwalData.currentHanpangan) result += "- Jadwal Hanpangan hari ini : " + JadwalData.currentHanpangan + "\n\n"; result += "Demikian MMP."; const preview = document.getElementById('j_hasilPesanBaru'); if (preview) { preview.value = result; setTimeout(autoResizeTextarea, 10); } }
 
-        function formatTanggal(date) {
-            const days = ["Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu"];
-            const months = ["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"];
-            return days[date.getDay()] + ", " + date.getDate() + " " + months[date.getMonth()] + " " + date.getFullYear();
-        }
-
-        function autoResizeTextarea() {
-            const textarea = document.getElementById('j_hasilPesanBaru');
-            if (textarea) {
-                textarea.style.height = 'auto';
-                textarea.style.height = textarea.scrollHeight + 'px';
-            }
-        }
-
-        function updatePreview() {
-            const now = new Date(), tomorrow = new Date(); tomorrow.setDate(now.getDate() + 1);
-            let result = "=======================\nKORAMIL 1609-05/SUKASADA\n    JADWAL DINAS DALAM\n=======================\n\n";
-            const getVal = (id) => document.getElementById(id)?.value || "";
-            
-            const sections = [
-                { names: [getVal('j_nama1a_baru'), getVal('j_nama1b_baru')], title: formatTanggal(now), suffix: "" },
-                { names: [getVal('j_nama2a_baru'), getVal('j_nama2b_baru')], title: formatTanggal(tomorrow), suffix: "" },
-                { names: [getVal('j_nama3a_baru'), getVal('j_nama3b_baru')], title: formatTanggal(now), suffix: " (Kediaman)" },
-                { names: [getVal('j_nama3c_baru'), getVal('j_nama3d_baru')], title: formatTanggal(tomorrow), suffix: " (Kediaman)" },
-                { names: [getVal('j_nama4a_baru'), getVal('j_nama4b_baru')], title: formatTanggal(now), suffix: " (Makodim)" },
-                { names: [getVal('j_nama4c_baru'), getVal('j_nama4d_baru')], title: formatTanggal(tomorrow), suffix: " (Makodim)" }
-            ];
-            
-            let sectionCount = 0;
-            for (const s of sections) {
-                const valid = s.names.filter(n => n && n.trim());
-                if (valid.length) {
-                    result += String.fromCharCode(65 + sectionCount) + ". " + s.title + s.suffix + "\n";
-                    valid.forEach((n, i) => result += "   " + (i + 1) + ". " + n + "\n");
-                    result += "\n"; sectionCount++;
-                }
-            }
-            if (JadwalData.currentHanpangan) result += "- Jadwal Hanpangan hari ini : " + JadwalData.currentHanpangan + "\n\n";
-            result += "Demikian MMP.";
-            const preview = document.getElementById('j_hasilPesanBaru');
-            if (preview) {
-                preview.value = result;
-                setTimeout(autoResizeTextarea, 10);
-            }
-        }
-
-        function sendToWhatsApp() {
-            const preview = document.getElementById('j_hasilPesanBaru');
-            const pesan = preview ? preview.value.trim() : "";
-            if (!pesan) { showToast("Tidak ada pesan untuk dikirim"); return false; }
-            window.open("https://wa.me/?text=" + encodeURIComponent(pesan), "_blank");
-            showToast("Membuka WhatsApp...");
-            return false;
-        }
+        function sendToWhatsApp() { const preview = document.getElementById('j_hasilPesanBaru'); const pesan = preview ? preview.value.trim() : ""; if (!pesan) return false; window.open("https://wa.me/?text=" + encodeURIComponent(pesan), "_blank"); return false; }
 
         let isLoading = false;
-        function loadAllJadwalData() {
-            if (isLoading) return;
-            isLoading = true;
-            const loading = document.getElementById('j_loadingIndicatorBaru');
-            if (loading) loading.style.display = 'block';
-            Promise.all([loadPiketData(), loadHanpanganData()]).then(() => { updatePreview(); }).catch(() => {}).finally(() => { if (loading) loading.style.display = 'none'; isLoading = false; });
-        }
+        function loadAllJadwalData() { if (isLoading) return; isLoading = true; const loading = document.getElementById('j_loadingIndicatorBaru'); if (loading) loading.style.display = 'block'; Promise.all([loadPiketData(), loadHanpanganData()]).then(() => { updatePreview(); }).catch(() => {}).finally(() => { if (loading) loading.style.display = 'none'; isLoading = false; }); }
 
-        function initJadwalBaru() {
-            JADWAL_DROPDOWN_IDS.forEach(id => { const sel = document.getElementById(id); if (sel) sel.addEventListener('change', updatePreview); });
-            const btn = document.getElementById('whatsappBtnBaru');
-            if (btn) { const newBtn = btn.cloneNode(true); btn.parentNode.replaceChild(newBtn, btn); newBtn.addEventListener('click', (e) => { e.preventDefault(); sendToWhatsApp(); }); }
-            loadAllJadwalData();
-            autoResizeTextarea();
-        }
+        function initJadwalBaru() { JADWAL_DROPDOWN_IDS.forEach(id => { const sel = document.getElementById(id); if (sel) sel.addEventListener('change', updatePreview); }); const btn = document.getElementById('whatsappBtnBaru'); if (btn) { const newBtn = btn.cloneNode(true); btn.parentNode.replaceChild(newBtn, btn); newBtn.addEventListener('click', (e) => { e.preventDefault(); sendToWhatsApp(); }); } loadAllJadwalData(); autoResizeTextarea(); }
 
-        window.showJadwalPiketBaru = function() {
-            document.getElementById('dukopsContent').style.display = 'none';
-            document.getElementById('jadwalPiketContainerBaru').style.display = 'block';
-            document.getElementById('absenContent').style.display = 'none';
-            document.getElementById('btnDukops').classList.remove('active');
-            document.getElementById('btnJadwal').classList.add('active');
-            document.getElementById('btnAbsen').classList.remove('active');
-            initJadwalBaru();
-        };
-
-        window.showDukops = function() {
-            document.getElementById('dukopsContent').style.display = 'block';
-            document.getElementById('jadwalPiketContainerBaru').style.display = 'none';
-            document.getElementById('absenContent').style.display = 'none';
-            document.getElementById('btnDukops').classList.add('active');
-            document.getElementById('btnJadwal').classList.remove('active');
-            document.getElementById('btnAbsen').classList.remove('active');
-        };
-        
-        window.showAbsenTab = function() {
-            document.getElementById('dukopsContent').style.display = 'none';
-            document.getElementById('jadwalPiketContainerBaru').style.display = 'none';
-            document.getElementById('absenContent').style.display = 'block';
-            document.getElementById('btnDukops').classList.remove('active');
-            document.getElementById('btnJadwal').classList.remove('active');
-            document.getElementById('btnAbsen').classList.add('active');
-            if (typeof loadAbsenTahun === 'function') loadAbsenTahun();
-        };
+        window.showJadwalPiketBaru = function() { document.getElementById('dukopsContent').style.display = 'none'; document.getElementById('jadwalPiketContainerBaru').style.display = 'block'; document.getElementById('absenContent').style.display = 'none'; document.getElementById('btnDukops').classList.remove('active'); document.getElementById('btnJadwal').classList.add('active'); document.getElementById('btnAbsen').classList.remove('active'); initJadwalBaru(); };
+        window.showDukops = function() { document.getElementById('dukopsContent').style.display = 'block'; document.getElementById('jadwalPiketContainerBaru').style.display = 'none'; document.getElementById('absenContent').style.display = 'none'; document.getElementById('btnDukops').classList.add('active'); document.getElementById('btnJadwal').classList.remove('active'); document.getElementById('btnAbsen').classList.remove('active'); };
+        window.showAbsenTab = function() { document.getElementById('dukopsContent').style.display = 'none'; document.getElementById('jadwalPiketContainerBaru').style.display = 'none'; document.getElementById('absenContent').style.display = 'block'; document.getElementById('btnDukops').classList.remove('active'); document.getElementById('btnJadwal').classList.remove('active'); document.getElementById('btnAbsen').classList.add('active'); if (typeof loadAbsenTahun === 'function') loadAbsenTahun(); };
 
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initJadwalBaru);
         else initJadwalBaru();
     })();
     
     // ============ SCRIPT UNTUK TAB ABSEN ============
+    (function() { var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcKBFM8Mm0A8e_hWfl48uEUuDhlmxK8okgXF4M-102HLEuROZPN9YZlpmKnkRo8b_SKA/exec'; var CACHE_KEY_ABSEN = 'absensi_dukops_data'; var CACHE_EXPIRY = 30*60*1000; var isOnlineAbsen = navigator.onLine; var currentDataAbsen = null; var tahunSelectAbsen = document.getElementById('absenTahunSelect'); var bulanSelectAbsen = document.getElementById('absenBulanSelect'); var resultContainerAbsen = document.getElementById('absenResultContainer'); var screenshotAreaAbsen = document.getElementById('absenScreenshotArea'); if (tahunSelectAbsen) tahunSelectAbsen.onchange = onTahunChangeAbsen; window.addEventListener('online', function() { isOnlineAbsen = true; loadAbsenTahun(); }); window.addEventListener('offline', function() { isOnlineAbsen = false; });
+    function loadAbsenTahun() { if (!tahunSelectAbsen) return; tahunSelectAbsen.disabled = true; tahunSelectAbsen.innerHTML = '<option>⏳ Mohon tunggu....</option>'; var cached = getCacheAbsen(); if (cached && cached.years && cached.years.length > 0) { populateTahunSelectAbsen(cached.years); tahunSelectAbsen.disabled = false; } if (!isOnlineAbsen) { if (!cached || !cached.years) tahunSelectAbsen.innerHTML = '<option>❌ Offline - no data</option>'; return; } fetch(SCRIPT_URL + '?action=getYears').then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); }).then(function(y) { if (y && y.length > 0) { populateTahunSelectAbsen(y); saveToCacheAbsen({ years: y, months: null, data: null }); } else throw new Error('Tidak ada data'); }).catch(function() { if (!cached || !cached.years) tahunSelectAbsen.innerHTML = '<option>❌ Gagal memuat</option>'; }).finally(function() { if (tahunSelectAbsen) tahunSelectAbsen.disabled = false; }); }
+    function populateTahunSelectAbsen(y) { if (!tahunSelectAbsen) return; tahunSelectAbsen.innerHTML = '<option value="">-- Pilih Tahun --</option>'; for (var i=0;i<y.length;i++) { var o=document.createElement('option'); o.value=y[i]; o.textContent=y[i]; tahunSelectAbsen.appendChild(o); } if (y.length>0){tahunSelectAbsen.value=y[0];onTahunChangeAbsen();} }
+    function onTahunChangeAbsen() { if (!tahunSelectAbsen||!bulanSelectAbsen) return; var t=tahunSelectAbsen.value; if (!t) { bulanSelectAbsen.innerHTML='<option>Pilih tahun dulu</option>'; bulanSelectAbsen.disabled=true; return; } bulanSelectAbsen.disabled=true; bulanSelectAbsen.innerHTML='<option>⏳ Memuat...</option>'; var c=getCacheAbsen(); if (c&&c.months&&c.months[t]){populateBulanSelectAbsen(c.months[t]);bulanSelectAbsen.disabled=false;return;} if(!isOnlineAbsen){bulanSelectAbsen.innerHTML='<option>❌ Offline</option>';bulanSelectAbsen.disabled=false;return;} fetch(SCRIPT_URL+'?action=getMonths&tahun='+encodeURIComponent(t)).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).then(function(m){if(m&&m.length>0){populateBulanSelectAbsen(m);var uc=getCacheAbsen()||{};uc.months=uc.months||{};uc.months[t]=m;saveToCacheAbsen(uc);}else bulanSelectAbsen.innerHTML='<option>Tidak ada data</option>';bulanSelectAbsen.disabled=false;}).catch(function(){bulanSelectAbsen.innerHTML='<option>❌ Gagal memuat</option>';bulanSelectAbsen.disabled=false;}); }
+    function populateBulanSelectAbsen(m) { if(!bulanSelectAbsen)return; bulanSelectAbsen.innerHTML='<option value="">-- Pilih Bulan --</option>'; for(var i=0;i<m.length;i++){var o=document.createElement('option');o.value=m[i].num||m[i];o.textContent=m[i].name||m[i];bulanSelectAbsen.appendChild(o);} bulanSelectAbsen.onchange=function(){if(this.value){loadDataAbsen();}else{if(resultContainerAbsen)resultContainerAbsen.innerHTML='';}}; if(bulanSelectAbsen.value){loadDataAbsen();} }
+    function loadDataAbsen() { if(!tahunSelectAbsen||!bulanSelectAbsen)return; var t=tahunSelectAbsen.value,b=bulanSelectAbsen.value; if(!t||!b){if(resultContainerAbsen)resultContainerAbsen.innerHTML='<div class="absen-card">Pilih tahun dan bulan</div>';return;} showLoadingAbsen(); var c=getCacheAbsen(),ck=t+'_'+b; if(c&&c.data&&c.data[ck]){var cd=c.data[ck];if(Date.now()-cd.timestamp<CACHE_EXPIRY){displayDataAbsen(cd.data);currentDataAbsen=cd.data;return;}} if(!isOnlineAbsen){showErrorAbsen('Tidak ada koneksi');return;} fetch(SCRIPT_URL+'?action=getData&tahun='+encodeURIComponent(t)+'&bulan='+encodeURIComponent(b)).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}).then(function(d){currentDataAbsen=d;displayDataAbsen(d);var uc=getCacheAbsen()||{};uc.data=uc.data||{};uc.data[ck]={data:d,timestamp:Date.now()};saveToCacheAbsen(uc);}).catch(function(e){showErrorAbsen('Gagal: '+e.message);}); }
+    function displayDataAbsen(d) { if(!resultContainerAbsen)return; if(d.error){showErrorAbsen(d.error);return;} var td=d.total_desa||0,p=td>0?Math.round((d.desa_lengkap/td)*100):0,dh=''; for(var i=0;i<d.details.length;i++){var de=d.details[i],cls='',txt='',icon='';if(de.status==='LENGKAP'){cls='absen-status-lengkap';icon='✅';txt='LENGKAP';}else if(de.status==='BELUM_LENGKAP'){cls='absen-status-belum-lengkap';icon='⚠️';txt='BL';}else{cls='absen-status-belum';icon='❌';txt='BELUM';}var w=(de.status==='LENGKAP')?'#4caf50':((de.status==='BELUM_LENGKAP')?'#ff9800':'#f44336');dh+='<div class="absen-desa-item" onclick="window.showDetailAbsen(\''+escapeHtmlAbsen(de.nama)+'\','+de.jumlah_file+','+de.persentase+',\''+de.status+'\')"><div class="absen-desa-name">'+icon+' '+escapeHtmlAbsen(de.nama)+'</div><div class="absen-desa-stats">'+de.jumlah_file+'/9</div><div class="absen-desa-progress"><div class="absen-desa-progress-bar"><div class="absen-desa-progress-fill" style="width:'+de.persentase+'%;background:'+w+'"></div></div></div><div class="absen-status-badge '+cls+'">'+txt+'</div></div>';} resultContainerAbsen.innerHTML='<div class="absen-card"><div class="absen-stats-grid"><div class="absen-stat-card"><div class="absen-stat-value" style="color:#1a73e8;">'+d.total_desa+'</div><div class="absen-stat-label">DESA</div></div><div class="absen-stat-card"><div class="absen-stat-value" style="color:#4caf50;">'+d.desa_lengkap+'</div><div class="absen-stat-label">LENGKAP</div></div><div class="absen-stat-card"><div class="absen-stat-value" style="color:#ff9800;">'+d.desa_belum_lengkap+'</div><div class="absen-stat-label">BL</div></div><div class="absen-stat-card"><div class="absen-stat-value" style="color:#f44336;">'+d.desa_belum+'</div><div class="absen-stat-label">BELUM</div></div></div><div class="absen-progress-container"><div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:12px;"><span>📈 PROGRESS</span><span><b>'+p+'%</b></span></div><div class="absen-progress-bar"><div class="absen-progress-fill" style="width:'+p+'%"></div></div></div><div style="font-size:0.7rem;font-weight:600;margin:10px 0 5px;">📋 DAFTAR DESA ('+d.total_desa+')</div><div class="absen-desa-list">'+dh+'</div><div style="margin-top:15px;text-align:center;"><button onclick="shareAsPNGAbsen()" class="absen-btn absen-btn-primary" style="background:#e91e63;">📸 DOWNLOAD ABSEN</button></div></div>'; }
+    function getCacheAbsen(){try{var c=localStorage.getItem(CACHE_KEY_ABSEN);if(c)return JSON.parse(c);}catch(e){}return null;}
+    function saveToCacheAbsen(d){try{localStorage.setItem(CACHE_KEY_ABSEN,JSON.stringify(d));}catch(e){}}
+    function showLoadingAbsen(){if(resultContainerAbsen)resultContainerAbsen.innerHTML='<div class="absen-loading"><div class="absen-spinner"></div><p>Mohon Tunggu ...</p></div>';}
+    function showErrorAbsen(m){if(resultContainerAbsen)resultContainerAbsen.innerHTML='<div class="absen-card" style="color:#f44336;">⚠️ '+escapeHtmlAbsen(m)+'</div>';}
+    function escapeHtmlAbsen(t){if(!t)return'';return t.replace(/[&<>]/g,function(m){if(m==='&')return'&amp;';if(m==='<')return'&lt;';if(m==='>')return'&gt;';return m;});}
+    window.showDetailAbsen=function(n,j,p,s){alert((s==='LENGKAP'?'✅ ':(s==='BELUM_LENGKAP'?'⚠️ ':'❌ '))+n+'\n'+j+'/9 ('+p+'%)');};
+    window.shareAsPNGAbsen=async function(){if(!currentDataAbsen)return;if(screenshotAreaAbsen)screenshotAreaAbsen.innerHTML=(function(){var d=currentDataAbsen,t=d.total_desa||0,p=t>0?Math.round((d.desa_lengkap/t)*100):0,tg=new Date().toLocaleDateString('id-ID'),lh='';for(var i=0;i<d.details.length;i++){var de=d.details[i],w=(de.status==='LENGKAP')?'#4caf50':((de.status==='BELUM_LENGKAP')?'#ff9800':'#f44336'),em=(de.status==='LENGKAP')?'✅':((de.status==='BELUM_LENGKAP')?'⚠️':'❌'),st=(de.status==='LENGKAP')?'LENGKAP':((de.status==='BELUM_LENGKAP')?'BL':'BELUM'),sb=(de.status==='LENGKAP')?'#e8f5e9':((de.status==='BELUM_LENGKAP')?'#fff3e0':'#ffebee');lh+='<div class="png-desa-item"><div style="width:24px;font-size:10px;">'+em+'</div><div style="flex:2;font-size:10px;font-weight:500;color:#000;">'+escapeHtmlAbsen(de.nama)+'</div><div style="width:35px;font-size:9px;text-align:center;color:#000;">'+de.jumlah_file+'/9</div><div style="width:50px;"><div style="background:#e0e0e0;border-radius:6px;height:4px;"><div style="background:'+w+';width:'+de.persentase+'%;height:4px;border-radius:6px;"></div></div></div><div style="width:45px;font-size:8px;text-align:center;padding:2px 4px;border-radius:8px;background:'+sb+';color:'+w+';">'+st+'</div></div>';} return '<div class="png-container"><div class="png-header"><div style="font-size:16px;font-weight:bold;">📊 ABSENSI DUKOPS</div><div style="font-size:8px;">Koramil Monitoring</div></div><div style="padding:10px;"><div style="text-align:center;margin-bottom:8px;"><div style="font-size:14px;font-weight:bold;color:#000;">'+(d.nama_bulan||'')+' '+(d.tahun||'')+'</div><div style="font-size:7px;color:#666;">'+tg+'</div></div><div class="png-stats"><div class="png-stat-card"><div style="font-size:12px;font-weight:bold;color:#1a73e8;">'+d.total_desa+'</div><div style="font-size:7px;">DESA</div></div><div class="png-stat-card"><div style="font-size:12px;font-weight:bold;color:#4caf50;">'+d.desa_lengkap+'</div><div style="font-size:7px;">LENGKAP</div></div><div class="png-stat-card"><div style="font-size:12px;font-weight:bold;color:#ff9800;">'+d.desa_belum_lengkap+'</div><div style="font-size:7px;">BL</div></div><div class="png-stat-card"><div style="font-size:12px;font-weight:bold;color:#f44336;">'+d.desa_belum+'</div><div style="font-size:7px;">BELUM</div></div></div><div style="margin-bottom:8px;"><div style="display:flex;justify-content:space-between;font-size:8px;color:#000;"><span>PROGRESS</span><span><b>'+p+'%</b></span></div><div class="png-progress-bar"><div class="png-progress-fill" style="width:'+p+'%"></div></div></div><div style="font-size:9px;font-weight:bold;margin:6px 0 4px;color:#000;">📋 DAFTAR DESA ('+d.total_desa+')</div><div style="max-height:550px;overflow:hidden;">'+lh+'</div></div></div>'; })(); var el=screenshotAreaAbsen?screenshotAreaAbsen.firstChild:null;if(!el)return;try{var canvas=await html2canvas(el,{scale:2,backgroundColor:'#ffffff'});var link=document.createElement('a');link.download='Absensi_'+(currentDataAbsen.nama_bulan||'')+'_'+(currentDataAbsen.tahun||'')+'.png';link.href=canvas.toDataURL('image/png');link.click();}catch(e){}setTimeout(function(){if(screenshotAreaAbsen)screenshotAreaAbsen.innerHTML='';},500);};
+    window.loadAbsenTahun = loadAbsenTahun; })();
+    </script>
+
+    <!-- ============ SUPABASE CHAT SCRIPT ============ -->
+    <script>
     (function() {
-        var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcKBFM8Mm0A8e_hWfl48uEUuDhlmxK8okgXF4M-102HLEuROZPN9YZlpmKnkRo8b_SKA/exec';
-        var CACHE_KEY_ABSEN = 'absensi_dukops_data';
-        var CACHE_EXPIRY = 30 * 60 * 1000;
-        
-        var isOnlineAbsen = navigator.onLine;
-        var currentDataAbsen = null;
-        
-        var tahunSelectAbsen = document.getElementById('absenTahunSelect');
-        var bulanSelectAbsen = document.getElementById('absenBulanSelect');
-        var resultContainerAbsen = document.getElementById('absenResultContainer');
-        var screenshotAreaAbsen = document.getElementById('absenScreenshotArea');
-        
-        if (tahunSelectAbsen) tahunSelectAbsen.onchange = onTahunChangeAbsen;
-        
-        window.addEventListener('online', function() { isOnlineAbsen = true; loadAbsenTahun(); });
-        window.addEventListener('offline', function() { isOnlineAbsen = false; });
-        
-        function forceRefreshAbsen() {
-            if (!isOnlineAbsen) return;
-            localStorage.removeItem(CACHE_KEY_ABSEN);
-            loadAbsenTahun();
-            if (currentDataAbsen) loadDataAbsen();
+        const SUPABASE_URL = 'https://qthoexsadattfnnzcawh.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF0aG9leHNhZGF0dGZubnpjYXdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NTMzNTAsImV4cCI6MjA5NjEyOTM1MH0.qZBFjrN8F8vwxoaPKIPLDQIOWbt58BNlPWLOn4J_5_4';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        console.log('✅ Chat Supabase terhubung!');
+
+        let isChatOpen = false;
+        let unreadCount = 0;
+
+        function getCurrentTime() { const n = new Date(); return n.getHours().toString().padStart(2,'0')+':'+n.getMinutes().toString().padStart(2,'0'); }
+        function getUserName() { const d = document.getElementById('selectDesa'); return (d && d.value) ? d.options[d.selectedIndex].text : 'Babinsa'; }
+
+        function addMessage(text, type, timestamp, sender) {
+            const div = document.createElement('div');
+            div.className = 'chat-message ' + type;
+            const time = timestamp ? new Date(timestamp).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}) : getCurrentTime();
+            div.innerHTML = (sender && sender !== 'Admin DUKOPS' ? '<div style="font-size:10px;color:#666;margin-bottom:3px;">'+sender+'</div>' : '') + text + '<div class="chat-time">'+time+'</div>';
+            document.getElementById('chatBody').appendChild(div);
+            document.getElementById('chatBody').scrollTop = document.getElementById('chatBody').scrollHeight;
         }
-        
-        function loadAbsenTahun() {
-            if (!tahunSelectAbsen) return;
-            tahunSelectAbsen.disabled = true;
-            tahunSelectAbsen.innerHTML = '<option>⏳ Mohon tunggu....</option>';
-            
-            var cached = getCacheAbsen();
-            if (cached && cached.years && cached.years.length > 0) {
-                populateTahunSelectAbsen(cached.years);
-                tahunSelectAbsen.disabled = false;
-            }
-            
-            if (!isOnlineAbsen) {
-                if (!cached || !cached.years) tahunSelectAbsen.innerHTML = '<option>❌ Offline - no data</option>';
-                return;
-            }
-            
-            fetch(SCRIPT_URL + '?action=getYears')
-                .then(function(response) {
-                    if (!response.ok) throw new Error('HTTP ' + response.status);
-                    return response.json();
-                })
-                .then(function(years) {
-                    if (years && years.length > 0) {
-                        populateTahunSelectAbsen(years);
-                        saveToCacheAbsen({ years: years, months: null, data: null });
-                    } else {
-                        throw new Error('Tidak ada data tahun');
-                    }
-                })
-                .catch(function(error) {
-                    console.error('Error:', error);
-                    if (!cached || !cached.years) {
-                        tahunSelectAbsen.innerHTML = '<option>❌ Gagal memuat</option>';
-                    }
-                })
-                .finally(function() { if (tahunSelectAbsen) tahunSelectAbsen.disabled = false; });
-        }
-        
-        function populateTahunSelectAbsen(years) {
-            if (!tahunSelectAbsen) return;
-            tahunSelectAbsen.innerHTML = '<option value="">-- Pilih Tahun --</option>';
-            for (var i = 0; i < years.length; i++) {
-                var opt = document.createElement('option');
-                opt.value = years[i];
-                opt.textContent = years[i];
-                tahunSelectAbsen.appendChild(opt);
-            }
-            if (years.length > 0) { 
-                tahunSelectAbsen.value = years[0]; 
-                onTahunChangeAbsen(); 
-            }
-        }
-        
-        function onTahunChangeAbsen() {
-            if (!tahunSelectAbsen || !bulanSelectAbsen) return;
-            var tahun = tahunSelectAbsen.value;
-            if (!tahun) {
-                bulanSelectAbsen.innerHTML = '<option>Pilih tahun dulu</option>';
-                bulanSelectAbsen.disabled = true;
-                return;
-            }
-            
-            bulanSelectAbsen.disabled = true;
-            bulanSelectAbsen.innerHTML = '<option>⏳ Memuat...</option>';
-            
-            var cached = getCacheAbsen();
-            if (cached && cached.months && cached.months[tahun]) {
-                populateBulanSelectAbsen(cached.months[tahun]);
-                bulanSelectAbsen.disabled = false;
-                return;
-            }
-            
-            if (!isOnlineAbsen) {
-                bulanSelectAbsen.innerHTML = '<option>❌ Offline - pilih tahun lain</option>';
-                bulanSelectAbsen.disabled = false;
-                return;
-            }
-            
-            fetch(SCRIPT_URL + '?action=getMonths&tahun=' + encodeURIComponent(tahun))
-                .then(function(response) {
-                    if (!response.ok) throw new Error('HTTP ' + response.status);
-                    return response.json();
-                })
-                .then(function(months) {
-                    if (months && months.length > 0) {
-                        populateBulanSelectAbsen(months);
-                        var updatedCache = getCacheAbsen() || {};
-                        updatedCache.months = updatedCache.months || {};
-                        updatedCache.months[tahun] = months;
-                        saveToCacheAbsen(updatedCache);
-                    } else {
-                        bulanSelectAbsen.innerHTML = '<option>Tidak ada data bulan</option>';
-                    }
-                    bulanSelectAbsen.disabled = false;
-                })
-                .catch(function(error) {
-                    console.error('Error:', error);
-                    bulanSelectAbsen.innerHTML = '<option>❌ Gagal memuat</option>';
-                    bulanSelectAbsen.disabled = false;
-                });
-        }
-        
-        function populateBulanSelectAbsen(months) {
-            if (!bulanSelectAbsen) return;
-            bulanSelectAbsen.innerHTML = '<option value="">-- Pilih Bulan --</option>';
-            for (var i = 0; i < months.length; i++) {
-                var opt = document.createElement('option');
-                opt.value = months[i].num || months[i];
-                opt.textContent = months[i].name || months[i];
-                bulanSelectAbsen.appendChild(opt);
-            }
-            bulanSelectAbsen.onchange = function() {
-                if (this.value) {
-                    loadDataAbsen();
-                } else {
-                    if (resultContainerAbsen) resultContainerAbsen.innerHTML = '';
-                }
-            };
-            if (bulanSelectAbsen.value) {
-                loadDataAbsen();
-            }
-        }
-        
-        function loadDataAbsen() {
-            if (!tahunSelectAbsen || !bulanSelectAbsen) return;
-            var tahun = tahunSelectAbsen.value;
-            var bulan = bulanSelectAbsen.value;
-            
-            if (!tahun || !bulan) { 
-                if (resultContainerAbsen) resultContainerAbsen.innerHTML = '<div class="absen-card">Pilih tahun dan bulan terlebih dahulu</div>';
-                return; 
-            }
-            
-            showLoadingAbsen();
-            
-            var cached = getCacheAbsen();
-            var cacheKey = tahun + '_' + bulan;
-            if (cached && cached.data && cached.data[cacheKey]) {
-                var cachedData = cached.data[cacheKey];
-                if (Date.now() - cachedData.timestamp < CACHE_EXPIRY) {
-                    displayDataAbsen(cachedData.data);
-                    currentDataAbsen = cachedData.data;
-                    return;
-                }
-            }
-            
-            if (!isOnlineAbsen) {
-                showErrorAbsen('Tidak ada koneksi dan tidak ada data tersimpan');
-                return;
-            }
-            
-            fetch(SCRIPT_URL + '?action=getData&tahun=' + encodeURIComponent(tahun) + '&bulan=' + encodeURIComponent(bulan))
-                .then(function(response) {
-                    if (!response.ok) throw new Error('HTTP ' + response.status);
-                    return response.json();
-                })
-                .then(function(data) {
-                    currentDataAbsen = data;
-                    displayDataAbsen(data);
-                    var updatedCache = getCacheAbsen() || {};
-                    updatedCache.data = updatedCache.data || {};
-                    updatedCache.data[cacheKey] = { data: data, timestamp: Date.now() };
-                    saveToCacheAbsen(updatedCache);
-                })
-                .catch(function(error) {
-                    console.error('Error:', error);
-                    showErrorAbsen('Gagal: ' + error.message);
-                });
-        }
-        
-        function displayDataAbsen(data) {
-            if (!resultContainerAbsen) return;
-            if (data.error) { showErrorAbsen(data.error); return; }
-            
-            var totalDesa = data.total_desa || 0;
-            var persen = totalDesa > 0 ? Math.round((data.desa_lengkap / totalDesa) * 100) : 0;
-            var detailsHtml = '';
-            
-            for (var i = 0; i < data.details.length; i++) {
-                var d = data.details[i];
-                var cls = '', txt = '', icon = '';
-                if (d.status === 'LENGKAP') { cls = 'absen-status-lengkap'; icon = '✅'; txt = 'LENGKAP'; }
-                else if (d.status === 'BELUM_LENGKAP') { cls = 'absen-status-belum-lengkap'; icon = '⚠️'; txt = 'BL'; }
-                else { cls = 'absen-status-belum'; icon = '❌'; txt = 'BELUM'; }
-                var warn = (d.status === 'LENGKAP') ? '#4caf50' : ((d.status === 'BELUM_LENGKAP') ? '#ff9800' : '#f44336');
-                
-                detailsHtml += '<div class="absen-desa-item" onclick="window.showDetailAbsen(\'' + escapeHtmlAbsen(d.nama) + '\',' + d.jumlah_file + ',' + d.persentase + ',\'' + d.status + '\')">' +
-                    '<div class="absen-desa-name">' + icon + ' ' + escapeHtmlAbsen(d.nama) + '</div>' +
-                    '<div class="absen-desa-stats">' + d.jumlah_file + '/9</div>' +
-                    '<div class="absen-desa-progress"><div class="absen-desa-progress-bar"><div class="absen-desa-progress-fill" style="width:' + d.persentase + '%; background:' + warn + '"></div></div></div>' +
-                    '<div class="absen-status-badge ' + cls + '">' + txt + '</div></div>';
-            }
-            
-            var html = '<div class="absen-card">' +
-                '<div class="absen-stats-grid">' +
-                '<div class="absen-stat-card"><div class="absen-stat-value" style="color:#1a73e8;">' + data.total_desa + '</div><div class="absen-stat-label">DESA</div></div>' +
-                '<div class="absen-stat-card"><div class="absen-stat-value" style="color:#4caf50;">' + data.desa_lengkap + '</div><div class="absen-stat-label">LENGKAP</div></div>' +
-                '<div class="absen-stat-card"><div class="absen-stat-value" style="color:#ff9800;">' + data.desa_belum_lengkap + '</div><div class="absen-stat-label">BL</div></div>' +
-                '<div class="absen-stat-card"><div class="absen-stat-value" style="color:#f44336;">' + data.desa_belum + '</div><div class="absen-stat-label">BELUM</div></div>' +
-                '</div>' +
-                '<div class="absen-progress-container">' +
-                '<div class="progress-text" style="display:flex; justify-content:space-between; margin-bottom:5px; font-size:12px;"><span>📈 PROGRESS</span><span><b>' + persen + '%</b></span></div>' +
-                '<div class="absen-progress-bar"><div class="absen-progress-fill" style="width:' + persen + '%"></div></div>' +
-                '</div>' +
-                '<div style="font-size:0.7rem; font-weight:600; margin:10px 0 5px;">📋 DAFTAR DESA (' + data.total_desa + ')</div>' +
-                '<div class="absen-desa-list">' + detailsHtml + '</div>' +
-                '<div style="margin-top:15px; text-align:center;">' +
-                '<button onclick="shareAsPNGAbsen()" class="absen-btn absen-btn-primary" style="background:#e91e63;">📸 DOWNLOAD ABSEN</button>' +
-                '</div></div>';
-            
-            resultContainerAbsen.innerHTML = html;
-            
-            var pngBtn = document.querySelector('#absenResultContainer .absen-btn-primary');
-            if (pngBtn && pngBtn.textContent.includes('PNG')) {
-                pngBtn.onclick = function() { shareAsPNGAbsen(); };
-            }
-        }
-        
-        function createCompactPNGHTMLAbsen() {
-            if (!currentDataAbsen) return '';
-            var d = currentDataAbsen;
-            var total = d.total_desa || 0;
-            var persen = total > 0 ? Math.round((d.desa_lengkap / total) * 100) : 0;
-            var tgl = new Date().toLocaleDateString('id-ID');
-            var listHtml = '';
-            
-            for (var i = 0; i < d.details.length; i++) {
-                var des = d.details[i];
-                var warn = (des.status === 'LENGKAP') ? '#4caf50' : ((des.status === 'BELUM_LENGKAP') ? '#ff9800' : '#f44336');
-                var emoji = (des.status === 'LENGKAP') ? '✅' : ((des.status === 'BELUM_LENGKAP') ? '⚠️' : '❌');
-                var statusText = (des.status === 'LENGKAP') ? 'LENGKAP' : ((des.status === 'BELUM_LENGKAP') ? 'BL' : 'BELUM');
-                var statusBg = (des.status === 'LENGKAP') ? '#e8f5e9' : ((des.status === 'BELUM_LENGKAP') ? '#fff3e0' : '#ffebee');
-                
-                listHtml += '<div class="png-desa-item">' +
-                    '<div style="width:24px; font-size:10px;">' + emoji + '</div>' +
-                    '<div style="flex:2; font-size:10px; font-weight:500; color:#000;">' + escapeHtmlAbsen(des.nama) + '</div>' +
-                    '<div style="width:35px; font-size:9px; text-align:center; color:#000;">' + des.jumlah_file + '/9</div>' +
-                    '<div style="width:50px;"><div style="background:#e0e0e0; border-radius:6px; height:4px;"><div style="background:' + warn + '; width:' + des.persentase + '%; height:4px; border-radius:6px;"></div></div></div>' +
-                    '<div style="width:45px; font-size:8px; text-align:center; padding:2px 4px; border-radius:8px; background:' + statusBg + '; color:' + warn + ';">' + statusText + '</div>' +
-                    '</div>';
-            }
-            
-            return '<div class="png-container">' +
-                '<div class="png-header">' +
-                '<div style="font-size:16px; font-weight:bold;">📊 ABSENSI DUKOPS</div>' +
-                '<div style="font-size:8px;">Koramil Monitoring | Target 9 File ZIP</div></div>' +
-                '<div style="padding:10px;"><div style="text-align:center; margin-bottom:8px;">' +
-                '<div style="font-size:14px; font-weight:bold; color:#000;">' + (d.nama_bulan || '') + ' ' + (d.tahun || '') + '</div>' +
-                '<div style="font-size:7px; color:#666;">' + tgl + '</div></div>' +
-                '<div class="png-stats">' +
-                '<div class="png-stat-card"><div style="font-size:12px; font-weight:bold; color:#1a73e8;">' + d.total_desa + '</div><div style="font-size:7px;">DESA</div></div>' +
-                '<div class="png-stat-card"><div style="font-size:12px; font-weight:bold; color:#4caf50;">' + d.desa_lengkap + '</div><div style="font-size:7px;">LENGKAP</div></div>' +
-                '<div class="png-stat-card"><div style="font-size:12px; font-weight:bold; color:#ff9800;">' + d.desa_belum_lengkap + '</div><div style="font-size:7px;">BL</div></div>' +
-                '<div class="png-stat-card"><div style="font-size:12px; font-weight:bold; color:#f44336;">' + d.desa_belum + '</div><div style="font-size:7px;">BELUM</div></div>' +
-                '</div>' +
-                '<div style="margin-bottom:8px;"><div style="display:flex; justify-content:space-between; font-size:8px; color:#000;"><span>PROGRESS</span><span><b>' + persen + '%</b></span></div>' +
-                '<div class="png-progress-bar"><div class="png-progress-fill" style="width:' + persen + '%"></div></div></div>' +
-                '<div style="font-size:9px; font-weight:bold; margin:6px 0 4px; color:#000;">📋 DAFTAR DESA (' + d.total_desa + ')</div>' +
-                '<div style="max-height:550px; overflow:hidden;">' + listHtml + '</div>' +
-                '<div style="margin-top:8px; padding-top:5px; border-top:1px solid #eee; text-align:center; font-size:6px; color:#aaa;">Absensi Dukops - Koramil</div></div></div>';
-        }
-        
-        window.shareAsPNGAbsen = async function() {
-            if (!currentDataAbsen) return;
-            if (screenshotAreaAbsen) screenshotAreaAbsen.innerHTML = createCompactPNGHTMLAbsen();
-            var element = screenshotAreaAbsen ? screenshotAreaAbsen.firstChild : null;
-            if (!element) return;
+
+        async function loadChat() {
             try {
-                var canvas = await html2canvas(element, { scale: 2, backgroundColor: '#ffffff' });
-                var link = document.createElement('a');
-                link.download = 'Absensi_' + (currentDataAbsen.nama_bulan || '') + '_' + (currentDataAbsen.tahun || '') + '.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            } catch (e) { console.error(e); }
-            setTimeout(function() { if (screenshotAreaAbsen) screenshotAreaAbsen.innerHTML = ''; }, 500);
-        };
-        
-        function getCacheAbsen() { try { var cached = localStorage.getItem(CACHE_KEY_ABSEN); if (cached) return JSON.parse(cached); } catch(e) {} return null; }
-        function saveToCacheAbsen(data) { try { localStorage.setItem(CACHE_KEY_ABSEN, JSON.stringify(data)); } catch(e) {} }
-        
-        function showLoadingAbsen() {
-            if (resultContainerAbsen) resultContainerAbsen.innerHTML = '<div class="absen-loading"><div class="absen-spinner"></div><p>Mohon Tunggu ...</p></div>';
+                const { data, error } = await supabase.from('live_chat').select('*').order('created_at',{ascending:true}).limit(50);
+                if (error) throw error;
+                document.getElementById('chatBody').innerHTML = '';
+                if (!data || data.length === 0) {
+                    addMessage('Selamat datang di DUKOPS BABINSA! 🎯<br>Kami <strong>🟢 siap online</strong> 24/7.<br>Ada yang bisa kami bantu?', 'received', new Date().toISOString(), 'Admin DUKOPS');
+                } else {
+                    data.forEach(msg => { const isAdmin = msg.username === 'Admin DUKOPS'; addMessage(msg.message, isAdmin ? 'received' : 'sent', msg.created_at, msg.username || 'Babinsa'); });
+                }
+            } catch(e) { console.error('Gagal load chat:', e); }
         }
-        
-        function showErrorAbsen(msg) {
-            if (resultContainerAbsen) resultContainerAbsen.innerHTML = '<div class="absen-card" style="color:#f44336;">⚠️ ' + escapeHtmlAbsen(msg) + '</div>';
-        }
-        
-        function escapeHtmlAbsen(t) { if (!t) return ''; return t.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
-        
-        window.showDetailAbsen = function(n, j, p, s) { 
-            alert((s === 'LENGKAP' ? '✅ ' : (s === 'BELUM_LENGKAP' ? '⚠️ ' : '❌ ')) + n + '\n' + j + '/9 (' + p + '%)');
+
+        window.sendChatMessage = async function() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+            const username = getUserName();
+            addMessage(message, 'sent', new Date().toISOString(), username);
+            input.value = '';
+            try { const { error } = await supabase.from('live_chat').insert([{ username, message, created_at: new Date().toISOString() }]); if (error) throw error; } catch(e) { console.error('Gagal kirim:', e); }
         };
-        
-        window.loadAbsenTahun = loadAbsenTahun;
+
+        window.toggleChat = function() {
+            isChatOpen = !isChatOpen;
+            document.getElementById('chatPanel').classList.toggle('active', isChatOpen);
+            document.getElementById('chatToggleBtn').style.transform = isChatOpen ? 'rotate(360deg)' : 'rotate(0deg)';
+            document.getElementById('chatTooltip').style.display = 'none';
+            if (isChatOpen) { unreadCount = 0; document.getElementById('chatBadge').style.display = 'none'; setTimeout(() => document.getElementById('chatInput').focus(), 300); loadChat(); }
+        };
+
+        supabase.channel('chat-realtime').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'live_chat' }, (payload) => {
+            const msg = payload.new;
+            const isAdmin = msg.username === 'Admin DUKOPS';
+            addMessage(msg.message, isAdmin ? 'received' : 'sent', msg.created_at, msg.username);
+            if (!isChatOpen && isAdmin) { unreadCount++; const b = document.getElementById('chatBadge'); b.style.display = 'flex'; b.textContent = unreadCount > 99 ? '99+' : unreadCount; }
+        }).subscribe();
+
+        document.getElementById('welcomeTime').textContent = getCurrentTime();
+        setTimeout(() => { document.getElementById('chatTooltip').style.display = 'block'; }, 2000);
+        setTimeout(() => { document.getElementById('chatTooltip').style.display = 'none'; }, 7000);
+        loadChat();
+        console.log('✅ Chat siap! 🟢 Siap Online');
     })();
     </script>
 </body>
