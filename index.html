@@ -1213,6 +1213,37 @@
             .chat-toggle-btn { width: 50px; height: 50px; }
             .chat-toggle-btn i { font-size: 24px; }
         }
+
+/* ================= DUKOPS ANNOUNCEMENT BAR ================= */
+
+.dukops-announcement-bar{
+    width:100%;
+    background:linear-gradient(90deg,#006400,#008000,#006400);
+    color:#ffffff;
+    overflow:hidden;
+    white-space:nowrap;
+    padding:10px 0;
+    border-bottom:3px solid #FFD700;
+    box-shadow:0 2px 8px rgba(0,0,0,0.25);
+    font-size:14px;
+    font-weight:bold;
+    font-family:Arial, sans-serif;
+}
+
+.dukops-announcement-text{
+    display:inline-block;
+    padding-left:100%;
+    animation:dukops-running-text 30s linear infinite;
+}
+
+@keyframes dukops-running-text{
+    from{
+        transform:translateX(0);
+    }
+    to{
+        transform:translateX(-100%);
+    }
+}		
     </style>
 </head>
 
@@ -1240,7 +1271,12 @@
     <audio id="backgroundMusic" loop preload="auto">
         <!-- Tambahkan file lokal di assets/audio/background.mp3 jika ingin musik latar lokal -->
     </audio>
-
+<!-- ================= DUKOPS ANNOUNCEMENT BAR ================= -->
+<div class="dukops-announcement-bar">
+    <div class="dukops-announcement-text">
+        🇮🇩 DUKOPS DIGITAL BABINSA • 📡 Server Online • 🤖 Telegram Aktif • ☁️ Cloudflare Terhubung • ✅ Pastikan seluruh data dan foto kegiatan telah terisi dengan benar sebelum mengirim laporan • 🚀 Versi 6.0
+    </div>
+</div>
     <!-- ================= APLIKASI UTAMA ================= -->
     <div id="appContainer" class="container" style="display: none; opacity: 0;">
         <button id="installButton"><i class="fas fa-download"></i> Install App</button>
