@@ -818,7 +818,7 @@ async function processSubmission() {
         a.click();
         document.body.removeChild(a);
 
-        // 2. Kirim ke Telegram (via backend)
+        // 2. Kirim ke Telegram (via backend) - tanpa notifikasi popup
         const telegramSent = await sendZipToTelegram(content, zipFileNameForBackend, selectedDesa);
 
         // 3. Upload ke Google Drive (via backend)
@@ -832,39 +832,27 @@ async function processSubmission() {
             setTimeout(() => loadAttendanceData(), 2000);
         }
 
-        // 6. Notifikasi hasil
-        let notificationMsg = '';
-        if (telegramSent && driveUploaded) {
-            notificationMsg = `✔ Berhasil: Telegram & Drive (${desaData.count}/9 laporan)`;
-            showNotification(notificationMsg, "success");
-
-            // Cek jika sudah mencapai 9 laporan untuk desa ini
-            if (desaData.count >= 9) {
-                // Tampilkan popup ucapan terima kasih
-                showThankYouPopup(desaInfo.cleanName, desaData.count);
-
-                // Kirim notifikasi Telegram ucapan terima kasih
-                await sendThankYouTelegram(desaInfo.cleanName, desaData.count);
-            }
-        } else if (telegramSent) {
-            notificationMsg = `✔ Telegram OK (Drive gagal) (${desaData.count}/9 laporan)`;
-            showNotification(notificationMsg, "warning");
-        } else if (driveUploaded) {
-            notificationMsg = `✔ Drive OK (Telegram gagal) (${desaData.count}/9 laporan)`;
-            showNotification(notificationMsg, "warning");
+        // 6. Notifikasi hasil (TANPA menyebut Telegram, hanya Drive)
+        if (driveUploaded) {
+            showNotification(`✔ Laporan berhasil disimpan (${desaData.count}/${TARGET_LAPORAN} laporan)`, "success");
         } else {
-            notificationMsg = "⚠ File didownload, tapi gagal ke Telegram & Drive";
-            showNotification(notificationMsg, "error");
+            showNotification(`⚠ Laporan hanya didownload, gagal simpan ke Drive`, "warning");
+        }
+
+        // Cek jika sudah mencapai 9 laporan untuk desa ini
+        if (desaData.count >= 9) {
+            // Tampilkan popup ucapan terima kasih (ini tetap dipertahankan)
+            showThankYouPopup(desaInfo.cleanName, desaData.count);
+            // Kirim notifikasi Telegram ucapan terima kasih (tetap berjalan di background, tanpa popup)
+            await sendThankYouTelegram(desaInfo.cleanName, desaData.count);
         }
 
         updateCounter();
-        // send log removed
         saveSubmittedDate(tanggalWaktu);
 
     } catch (error) {
         console.error("Error:", error);
         showNotification("❌ Gagal mengirim laporan", "error");
-        // send log removed
     } finally {
         button.disabled = false;
         button.innerHTML = originalText;
@@ -1663,7 +1651,7 @@ function showThankYouPopup(desaName, count) {
     }, 10000);
 }
 
-// Fungsi untuk mengirim ucapan terima kasih ke Telegram
+// Fungsi untuk mengirim ucapan terima kasih ke Telegram (tetap berjalan, tanpa popup)
 async function sendThankYouTelegram(desaName, count) {
     try {
         const message = `🎉 *SELAMAT!* 🎉
