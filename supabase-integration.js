@@ -1,8 +1,6 @@
 // ============================================
 // SUPABASE INTEGRATION FOR JADWAL PIKET
 // ============================================
-// File ini MENAMBAHKAN fitur sinkronisasi jadwal ke Supabase
-// TANPA menghapus atau mengubah fungsi yang sudah ada
 
 const SUPABASE_URL = 'https://qthoexsadattfnnzcawh.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF0aG9leHNhZGF0dGZubnpjYXdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NTMzNTAsImV4cCI6MjA5NjEyOTM1MH0.qZBFjrN8F8vwxoaPKIPLDQIOWbt58BNlPWLOn4J_5_4';
@@ -37,7 +35,7 @@ async function upsertScheduleOverwrite(scheduleDate, scheduleType, shiftName, pe
         });
         
         if (error) {
-            console.log('RPC error (tabel/fungsi mungkin belum ada):', error.message);
+            console.log('RPC error:', error.message);
             return null;
         }
         
@@ -48,7 +46,7 @@ async function upsertScheduleOverwrite(scheduleDate, scheduleType, shiftName, pe
         }
         return data;
     } catch (error) {
-        console.error(`Error saving ${scheduleType}:`, error);
+        console.error(`Error:`, error);
         return null;
     }
 }
@@ -65,7 +63,7 @@ async function sendAllSchedulesToSupabase(fullMessage, hanpangan) {
     if (lastUpdateTimeJadwal && (now - lastUpdateTimeJadwal) < 60 * 60 * 1000) {
         const minutesAgo = Math.round((now - lastUpdateTimeJadwal) / 60000);
         updateReason = `Perubahan jadwal (${minutesAgo} menit setelah kirim sebelumnya)`;
-        showJadwalToastMessage(`⚠️ Mengirim ulang dalam ${minutesAgo} menit. Data LAMA akan ditimpa!`, 'warning');
+        showToastMessage(`⚠️ Mengirim ulang dalam ${minutesAgo} menit. Data LAMA akan ditimpa!`, 'warning');
     }
     
     const schedules = [
@@ -105,11 +103,8 @@ async function loadLatestSchedulesFromSupabase() {
             .order('schedule_date', { ascending: true });
         
         if (error) {
-            if (error.code === '42P01') {
-                console.log('Tabel daily_schedules_overwrite belum ada di Supabase');
-                return false;
-            }
-            throw error;
+            console.log('Error loading:', error.message);
+            return false;
         }
         
         if (!data || data.length === 0) return false;
@@ -162,54 +157,38 @@ function updateJadwalDropdownsFromData(scheduleMap) {
         }
     }
     
-    // Trigger preview update jika fungsi tersedia
     if (typeof updatePreview === 'function') {
         updatePreview();
-    }
-}
-
-async function updateDesaOnlineStatus(desaName, isOnline = true, action = '') {
-    if (!desaName || desaName === '-- Pilih Desa/Kelurahan --') return;
-    try {
-        await supabaseJadwal.rpc('update_desa_online_status', {
-            p_desa_name: desaName, p_user_name: desaName, p_is_online: isOnline, p_last_action: action
-        });
-        console.log(`📍 Desa ${desaName}: ${isOnline ? 'ONLINE' : 'OFFLINE'}`);
-    } catch (error) {
-        // Fungsi belum ada di Supabase, abaikan
-        console.log('Status online function belum tersedia');
     }
 }
 
 let scheduleChannel = null;
 
 function subscribeToScheduleUpdates() {
-    supabaseJadwal
-        .from('daily_schedules_overwrite')
-        .select('count', { count: 'exact', head: true })
-        .then(({ error }) => {
-            if (error && error.code === '42P01') return;
-            if (scheduleChannel) supabaseJadwal.removeChannel(scheduleChannel);
-            scheduleChannel = supabaseJadwal.channel('schedule-overwrite')
-                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'daily_schedules_overwrite' }, (payload) => {
-                    if (payload.new && payload.new.last_updated_by_desa !== currentUserDesaJadwal) {
-                        showJadwalToastMessage(`🔄 ${payload.new.schedule_type} ${payload.new.shift_name} diupdate oleh ${payload.new.last_updated_by_desa}`, 'info');
-                        loadLatestSchedulesFromSupabase();
-                    }
-                }).subscribe();
-        });
+    if (scheduleChannel) supabaseJadwal.removeChannel(scheduleChannel);
+    scheduleChannel = supabaseJadwal.channel('schedule-overwrite')
+        .on('postgres_changes', { 
+            event: 'UPDATE', 
+            schema: 'public', 
+            table: 'daily_schedules_overwrite' 
+        }, (payload) => {
+            if (payload.new && payload.new.last_updated_by_desa !== currentUserDesaJadwal) {
+                showToastMessage(`🔄 ${payload.new.schedule_type} ${payload.new.shift_name} diupdate oleh ${payload.new.last_updated_by_desa}`, 'info');
+                loadLatestSchedulesFromSupabase();
+            }
+        }).subscribe();
 }
 
 async function sendJadwalToWhatsAppWithSupabase() {
     if (isSendingJadwal) {
-        showJadwalToastMessage('⏳ Masih memproses, tunggu sebentar...', 'warning');
+        showToastMessage('⏳ Masih memproses, tunggu sebentar...', 'warning');
         return false;
     }
     
     const preview = document.getElementById('j_hasilPesanBaru');
     const pesan = preview ? preview.value.trim() : "";
     if (!pesan) {
-        showJadwalToastMessage('Tidak ada pesan untuk dikirim', 'warning');
+        showToastMessage('Tidak ada pesan untuk dikirim', 'warning');
         return false;
     }
     
@@ -221,15 +200,15 @@ async function sendJadwalToWhatsAppWithSupabase() {
     }
     
     isSendingJadwal = true;
-    showJadwalToastMessage('📡 Menyimpan jadwal ke database...', 'info');
+    showToastMessage('📡 Menyimpan jadwal ke database...', 'info');
     
     try {
         await sendAllSchedulesToSupabase(pesan, hanpangan);
-        showJadwalToastMessage('✅ Jadwal tersimpan! Membuka WhatsApp...', 'success');
+        showToastMessage('✅ Jadwal tersimpan! Membuka WhatsApp...', 'success');
         setTimeout(() => window.open("https://wa.me/?text=" + encodeURIComponent(pesan), "_blank"), 1000);
     } catch (error) {
         console.error('Error:', error);
-        showJadwalToastMessage('❌ Gagal menyimpan, tetap buka WhatsApp', 'error');
+        showToastMessage('❌ Gagal menyimpan, tetap buka WhatsApp', 'error');
         setTimeout(() => window.open("https://wa.me/?text=" + encodeURIComponent(pesan), "_blank"), 500);
     } finally {
         isSendingJadwal = false;
@@ -237,7 +216,7 @@ async function sendJadwalToWhatsAppWithSupabase() {
     return false;
 }
 
-function showJadwalToastMessage(message, type = 'info') {
+function showToastMessage(message, type = 'info') {
     let toast = document.getElementById('j_toastNotificationBaru');
     if (!toast) {
         toast = document.createElement('div');
@@ -261,39 +240,30 @@ async function initJadwalSupabase() {
         const handleDesaChange = async () => {
             const newDesa = selectDesa.options[selectDesa.selectedIndex]?.text || '';
             if (newDesa && newDesa !== '-- Pilih Desa/Kelurahan --') {
-                if (currentUserDesaJadwal && currentUserDesaJadwal !== newDesa) {
-                    await updateDesaOnlineStatus(currentUserDesaJadwal, false, 'berpindah desa');
-                }
                 currentUserDesaJadwal = newDesa;
-                await updateDesaOnlineStatus(currentUserDesaJadwal, true, 'membuka tab jadwal');
                 await loadLatestSchedulesFromSupabase();
             }
         };
         selectDesa.removeEventListener('change', handleDesaChange);
         selectDesa.addEventListener('change', handleDesaChange);
         if (currentUserDesaJadwal && currentUserDesaJadwal !== '-- Pilih Desa/Kelurahan --') {
-            await updateDesaOnlineStatus(currentUserDesaJadwal, true, 'membuka aplikasi');
             await loadLatestSchedulesFromSupabase();
         }
     }
     subscribeToScheduleUpdates();
     
-    // OVERRIDE tombol WhatsApp - TANPA menghapus fungsi asli
     const whatsappBtn = document.getElementById('whatsappBtnBaru');
     if (whatsappBtn) {
-        // Simpan fungsi asli
-        const originalClick = whatsappBtn.onclick;
-        // Tambahkan fungsi baru tanpa menghapus yang asli
-        whatsappBtn.addEventListener('click', (e) => {
+        const newBtn = whatsappBtn.cloneNode(true);
+        whatsappBtn.parentNode?.replaceChild(newBtn, whatsappBtn);
+        newBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            e.stopPropagation();
             sendJadwalToWhatsAppWithSupabase();
         });
     }
-    console.log('✅ Jadwal Supabase integration initialized - Fungsi asli tetap berjalan');
+    console.log('✅ Jadwal Supabase integration initialized');
 }
 
-// Jalankan setelah DOM siap
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initJadwalSupabase);
 } else {
