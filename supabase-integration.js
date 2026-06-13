@@ -361,3 +361,63 @@ if (document.readyState === 'loading') {
 } else {
     setTimeout(buatLedRunningText, 500);
 }
+
+// ==========================================
+// KNIGHT RIDER EFFECT UNTUK HANPANGAN
+// ==========================================
+
+function buatKnightRiderHanpangan() {
+    // Cari elemen running text hanpangan
+    const runningTextEl = document.getElementById('runningTextJadwalBaru');
+    if (!runningTextEl) {
+        setTimeout(buatKnightRiderHanpangan, 1000);
+        return;
+    }
+    
+    // Cek apakah sudah di-wrap
+    if (runningTextEl.parentElement.classList.contains('knight-rider-container')) return;
+    
+    // Ambil teks asli
+    const teksAsli = runningTextEl.textContent;
+    
+    // Buat container baru dengan efek Knight Rider
+    const container = document.createElement('div');
+    container.className = 'knight-rider-container';
+    
+    // Buat teks dengan efek LED per huruf
+    const textSpan = document.createElement('span');
+    textSpan.className = 'knight-rider-text';
+    
+    // Efek per huruf dengan delay berbeda
+    let html = '';
+    for (let i = 0; i < teksAsli.length; i++) {
+        const huruf = teksAsli[i];
+        if (huruf === ' ') {
+            html += '<span style="display:inline-block; width:8px;"></span>';
+        } else {
+            html += `<span class="knight-rider-letter" style="--i: ${i % 10}">${huruf}</span>`;
+        }
+    }
+    textSpan.innerHTML = html;
+    
+    // Tambahkan scanner effect
+    const scanner = document.createElement('div');
+    scanner.className = 'knight-rider-scanner';
+    
+    container.appendChild(textSpan);
+    container.appendChild(scanner);
+    
+    // Ganti elemen asli
+    runningTextEl.parentNode.replaceChild(container, runningTextEl);
+    
+    console.log('✅ Knight Rider effect added to hanpangan text!');
+}
+
+// Jalankan setelah halaman siap
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(buatKnightRiderHanpangan, 1500);
+    });
+} else {
+    setTimeout(buatKnightRiderHanpangan, 1500);
+}
