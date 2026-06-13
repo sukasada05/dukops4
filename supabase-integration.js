@@ -268,3 +268,96 @@ if (document.readyState === 'loading') {
     hubungkanTombolSubmit();
     setTimeout(tambahTombolLihatLaporan, 1000);
 }
+// ==========================================
+// LED RUNNING TEXT - OTOMATIS TAMBAH TANPA RUBAH HTML
+// ==========================================
+
+function buatLedRunningText() {
+    // Cek apakah sudah ada, jika sudah jangan buat duplikat
+    if (document.getElementById('ledRunningContainer')) return;
+    
+    // Teks yang akan ditampilkan
+    const teks = "⚡ DUKOPS BABINSA SUKASADA ⚡";
+    const warnaLed = [
+        'led-red', 'led-orange', 'led-yellow', 'led-green', 
+        'led-cyan', 'led-blue', 'led-magenta', 'led-white', 'led-gold'
+    ];
+    
+    // Buat container LED
+    const container = document.createElement('div');
+    container.id = 'ledRunningContainer';
+    container.className = 'led-running-container';
+    
+    // Buat border LED
+    const border = document.createElement('div');
+    border.className = 'led-border';
+    container.appendChild(border);
+    
+    // Buat wrapper teks
+    const textWrapper = document.createElement('div');
+    textWrapper.className = 'led-running-text';
+    
+    // Fungsi untuk membuat huruf LED dengan warna acak
+    function buatHurufLed(huruf) {
+        if (huruf === ' ') {
+            return '<span style="display:inline-block; width:8px;"></span>';
+        }
+        const warnaAcak = warnaLed[Math.floor(Math.random() * warnaLed.length)];
+        return `<span class="led-letter ${warnaAcak}">${huruf}</span>`;
+    }
+    
+    // Buat teks utama
+    let html = '';
+    for (let i = 0; i < teks.length; i++) {
+        html += buatHurufLed(teks[i]);
+    }
+    
+    // Tambahkan separator LED dots
+    html += `<span class="led-dot led-dot-red"></span>`;
+    html += `<span class="led-dot led-dot-green"></span>`;
+    html += `<span class="led-dot led-dot-blue"></span>`;
+    
+    // Duplikat teks untuk efek running (agar tidak putus)
+    for (let i = 0; i < teks.length; i++) {
+        html += buatHurufLed(teks[i]);
+    }
+    
+    // Tambahkan lagi LED dots
+    html += `<span class="led-dot led-dot-red"></span>`;
+    html += `<span class="led-dot led-dot-green"></span>`;
+    html += `<span class="led-dot led-dot-blue"></span>`;
+    
+    // Duplikat sekali lagi
+    for (let i = 0; i < teks.length; i++) {
+        html += buatHurufLed(teks[i]);
+    }
+    
+    textWrapper.innerHTML = html;
+    container.appendChild(textWrapper);
+    
+    // Cari posisi untuk menyisipkan (setelah splash screen, sebelum app container)
+    const splashScreen = document.getElementById('splashScreen');
+    const appContainer = document.getElementById('appContainer');
+    
+    if (splashScreen && splashScreen.parentNode) {
+        // Sisipkan setelah splash screen
+        splashScreen.insertAdjacentElement('afterend', container);
+    } else if (appContainer && appContainer.parentNode) {
+        // Sisipkan sebelum app container
+        appContainer.parentNode.insertBefore(container, appContainer);
+    } else {
+        // Fallback: sisipkan di body bagian atas
+        document.body.insertBefore(container, document.body.firstChild);
+    }
+    
+    console.log('✅ LED Running Text ditambahkan!');
+}
+
+// Jalankan saat halaman siap
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(buatLedRunningText, 500);
+    });
+} else {
+    setTimeout(buatLedRunningText, 500);
+}
