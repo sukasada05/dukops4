@@ -11,6 +11,9 @@ let currentUserDesaJadwal = '';
 let lastUpdateTimeJadwal = null;
 let isSendingJadwal = false;
 
+// DROPDOWN DESA KHUSUS UNTUK TAB PIKET
+let desaPiketDropdown = null;
+
 const JADWAL_DROPDOWN_IDS = {
     piketKoramilHariIni: ['j_nama1a_baru', 'j_nama1b_baru'],
     piketKoramilBesok: ['j_nama2a_baru', 'j_nama2b_baru'],
@@ -20,8 +23,21 @@ const JADWAL_DROPDOWN_IDS = {
     piketMakodimBesok: ['j_nama4c_baru', 'j_nama4d_baru']
 };
 
+// Fungsi untuk mendapatkan nama desa dari dropdown PIKET
+function getDesaPiket() {
+    if (desaPiketDropdown && desaPiketDropdown.value) {
+        return desaPiketDropdown.options[desaPiketDropdown.selectedIndex]?.text || 'Babinsa';
+    }
+    // Fallback ke dropdown DUKOPS jika belum ada dropdown khusus
+    const selectDesa = document.getElementById('selectDesa');
+    return (selectDesa && selectDesa.value) ? selectDesa.options[selectDesa.selectedIndex]?.text || 'Babinsa' : 'Babinsa';
+}
+
 async function upsertScheduleOverwrite(scheduleDate, scheduleType, shiftName, personelNames, hanpangan, fullMessage, updateReason) {
     try {
+        const desaName = getDesaPiket();
+        console.log(`📝 Menyimpan jadwal untuk desa: ${desaName}`);
+        
         const { data, error } = await supabaseJadwal.rpc('upsert_schedule_overwrite', {
             p_schedule_date: scheduleDate,
             p_schedule_type: scheduleType,
@@ -29,8 +45,8 @@ async function upsertScheduleOverwrite(scheduleDate, scheduleType, shiftName, pe
             p_personel_names: personelNames,
             p_hanpangan: hanpangan || '',
             p_full_message: fullMessage || '',
-            p_updated_by: currentUserDesaJadwal,
-            p_updated_by_desa: currentUserDesaJadwal,
+            p_updated_by: desaName,
+            p_updated_by_desa: desaName,
             p_update_reason: updateReason || 'Pengiriman jadwal'
         });
         
@@ -40,9 +56,9 @@ async function upsertScheduleOverwrite(scheduleDate, scheduleType, shiftName, pe
         }
         
         if (data && data.was_updated) {
-            console.log(`🔄 ${scheduleType} ${shiftName} diupdate! (Update ke-${data.update_count})`);
+            console.log(`🔄 ${scheduleType} ${shiftName} diupdate oleh ${desaName}! (Update ke-${data.update_count})`);
         } else if (data) {
-            console.log(`✅ ${scheduleType} ${shiftName} tersimpan`);
+            console.log(`✅ ${scheduleType} ${shiftName} tersimpan oleh ${desaName}`);
         }
         return data;
     } catch (error) {
@@ -59,11 +75,12 @@ async function sendAllSchedulesToSupabase(fullMessage, hanpangan) {
     
     const now = new Date();
     let updateReason = 'Pengiriman jadwal';
+    const desaName = getDesaPiket();
     
     if (lastUpdateTimeJadwal && (now - lastUpdateTimeJadwal) < 60 * 60 * 1000) {
         const minutesAgo = Math.round((now - lastUpdateTimeJadwal) / 60000);
-        updateReason = `Perubahan jadwal (${minutesAgo} menit setelah kirim sebelumnya)`;
-        showToastMessage(`⚠️ Mengirim ulang dalam ${minutesAgo} menit. Data LAMA akan ditimpa!`, 'warning');
+        updateReason = `Perubahan jadwal oleh ${desaName} (${minutesAgo} menit setelah kirim sebelumnya)`;
+        showToastMessage(`⚠️ ${desaName} mengirim ulang dalam ${minutesAgo} menit. Data LAMA akan ditimpa!`, 'warning');
     }
     
     const schedules = [
@@ -172,7 +189,7 @@ function subscribeToScheduleUpdates() {
             schema: 'public', 
             table: 'daily_schedules_overwrite' 
         }, (payload) => {
-            if (payload.new && payload.new.last_updated_by_desa !== currentUserDesaJadwal) {
+            if (payload.new && payload.new.last_updated_by_desa !== getDesaPiket()) {
                 showToastMessage(`🔄 ${payload.new.schedule_type} ${payload.new.shift_name} diupdate oleh ${payload.new.last_updated_by_desa}`, 'info');
                 loadLatestSchedulesFromSupabase();
             }
@@ -182,6 +199,13 @@ function subscribeToScheduleUpdates() {
 async function sendJadwalToWhatsAppWithSupabase() {
     if (isSendingJadwal) {
         showToastMessage('⏳ Masih memproses, tunggu sebentar...', 'warning');
+        return false;
+    }
+    
+    // Pastikan desa sudah dipilih
+    const desaName = getDesaPiket();
+    if (!desaName || desaName === '-- Pilih Desa/Kelurahan --' || desaName === 'Babinsa') {
+        showToastMessage('⚠️ Silakan pilih desa terlebih dahulu di dropdown Pilih Desa!', 'warning');
         return false;
     }
     
@@ -200,11 +224,11 @@ async function sendJadwalToWhatsAppWithSupabase() {
     }
     
     isSendingJadwal = true;
-    showToastMessage('📡 Menyimpan jadwal ke database...', 'info');
+    showToastMessage(`📡 Menyimpan jadwal untuk Desa ${desaName}...`, 'info');
     
     try {
         await sendAllSchedulesToSupabase(pesan, hanpangan);
-        showToastMessage('✅ Jadwal tersimpan! Membuka WhatsApp...', 'success');
+        showToastMessage(`✅ Jadwal ${desaName} tersimpan! Membuka WhatsApp...`, 'success');
         setTimeout(() => window.open("https://wa.me/?text=" + encodeURIComponent(pesan), "_blank"), 1000);
     } catch (error) {
         console.error('Error:', error);
@@ -234,22 +258,62 @@ function showToastMessage(message, type = 'info') {
 
 async function initJadwalSupabase() {
     console.log('🚀 Initializing Jadwal Supabase Integration...');
-    const selectDesa = document.getElementById('selectDesa');
-    if (selectDesa) {
-        currentUserDesaJadwal = selectDesa.options[selectDesa.selectedIndex]?.text || '';
-        const handleDesaChange = async () => {
-            const newDesa = selectDesa.options[selectDesa.selectedIndex]?.text || '';
-            if (newDesa && newDesa !== '-- Pilih Desa/Kelurahan --') {
-                currentUserDesaJadwal = newDesa;
-                await loadLatestSchedulesFromSupabase();
-            }
-        };
-        selectDesa.removeEventListener('change', handleDesaChange);
-        selectDesa.addEventListener('change', handleDesaChange);
-        if (currentUserDesaJadwal && currentUserDesaJadwal !== '-- Pilih Desa/Kelurahan --') {
-            await loadLatestSchedulesFromSupabase();
+    
+    // BUAT DROPDOWN DESA KHUSUS UNTUK TAB PIKET
+    const jadwalContainer = document.getElementById('jadwalPiketContainerBaru');
+    if (jadwalContainer) {
+        // Cek apakah dropdown sudah ada
+        let existingDropdown = document.getElementById('desaPiketSelect');
+        if (!existingDropdown) {
+            const desaSelectDiv = document.createElement('div');
+            desaSelectDiv.style.cssText = 'margin-bottom: 15px; padding: 10px; background: rgba(0,60,0,0.5); border-radius: 8px;';
+            desaSelectDiv.innerHTML = `
+                <label style="color: #4dff4d; font-weight: bold;">
+                    <i class="fas fa-village"></i> Pilih Desa (untuk Piket):
+                </label>
+                <select id="desaPiketSelect" style="width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #4dff4d; background: #1a2a1a; color: #e6ffe6;">
+                    <option value="">-- Pilih Desa --</option>
+                </select>
+            `;
+            jadwalContainer.insertBefore(desaSelectDiv, jadwalContainer.firstChild);
+            desaPiketDropdown = document.getElementById('desaPiketSelect');
+        } else {
+            desaPiketDropdown = existingDropdown;
+        }
+        
+        // Isi dropdown dengan daftar desa
+        if (desaPiketDropdown && window.daftarDesaGlobal) {
+            desaPiketDropdown.innerHTML = '<option value="">-- Pilih Desa --</option>';
+            window.daftarDesaGlobal.forEach(desa => {
+                const option = document.createElement('option');
+                option.value = desa;
+                option.textContent = desa;
+                desaPiketDropdown.appendChild(option);
+            });
+        }
+        
+        // Event listener untuk dropdown desa PIKET
+        if (desaPiketDropdown) {
+            desaPiketDropdown.addEventListener('change', async () => {
+                const newDesa = desaPiketDropdown.options[desaPiketDropdown.selectedIndex]?.text || '';
+                if (newDesa && newDesa !== '-- Pilih Desa --') {
+                    currentUserDesaJadwal = newDesa;
+                    await loadLatestSchedulesFromSupabase();
+                }
+            });
         }
     }
+    
+    // Fallback ke dropdown DUKOPS jika ada
+    const selectDesa = document.getElementById('selectDesa');
+    if (selectDesa && !desaPiketDropdown) {
+        currentUserDesaJadwal = selectDesa.options[selectDesa.selectedIndex]?.text || '';
+        selectDesa.addEventListener('change', async () => {
+            currentUserDesaJadwal = selectDesa.options[selectDesa.selectedIndex]?.text || '';
+            await loadLatestSchedulesFromSupabase();
+        });
+    }
+    
     subscribeToScheduleUpdates();
     
     const whatsappBtn = document.getElementById('whatsappBtnBaru');
