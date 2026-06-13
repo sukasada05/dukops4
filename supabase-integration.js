@@ -10,7 +10,25 @@ const supabaseJadwal = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let currentUserDesaJadwal = '';
 let lastUpdateTimeJadwal = null;
 let isSendingJadwal = false;
-let daftarDesa = [];
+
+// DAFTAR DESA (LANGSUNG DI SINI, TIDAK PERLU FILE EKSTERNAL)
+const DAFTAR_DESA = [
+    "Gitgit",
+    "Panji",
+    "Panji Anom",
+    "Sukasada",
+    "Pancasari",
+    "Wanagiri",
+    "Ambengan",
+    "Kayu Putih",
+    "Padang Bulia",
+    "Pegadungan",
+    "Pegayaman",
+    "Sambangan",
+    "Selat",
+    "Silangjana",
+    "Tegallinggah"
+];
 
 // DROPDOWN DESA KHUSUS UNTUK TAB PIKET
 let desaPiketDropdown = null;
@@ -24,36 +42,12 @@ const JADWAL_DROPDOWN_IDS = {
     piketMakodimBesok: ['j_nama4c_baru', 'j_nama4d_baru']
 };
 
-// ============ LOAD DAFTAR DESA DARI FILE JSON ============
-async function loadDaftarDesa() {
-    try {
-        const response = await fetch('data/desa-list.json?t=' + Date.now());
-        if (!response.ok) throw new Error('Gagal load desa-list.json');
-        const data = await response.json();
-        daftarDesa = data.desaList || [];
-        console.log('✅ Daftar desa dimuat:', daftarDesa.length, 'desa');
-        return true;
-    } catch (error) {
-        console.error('Gagal load daftar desa:', error);
-        // Fallback desa jika file tidak ada
-        daftarDesa = [
-            "Gitgit", "Panji", "Panji Anom", "Sukasada", "Pancasari", 
-            "Wanagiri", "Ambengan", "Kayu Putih", "Padang Bulia", 
-            "Pegadungan", "Pegayaman", "Sambangan", "Selat", 
-            "Silangjana", "Tegallinggah"
-        ];
-        return false;
-    }
-}
-
 // ============ FUNGSI MENDAPATKAN NAMA DESA ============
 function getDesaPiket() {
     if (desaPiketDropdown && desaPiketDropdown.value) {
         return desaPiketDropdown.options[desaPiketDropdown.selectedIndex]?.text || '';
     }
-    // Fallback ke dropdown DUKOPS jika belum ada dropdown khusus
-    const selectDesa = document.getElementById('selectDesa');
-    return (selectDesa && selectDesa.value) ? selectDesa.options[selectDesa.selectedIndex]?.text || '' : '';
+    return '';
 }
 
 // ============ UPDATE DROPDOWN DESA PIKET ============
@@ -63,16 +57,18 @@ function updateDesaPiketDropdown() {
     const currentValue = desaPiketDropdown.value;
     desaPiketDropdown.innerHTML = '<option value="">-- Pilih Desa --</option>';
     
-    daftarDesa.forEach(desa => {
+    DAFTAR_DESA.forEach(desa => {
         const option = document.createElement('option');
         option.value = desa;
         option.textContent = desa;
         desaPiketDropdown.appendChild(option);
     });
     
-    if (currentValue && daftarDesa.includes(currentValue)) {
+    if (currentValue && DAFTAR_DESA.includes(currentValue)) {
         desaPiketDropdown.value = currentValue;
     }
+    
+    console.log('✅ Dropdown desa diisi dengan', DAFTAR_DESA.length, 'desa');
 }
 
 // ============ UPSERT SCHEDULE (SAVE ATAU UPDATE) ============
@@ -230,7 +226,6 @@ function updateJadwalDropdownsFromData(scheduleMap) {
         }
     }
     
-    // Trigger preview update
     if (typeof updatePreview === 'function') {
         updatePreview();
     }
@@ -316,11 +311,8 @@ function showToastMessage(message, type = 'info') {
 }
 
 // ============ INISIALISASI ============
-async function initJadwalSupabase() {
+function initJadwalSupabase() {
     console.log('🚀 Initializing Jadwal Supabase Integration...');
-    
-    // Load daftar desa
-    await loadDaftarDesa();
     
     // BUAT DROPDOWN DESA KHUSUS UNTUK TAB PIKET
     const jadwalContainer = document.getElementById('jadwalPiketContainerBaru');
@@ -355,6 +347,7 @@ async function initJadwalSupabase() {
                     currentUserDesaJadwal = newDesa;
                     console.log(`📍 Desa dipilih: ${newDesa}`);
                     await loadLatestSchedulesFromSupabase();
+                    showToastMessage(`Desa ${newDesa} dipilih`, 'success');
                 }
             });
         }
@@ -374,6 +367,7 @@ async function initJadwalSupabase() {
     }
     
     console.log('✅ Jadwal Supabase integration initialized');
+    console.log('📋 Daftar desa:', DAFTAR_DESA);
     console.log('📋 Silakan pilih desa dari dropdown "Pilih Desa (untuk Piket)"');
 }
 
