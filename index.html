@@ -2197,6 +2197,18 @@
     })();
     </script>
     <!-- ============ SUPABASE JADWAL INTEGRATION ============ -->
-    <script src="supabase-integration.js"></script>	
+    <script src="supabase-integration.js"></script>
+    <script>
+    // PLAY MP3 SETIAP KLIK TAB - UNIVERSAL
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (typeof window.triggerPlayMusic === 'function') {
+                    window.triggerPlayMusic();
+                }
+            });
+        });
+    });
+    </script>
 </body>
 </html>
