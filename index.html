@@ -1049,7 +1049,7 @@
         <!-- ========== RUNNING TEXT PENERIMA PESAN DARI TELEGRAM ========== -->
         <div class="telegram-running-container">
             <div class="telegram-running-text" id="telegramRunningMessage">
-                Pengiriman Ke telegram dalam perbaikan...
+                
             </div>
         </div>
 
@@ -1070,12 +1070,12 @@
             <div style="width: 90%; margin: 0 auto; font-size: 12px;">
                 <label><i class="fas fa-village"></i> Pilih Desa:</label>
                 <select id="selectDesa" onchange="loadSelectedDesa()">
-                    <option value="">-- Memuat data desa... --</option>
+                    <option value=""></option>
                 </select>
-                <div id="loadingDesa"><i class="fas fa-spinner fa-spin"></i> Memuat daftar desa/Kelurahan lokal...</div>
+                <div id="loadingDesa"><i class="fas fa-spinner fa-spin"></i></div>
                 <div class="previewBox" id="previewDesa"></div>
 
-                <div id="loadingKoordinat"><i class="fas fa-spinner fa-spin"></i> Memuat koordinat...</div>
+                <div id="loadingKoordinat"><i class="fas fa-spinner fa-spin"></i></div>
                 <div class="previewBox" id="previewKordinat"></div>
 
                 <label><i class="fas fa-camera"></i> Foto Kegiatan:</label>
@@ -1198,7 +1198,7 @@
                 </div>
                 <div class="form-group" style="margin-bottom: 15px;">
                     <label style="color: #4dff4d;">📆 BULAN</label>
-                    <select id="absenBulanSelect" disabled><option>Pilih tahun dulu</option></select>
+                    <select id="absenBulanSelect" disabled><option>Pilih tahun</option></select>
                 </div>
             </div>
 
@@ -1589,7 +1589,7 @@
                         }
                         deferredPrompt = null;
                     } else {
-                        alert('Install prompt tidak tersedia. Pastikan browser mendukung PWA.');
+                        alert('');
                     }
                 });
             }
@@ -1631,7 +1631,7 @@
                     console.log("✅ Template AI berhasil dimuat dari GitHub");
                     return true;
                 } catch (error) {
-                    console.error("Gagal memuat template AI:", error);
+                    console.error("", error);
                     return false;
                 }
             }
@@ -1669,7 +1669,7 @@
 
             function renderModalTemplateList() {
                 if (!templateData || !templateData[activeTab]) {
-                    modalBody.innerHTML = '<div class="loading-templates">❌ Template tidak tersedia</div>';
+                    modalBody.innerHTML = '<div class="loading-templates">❌</div>';
                     return;
                 }
                 const templates = templateData[activeTab];
@@ -1737,7 +1737,7 @@
         const JadwalData = { daftarNama: [], daftarHanpangan: [], currentHanpangan: "" };
         const JADWAL_DROPDOWN_IDS = ['j_nama1a_baru','j_nama1b_baru','j_nama2a_baru','j_nama2b_baru','j_nama3a_baru','j_nama3b_baru','j_nama3c_baru','j_nama3d_baru','j_nama4a_baru','j_nama4b_baru','j_nama4c_baru','j_nama4d_baru'];
 
-        function updateRunningText() { const el = document.getElementById('runningTextJadwalBaru'); if (el) el.textContent = JadwalData.currentHanpangan ? '🍽️ JADWAL HANPANGAN HARI INI: ' + JadwalData.currentHanpangan + ' 🍽️' : '🍽️ Memuat jadwal hanpangan... 🍽️'; }
+        function updateRunningText() { const el = document.getElementById('runningTextJadwalBaru'); if (el) el.textContent = JadwalData.currentHanpangan ? '🌾 JADWAL HANPANGAN HARI INI: ' + JadwalData.currentHanpangan + '🌾' : '🌾 Memuat jadwal hanpangan...🌾'; }
         function fetchFromGitHub(url) { return new Promise(resolve => { fetch(url + '?t=' + new Date().getTime()).then(res => res.ok ? res.text() : null).then(data => resolve(data)).catch(() => resolve(null)); }); }
 
         function loadPiketData() { return fetchFromGitHub(GITHUB_URLS.PIKET).then(data => { if (data) { JadwalData.daftarNama = data.trim().split('\n').filter(l => l.trim()).map(n => n.trim()); JADWAL_DROPDOWN_IDS.forEach(id => { const select = document.getElementById(id); if (select) { select.innerHTML = '<option value="">-- Pilih Nama --</option>'; JadwalData.daftarNama.forEach(nama => { const opt = document.createElement('option'); opt.value = nama; opt.textContent = nama; select.appendChild(opt); }); select.value = ""; } }); return true; } return false; }); }
