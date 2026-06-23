@@ -1012,7 +1012,7 @@
         <div class="splash-tentara-progress">
             <div class="splash-tentara-progress-fill" id="progressTentara"></div>
         </div>
-        <div class="splash-tentara-status" id="statusTentara">⏳ Memuat GIF ...</div>
+        <div class="splash-tentara-status" id="statusTentara"></div>
     </div>
 
     <!-- ================= BACKGROUND MP3 PLAYER ================= -->
@@ -1438,7 +1438,7 @@
                 if (gif.naturalWidth === 0 && gif.naturalHeight === 0) {
                     statusText.textContent = '⚠️ GIF gagal dimuat, lanjutkan ...';
                 } else {
-                    statusText.textContent = '✅ GIF siap!';
+                    statusText.textContent = '';
                 }
                 startTime = Date.now();
                 updateProgress();
