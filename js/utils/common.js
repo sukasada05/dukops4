@@ -317,6 +317,26 @@ function saveDesaCounter(counter) {
  * Load send logs dari localStorage
  * Logs of all sent submissions
  */
-// send logs helpers removed
+function loadSendLogs() {
+    try {
+        const saved = localStorage.getItem('dukopsSendLogs');
+        return saved ? JSON.parse(saved) : [];
+    } catch (error) {
+        console.error('Error loading send logs:', error);
+        return [];
+    }
+}
+
+/**
+ * Save send logs ke localStorage
+ * @param {array} logs - Array of {timestamp, filename, desa}
+ */
+function saveSendLogs(logs) {
+    try {
+        localStorage.setItem('dukopsSendLogs', JSON.stringify(logs));
+    } catch (error) {
+        console.error('Error saving send logs:', error);
+    }
+}
 
 console.log("✅ Common.js loaded - Constants, utilities, and helpers ready");

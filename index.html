@@ -597,6 +597,20 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+        .absen-refresh-btn {
+            position: fixed;
+            bottom: 15px;
+            right: 15px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #2a4a2a;
+            border: 1px solid #4dff4d;
+            color: #4dff4d;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 100;
+        }
         .absen-info-text {
             text-align: center;
             font-size: 0.6rem;
@@ -1057,17 +1071,15 @@
 
                 <canvas id="canvas"></canvas>
 
-                <div class="action-buttons">
-                    <button id="submitBtn" onclick="processSubmission()" enable>
-                        <i class="fas fa-download"></i> DOWNLOAD KIRIM DRIVE
-                    </button>
-                    <button id="resetBtn" onclick="resetAll()"><i class="fas fa-redo"></i>RESET</button>
-                </div>
+                <button id="submitBtn" onclick="processSubmission()" disabled>
+                    <i class="fas fa-download"></i> DOWNLOAD & <i class="fas fa-paper-plane"></i> KIRIM & <i class="fab fa-google-drive"></i> DRIVE
+                </button>
+                <button id="resetBtn" onclick="resetAll()"><i class="fas fa-redo"></i> Reset Data</button>
                 <button id="showAttendanceBtn" onclick="showAttendance()"><i class="fas fa-chart-bar"></i> KLIK INI..CEK LAPORAN ANDA DISINI YANG TIAP BULAN</button>
 
                 <div id="attendancePanel" style="display: none;">
                     <div class="attendance-header">
-                        <button onclick="hideAttendance()" style="background: #e65603; border: show; color: #ffffff; cursor: pointer;">EXIT LAPORAN TERKIRIM</button>
+                        <button onclick="hideAttendance()" style="background: #9fd49f; border: none; color: #f5f5f5; cursor: pointer;">EXIT LAPORAN TERKIRIM</button>
                     </div>
                     <div class="attendance-filters">
                         <select id="attendanceDesaFilter" onchange="loadAttendanceData()"><option value="">Semua Desa</option></select>
@@ -1075,13 +1087,18 @@
                     </div>
                     <div id="attendanceLoading" style="display: none; text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> 🪖 Tunggu..laporan akan di tampilkan</div>
                     <div id="attendanceSummary" class="attendance-summary" style="display: none;">
-                        <div class="summary-row"><span>Total Laporan:</span><span id="totalReports" style="font-weight: bold; color: #ffffff;">0</span></div>
-                        <div class="summary-row"><span>Total Desa:</span><span id="totalDesa" style="font-weight: bold; color: #ffffff;">0</span></div>
+                        <div class="summary-row"><span>Total Laporan:</span><span id="totalReports" style="font-weight: bold; color: #9fd49f;">0</span></div>
+                        <div class="summary-row"><span>Total Desa:</span><span id="totalDesa" style="font-weight: bold; color: #9fd49f;">0</span></div>
                         <div class="summary-row"><span>Pencapaian Target:</span><span id="targetStatus" style="font-weight: bold;">0%</span></div>
                         <div class="progress-container"><div id="progressBar" class="progress-bar"></div></div>
                     </div>
                     <div id="attendanceList" style="max-height: 400px; overflow-y: auto;"></div>
+                    <div class="attendance-actions">
+                        <button onclick="refreshAttendanceData()" style="background: #3a4f41;"><i class="fas fa-sync-alt"></i> Refresh Data</button>
+                        <button onclick="downloadAttendanceReport()" style="background: #2b4d2b;"><i class="fas fa-download"></i> Download Laporan</button>
+                    </div>
                 </div>
+                <div id="logTerkirim"></div>
             </div>
         </div>
 
@@ -1111,7 +1128,7 @@
                     </div>
                 </div>
             </div>
-
+			
             <div class="jadwal-section">
                 <div class="section-content">
                     <div><h3 class="section-title-kediaman">Jaga Kediaman Hari Ini :</h3>
@@ -1170,6 +1187,7 @@
         <div class="jadwal-toast" id="j_toastNotificationBaru"></div>
     </div>
 
+    <button id="absenRefreshBtn" class="absen-refresh-btn" style="display: none;">🔄</button>
     <div id="absenScreenshotArea" style="position: fixed; left: -9999px; top: 0; width: 500px; background: white;"></div>
 
     <!-- ==================== MODAL TEMPLATE AI ==================== -->
@@ -1688,6 +1706,8 @@
     </script>
 
     <!-- ============ APPLICATION SCRIPTS ============ -->
+    <script src="js/components/FormValidator.js"></script>
+    <script src="js/services/AdminSettings.js"></script>
     <script src="app.js"></script>
 
     <!-- ============ JADWAL PIKET BARU SCRIPT (DENGAN URL REPOSITORY sukasada05/dukops4) ============ -->
@@ -1772,7 +1792,18 @@
                         return true;
                     }
                 }
-                
+                // DATA DEFAULT (10 nama sesuai urutan agar Serda muncul hari ini)
+                const defaultHanpangan = [
+                    "Serka Wahyu Hidayat",
+                    "Pelda I Komang Karia",
+                    "Serma Mujiburrahman",
+                    "Sertu Nyoman Warsa",
+                    "Serma I Kadek Teges Suardana",
+                    "Serda I Putu Suwidana Yasa",
+                    "Serka Satriyo",
+                    "Serka I Made Widiasa",
+                    "Serka Nyoman Join Amitaba",
+                    "Serka I Nyoman Arta"
                 ];
                 JadwalData.daftarHanpangan = defaultHanpangan;
                 const today = new Date();
@@ -1783,7 +1814,7 @@
                 if (offset < 0) offset += defaultHanpangan.length;
                 let index = (epochDays + offset) % defaultHanpangan.length;
                 if (index < 0) index += defaultHanpangan.length;
-                JadwalData.currentHEXIT LAPORAN TERKIRIManpangan = defaultHanpangan[index];
+                JadwalData.currentHanpangan = defaultHanpangan[index];
                 updateRunningText();
                 return false;
             });
@@ -1866,6 +1897,7 @@
             document.getElementById('dukopsContent').style.display = 'none';
             document.getElementById('jadwalPiketContainerBaru').style.display = 'block';
             document.getElementById('absenContent').style.display = 'none';
+            document.getElementById('absenRefreshBtn').style.display = 'none';
             document.getElementById('btnDukops').classList.remove('active');
             document.getElementById('btnJadwal').classList.add('active');
             document.getElementById('btnAbsen').classList.remove('active');
@@ -1876,6 +1908,7 @@
             document.getElementById('dukopsContent').style.display = 'block';
             document.getElementById('jadwalPiketContainerBaru').style.display = 'none';
             document.getElementById('absenContent').style.display = 'none';
+            document.getElementById('absenRefreshBtn').style.display = 'none';
             document.getElementById('btnDukops').classList.add('active');
             document.getElementById('btnJadwal').classList.remove('active');
             document.getElementById('btnAbsen').classList.remove('active');
@@ -1885,6 +1918,7 @@
             document.getElementById('dukopsContent').style.display = 'none';
             document.getElementById('jadwalPiketContainerBaru').style.display = 'none';
             document.getElementById('absenContent').style.display = 'block';
+            document.getElementById('absenRefreshBtn').style.display = 'block';
             document.getElementById('btnDukops').classList.remove('active');
             document.getElementById('btnJadwal').classList.remove('active');
             document.getElementById('btnAbsen').classList.add('active');
@@ -1907,9 +1941,11 @@
         var tahunSelectAbsen = document.getElementById('absenTahunSelect');
         var bulanSelectAbsen = document.getElementById('absenBulanSelect');
         var resultContainerAbsen = document.getElementById('absenResultContainer');
+        var refreshBtnAbsen = document.getElementById('absenRefreshBtn');
         var screenshotAreaAbsen = document.getElementById('absenScreenshotArea');
         
         if (tahunSelectAbsen) tahunSelectAbsen.onchange = onTahunChangeAbsen;
+        if (refreshBtnAbsen) refreshBtnAbsen.onclick = forceRefreshAbsen;
         
         window.addEventListener('online', function() { isOnlineAbsen = true; loadAbsenTahun(); });
         window.addEventListener('offline', function() { isOnlineAbsen = false; });

@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Chat DUKOPS</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: transparent;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: rgba(10, 26, 42, 0.95);
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Header dengan online users */
+        .chat-header {
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #0d2a1d, #0a1f15);
+            border-bottom: 1px solid #2e8b57;
+            flex-shrink: 0;
+        }
+        
+        .online-users {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .online-label {
+            font-size: 11px;
+            color: #4dff4d;
+            background: rgba(77, 255, 77, 0.15);
+            padding: 2px 8px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .online-label i {
+            font-size: 8px;
+            color: #4caf50;
+        }
+        
+        .user-avatar {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(255,255,255,0.1);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            color: #e6ffe6;
+        }
+        
+        .user-avatar i {
+            font-size: 10px;
+            color: #4caf50;
+        }
+        
+        .user-avatar.online i {
+            color: #4caf50;
+            text-shadow: 0 0 4px #4caf50;
+        }
+        
+        .chat-header h3 {
+            color: #ffcc00;
+            font-size: 12px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 8px;
+        }
+        
+        .chat-badge {
+            background: #ff4444;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 6px;
+            font-size: 9px;
+        }
+        
+        .chat-actions {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+        }
+        
+        .chat-actions button {
+            background: none;
+            border: none;
+            color: #9fd49f;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        
+        .chat-actions button:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        /* Area pesan */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .message {
+            display: flex;
+            flex-direction: column;
+            max-width: 85%;
+        }
+        
+        .message-own {
+            align-self: flex-end;
+        }
+        
+        .message-other {
+            align-self: flex-start;
+        }
+        
+        .message-bubble {
+            padding: 8px 12px;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+        
+        .message-own .message-bubble {
+            background: #2e7d32;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .message-other .message-bubble {
+            background: #1a3a6a;
+            border-bottom-left-radius: 4px;
+        }
+        
+        .message-name {
+            font-size: 10px;
+            margin-bottom: 2px;
+            margin-left: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .message-own .message-name {
+            color: #a5d6a7;
+            justify-content: flex-end;
+        }
+        
+        .message-other .message-name {
+            color: #ffcc00;
+        }
+        
+        .online-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4caf50;
+            display: inline-block;
+            box-shadow: 0 0 4px #4caf50;
+        }
+        
+        .message-text {
+            font-size: 13px;
+            color: #e6ffe6;
+            line-height: 1.4;
+        }
+        
+        .message-time {
+            font-size: 9px;
+            color: #888;
+            margin-top: 2px;
+            margin-left: 8px;
+        }
+        
+        .message-own .message-time {
+            text-align: right;
+        }
+        
+        .chat-input-area {
+            padding: 12px;
+            border-top: 1px solid #2a4a2a;
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+            background: rgba(0,0,0,0.3);
+        }
+        
+        .chat-input-area input {
+            flex: 1;
+            padding: 10px 14px;
+            border-radius: 25px;
+            border: 1px solid #4dff4d;
+            background: #1a2a1f;
+            color: #e6ffe6;
+            font-size: 13px;
+            outline: none;
+        }
+        
+        .chat-input-area input::placeholder {
+            color: #6a8a6a;
+        }
+        
+        .chat-input-area button {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: none;
+            background: #4dff4d;
+            color: #003300;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .chat-input-area button:hover {
+            background: #6aff6a;
+        }
+        
+        .chat-footer {
+            padding: 6px 12px;
+            font-size: 9px;
+            color: #666;
+            text-align: center;
+            border-top: 1px solid #2a4a2a;
+            display: flex;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+        
+        .chat-footer span {
+            cursor: pointer;
+        }
+        
+        .chat-footer span:hover {
+            color: #ff8888;
+        }
+        
+        .empty-chat {
+            text-align: center;
+            color: #888;
+            padding: 30px 20px;
+        }
+        
+        .loading-chat {
+            text-align: center;
+            color: #4dff4d;
+            padding: 30px 20px;
+        }
+        
+        .chat-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .chat-messages::-webkit-scrollbar-track {
+            background: #1a2a1f;
+        }
+        
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: #4dff4d;
+            border-radius: 4px;
+        }
+        
+        .no-online {
+            color: #888;
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">
+            <div class="online-users" id="onlineUsersContainer">
+                <span class="online-label"><i class="fas fa-circle"></i> ONLINE</span>
+                <div id="onlineUsersList" style="display: flex; flex-wrap: wrap; gap: 6px;">
+                    <span class="no-online">Memuat...</span>
+                </div>
+            </div>
+            <h3>
+                <i class="fas fa-comments"></i> LIVE CHAT
+                <span id="unreadBadge" class="chat-badge" style="display: none;">0</span>
+            </h3>
+            <div class="chat-actions">
+                <button id="deleteAllBtn" title="Hapus semua pesan"><i class="fas fa-trash-alt"></i></button>
+            </div>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="loading-chat"><i class="fas fa-spinner fa-pulse"></i> Memuat pesan...</div>
+        </div>
+        
+        <div class="chat-input-area">
+            <input type="text" id="messageInput" placeholder="Tulis pesan...">
+            <button id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+        
+        <div class="chat-footer">
+            <span>💾 Pesan tersimpan permanen</span>
+            <span id="userNameDisplay">👤 Guest</span>
+        </div>
+    </div>
+
+    <script>
+        // ============ KONFIGURASI SUPABASE ============
+        const SUPABASE_URL = 'https://qthoexsadattfnnzcawh.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF0aG9leHNhZGF0dGZubnpjYXdoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1NTMzNTAsImV4cCI6MjA5NjEyOTM1MH0.qZBFjrN8F8vwxoaPKIPLDQIOWbt58BNlPWLOn4J_5_4';
+        
+        let supabase = null;
+        let currentUser = 'Guest';
+        let messages = [];
+        let unreadCount = 0;
+        let lastMessageCount = 0;
+        let chatChannel = null;
+        
+        // Data online users
+        let onlineUsers = new Set(); // Set of usernames
+        let lastActivity = new Map(); // username -> timestamp
+        
+        // Update interval untuk online status (setiap 30 detik)
+        let onlineInterval = null;
+        
+        // Ambil username dari berbagai sumber
+        function getUsername() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const urlUser = urlParams.get('user');
+                if (urlUser) return decodeURIComponent(urlUser);
+                
+                const stored = localStorage.getItem('dukops_username');
+                if (stored) return stored;
+                
+                if (window.parent && window.parent.document) {
+                    const selectDesa = window.parent.document.getElementById('selectDesa');
+                    if (selectDesa && selectDesa.options && selectDesa.options[selectDesa.selectedIndex]) {
+                        return selectDesa.options[selectDesa.selectedIndex].text;
+                    }
+                }
+            } catch(e) {}
+            return 'Guest';
+        }
+        
+        // Update display username
+        function updateUserDisplay() {
+            const display = document.getElementById('userNameDisplay');
+            if (display) display.innerHTML = `<i class="fas fa-user"></i> ${currentUser.substring(0, 20)}`;
+        }
+        
+        // Update online users di header
+        function updateOnlineUsersDisplay() {
+            const container = document.getElementById('onlineUsersList');
+            if (!container) return;
+            
+            const onlineList = Array.from(onlineUsers).filter(u => u !== 'Guest' && u !== currentUser);
+            
+            if (onlineList.length === 0) {
+                container.innerHTML = '<span class="no-online">Tidak ada user lain online</span>';
+                return;
+            }
+            
+            container.innerHTML = onlineList.map(user => `
+                <span class="user-avatar online">
+                    <i class="fas fa-circle"></i> ${escapeHtml(user.substring(0, 15))}
+                </span>
+            `).join('');
+        }
+        
+        // Update aktivitas user (setiap kali ada interaksi)
+        function updateUserActivity(username) {
+            if (!username || username === 'Guest') return;
+            lastActivity.set(username, Date.now());
+            
+            // Tambah ke online users jika belum ada
+            if (!onlineUsers.has(username)) {
+                onlineUsers.add(username);
+                updateOnlineUsersDisplay();
+            }
+        }
+        
+        // Cek user yang tidak aktif (lebih dari 1 menit)
+        function checkInactiveUsers() {
+            const now = Date.now();
+            let changed = false;
+            
+            onlineUsers.forEach(user => {
+                const lastActive = lastActivity.get(user);
+                if (lastActive && (now - lastActive) > 60000) { // 60 detik
+                    onlineUsers.delete(user);
+                    lastActivity.delete(user);
+                    changed = true;
+                }
+            });
+            
+            if (changed) {
+                updateOnlineUsersDisplay();
+            }
+        }
+        
+        // Kirim pesan heartbeart ke Supabase (untuk online status)
+        async function sendHeartbeat() {
+            if (!supabase || !currentUser || currentUser === 'Guest') return;
+            
+            try {
+                // Simpan aktivitas ke tabel online_users (buat dulu jika belum)
+                // Alternatif: update last_active di tabel terpisah
+                const { error } = await supabase
+                    .from('online_users')
+                    .upsert({ 
+                        username: currentUser, 
+                        last_active: new Date().toISOString(),
+                        updated_at: new Date().toISOString()
+                    }, { onConflict: 'username' });
+                
+                if (error && error.code !== '42P01') { // Table not found
+                    console.log('Heartbeat error:', error.message);
+                }
+            } catch(e) { /* Table mungkin belum dibuat */ }
+        }
+        
+        // Load online users dari Supabase
+        async function loadOnlineUsers() {
+            if (!supabase) return;
+            
+            try {
+                const { data, error } = await supabase
+                    .from('online_users')
+                    .select('username, last_active')
+                    .gte('last_active', new Date(Date.now() - 60000).toISOString());
+                
+                if (error && error.code !== '42P01') {
+                    console.log('Load online users error:', error);
+                    return;
+                }
+                
+                if (data && data.length > 0) {
+                    const newOnlineSet = new Set();
+                    data.forEach(user => {
+                        if (user.username !== 'Guest') {
+                            newOnlineSet.add(user.username);
+                            lastActivity.set(user.username, new Date(user.last_active).getTime());
+                        }
+                    });
+                    
+                    onlineUsers = newOnlineSet;
+                    updateOnlineUsersDisplay();
+                }
+            } catch(e) { console.log('Load online users error:', e); }
+        }
+        
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Format waktu
+        function formatTime(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        }
+        
+        // Render pesan
+        function renderMessages() {
+            const container = document.getElementById('chatMessages');
+            if (!container) return;
+            
+            if (messages.length === 0) {
+                container.innerHTML = '<div class="empty-chat">💬 Belum ada pesan. Jadilah yang pertama!</div>';
+                return;
+            }
+            
+            container.innerHTML = messages.map(msg => {
+                const isOwn = msg.username === currentUser;
+                const isOnline = onlineUsers.has(msg.username);
+                return `
+                    <div class="message ${isOwn ? 'message-own' : 'message-other'}">
+                        <div class="message-name">
+                            ${isOwn ? '👤 Anda' : '👤 ' + escapeHtml(msg.username)}
+                            ${!isOwn && isOnline ? '<span class="online-dot" title="Online"></span>' : ''}
+                        </div>
+                        <div class="message-bubble">
+                            <div class="message-text">${escapeHtml(msg.message)}</div>
+                        </div>
+                        <div class="message-time">${formatTime(msg.created_at)}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            container.scrollTop = container.scrollHeight;
+            
+            if (messages.length > lastMessageCount) {
+                const isScrolledToBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 50;
+                if (!isScrolledToBottom) {
+                    unreadCount += messages.length - lastMessageCount;
+                    updateUnreadBadge();
+                }
+            }
+            lastMessageCount = messages.length;
+        }
+        
+        function updateUnreadBadge() {
+            const badge = document.getElementById('unreadBadge');
+            if (badge) {
+                if (unreadCount > 0) {
+                    badge.style.display = 'inline-block';
+                    badge.textContent = unreadCount;
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        }
+        
+        // Load pesan dari Supabase
+        async function loadMessages() {
+            if (!supabase) return;
+            
+            try {
+                const { data, error } = await supabase
+                    .from('live_chat')
+                    .select('*')
+                    .order('created_at', { ascending: true });
+                
+                if (error) throw error;
+                
+                messages = data || [];
+                renderMessages();
+            } catch(e) {
+                console.error('Load messages error:', e);
+                document.getElementById('chatMessages').innerHTML = '<div class="empty-chat" style="color:#ff6666;">❌ Gagal memuat pesan</div>';
+            }
+        }
+        
+        // Subscribe realtime
+        function subscribeToChat() {
+            if (!supabase) return;
+            
+            chatChannel = supabase
+                .channel('live_chat_channel')
+                .on('postgres_changes', 
+                    { event: 'INSERT', schema: 'public', table: 'live_chat' }, 
+                    (payload) => {
+                        messages.push(payload.new);
+                        renderMessages();
+                        // Update aktivitas user yang mengirim pesan
+                        updateUserActivity(payload.new.username);
+                    }
+                )
+                .on('postgres_changes', 
+                    { event: 'DELETE', schema: 'public', table: 'live_chat' }, 
+                    () => {
+                        loadMessages();
+                    }
+                )
+                .subscribe();
+        }
+        
+        // Kirim pesan
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            if (!supabase) {
+                alert('Chat tidak tersedia');
+                return;
+            }
+            
+            try {
+                const { error } = await supabase
+                    .from('live_chat')
+                    .insert([{
+                        username: currentUser,
+                        message: message
+                    }]);
+                
+                if (error) throw error;
+                
+                input.value = '';
+                unreadCount = 0;
+                updateUnreadBadge();
+                // Update aktivitas user
+                updateUserActivity(currentUser);
+                // Kirim heartbeat
+                sendHeartbeat();
+            } catch(e) {
+                console.error('Send error:', e);
+                alert('Gagal mengirim: ' + e.message);
+            }
+        }
+        
+        // Hapus semua pesan
+        async function deleteAllMessages() {
+            if (!supabase) return;
+            if (confirm('⚠️ PERINGATAN! Semua pesan chat akan dihapus permanen. Lanjutkan?')) {
+                try {
+                    const { error } = await supabase
+                        .from('live_chat')
+                        .delete()
+                        .neq('id', 0);
+                    
+                    if (error) throw error;
+                    
+                    messages = [];
+                    renderMessages();
+                    alert('✅ Semua pesan telah dihapus');
+                } catch(e) {
+                    console.error('Delete error:', e);
+                    alert('Gagal menghapus: ' + e.message);
+                }
+            }
+        }
+        
+        // Reset unread saat scroll ke bawah
+        function setupScrollListener() {
+            const container = document.getElementById('chatMessages');
+            if (container) {
+                container.addEventListener('scroll', () => {
+                    const isAtBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 50;
+                    if (isAtBottom) {
+                        unreadCount = 0;
+                        updateUnreadBadge();
+                    }
+                });
+            }
+        }
+        
+        // Buat tabel online_users jika belum ada
+        async function createOnlineUsersTable() {
+            // Catatan: Ini hanya simulasi, sebaiknya buat tabel manual di Supabase SQL Editor
+            // SQL: CREATE TABLE online_users (username TEXT PRIMARY KEY, last_active TIMESTAMP, updated_at TIMESTAMP);
+            console.log('Pastikan tabel online_users sudah dibuat di Supabase');
+        }
+        
+        // Inisialisasi Supabase
+        function initSupabase() {
+            if (SUPABASE_URL.includes('YOUR_PROJECT')) {
+                document.getElementById('chatMessages').innerHTML = '<div class="empty-chat" style="color:#ffaa00;">⚠️ Konfigurasi Supabase belum diisi</div>';
+                return false;
+            }
+            
+            try {
+                supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log('✅ Supabase terhubung');
+                loadMessages();
+                subscribeToChat();
+                loadOnlineUsers();
+                createOnlineUsersTable();
+                
+                // Mulai heartbeat interval (setiap 30 detik)
+                setInterval(() => {
+                    sendHeartbeat();
+                    checkInactiveUsers();
+                    loadOnlineUsers();
+                }, 30000);
+                
+                // Kirim heartbeat pertama
+                setTimeout(() => {
+                    sendHeartbeat();
+                    updateUserActivity(currentUser);
+                }, 1000);
+                
+                return true;
+            } catch(e) {
+                console.error('Init error:', e);
+                document.getElementById('chatMessages').innerHTML = '<div class="empty-chat" style="color:#ff6666;">❌ Gagal koneksi ke database</div>';
+                return false;
+            }
+        }
+        
+        // Kirim username ke parent
+        function syncUsernameToParent() {
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: 'chatUsername', username: currentUser }, '*');
+                }
+            } catch(e) {}
+        }
+        
+        // Event listener dari parent untuk update username
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'updateUsername') {
+                currentUser = event.data.username || 'Guest';
+                localStorage.setItem('dukops_username', currentUser);
+                updateUserDisplay();
+                syncUsernameToParent();
+                updateUserActivity(currentUser);
+                sendHeartbeat();
+            }
+        });
+        
+        // Setup event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            currentUser = getUsername();
+            updateUserDisplay();
+            updateUnreadBadge();
+            setupScrollListener();
+            initSupabase();
+            
+            setTimeout(() => {
+                updateUserActivity(currentUser);
+                sendHeartbeat();
+            }, 500);
+            
+            setTimeout(syncUsernameToParent, 500);
+            
+            document.getElementById('sendBtn').onclick = sendMessage;
+            document.getElementById('deleteAllBtn').onclick = deleteAllMessages;
+            document.getElementById('messageInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage();
+            });
+        });
+    </script>
+</body>
+</html>
