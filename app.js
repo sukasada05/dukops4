@@ -193,17 +193,13 @@ function showApp() {
             if (currentApp === 'dukops') {
                 document.getElementById('btnDukops').classList.add('active');
                 document.getElementById('btnJadwal').classList.remove('active');
-                document.getElementById('btnAdmin').classList.remove('active');
                 document.getElementById('dukopsContent').style.display = 'block';
                 document.getElementById('jadwalPiketContainer').style.display = 'none';
-                document.getElementById('adminPanelContainer').style.display = 'none';
             } else {
                 document.getElementById('btnDukops').classList.remove('active');
                 document.getElementById('btnJadwal').classList.add('active');
-                document.getElementById('btnAdmin').classList.remove('active');
                 document.getElementById('dukopsContent').style.display = 'none';
                 document.getElementById('jadwalPiketContainer').style.display = 'block';
-                document.getElementById('adminPanelContainer').style.display = 'none';
             }
 
             console.log(`🎉 ${currentApp.toUpperCase()} App initialized!`);
@@ -215,63 +211,21 @@ function showApp() {
 function showDukops() {
     document.getElementById('dukopsContent').style.display = 'block';
     document.getElementById('jadwalPiketContainer').style.display = 'none';
-    document.getElementById('adminPanelContainer').style.display = 'none';
     document.getElementById('btnDukops').classList.add('active');
     document.getElementById('btnJadwal').classList.remove('active');
-    document.getElementById('btnAdmin').classList.remove('active');
     currentApp = 'dukops';
 }
 
 function showJadwalPiket() {
     document.getElementById('dukopsContent').style.display = 'none';
     document.getElementById('jadwalPiketContainer').style.display = 'block';
-    document.getElementById('adminPanelContainer').style.display = 'none';
     document.getElementById('btnDukops').classList.remove('active');
     document.getElementById('btnJadwal').classList.add('active');
-    document.getElementById('btnAdmin').classList.remove('active');
     currentApp = 'jadwal';
 
     // Inisialisasi Jadwal Piket jika belum diinisialisasi
     if (JadwalData.daftarNama.length === 0) {
         initJadwalPiket();
-    }
-}
-
-// ================= ADMIN PANEL =================
-function showAdminPanel() {
-    try {
-        console.log("🔐 Opening Admin Panel...");
-
-        // Hide other containers
-        document.getElementById('dukopsContent').style.display = 'none';
-        document.getElementById('jadwalPiketContainer').style.display = 'none';
-        document.getElementById('adminPanelContainer').style.display = 'block';
-
-        // Update active button
-        document.getElementById('btnDukops').classList.remove('active');
-        document.getElementById('btnJadwal').classList.remove('active');
-        document.getElementById('btnAdmin').classList.add('active');
-
-        currentApp = 'admin';
-
-        // Initialize AdminSettings if available (only when admin is accessed)
-        if (typeof AdminSettings !== 'undefined' && AdminSettings.init) {
-            AdminSettings.init().catch(err => {
-                console.warn("⚠️ AdminSettings init error:", err);
-            });
-        }
-
-        // Check if AdminDashboard is available
-        if (typeof AdminDashboard !== 'undefined' && AdminDashboard.init) {
-            console.log("✅ AdminDashboard loaded, initializing...");
-            AdminDashboard.init();
-        } else {
-            console.error("❌ AdminDashboard not loaded properly!");
-            document.getElementById('adminContent').innerHTML = '<p style="color: #ff6b6b;">Admin Panel tidak tersedia. Silakan refresh halaman.</p>';
-        }
-    } catch (error) {
-        console.error("❌ Error opening admin panel:", error);
-        document.getElementById('adminContent').innerHTML = '<p style="color: #ff6b6b;">Error membuka Admin Panel: ' + error.message + '</p>';
     }
 }
 
@@ -347,7 +301,7 @@ function initializeApp() {
         // Load data lainnya
         loadLastSubmittedDates();
         loadDesaCounter();
-        loadSendLogs();
+        // send logs feature removed
 
         // Set tanggal default
         const now = new Date();
@@ -864,7 +818,7 @@ async function processSubmission() {
         a.click();
         document.body.removeChild(a);
 
-        // 2. Kirim ke Telegram (via backend)
+        // 2. Kirim ke Telegram (via backend) - tanpa notifikasi popup
         const telegramSent = await sendZipToTelegram(content, zipFileNameForBackend, selectedDesa);
 
         // 3. Upload ke Google Drive (via backend)
@@ -878,40 +832,27 @@ async function processSubmission() {
             setTimeout(() => loadAttendanceData(), 2000);
         }
 
-        // 6. Notifikasi hasil
-        let notificationMsg = '';
-        if (telegramSent && driveUploaded) {
-            notificationMsg = `✔ Berhasil: Telegram & Drive (${desaData.count}/9 laporan)`;
-            showNotification(notificationMsg, "success");
-
-            // Cek jika sudah mencapai 9 laporan untuk desa ini
-            if (desaData.count >= 9) {
-                // Tampilkan popup ucapan terima kasih
-                showThankYouPopup(desaInfo.cleanName, desaData.count);
-
-                // Kirim notifikasi Telegram ucapan terima kasih
-                await sendThankYouTelegram(desaInfo.cleanName, desaData.count);
-            }
-        } else if (telegramSent) {
-            notificationMsg = `✔ Telegram OK (Drive gagal) (${desaData.count}/9 laporan)`;
-            showNotification(notificationMsg, "warning");
-        } else if (driveUploaded) {
-            notificationMsg = `✔ Drive OK (Telegram gagal) (${desaData.count}/9 laporan)`;
-            showNotification(notificationMsg, "warning");
+        // 6. Notifikasi hasil (TANPA menyebut Telegram, hanya Drive)
+        if (driveUploaded) {
+            showNotification(`✔ Laporan berhasil disimpan (${desaData.count}/${TARGET_LAPORAN} laporan)`, "success");
         } else {
-            notificationMsg = "⚠ File didownload, tapi gagal ke Telegram & Drive";
-            showNotification(notificationMsg, "error");
+            showNotification(`⚠ Laporan hanya didownload, gagal simpan ke Drive`, "warning");
+        }
+
+        // Cek jika sudah mencapai 9 laporan untuk desa ini
+        if (desaData.count >= 9) {
+            // Tampilkan popup ucapan terima kasih (ini tetap dipertahankan)
+            showThankYouPopup(desaInfo.cleanName, desaData.count);
+            // Kirim notifikasi Telegram ucapan terima kasih (tetap berjalan di background, tanpa popup)
+            await sendThankYouTelegram(desaInfo.cleanName, desaData.count);
         }
 
         updateCounter();
-        addSendLog(zipFileNameForBackend, "success", notificationMsg);
         saveSubmittedDate(tanggalWaktu);
 
     } catch (error) {
         console.error("Error:", error);
         showNotification("❌ Gagal mengirim laporan", "error");
-        const desaInfo = normalizeDesaName(selectedDesa);
-        addSendLog(`${desaInfo.cleanName} - Error`, "failed", error.message);
     } finally {
         button.disabled = false;
         button.innerHTML = originalText;
@@ -990,8 +931,7 @@ function resetAll() {
         document.getElementById('submissionCounter').textContent = '0';
         localStorage.setItem('dukopsSubmissionCount', '0');
 
-        localStorage.removeItem('dukopsSendLogs');
-        document.getElementById('logTerkirim').innerHTML = '';
+        // send logs cleared (feature removed)
 
         submittedDates = [];
         localStorage.removeItem('dukopsSubmittedDates');
@@ -1069,49 +1009,7 @@ function updateDesaCounter(desaName, fileName) {
     return desaCounter[desaName];
 }
 
-function addSendLog(filename, status, message = "") {
-    const logsContainer = document.getElementById("logTerkirim");
-    const logEntry = document.createElement("div");
-    logEntry.className = "log-entry";
-
-    const time = new Date().toLocaleTimeString('id-ID');
-    const statusClass = status === "success" ? "success" : "failed";
-
-    logEntry.innerHTML = `
-        <div class="log-time">${time}</div>
-        <div class="log-filename">${filename}</div>
-        <div class="log-status ${statusClass}">Status: ${status.toUpperCase()} ${message}</div>
-    `;
-
-    logsContainer.insertBefore(logEntry, logsContainer.firstChild);
-    saveSendLog(filename, status, time);
-}
-
-function saveSendLog(filename, status, time) {
-    let logs = JSON.parse(localStorage.getItem('dukopsSendLogs') || '[]');
-    logs.unshift({ filename, status, time });
-    if (logs.length > 50) logs = logs.slice(0, 50);
-    localStorage.setItem('dukopsSendLogs', JSON.stringify(logs));
-}
-
-function loadSendLogs() {
-    const logs = JSON.parse(localStorage.getItem('dukopsSendLogs') || '[]');
-    const container = document.getElementById("logTerkirim");
-
-    logs.forEach(log => {
-        const logEntry = document.createElement("div");
-        logEntry.className = "log-entry";
-        const statusClass = log.status === "success" ? "success" : "failed";
-
-        logEntry.innerHTML = `
-            <div class="log-time">${log.time}</div>
-            <div class="log-filename">${log.filename}</div>
-            <div class="log-status ${statusClass}">Status: ${log.status.toUpperCase()}</div>
-        `;
-
-        container.appendChild(logEntry);
-    });
-}
+// send log functions removed
 
 function saveSubmittedDate(dateStr) {
     submittedDates.push(dateStr);
@@ -1532,24 +1430,32 @@ function refreshAttendanceData() {
     loadAttendanceData();
 }
 
-function downloadAttendanceReport() {
+async function downloadAttendanceReport() {
     if (attendanceData.length === 0) {
         showNotification("Tidak ada data untuk didownload", "warning");
         return;
     }
 
     try {
-        let txtContent = "=".repeat(50) + "\n";
-        txtContent += "       LAPORAN ABSENSI DUKOPS BABINSA\n";
-        txtContent += "       KORAMIL 1609-05/SUKASADA\n";
-        txtContent += "=".repeat(50) + "\n\n";
+        const now = new Date();
+        const selectedMonth = document.getElementById('attendanceMonthFilter')?.value || `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        const [year, month] = selectedMonth.split('-');
+        const monthName = new Date(year, month - 1).toLocaleDateString('id-ID', { month: 'long' });
+        const zipFileName = `LAPORAN_ABSENSI_DUKOPS_${year}_${month}.zip`;
 
-        txtContent += `Tanggal Laporan: ${new Date().toLocaleString('id-ID')}\n`;
-        txtContent += `Total Data: ${attendanceData.length} laporan\n\n`;
-
-        txtContent += "-".repeat(50) + "\n";
-        txtContent += "RINGKASAN PER DESA:\n";
-        txtContent += "-".repeat(50) + "\n";
+        const reportLines = [];
+        reportLines.push('='.repeat(50));
+        reportLines.push('       LAPORAN ABSENSI DUKOPS BABINSA');
+        reportLines.push('       KORAMIL 1609-05/SUKASADA');
+        reportLines.push('='.repeat(50));
+        reportLines.push('');
+        reportLines.push(`Tanggal Laporan: ${now.toLocaleString('id-ID')}`);
+        reportLines.push(`Periode        : ${monthName} ${year}`);
+        reportLines.push(`Total Data     : ${attendanceData.length} laporan`);
+        reportLines.push('');
+        reportLines.push('-'.repeat(50));
+        reportLines.push('RINGKASAN PER DESA:');
+        reportLines.push('-'.repeat(50));
 
         const desaGroups = {};
         attendanceData.forEach(file => {
@@ -1570,86 +1476,90 @@ function downloadAttendanceReport() {
             }
         });
 
-        const sortedDesas = Object.keys(desaGroups).sort((a, b) => {
-            return desaGroups[b].count - desaGroups[a].count;
-        });
-
+        const sortedDesas = Object.keys(desaGroups).sort((a, b) => desaGroups[b].count - desaGroups[a].count);
         sortedDesas.forEach((desaName, index) => {
             const group = desaGroups[desaName];
-            const status = group.count >= TARGET_LAPORAN ? "✅ TUNTAS" : "⏳ BELUM";
+            const status = group.count >= TARGET_LAPORAN ? '✅ TUNTAS' : '⏳ BELUM';
             const lastDate = group.latestDate.toLocaleDateString('id-ID');
 
-            txtContent += `\n${index + 1}. ${desaName}\n`;
-            txtContent += `   Jumlah Laporan : ${group.count}/${TARGET_LAPORAN}\n`;
-            txtContent += `   Status Target  : ${status}\n`;
-            txtContent += `   Terakhir Kirim : ${lastDate}\n`;
+            reportLines.push('');
+            reportLines.push(`${index + 1}. ${desaName}`);
+            reportLines.push(`   Jumlah Laporan : ${group.count}/${TARGET_LAPORAN}`);
+            reportLines.push(`   Status Target  : ${status}`);
+            reportLines.push(`   Terakhir Kirim : ${lastDate}`);
         });
 
         const uniqueDesas = Object.keys(desaGroups).length;
         const totalReports = attendanceData.length;
         const completedDesas = Object.values(desaGroups).filter(g => g.count >= TARGET_LAPORAN).length;
-        const completionRate = ((completedDesas / uniqueDesas) * 100).toFixed(1);
+        const completionRate = uniqueDesas > 0 ? ((completedDesas / uniqueDesas) * 100).toFixed(1) : '0.0';
 
-        txtContent += "\n" + "=".repeat(50) + "\n";
-        txtContent += "STATISTIK:\n";
-        txtContent += "=".repeat(50) + "\n";
-        txtContent += `Total Desa        : ${uniqueDesas}\n`;
-        txtContent += `Total Laporan     : ${totalReports}\n`;
-        txtContent += `Desa Tuntas       : ${completedDesas}\n`;
-        txtContent += `Desa Belum Tuntas : ${uniqueDesas - completedDesas}\n`;
-        txtContent += `Persentase Tuntas : ${completionRate}%\n\n`;
+        reportLines.push('');
+        reportLines.push('='.repeat(50));
+        reportLines.push('STATISTIK:');
+        reportLines.push('='.repeat(50));
+        reportLines.push(`Total Desa        : ${uniqueDesas}`);
+        reportLines.push(`Total Laporan     : ${totalReports}`);
+        reportLines.push(`Desa Tuntas       : ${completedDesas}`);
+        reportLines.push(`Desa Belum Tuntas : ${uniqueDesas - completedDesas}`);
+        reportLines.push(`Persentase Tuntas : ${completionRate}%`);
+        reportLines.push('');
+        reportLines.push('-'.repeat(50));
+        reportLines.push('DETAIL LAPORAN:');
+        reportLines.push('-'.repeat(50));
 
-        txtContent += "-".repeat(50) + "\n";
-        txtContent += "DETAIL LAPORAN:\n";
-        txtContent += "-".repeat(50) + "\n";
+        const manifestLines = [];
+        manifestLines.push('ZIP CONTENTS PER LAPORAN');
+        manifestLines.push('='.repeat(50));
 
         attendanceData.forEach((file, index) => {
             const date = new Date(file.createdTime);
             const dateStr = date.toLocaleDateString('id-ID', {
                 day: '2-digit',
                 month: 'short',
-                year: 'numeric',
                 hour: '2-digit',
                 minute: '2-digit'
             });
 
-            txtContent += `\n${index + 1}. ${file.name}\n`;
-            txtContent += `   Desa    : ${file.desa || extractDesaFromFileName(file.name)}\n`;
-            txtContent += `   Tanggal : ${dateStr}\n`;
+            reportLines.push('');
+            reportLines.push(`${index + 1}. ${file.name}`);
+            reportLines.push(`   Desa    : ${file.desa || extractDesaFromFileName(file.name)}`);
+            reportLines.push(`   Tanggal : ${dateStr}`);
             if (file.zipContents) {
-                txtContent += `   Isi ZIP : ${file.zipContents}\n`;
+                reportLines.push(`   Isi ZIP : ${file.zipContents}`);
+                manifestLines.push(`${file.name} -> ${file.zipContents}`);
             }
             if (file.webViewLink && file.webViewLink !== '#') {
-                txtContent += `   Link    : ${file.webViewLink}\n`;
+                reportLines.push(`   Link    : ${file.webViewLink}`);
             }
         });
 
-        txtContent += "\n" + "=".repeat(50) + "\n";
-        txtContent += "CATATAN:\n";
-        txtContent += "- Target per desa: 9 laporan per bulan\n";
-        txtContent += "- Sistem by: Serka I Nyoman Arta\n";
-        txtContent += "=".repeat(50);
+        reportLines.push('');
+        reportLines.push('='.repeat(50));
+        reportLines.push('CATATAN:');
+        reportLines.push('- Target per desa: 9 laporan per bulan');
+        reportLines.push('- Sistem by: Serka I Nyoman Arta');
+        reportLines.push('='.repeat(50));
 
-        const blob = new Blob([txtContent], { type: 'text/plain;charset=utf-8' });
-        const link = document.createElement("a");
-        const url = URL.createObjectURL(blob);
+        const zip = new JSZip();
+        zip.file(`LAPORAN_ABSENSI_DUKOPS_${year}_${month}.txt`, reportLines.join('\n'));
+        zip.file(`ZIP_CONTENTS_PER_LAPORAN_${year}_${month}.txt`, manifestLines.join('\n'));
 
-        const now = new Date();
-        const fileName = `LAPORAN_DUKOPS_${now.getDate()}_${now.getMonth() + 1}_${now.getFullYear()}.txt`;
+        const content = await zip.generateAsync({ type: 'blob' });
 
-        link.setAttribute("href", url);
-        link.setAttribute("download", fileName);
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(content);
+        link.download = zipFileName;
         link.style.visibility = 'hidden';
 
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
 
-        showNotification(`✅ Laporan TXT berhasil didownload: ${fileName}`, "success");
-
+        showNotification(`✅ Laporan ZIP berhasil didownload: ${zipFileName}`, 'success');
     } catch (error) {
         console.error('Error downloading report:', error);
-        showNotification("❌ Gagal membuat laporan", "error");
+        showNotification('❌ Gagal membuat laporan', 'error');
     }
 }
 
@@ -1741,7 +1651,7 @@ function showThankYouPopup(desaName, count) {
     }, 10000);
 }
 
-// Fungsi untuk mengirim ucapan terima kasih ke Telegram
+// Fungsi untuk mengirim ucapan terima kasih ke Telegram (tetap berjalan, tanpa popup)
 async function sendThankYouTelegram(desaName, count) {
     try {
         const message = `🎉 *SELAMAT!* 🎉
@@ -1952,8 +1862,8 @@ function updateJadwalPreview() {
     };
 
     let result = "=======================\n" +
-        "KORAMIL 1609-05/SUKASADA\n" +
-        "    JADWAL DINAS DALAM\n" +
+        "*KORAMIL 1609-05/SUKASADA*\n" +
+        "    *JADWAL DINAS DALAM*\n" +
         "=======================\n\n";
 
     const sections = [
@@ -2024,10 +1934,10 @@ function updateJadwalPreview() {
     });
 
     if (JadwalData.currentHanpangan) {
-        result += "- Jadwal Hanpangan hari ini : " + JadwalData.currentHanpangan + "\n\n";
+        result += "*-Jadwal Hanpangan hari ini :* " + JadwalData.currentHanpangan + "\n\n";
     }
 
-    result += "Demikian MMP.";
+    result += "*Demikian MMP.*";
 
     document.getElementById('j_hasilPesan').value = result;
 }

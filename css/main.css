@@ -1,0 +1,17 @@
+/* ================================================================
+   MAIN.CSS - IMPORT SEMUA FILE CSS
+   ================================================================ */
+
+@import url('base.css');
+@import url('splash.css');
+@import url('header.css');
+@import url('navigation.css');
+@import url('form.css');
+@import url('buttons.css');
+@import url('notification.css');
+@import url('jadwal.css');
+@import url('attendance.css');
+@import url('tab-absen.css');
+@import url('popup.css');
+@import url('led-effects.css');
+@import url('responsive.css');

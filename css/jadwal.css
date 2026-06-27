@@ -1,0 +1,184 @@
+/* ================================================================
+   JADWAL.CSS - JADWAL PIKET (FULL UPGRADE - SIAP PAKAI)
+   ================================================================ */
+
+.jadwal-header {
+    text-align: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.jadwal-title {
+    color: #FFD700;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.05);
+}
+
+.jadwal-logo {
+    max-width: 100%;
+    height: auto;
+    max-height: 80px;
+    border-radius: 12px;
+    border: 1px solid rgba(76, 175, 80, 0.1);
+    margin-bottom: 8px;
+}
+
+.jadwal-header p {
+    font-size: 12px;
+    color: #889988;
+    letter-spacing: 0.5px;
+}
+
+.jadwal-section {
+    background: rgba(0, 40, 0, 0.3);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 14px;
+    border: 1px solid rgba(76, 175, 80, 0.06);
+    backdrop-filter: blur(4px);
+    transition: all 0.3s ease;
+}
+
+.jadwal-section:hover {
+    border-color: rgba(76, 175, 80, 0.1);
+}
+
+/* ================================================================
+   SUPERPOWER CENTER - SEMUA LABEL PASTI TENGAH
+   (kecuali textarea preview, biar rata kiri)
+   ================================================================ */
+.jadwal-section,
+.jadwal-section *,
+.jadwal-section h3,
+.jadwal-section p,
+.jadwal-section div,
+.jadwal-section span,
+.jadwal-section label,
+.jadwal-section li,
+.section-title-koramil,
+.section-title-kediaman,
+.section-title-makodim {
+    text-align: center !important;
+}
+
+/* ================================================================
+   HEADING JADWAL - STYLE UPGRADE
+   ================================================================ */
+.jadwal-section h3 {
+    margin: 8px 0 12px 0 !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px !important;
+    text-align: center !important;
+    text-transform: uppercase;
+    display: block !important;
+    width: 100% !important;
+}
+
+/* ================================================================
+   WARNA LABEL DIBEDAKAN TAJAM (DENGAN GLOW)
+   ================================================================ */
+
+/* 🟢 PIKET KORAMIL - HIJAU TERANG */
+.section-title-koramil,
+h3.section-title-koramil {
+    color: #4dff4d !important;
+    text-shadow: 0 0 15px rgba(77, 255, 77, 0.4);
+}
+
+/* 🟡 JAGA KEDIAMAN - EMAS */
+.section-title-kediaman,
+h3.section-title-kediaman {
+    color: #FFD700 !important;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+}
+
+/* 🔵 PIKET MAKODIM - BIRU ELEKTRIK */
+.section-title-makodim,
+h3.section-title-makodim {
+    color: #00ccff !important;
+    text-shadow: 0 0 15px rgba(0, 204, 255, 0.4);
+}
+
+/* ================================================================
+   ROW DAN COL UNTUK SELECT (TETAP RAPI)
+   ================================================================ */
+.jadwal-section .section-content {
+    display: block;
+    width: 100%;
+}
+
+.jadwal-section .row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.jadwal-section .col {
+    flex: 1 1 140px;
+    max-width: 200px;
+    text-align: center;
+}
+
+.jadwal-section select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #0f1f0f;
+    color: #e0ffe0;
+    border: 1px solid rgba(76, 175, 80, 0.25);
+    font-size: 13px;
+    cursor: pointer;
+    outline: none;
+}
+
+/* ================================================================
+   BOX OUTPUT PESAN (PREVIEW) - TETAP RATA KIRI SEPERTI AWAL
+   ================================================================ */
+#j_hasilPesanBaru {
+    width: 100%;
+    min-height: 200px;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 136, 204, 0.08);
+    background: rgba(0, 0, 0, 0.3);
+    color: #ddeedd;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    resize: vertical;
+    margin-top: 10px;
+    white-space: pre-wrap;
+    overflow-y: auto;
+    text-align: left !important;   /* ✅ PENGECUALIAN: preview tetap rata kiri */
+}
+
+#j_hasilPesanBaru:focus {
+    outline: none;
+    border-color: rgba(0, 136, 204, 0.2);
+}
+
+/* ================================================================
+   RESPONSIVE - MOBILE
+   ================================================================ */
+@media (max-width: 600px) {
+    .jadwal-section {
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+    .jadwal-section h3 {
+        font-size: 14px !important;
+    }
+    .jadwal-title {
+        font-size: 18px;
+    }
+    .jadwal-section .col {
+        min-width: 120px;
+    }
+}
