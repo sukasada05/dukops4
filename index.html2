@@ -6,10 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <!-- ========== INSTRUKSI NOINDEX UNTUK MESIN PENCARI ========== -->
     <meta name="robots" content="noindex, nofollow">
 
-    <!-- PWA Configuration -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -23,202 +21,49 @@
     <link rel="shortcut icon" href="favicon.ico" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <link rel="manifest" href="site.webmanifest" />
-    <!-- ============================= -->
 
     <!-- External Libraries -->
     <script src="https://cdn.polyfill.io/v3/polyfill.min.js?features=default,es6,Promise,fetch,Array.prototype.includes"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Supabase JS Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <!-- ========== CSS MODULAR ========== -->
     <link rel="stylesheet" href="css/main.css">
-
-    <!-- ========== CSS Download png absen ========== -->
     <link rel="stylesheet" href="css/download-png.css">
+    <link rel="stylesheet" href="css/terang-besar.css">
     
-    <!-- html2canvas -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
     <style>
-        /* ===== TAMPILAN TERANG & FONT BESAR ===== */
-        * {
-            font-size: 18px;
-        }
-
-        body {
-            background: #edf2f9 !important;
-            color: #0a1a2e !important;
-        }
-
-        .container {
-            background: #ffffff !important;
-            max-width: 500px !important;
-            padding: 16px !important;
-        }
-
-        .dukops-header {
-            background: linear-gradient(135deg, #dce8f8, #b8cce8) !important;
-            border-bottom: 3px solid #2a6a9a !important;
-            padding: 18px 16px !important;
-            border-radius: 14px 14px 0 0 !important;
-        }
-
-        .dukops-header-title {
-            font-size: 1.8rem !important;
-            font-weight: 700 !important;
-            color: #0a1a3a !important;
-            text-shadow: 0 1px 2px rgba(255,255,255,0.5) !important;
-        }
-
-        .dukops-header-address {
-            font-size: 1rem !important;
-            color: #1a2a4a !important;
-        }
-
-        label {
-            font-size: 1.2rem !important;
-            font-weight: 600 !important;
-            color: #0a1a3a !important;
-            margin-top: 14px !important;
-            display: block !important;
-        }
-
+        /* ===== PERBAIKAN TAMBAHAN UNTUK INPUT & SELECT ===== */
         select, input, textarea {
-            font-size: 1.15rem !important;
-            padding: 14px 18px !important;
-            border-radius: 12px !important;
-            border: 2px solid #c8d8e8 !important;
-            background: #faffff !important;
-            width: 100% !important;
+            color: #0a1a2e !important;
+            background: #ffffff !important;
+            font-weight: 500 !important;
+            border: 2px solid #2a5a8a !important;
         }
 
-        select:focus, input:focus, textarea:focus {
-            border-color: #2a7acc !important;
-            box-shadow: 0 0 0 4px rgba(42, 122, 204, 0.15) !important;
+        select option {
+            color: #0a1a2e !important;
+            background: #ffffff !important;
+            font-weight: 500 !important;
+        }
+
+        ::placeholder {
+            color: #6a7a8a !important;
+            font-weight: 400 !important;
+            opacity: 1 !important;
         }
 
         .previewBox {
-            background: #f5f9ff !important;
-            border: 2px solid #dce6f0 !important;
-            border-radius: 14px !important;
-            padding: 18px 20px !important;
-            margin: 6px 0 14px 0 !important;
-            font-size: 1.1rem !important;
             color: #0a1a2e !important;
+            font-weight: 500 !important;
+            border: 2px solid #2a5a8a !important;
         }
 
-        textarea#narasi {
-            font-size: 1.15rem !important;
-            line-height: 1.9 !important;
-            padding: 18px !important;
-            min-height: 200px !important;
-        }
-
-        button, .nav-btn {
-            font-size: 1.15rem !important;
-            padding: 16px 26px !important;
-            border-radius: 14px !important;
-            font-weight: 600 !important;
-        }
-
-        #submitBtn {
-            background: #1a6a3a !important;
-            color: #ffffff !important;
-            font-size: 1.2rem !important;
-            padding: 18px 28px !important;
-        }
-
-        #resetBtn {
-            background: #e8ecf0 !important;
-            color: #1a2a3a !important;
-            font-size: 1.1rem !important;
-        }
-
-        .telegram-running-container {
-            background: #dce8f8 !important;
-            padding: 8px 0 !important;
-        }
-
-        .telegram-running-text {
-            font-size: 1.3rem !important;
-            font-weight: 600 !important;
-            color: #0a1a3a !important;
-            padding: 14px 0 !important;
-        }
-
-        .jadwal-title {
-            font-size: 2.2rem !important;
-            font-weight: 800 !important;
-            color: #0a1a3a !important;
-        }
-
-        .jadwal-section {
-            background: #f5f9ff !important;
-            border: 2px solid #dce6f0 !important;
-            border-radius: 16px !important;
-            padding: 20px !important;
-            margin: 12px 0 !important;
-        }
-
-        .section-title-koramil,
-        .section-title-kediaman,
-        .section-title-makodim {
-            font-size: 1.3rem !important;
-            font-weight: 700 !important;
-            color: #0a1a3a !important;
-        }
-
-        .absen-card {
-            background: #f5f9ff !important;
-            border: 2px solid #dce6f0 !important;
-            border-radius: 16px !important;
-            padding: 20px !important;
-        }
-
-        .absen-stat-value {
-            font-size: 2rem !important;
-            font-weight: 800 !important;
-        }
-
-        .absen-desa-name {
-            font-size: 1.1rem !important;
-            font-weight: 600 !important;
-        }
-
-        .modal-ai-content {
-            background: #ffffff !important;
-            border-radius: 20px !important;
-            padding: 24px !important;
-        }
-
-        .modal-ai-header h3 {
-            font-size: 1.4rem !important;
-            font-weight: 700 !important;
-        }
-
-        .modal-template-text {
-            font-size: 1.1rem !important;
-            line-height: 1.7 !important;
-        }
-
-        .dukops-announcement-bar {
-            background: #1a2a4a !important;
-            padding: 10px 0 !important;
-        }
-
-        .dukops-announcement-text {
-            font-size: 1rem !important;
-            color: #ffdd77 !important;
-        }
-
-        .previewBox, .jadwal-section, .absen-card {
-            color: #0a1a2e !important;
-        }
-
-        .previewBox label, .previewBox span {
+        .previewBox * {
             color: #0a1a2e !important;
         }
 
@@ -227,14 +72,22 @@
             font-weight: 500 !important;
         }
 
-        ::placeholder {
-            color: #6a7a8a !important;
-            font-size: 1rem !important;
+        /* Dropdown arrow custom */
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230a1a2e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 18px;
+            padding-right: 40px !important;
         }
 
-        select option {
-            font-size: 1.1rem !important;
-            padding: 10px !important;
+        select:focus, input:focus, textarea:focus {
+            border-color: #1a5a9a !important;
+            box-shadow: 0 0 0 4px rgba(26, 90, 154, 0.2) !important;
+            outline: none !important;
         }
     </style>
 </head>
