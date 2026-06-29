@@ -29,11 +29,11 @@
 
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/download-png.css">
-    <link rel="stylesheet" href="css/terang-besar.css">
     
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
     <style>
+        /* ===== PERBAIKAN TAMBAHAN ===== */
         select, input, textarea {
             color: #0a1a2e !important;
             background: #ffffff !important;
@@ -86,20 +86,144 @@
             outline: none !important;
         }
 
-        /* Hilangkan pesan "Desa: XXX" di preview */
+        /* Hilangkan preview desa */
         #previewDesa {
             display: none !important;
         }
 
-        /* Loading koordinat */
         #loadingKoordinat {
             color: #0a1a2e !important;
             font-weight: 500 !important;
         }
 
-        /* Preview koordinat */
         #previewKordinat {
             min-height: 30px !important;
+        }
+
+        /* ===== TINGGI NARASI ===== */
+        #narasi {
+            min-height: 350px !important;
+            height: auto !important;
+            max-height: 500px !important;
+            resize: vertical !important;
+            padding: 18px !important;
+            font-size: 1.15rem !important;
+            line-height: 1.9 !important;
+            color: #0a1a2e !important;
+            background: #ffffff !important;
+            font-weight: 500 !important;
+            border: 2px solid #2a5a8a !important;
+            border-radius: 12px !important;
+        }
+
+        /* ===== SLIDER VOLUME PUTIH ===== */
+        .audio-volume-slider {
+            display: inline-block !important;
+            width: 100px !important;
+            height: 6px !important;
+            border-radius: 999px !important;
+            background: rgba(255,255,255,0.4) !important;
+            outline: none !important;
+            -webkit-appearance: none !important;
+            appearance: none !important;
+            cursor: pointer !important;
+        }
+
+        .audio-volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none !important;
+            appearance: none !important;
+            width: 16px !important;
+            height: 16px !important;
+            border-radius: 50% !important;
+            background: #ffffff !important;
+            cursor: pointer !important;
+            box-shadow: 0 0 8px rgba(0,0,0,0.3) !important;
+            border: 2px solid #2a5a8a !important;
+        }
+
+        .audio-volume-slider::-moz-range-thumb {
+            width: 16px !important;
+            height: 16px !important;
+            border-radius: 50% !important;
+            background: #ffffff !important;
+            cursor: pointer !important;
+            border: 2px solid #2a5a8a !important;
+        }
+
+        /* ===== HILANGKAN TOMBOL SPEAKER ===== */
+        #mp3ControlBtn {
+            display: none !important;
+        }
+
+        /* ===== AUDIO WRAPPER ===== */
+        .audio-control-wrapper {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            margin-top: 8px !important;
+        }
+
+        /* ===== INSTALL BUTTON ===== */
+        #installButton {
+            display: none;
+            margin-bottom: 15px;
+            background: #4CAF50 !important;
+            color: white !important;
+            border: none !important;
+            padding: 12px !important;
+            border-radius: 10px !important;
+            font-weight: bold !important;
+            width: 100% !important;
+        }
+
+        /* ===== ANNOUNCEMENT ===== */
+        .dukops-announcement-bar {
+            background: #1a2a4a !important;
+            padding: 10px 0 !important;
+        }
+
+        .dukops-announcement-text {
+            font-size: 1rem !important;
+            color: #ffdd77 !important;
+        }
+
+        .container {
+            max-width: 500px !important;
+            padding: 16px !important;
+        }
+
+        /* ===== ACTION BUTTONS ===== */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .action-buttons button {
+            flex: 1;
+        }
+
+        /* ===== AI TEMPLATE ===== */
+        .ai-template-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+
+        .ai-template-btn {
+            background: #2ecc71 !important;
+            color: #0a1a0a !important;
+            border: none !important;
+            padding: 10px 18px !important;
+            border-radius: 10px !important;
+            font-weight: 600 !important;
+            cursor: pointer !important;
+        }
+
+        .ai-template-btn:hover {
+            background: #27ae60 !important;
         }
     </style>
 </head>
@@ -125,7 +249,9 @@
     </div>
 
     <!-- ================= BACKGROUND MP3 PLAYER ================= -->
-    <audio id="backgroundMusic" loop preload="auto"></audio>
+    <audio id="backgroundMusic" loop preload="auto">
+        <source src="assets/audio/background.mp3" type="audio/mpeg">
+    </audio>
 
     <!-- ================= ANNOUNCEMENT BAR ================= -->
     <div class="dukops-announcement-bar">
@@ -151,6 +277,11 @@
                     <div class="dukops-header-address">
                         <i class="fas fa-map-marker-alt"></i> Jl. Jelantik Gingsir No. 32 Sukasada Singaraja-Bali 81161
                     </div>
+                    <div class="audio-control-wrapper">
+                        <!-- TOMBOL SPEAKER DIHILANGKAN -->
+                        <input id="audioVolumeSlider" class="audio-volume-slider" type="range" min="0" max="100" value="30" aria-label="Volume audio">
+                    </div>
+                    <div><span class="counter-value" id="submissionCounter">0</span></div>
                 </div>
             </div>
         </div>
@@ -181,7 +312,6 @@
                     <option value="">-- Pilih Desa --</option>
                 </select>
                 <div id="loadingDesa" style="display:none;"><i class="fas fa-spinner fa-spin"></i> Memuat...</div>
-                <!-- PREVIEW DESA DIHILANGKAN -->
                 <div class="previewBox" id="previewDesa" style="display:none;"></div>
 
                 <label><i class="fas fa-map-pin"></i> Koordinat:</label>
@@ -198,9 +328,10 @@
 
                 <label><i class="fas fa-file-alt"></i> Narasi Kegiatan:</label>
                 <div class="narasi-wrapper">
-                    <textarea id="narasi" rows="12" placeholder="Masukkan narasi kegiatan..." oninput="checkInputCompletion()"></textarea>
+                    <textarea id="narasi" rows="18" placeholder="Masukkan narasi kegiatan..." oninput="checkInputCompletion()"></textarea>
                 </div>
 
+                <!-- AI TEMPLATE -->
                 <div class="ai-template-container">
                     <span><i class="fas fa-robot" style="color: #2ecc71;"></i> Butuh template narasi?</span>
                     <button class="ai-template-btn" id="aiTemplateBtn">
@@ -217,13 +348,13 @@
                     <button id="resetBtn" onclick="resetAll()"><i class="fas fa-redo"></i> RESET</button>
                 </div>
 
-                <button id="showAttendanceBtn" onclick="showAttendance()" style="margin-top:12px;">
+                <button id="showAttendanceBtn" onclick="showAttendance()" style="margin-top:12px; width:100%; padding:14px; border-radius:12px; background:#1a6a3a; color:#ffffff; border:none; font-weight:600; font-size:1.1rem; cursor:pointer;">
                     <i class="fas fa-chart-bar"></i> KLIK INI..CEK LAPORAN ANDA DISINI YANG TIAP BULAN
                 </button>
 
                 <div id="attendancePanel" style="display: none;">
                     <div class="attendance-header">
-                        <button onclick="hideAttendance()">✕ TUTUP</button>
+                        <button onclick="hideAttendance()" style="background:#ff4444; color:#ffffff; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:600;">✕ TUTUP</button>
                     </div>
                     <div class="attendance-filters">
                         <select id="attendanceDesaFilter" onchange="loadAttendanceData()">
@@ -364,55 +495,11 @@
 
     <!-- ==================== JAVASCRIPT ==================== -->
 
-    <!-- ============ RUNNING TEXT INFORMASI ============ -->
-    <script>
-        const infoRunningTextEl = document.getElementById('infoRunningMessage');
-
-        function updateInfoRunningText(message) {
-            if (infoRunningTextEl) {
-                let displayMsg = message.length > 100 ? message.substring(0, 97) + '...' : message;
-                infoRunningTextEl.textContent = `📢 ${displayMsg}`;
-                infoRunningTextEl.style.animation = 'none';
-                void infoRunningTextEl.offsetWidth;
-                infoRunningTextEl.style.animation = 'telegramMarquee 20s linear infinite';
-                console.log("✅ Running text diperbarui:", displayMsg);
-            }
-        }
-
-        (function() {
-            const messages = [
-                "📢 Selamat datang di DUKOPS Digitalisasi Babinsa",
-                "📢 Pastikan laporan terisi dengan benar dan lengkap",
-                "🇮🇩 Target 9 laporan per desa per bulan • Semangat Babinsa!",
-                "📊 Pantau terus laporan bulanan di menu ABSEN",
-                "✅ Laporan DUKOPS membantu pembinaan teritorial"
-            ];
-
-            let currentIndex = 0;
-
-            function rotateMessage() {
-                if (!infoRunningTextEl) return;
-                currentIndex = (currentIndex + 1) % messages.length;
-                infoRunningTextEl.textContent = messages[currentIndex];
-                infoRunningTextEl.style.animation = 'none';
-                void infoRunningTextEl.offsetWidth;
-                infoRunningTextEl.style.animation = 'telegramMarquee 20s linear infinite';
-            }
-
-            if (infoRunningTextEl) {
-                infoRunningTextEl.textContent = messages[0];
-                infoRunningTextEl.style.animation = 'telegramMarquee 20s linear infinite';
-            }
-
-            setInterval(rotateMessage, 5000);
-            console.log('✅ Running text auto-rotate aktif');
-        })();
-    </script>
-
     <!-- ============ MP3 BACKGROUND AUTO-PLAY ============ -->
     <script>
         (function() {
             const audio = document.getElementById('backgroundMusic');
+            const volumeSlider = document.getElementById('audioVolumeSlider');
             let isPlaying = false;
             let hasUserInteracted = false;
 
@@ -429,10 +516,34 @@
                 if (!audio.src) {
                     audio.src = 'assets/audio/background.mp3';
                 }
-                audio.volume = 0.2;
+                audio.volume = 0.3;
+                if (volumeSlider) {
+                    volumeSlider.value = Math.round(audio.volume * 100);
+                }
                 audio.loop = true;
                 audio.load();
             }
+
+            if (volumeSlider) {
+                volumeSlider.oninput = function() {
+                    if (!audio) return;
+                    const value = parseInt(this.value, 10) / 100;
+                    audio.volume = value;
+                    if (value > 0 && !isPlaying && hasUserInteracted) {
+                        playMusic();
+                    }
+                };
+            }
+
+            window.triggerPlayMusic = function() {
+                if (!audio) return;
+                if (!hasUserInteracted) {
+                    hasUserInteracted = true;
+                    playMusic();
+                } else if (!isPlaying) {
+                    playMusic();
+                }
+            };
 
             function firstInteraction() {
                 if (!hasUserInteracted) {
@@ -452,8 +563,6 @@
                     playMusic();
                 }
             }, 3000);
-
-            window.triggerPlayMusic = playMusic;
         })();
     </script>
 
@@ -468,7 +577,6 @@
         let profileImagesGlobal = {};
         let coordinatesData = {};
 
-        // ========== LOAD KOORDINAT ==========
         async function loadCoordinates() {
             try {
                 const response = await fetch(COORDINATES_URL + '?t=' + Date.now());
@@ -486,8 +594,6 @@
 
         function getCoordinates(desaName) {
             if (!desaName || !coordinatesData) return null;
-            
-            // Cari nama desa di data koordinat (case insensitive)
             for (let key in coordinatesData) {
                 if (key.toLowerCase() === desaName.toLowerCase()) {
                     return coordinatesData[key];
@@ -501,6 +607,7 @@
             const loadingKoordinat = document.getElementById('loadingKoordinat');
             
             if (!previewKordinat) return;
+            if (loadingKoordinat) loadingKoordinat.style.display = 'none';
             
             if (!desaName || desaName === "") {
                 previewKordinat.innerHTML = '<span style="color:#6a7a8a;">Pilih desa untuk melihat koordinat</span>';
@@ -521,13 +628,11 @@
             }
         }
 
-        // ========== LOAD DESA ==========
         async function loadDesaListFromGitHub() {
             const selectDesa = document.getElementById('selectDesa');
             const loadingDesa = document.getElementById('loadingDesa');
 
             try {
-                // Load koordinat dulu
                 await loadCoordinates();
 
                 const response = await fetch(DESA_LIST_URL + '?t=' + Date.now());
@@ -577,8 +682,6 @@
             selectDesa.value = "";
             const loadingDesa = document.getElementById('loadingDesa');
             if (loadingDesa) loadingDesa.style.display = 'none';
-            
-            // Update koordinat default
             updateCoordinatesPreview("");
         }
 
@@ -616,8 +719,6 @@
                 imgElement.src = DEFAULT_FAVICON_URL;
                 if (nameElement) nameElement.textContent = desaName || "Pilih Desa";
             }
-            
-            // Update koordinat
             updateCoordinatesPreview(desaName);
         }
 
@@ -1235,10 +1336,24 @@
     <!-- ============ SUPABASE ============ -->
     <script src="supabase-integration.js"></script>
 
+    <!-- ============ PLAY MP3 SETIAP KLIK TAB ============ -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (typeof window.triggerPlayMusic === 'function') {
+                        window.triggerPlayMusic();
+                    }
+                });
+            });
+        });
+    </script>
+
     <!-- ============ RESET CANVAS ============ -->
     <script>
         function resetCanvas() {
             const canvas = document.getElementById('canvas');
+            if (!canvas) return;
             const ctx = canvas.getContext('2d');
             
             canvas.width = 800;
