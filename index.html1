@@ -15,21 +15,18 @@
     <title>SISTEM PELAPORAN DUKOPS BABINSA dan JADWAL PIKET KORAMIL</title>
     <meta name="theme-color" content="#0a1a3a">
 
-    <!-- ========== FAVICON ========== -->
     <link rel="icon" type="image/png" href="favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="shortcut icon" href="favicon.ico" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <link rel="manifest" href="site.webmanifest" />
 
-    <!-- External Libraries -->
     <script src="https://cdn.polyfill.io/v3/polyfill.min.js?features=default,es6,Promise,fetch,Array.prototype.includes"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- ========== CSS MODULAR ========== -->
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/download-png.css">
     <link rel="stylesheet" href="css/terang-besar.css">
@@ -37,7 +34,6 @@
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
     <style>
-        /* ===== PERBAIKAN TAMBAHAN UNTUK INPUT & SELECT ===== */
         select, input, textarea {
             color: #0a1a2e !important;
             background: #ffffff !important;
@@ -61,6 +57,7 @@
             color: #0a1a2e !important;
             font-weight: 500 !important;
             border: 2px solid #2a5a8a !important;
+            background: #f5f9ff !important;
         }
 
         .previewBox * {
@@ -72,7 +69,6 @@
             font-weight: 500 !important;
         }
 
-        /* Dropdown arrow custom */
         select {
             -webkit-appearance: none;
             -moz-appearance: none;
@@ -88,6 +84,22 @@
             border-color: #1a5a9a !important;
             box-shadow: 0 0 0 4px rgba(26, 90, 154, 0.2) !important;
             outline: none !important;
+        }
+
+        /* Hilangkan pesan "Desa: XXX" di preview */
+        #previewDesa {
+            display: none !important;
+        }
+
+        /* Loading koordinat */
+        #loadingKoordinat {
+            color: #0a1a2e !important;
+            font-weight: 500 !important;
+        }
+
+        /* Preview koordinat */
+        #previewKordinat {
+            min-height: 30px !important;
         }
     </style>
 </head>
@@ -139,8 +151,6 @@
                     <div class="dukops-header-address">
                         <i class="fas fa-map-marker-alt"></i> Jl. Jelantik Gingsir No. 32 Sukasada Singaraja-Bali 81161
                     </div>
-                    <!-- AUDIO CONTROLS DAN COUNTER TELAH DIHAPUS -->
-                    <!-- MP3 BACKGROUND TETAP BERJALAN OTOMATIS -->
                 </div>
             </div>
         </div>
@@ -171,11 +181,12 @@
                     <option value="">-- Pilih Desa --</option>
                 </select>
                 <div id="loadingDesa" style="display:none;"><i class="fas fa-spinner fa-spin"></i> Memuat...</div>
-                <div class="previewBox" id="previewDesa"></div>
+                <!-- PREVIEW DESA DIHILANGKAN -->
+                <div class="previewBox" id="previewDesa" style="display:none;"></div>
 
                 <label><i class="fas fa-map-pin"></i> Koordinat:</label>
-                <div id="loadingKoordinat" style="display:none;"><i class="fas fa-spinner fa-spin"></i> Memuat...</div>
-                <div class="previewBox" id="previewKordinat"></div>
+                <div id="loadingKoordinat" style="display:none;"><i class="fas fa-spinner fa-spin"></i> Memuat koordinat...</div>
+                <div class="previewBox" id="previewKordinat"><span style="color:#6a7a8a;">Pilih desa untuk melihat koordinat</span></div>
 
                 <label><i class="fas fa-camera"></i> Foto Kegiatan:</label>
                 <input type="file" id="gambar" accept="image/*" onchange="previewImage()">
@@ -190,7 +201,6 @@
                     <textarea id="narasi" rows="12" placeholder="Masukkan narasi kegiatan..." oninput="checkInputCompletion()"></textarea>
                 </div>
 
-                <!-- AI TEMPLATE DI BAWAH -->
                 <div class="ai-template-container">
                     <span><i class="fas fa-robot" style="color: #2ecc71;"></i> Butuh template narasi?</span>
                     <button class="ai-template-btn" id="aiTemplateBtn">
@@ -211,7 +221,6 @@
                     <i class="fas fa-chart-bar"></i> KLIK INI..CEK LAPORAN ANDA DISINI YANG TIAP BULAN
                 </button>
 
-                <!-- Panel Absensi -->
                 <div id="attendancePanel" style="display: none;">
                     <div class="attendance-header">
                         <button onclick="hideAttendance()">✕ TUTUP</button>
@@ -250,7 +259,6 @@
                 <div class="running-text" id="runningTextJadwalBaru">🌾 Memuat jadwal hanpangan... 🌾</div>
             </div>
 
-            <!-- Piket Koramil -->
             <div class="jadwal-section">
                 <div class="section-content">
                     <div>
@@ -270,7 +278,6 @@
                 </div>
             </div>
 
-            <!-- Jaga Kediaman -->
             <div class="jadwal-section">
                 <div class="section-content">
                     <div>
@@ -290,7 +297,6 @@
                 </div>
             </div>
 
-            <!-- Piket Makodim -->
             <div class="jadwal-section">
                 <div class="section-content">
                     <div>
@@ -310,13 +316,11 @@
                 </div>
             </div>
 
-            <!-- Tombol WhatsApp -->
             <button id="whatsappBtnBaru" class="whatsapp-transparent-btn">
                 <i class="fab fa-whatsapp"></i>
                 <span>KIRIM KE WHATSAPP</span>
             </button>
 
-            <!-- Preview Pesan -->
             <div class="jadwal-section">
                 <textarea id="j_hasilPesanBaru" class="auto-height-textarea" readonly placeholder="Preview pesan akan muncul di sini setelah memilih nama..."></textarea>
             </div>
@@ -453,25 +457,84 @@
         })();
     </script>
 
-    <!-- ============ DATA DESA ============ -->
+    <!-- ============ DATA DESA & KOORDINAT ============ -->
     <script>
         const DESA_LIST_URL = 'data/desa-list.json';
+        const COORDINATES_URL = 'data/coordinates.json';
         const PROFILE_BASE_URL = 'profile/';
         const DEFAULT_FAVICON_URL = 'favicon-96x96.png';
 
         let daftarDesaGlobal = [];
         let profileImagesGlobal = {};
+        let coordinatesData = {};
 
+        // ========== LOAD KOORDINAT ==========
+        async function loadCoordinates() {
+            try {
+                const response = await fetch(COORDINATES_URL + '?t=' + Date.now());
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const data = await response.json();
+                coordinatesData = data.coordinates || {};
+                console.log("✅ Koordinat berhasil dimuat:", Object.keys(coordinatesData).length, "desa");
+                return true;
+            } catch (error) {
+                console.error("Gagal memuat koordinat:", error);
+                coordinatesData = {};
+                return false;
+            }
+        }
+
+        function getCoordinates(desaName) {
+            if (!desaName || !coordinatesData) return null;
+            
+            // Cari nama desa di data koordinat (case insensitive)
+            for (let key in coordinatesData) {
+                if (key.toLowerCase() === desaName.toLowerCase()) {
+                    return coordinatesData[key];
+                }
+            }
+            return null;
+        }
+
+        function updateCoordinatesPreview(desaName) {
+            const previewKordinat = document.getElementById('previewKordinat');
+            const loadingKoordinat = document.getElementById('loadingKoordinat');
+            
+            if (!previewKordinat) return;
+            
+            if (!desaName || desaName === "") {
+                previewKordinat.innerHTML = '<span style="color:#6a7a8a;">Pilih desa untuk melihat koordinat</span>';
+                return;
+            }
+            
+            const coords = getCoordinates(desaName);
+            if (coords) {
+                previewKordinat.innerHTML = `
+                    <div style="display:flex;flex-direction:column;gap:4px;">
+                        <span><i class="fas fa-location-dot" style="color:#e74c3c;"></i> <strong>Latitude:</strong> ${coords.lat}</span>
+                        <span><i class="fas fa-location-dot" style="color:#3498db;"></i> <strong>Longitude:</strong> ${coords.lng}</span>
+                        ${coords.nama ? `<span><i class="fas fa-map-pin" style="color:#2ecc71;"></i> <strong>Lokasi:</strong> ${coords.nama}</span>` : ''}
+                    </div>
+                `;
+            } else {
+                previewKordinat.innerHTML = `<span style="color:#e67e22;"><i class="fas fa-exclamation-triangle"></i> Koordinat tidak tersedia untuk desa ini</span>`;
+            }
+        }
+
+        // ========== LOAD DESA ==========
         async function loadDesaListFromGitHub() {
             const selectDesa = document.getElementById('selectDesa');
             const loadingDesa = document.getElementById('loadingDesa');
 
             try {
+                // Load koordinat dulu
+                await loadCoordinates();
+
                 const response = await fetch(DESA_LIST_URL + '?t=' + Date.now());
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const data = await response.json();
                 daftarDesaGlobal = data.desaList || [];
-                console.log("✅ Daftar desa berhasil dimuat dari lokal:", daftarDesaGlobal.length, "desa");
+                console.log("✅ Daftar desa berhasil dimuat:", daftarDesaGlobal.length, "desa");
 
                 daftarDesaGlobal.forEach(desa => {
                     let fileName = desa.toLowerCase() + '.png';
@@ -481,7 +544,7 @@
                 populateDesaDropdown();
 
             } catch (error) {
-                console.error("Gagal memuat daftar desa lokal:", error);
+                console.error("Gagal memuat daftar desa:", error);
                 if (loadingDesa) {
                     loadingDesa.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Gagal memuat daftar desa. Cek koneksi internet!';
                     loadingDesa.style.color = '#ff6666';
@@ -514,6 +577,9 @@
             selectDesa.value = "";
             const loadingDesa = document.getElementById('loadingDesa');
             if (loadingDesa) loadingDesa.style.display = 'none';
+            
+            // Update koordinat default
+            updateCoordinatesPreview("");
         }
 
         function updateDesaProfile(desaName) {
@@ -523,6 +589,7 @@
             if (!desaName || desaName === "") {
                 imgElement.src = DEFAULT_FAVICON_URL;
                 if (nameElement) nameElement.textContent = "Pilih Desa";
+                updateCoordinatesPreview("");
                 return;
             }
 
@@ -541,7 +608,7 @@
                 if (nameElement) nameElement.textContent = matchedKey;
 
                 imgElement.onerror = function() {
-                    console.warn(`Gagal memuat profil untuk ${matchedKey}, file tidak ditemukan di folder profile/`);
+                    console.warn(`Gagal memuat profil untuk ${matchedKey}`);
                     imgElement.src = DEFAULT_FAVICON_URL;
                     if (nameElement) nameElement.textContent = matchedKey;
                 };
@@ -549,6 +616,9 @@
                 imgElement.src = DEFAULT_FAVICON_URL;
                 if (nameElement) nameElement.textContent = desaName || "Pilih Desa";
             }
+            
+            // Update koordinat
+            updateCoordinatesPreview(desaName);
         }
 
         function injectDesaKeNarasi(templateText, namaDesa) {
