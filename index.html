@@ -225,6 +225,73 @@
         .ai-template-btn:hover {
             background: #27ae60 !important;
         }
+
+        /* ===== FILTER GAMBAR LANDSCAPE ===== */
+        #gambarError {
+            color: #ff4444;
+            font-weight: 600;
+            padding: 10px 14px;
+            background: #ffebee;
+            border-radius: 10px;
+            border-left: 4px solid #ff4444;
+            margin: 8px 0;
+            display: none;
+            font-size: 1rem;
+        }
+
+        #gambarError i {
+            margin-right: 8px;
+        }
+
+        #gambarInfo {
+            color: #2a5a8a;
+            font-size: 0.85rem;
+            margin: 4px 0 8px 0;
+            display: block;
+        }
+
+        .gambar-landscape-badge {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(46, 204, 113, 0.92);
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .gambar-preview-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .gambar-preview-wrapper img {
+            width: 100%;
+            border-radius: 8px;
+            max-height: 400px;
+            object-fit: cover;
+        }
+
+        .gambar-error-wrapper {
+            color: #ff4444;
+            font-weight: 600;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .gambar-error-wrapper i {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .gambar-error-wrapper span {
+            font-size: 0.8rem;
+            color: #666;
+        }
     </style>
 </head>
 
@@ -320,6 +387,8 @@
 
                 <label><i class="fas fa-camera"></i> Foto Kegiatan:</label>
                 <input type="file" id="gambar" accept="image/*" onchange="previewImage()">
+                <div id="gambarInfo"><i class="fas fa-info-circle"></i> 📷 Hanya gambar LANDSCAPE (lebar > tinggi) yang diterima</div>
+                <div id="gambarError"><i class="fas fa-exclamation-circle"></i> <span id="gambarErrorText">Gambar harus LANDSCAPE (lebar lebih besar dari tinggi)!</span></div>
                 <div class="previewBox" id="previewGambar"></div>
 
                 <label><i class="fas fa-calendar-alt"></i> Tanggal & Waktu:</label>
@@ -1384,6 +1453,89 @@
         document.addEventListener('DOMContentLoaded', function() {
             resetCanvas();
         });
+    </script>
+
+    <!-- ============ PREVIEW GAMBAR DENGAN FILTER LANDSCAPE ============ -->
+    <script>
+        function previewImage() {
+            const input = document.getElementById('gambar');
+            const preview = document.getElementById('previewGambar');
+            const errorDiv = document.getElementById('gambarError');
+            const errorText = document.getElementById('gambarErrorText');
+            
+            if (errorDiv) errorDiv.style.display = 'none';
+            
+            if (!input || !input.files || !input.files[0]) {
+                if (preview) preview.innerHTML = '<span style="color:#6a7a8a;">Belum ada gambar dipilih</span>';
+                return;
+            }
+            
+            const file = input.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const lebar = img.width;
+                    const tinggi = img.height;
+                    const isLandscape = lebar > tinggi;
+                    
+                    console.log(`📐 Ukuran gambar: ${lebar}×${tinggi}`);
+                    console.log(`🔄 Orientasi: ${isLandscape ? 'LANDSCAPE ✅' : 'POTRAIT/SQUARE ❌'}`);
+                    
+                    if (!isLandscape) {
+                        if (errorDiv) {
+                            errorDiv.style.display = 'block';
+                            if (errorText) {
+                                errorText.textContent = `❌ GAMBAR POTRAIT DITOLAK! (${lebar}×${tinggi}) - Gunakan gambar LANDSCAPE (lebar > tinggi)`;
+                            }
+                        }
+                        if (preview) {
+                            preview.innerHTML = `
+                                <div class="gambar-error-wrapper">
+                                    <i class="fas fa-times-circle"></i>
+                                    ❌ GAMBAR POTRAIT DITOLAK!<br>
+                                    <span>Ukuran: ${lebar}×${tinggi} (Harus lebar > tinggi)</span>
+                                </div>
+                            `;
+                        }
+                        input.value = '';
+                        if (typeof checkInputCompletion === 'function') {
+                            checkInputCompletion();
+                        }
+                        return;
+                    }
+                    
+                    if (errorDiv) errorDiv.style.display = 'none';
+                    
+                    if (preview) {
+                        preview.innerHTML = `
+                            <div class="gambar-preview-wrapper">
+                                <img src="${e.target.result}" alt="Preview gambar landscape">
+                                <div class="gambar-landscape-badge">
+                                    ✅ LANDSCAPE (${lebar}×${tinggi})
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    window._gambarData = {
+                        file: file,
+                        dataUrl: e.target.result,
+                        width: lebar,
+                        height: tinggi,
+                        isLandscape: true
+                    };
+                    
+                    if (typeof checkInputCompletion === 'function') {
+                        checkInputCompletion();
+                    }
+                };
+                img.src = e.target.result;
+            };
+            
+            reader.readAsDataURL(file);
+        }
     </script>
 
     <!-- ============ Tawk.to Chat ============ -->
