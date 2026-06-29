@@ -1377,21 +1377,34 @@
             canvas.width = 800;
             canvas.height = Math.round(canvas.width / (16 / 9));
             
-            // Background default hijau
-            ctx.fillStyle = '#0a1a0a';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.src = 'header/header-background.png';
             
-            // Teks placeholder
-            ctx.fillStyle = '#4CAF50';
-            ctx.font = '20px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('📸 Preview gambar akan muncul di sini', canvas.width / 2, canvas.height / 2);
+            img.onload = function() {
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                // ===== WATERMARK DI ATAS HEADER =====
+                ctx.fillStyle = 'rgba(255, 215, 0, 0.15)';
+                ctx.font = '24px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('📸 DUKOPS BABINSA', canvas.width / 2, canvas.height - 30);
+            };
             
-            // WATERMARK
-            ctx.fillStyle = 'rgba(255, 215, 0, 0.15)';
-            ctx.font = '24px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('📸 DUKOPS BABINSA', canvas.width / 2, canvas.height - 30);
+            img.onerror = function() {
+                ctx.fillStyle = '#0a1a0a';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#4CAF50';
+                ctx.font = '20px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('📸 Preview gambar akan muncul di sini', canvas.width / 2, canvas.height / 2);
+                
+                // ===== WATERMARK TETAP MUNCUL =====
+                ctx.fillStyle = 'rgba(255, 215, 0, 0.15)';
+                ctx.font = '24px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('📸 DUKOPS BABINSA', canvas.width / 2, canvas.height - 30);
+            };
         }
 
         // ============ PREVIEW GAMBAR DI CANVAS ============
@@ -1432,7 +1445,7 @@
                     canvas.width = 800;
                     canvas.height = Math.round(canvas.width / (16 / 9));
                     
-                    // Gambar foto FULL sebagai background (seperti header)
+                    // Gambar foto FULL sebagai background
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                     
                     // Efek overlay gelap di bagian bawah untuk watermark
@@ -1442,13 +1455,13 @@
                     ctx.fillStyle = gradient;
                     ctx.fillRect(0, canvas.height - 60, canvas.width, 60);
                     
-                    // WATERMARK
+                    // ===== WATERMARK DI ATAS GAMBAR =====
                     ctx.fillStyle = 'rgba(255, 215, 0, 0.25)';
                     ctx.font = 'bold 22px Arial';
                     ctx.textAlign = 'center';
                     ctx.fillText('📸 DUKOPS BABINSA', canvas.width / 2, canvas.height - 20);
                     
-                    // Border/Frame seperti header
+                    // Border/Frame
                     ctx.strokeStyle = 'rgba(255,215,0,0.3)';
                     ctx.lineWidth = 2;
                     ctx.strokeRect(0, 0, canvas.width, canvas.height);
@@ -1458,28 +1471,24 @@
                     ctx.strokeStyle = 'rgba(255,215,0,0.4)';
                     ctx.lineWidth = 3;
                     
-                    // Kiri Atas
                     ctx.beginPath();
                     ctx.moveTo(0, cornerSize);
                     ctx.lineTo(0, 0);
                     ctx.lineTo(cornerSize, 0);
                     ctx.stroke();
                     
-                    // Kanan Atas
                     ctx.beginPath();
                     ctx.moveTo(canvas.width - cornerSize, 0);
                     ctx.lineTo(canvas.width, 0);
                     ctx.lineTo(canvas.width, cornerSize);
                     ctx.stroke();
                     
-                    // Kiri Bawah
                     ctx.beginPath();
                     ctx.moveTo(0, canvas.height - cornerSize);
                     ctx.lineTo(0, canvas.height);
                     ctx.lineTo(cornerSize, canvas.height);
                     ctx.stroke();
                     
-                    // Kanan Bawah
                     ctx.beginPath();
                     ctx.moveTo(canvas.width - cornerSize, canvas.height);
                     ctx.lineTo(canvas.width, canvas.height);
