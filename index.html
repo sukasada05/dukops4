@@ -28,14 +28,214 @@
     <!-- External Libraries -->
     <script src="https://cdn.polyfill.io/v3/polyfill.min.js?features=default,es6,Promise,fetch,Array.prototype.includes"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/terang-besar.css">
+
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- ========== CSS MODULAR ========== -->
     <link rel="stylesheet" href="css/main.css">
+
+    <!-- ========== CSS Download png absen ========== -->
     <link rel="stylesheet" href="css/download-png.css">
+    
+    <!-- html2canvas -->
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
     <style>
-        /* CSS sudah dipindahkan ke file terpisah di folder css/ */
+        /* ===== TAMPILAN TERANG & FONT BESAR ===== */
+        * {
+            font-size: 18px;
+        }
+
+        body {
+            background: #edf2f9 !important;
+            color: #0a1a2e !important;
+        }
+
+        .container {
+            background: #ffffff !important;
+            max-width: 500px !important;
+            padding: 16px !important;
+        }
+
+        .dukops-header {
+            background: linear-gradient(135deg, #dce8f8, #b8cce8) !important;
+            border-bottom: 3px solid #2a6a9a !important;
+            padding: 18px 16px !important;
+            border-radius: 14px 14px 0 0 !important;
+        }
+
+        .dukops-header-title {
+            font-size: 1.8rem !important;
+            font-weight: 700 !important;
+            color: #0a1a3a !important;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.5) !important;
+        }
+
+        .dukops-header-address {
+            font-size: 1rem !important;
+            color: #1a2a4a !important;
+        }
+
+        label {
+            font-size: 1.2rem !important;
+            font-weight: 600 !important;
+            color: #0a1a3a !important;
+            margin-top: 14px !important;
+            display: block !important;
+        }
+
+        select, input, textarea {
+            font-size: 1.15rem !important;
+            padding: 14px 18px !important;
+            border-radius: 12px !important;
+            border: 2px solid #c8d8e8 !important;
+            background: #faffff !important;
+            width: 100% !important;
+        }
+
+        select:focus, input:focus, textarea:focus {
+            border-color: #2a7acc !important;
+            box-shadow: 0 0 0 4px rgba(42, 122, 204, 0.15) !important;
+        }
+
+        .previewBox {
+            background: #f5f9ff !important;
+            border: 2px solid #dce6f0 !important;
+            border-radius: 14px !important;
+            padding: 18px 20px !important;
+            margin: 6px 0 14px 0 !important;
+            font-size: 1.1rem !important;
+            color: #0a1a2e !important;
+        }
+
+        textarea#narasi {
+            font-size: 1.15rem !important;
+            line-height: 1.9 !important;
+            padding: 18px !important;
+            min-height: 200px !important;
+        }
+
+        button, .nav-btn {
+            font-size: 1.15rem !important;
+            padding: 16px 26px !important;
+            border-radius: 14px !important;
+            font-weight: 600 !important;
+        }
+
+        #submitBtn {
+            background: #1a6a3a !important;
+            color: #ffffff !important;
+            font-size: 1.2rem !important;
+            padding: 18px 28px !important;
+        }
+
+        #resetBtn {
+            background: #e8ecf0 !important;
+            color: #1a2a3a !important;
+            font-size: 1.1rem !important;
+        }
+
+        .telegram-running-container {
+            background: #dce8f8 !important;
+            padding: 8px 0 !important;
+        }
+
+        .telegram-running-text {
+            font-size: 1.3rem !important;
+            font-weight: 600 !important;
+            color: #0a1a3a !important;
+            padding: 14px 0 !important;
+        }
+
+        .jadwal-title {
+            font-size: 2.2rem !important;
+            font-weight: 800 !important;
+            color: #0a1a3a !important;
+        }
+
+        .jadwal-section {
+            background: #f5f9ff !important;
+            border: 2px solid #dce6f0 !important;
+            border-radius: 16px !important;
+            padding: 20px !important;
+            margin: 12px 0 !important;
+        }
+
+        .section-title-koramil,
+        .section-title-kediaman,
+        .section-title-makodim {
+            font-size: 1.3rem !important;
+            font-weight: 700 !important;
+            color: #0a1a3a !important;
+        }
+
+        .absen-card {
+            background: #f5f9ff !important;
+            border: 2px solid #dce6f0 !important;
+            border-radius: 16px !important;
+            padding: 20px !important;
+        }
+
+        .absen-stat-value {
+            font-size: 2rem !important;
+            font-weight: 800 !important;
+        }
+
+        .absen-desa-name {
+            font-size: 1.1rem !important;
+            font-weight: 600 !important;
+        }
+
+        .modal-ai-content {
+            background: #ffffff !important;
+            border-radius: 20px !important;
+            padding: 24px !important;
+        }
+
+        .modal-ai-header h3 {
+            font-size: 1.4rem !important;
+            font-weight: 700 !important;
+        }
+
+        .modal-template-text {
+            font-size: 1.1rem !important;
+            line-height: 1.7 !important;
+        }
+
+        .dukops-announcement-bar {
+            background: #1a2a4a !important;
+            padding: 10px 0 !important;
+        }
+
+        .dukops-announcement-text {
+            font-size: 1rem !important;
+            color: #ffdd77 !important;
+        }
+
+        .previewBox, .jadwal-section, .absen-card {
+            color: #0a1a2e !important;
+        }
+
+        .previewBox label, .previewBox span {
+            color: #0a1a2e !important;
+        }
+
+        #previewDesa, #previewKordinat, #previewGambar, #previewTanggal {
+            color: #0a1a2e !important;
+            font-weight: 500 !important;
+        }
+
+        ::placeholder {
+            color: #6a7a8a !important;
+            font-size: 1rem !important;
+        }
+
+        select option {
+            font-size: 1.1rem !important;
+            padding: 10px !important;
+        }
     </style>
 </head>
 
@@ -86,17 +286,8 @@
                     <div class="dukops-header-address">
                         <i class="fas fa-map-marker-alt"></i> Jl. Jelantik Gingsir No. 32 Sukasada Singaraja-Bali 81161
                     </div>
-
-                    <!-- AUDIO + COUNTER SATU BARIS -->
-                    <div class="audio-counter-wrapper">
-                        <div class="audio-control-wrapper">
-                            <button id="mp3ControlBtn" class="audio-control-btn" type="button" title="Kontrol audio">
-                                <i class="fas fa-volume-up"></i>
-                            </button>
-                            <input id="audioVolumeSlider" class="audio-volume-slider" type="range" min="0" max="100" value="30" aria-label="Volume audio">
-                        </div>
-                        <span class="counter-value" id="submissionCounter">0</span>
-                    </div>
+                    <!-- AUDIO CONTROLS DAN COUNTER TELAH DIHAPUS -->
+                    <!-- MP3 BACKGROUND TETAP BERJALAN OTOMATIS -->
                 </div>
             </div>
         </div>
@@ -320,22 +511,17 @@
     <script>
         const infoRunningTextEl = document.getElementById('infoRunningMessage');
 
-        // ========== UPDATE RUNNING TEXT ==========
         function updateInfoRunningText(message) {
             if (infoRunningTextEl) {
                 let displayMsg = message.length > 100 ? message.substring(0, 97) + '...' : message;
                 infoRunningTextEl.textContent = `📢 ${displayMsg}`;
-
-                // Reset animasi agar tetap berjalan
                 infoRunningTextEl.style.animation = 'none';
                 void infoRunningTextEl.offsetWidth;
                 infoRunningTextEl.style.animation = 'telegramMarquee 20s linear infinite';
-
                 console.log("✅ Running text diperbarui:", displayMsg);
             }
         }
 
-        // ========== AUTO-ROUTE PESAN INFORMASI ==========
         (function() {
             const messages = [
                 "📢 Selamat datang di DUKOPS Digitalisasi Babinsa",
@@ -351,7 +537,6 @@
                 if (!infoRunningTextEl) return;
                 currentIndex = (currentIndex + 1) % messages.length;
                 infoRunningTextEl.textContent = messages[currentIndex];
-
                 infoRunningTextEl.style.animation = 'none';
                 void infoRunningTextEl.offsetWidth;
                 infoRunningTextEl.style.animation = 'telegramMarquee 20s linear infinite';
@@ -363,7 +548,55 @@
             }
 
             setInterval(rotateMessage, 5000);
-            console.log('✅ Running text auto-rotate aktif (tanpa Telegram)');
+            console.log('✅ Running text auto-rotate aktif');
+        })();
+    </script>
+
+    <!-- ============ MP3 BACKGROUND AUTO-PLAY ============ -->
+    <script>
+        (function() {
+            const audio = document.getElementById('backgroundMusic');
+            let isPlaying = false;
+            let hasUserInteracted = false;
+
+            function playMusic() {
+                if (audio && !isPlaying) {
+                    audio.play().then(() => {
+                        isPlaying = true;
+                        console.log('🎵 Musik background diputar');
+                    }).catch(err => console.log('Gagal memutar musik:', err));
+                }
+            }
+
+            if (audio) {
+                if (!audio.src) {
+                    audio.src = 'assets/audio/background.mp3';
+                }
+                audio.volume = 0.2;
+                audio.loop = true;
+                audio.load();
+            }
+
+            function firstInteraction() {
+                if (!hasUserInteracted) {
+                    hasUserInteracted = true;
+                    playMusic();
+                    document.removeEventListener('click', firstInteraction);
+                    document.removeEventListener('touchstart', firstInteraction);
+                    document.removeEventListener('scroll', firstInteraction);
+                }
+            }
+            document.addEventListener('click', firstInteraction);
+            document.addEventListener('touchstart', firstInteraction);
+            document.addEventListener('scroll', firstInteraction);
+
+            setTimeout(() => {
+                if (!hasUserInteracted) {
+                    playMusic();
+                }
+            }, 3000);
+
+            window.triggerPlayMusic = playMusic;
         })();
     </script>
 
@@ -539,8 +772,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             startSplashProgress();
             loadDesaListFromGitHub();
-            
-            // 🔽 TAMBAHKAN INI - RESET CANVAS DENGAN GAMBAR DEFAULT 🔽
             resetCanvas();
             
             const selectDesa = document.getElementById('selectDesa');
@@ -551,114 +782,6 @@
                 });
             }
         });
-    </script>
-
-    <!-- ============ MP3 PLAYER ============ -->
-    <script>
-        (function() {
-            const audio = document.getElementById('backgroundMusic');
-            const mp3Btn = document.getElementById('mp3ControlBtn');
-            const volumeSlider = document.getElementById('audioVolumeSlider');
-            let isPlaying = false;
-            let hasUserInteracted = false;
-            let sliderVisible = false;
-
-            function updateButtonIcon() {
-                if (!mp3Btn) return;
-                if (!audio || audio.volume === 0) {
-                    mp3Btn.innerHTML = '<i class="fas fa-volume-mute"></i>';
-                } else {
-                    mp3Btn.innerHTML = '<i class="fas fa-volume-up"></i>';
-                }
-            }
-
-            function showVolumeSlider(show) {
-                if (!volumeSlider) return;
-                sliderVisible = show;
-                volumeSlider.style.display = show ? 'inline-block' : 'none';
-            }
-
-            function playMusic() {
-                if (audio && !isPlaying) {
-                    audio.play().then(() => {
-                        isPlaying = true;
-                        if (mp3Btn) {
-                            mp3Btn.classList.remove('muted');
-                            updateButtonIcon();
-                        }
-                    }).catch(err => console.log('Gagal memutar musik:', err));
-                }
-            }
-
-            function pauseMusic() {
-                if (audio && isPlaying) {
-                    audio.pause();
-                    isPlaying = false;
-                    if (mp3Btn) {
-                        mp3Btn.classList.add('muted');
-                        updateButtonIcon();
-                    }
-                }
-            }
-
-            function toggleSliderAndPlay() {
-                if (!audio) return;
-                if (!hasUserInteracted) {
-                    hasUserInteracted = true;
-                    playMusic();
-                }
-                showVolumeSlider(!sliderVisible);
-            }
-
-            if (audio) {
-                if (!audio.src) {
-                    audio.src = 'assets/audio/background.mp3';
-                }
-                audio.volume = 0.3;
-                if (volumeSlider) {
-                    volumeSlider.value = Math.round(audio.volume * 100);
-                }
-                audio.loop = true;
-                audio.load();
-            }
-
-            if (mp3Btn) {
-                mp3Btn.style.display = 'flex';
-                mp3Btn.onclick = toggleSliderAndPlay;
-            }
-
-            if (volumeSlider) {
-                volumeSlider.oninput = function() {
-                    if (!audio) return;
-                    const value = parseInt(this.value, 10) / 100;
-                    audio.volume = value;
-                    updateButtonIcon();
-                    if (value > 0 && !isPlaying && hasUserInteracted) {
-                        playMusic();
-                    }
-                };
-            }
-
-            window.triggerPlayMusic = function() {
-                if (!audio) return;
-                if (!hasUserInteracted) {
-                    hasUserInteracted = true;
-                    playMusic();
-                } else if (!isPlaying) {
-                    playMusic();
-                }
-            };
-
-            function firstInteraction() {
-                if (!hasUserInteracted) {
-                    hasUserInteracted = true;
-                    document.removeEventListener('click', firstInteraction);
-                    document.removeEventListener('touchstart', firstInteraction);
-                }
-            }
-            document.addEventListener('click', firstInteraction);
-            document.addEventListener('touchstart', firstInteraction);
-        })();
     </script>
 
     <!-- ============ INSTALL BUTTON ============ -->
@@ -1189,39 +1312,21 @@
     <!-- ============ SUPABASE ============ -->
     <script src="supabase-integration.js"></script>
 
-    <!-- ============ PLAY MP3 SETIAP KLIK TAB ============ -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    if (typeof window.triggerPlayMusic === 'function') {
-                        window.triggerPlayMusic();
-                    }
-                });
-            });
-        });
-    </script>
-
     <!-- ============ RESET CANVAS ============ -->
     <script>
         function resetCanvas() {
             const canvas = document.getElementById('canvas');
             const ctx = canvas.getContext('2d');
             
-            // Set ukuran canvas
             canvas.width = 800;
             canvas.height = Math.round(canvas.width / (16 / 9));
             
-            // Buat gambar background dari header-background.png
             const img = new Image();
             img.crossOrigin = 'anonymous';
             img.src = 'header/header-background.png';
             
             img.onload = function() {
-                // Gambar header-background.png sebagai background canvas
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                
-                // Tambahkan watermark teks
                 ctx.fillStyle = 'rgba(255, 215, 0, 0.15)';
                 ctx.font = '24px Arial';
                 ctx.textAlign = 'center';
@@ -1229,7 +1334,6 @@
             };
             
             img.onerror = function() {
-                // Fallback jika gambar tidak ditemukan
                 ctx.fillStyle = '#0a1a0a';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 ctx.fillStyle = '#4CAF50';
@@ -1239,7 +1343,6 @@
             };
         }
 
-        // Panggil resetCanvas saat halaman dimuat
         document.addEventListener('DOMContentLoaded', function() {
             resetCanvas();
         });
@@ -1259,5 +1362,7 @@
             s0.parentNode.insertBefore(s1, s0);
         })();
     </script>
+
 </body>
+
 </html>
