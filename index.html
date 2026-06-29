@@ -64,7 +64,7 @@
             color: #0a1a2e !important;
         }
 
-        #previewDesa, #previewKordinat, #previewGambar, #previewTanggal {
+        #previewDesa, #previewKordinat, #previewTanggal {
             color: #0a1a2e !important;
             font-weight: 500 !important;
         }
@@ -225,6 +225,48 @@
         .ai-template-btn:hover {
             background: #27ae60 !important;
         }
+
+        /* ===== CANVAS ===== */
+        #canvas {
+            width: 100%;
+            border-radius: 12px;
+            border: 2px solid #2a5a8a;
+            background: #0a1a0a;
+            margin: 10px 0;
+            display: block;
+        }
+
+        /* ===== INFO GAMBAR ===== */
+        #gambarInfo {
+            color: #2a5a8a;
+            font-size: 0.85rem;
+            margin: 4px 0 8px 0;
+            display: block;
+        }
+
+        /* ===== TOAST NOTIFICATION ===== */
+        .toast-notification {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ff4444;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            z-index: 9999;
+            box-shadow: 0 4px 20px rgba(255,68,68,0.4);
+            animation: toastSlideUp 0.3s ease;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        @keyframes toastSlideUp {
+            from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
     </style>
 </head>
 
@@ -320,7 +362,7 @@
 
                 <label><i class="fas fa-camera"></i> Foto Kegiatan:</label>
                 <input type="file" id="gambar" accept="image/*" onchange="previewImage()">
-                <div class="previewBox" id="previewGambar"></div>
+                <div id="gambarInfo"><i class="fas fa-info-circle"></i> 📷 Hanya gambar LANDSCAPE (lebar > tinggi) yang diterima</div>
 
                 <label><i class="fas fa-calendar-alt"></i> Tanggal & Waktu:</label>
                 <input type="datetime-local" id="tanggalWaktu" onchange="updateDatePreview()">
@@ -1384,6 +1426,126 @@
         document.addEventListener('DOMContentLoaded', function() {
             resetCanvas();
         });
+    </script>
+
+    <!-- ============ PREVIEW GAMBAR DI CANVAS (HANYA 1 PREVIEW) ============ -->
+    <script>
+        function previewImage() {
+            const input = document.getElementById('gambar');
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            // Jika tidak ada file dipilih
+            if (!input || !input.files || !input.files[0]) {
+                resetCanvas();
+                return;
+            }
+            
+            const file = input.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const lebar = img.width;
+                    const tinggi = img.height;
+                    const isLandscape = lebar > tinggi;
+                    
+                    console.log(`📐 Ukuran gambar: ${lebar}×${tinggi}`);
+                    console.log(`🔄 Orientasi: ${isLandscape ? 'LANDSCAPE ✅' : 'POTRAIT/SQUARE ❌'}`);
+                    
+                    // Jika POTRAIT atau SQUARE - TOLAK dengan ALERT
+                    if (!isLandscape) {
+                        alert(`❌ GAMBAR POTRAIT DITOLAK!\nUkuran: ${lebar}×${tinggi}\nGunakan gambar LANDSCAPE (lebar > tinggi)`);
+                        resetCanvas();
+                        input.value = '';
+                        if (typeof checkInputCompletion === 'function') {
+                            checkInputCompletion();
+                        }
+                        return;
+                    }
+                    
+                    // GAMBAR LANDSCAPE - TAMPILKAN DI CANVAS
+                    canvas.width = 800;
+                    canvas.height = Math.round(canvas.width / (16 / 9));
+                    
+                    // Gambar background header
+                    const bgImg = new Image();
+                    bgImg.crossOrigin = 'anonymous';
+                    bgImg.src = 'header/header-background.png';
+                    
+                    bgImg.onload = function() {
+                        ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+                        
+                        const maxWidth = canvas.width * 0.85;
+                        const maxHeight = canvas.height * 0.75;
+                        let imgWidth = maxWidth;
+                        let imgHeight = imgWidth * (tinggi / lebar);
+                        
+                        if (imgHeight > maxHeight) {
+                            imgHeight = maxHeight;
+                            imgWidth = imgHeight * (lebar / tinggi);
+                        }
+                        
+                        const x = (canvas.width - imgWidth) / 2;
+                        const y = (canvas.height - imgHeight) / 2 + 20;
+                        
+                        ctx.drawImage(img, x, y, imgWidth, imgHeight);
+                        
+                        ctx.strokeStyle = 'rgba(255,215,0,0.6)';
+                        ctx.lineWidth = 3;
+                        ctx.strokeRect(x, y, imgWidth, imgHeight);
+                        
+                        ctx.shadowColor = 'rgba(0,0,0,0.3)';
+                        ctx.shadowBlur = 10;
+                        ctx.shadowOffsetX = 2;
+                        ctx.shadowOffsetY = 2;
+                        ctx.strokeRect(x, y, imgWidth, imgHeight);
+                        ctx.shadowColor = 'transparent';
+                        
+                        console.log('✅ Gambar landscape berhasil ditampilkan di canvas');
+                    };
+                    
+                    bgImg.onerror = function() {
+                        ctx.fillStyle = '#0a1a0a';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        
+                        const maxWidth = canvas.width * 0.85;
+                        const maxHeight = canvas.height * 0.75;
+                        let imgWidth = maxWidth;
+                        let imgHeight = imgWidth * (tinggi / lebar);
+                        
+                        if (imgHeight > maxHeight) {
+                            imgHeight = maxHeight;
+                            imgWidth = imgHeight * (lebar / tinggi);
+                        }
+                        
+                        const x = (canvas.width - imgWidth) / 2;
+                        const y = (canvas.height - imgHeight) / 2 + 20;
+                        
+                        ctx.drawImage(img, x, y, imgWidth, imgHeight);
+                        ctx.strokeStyle = 'rgba(255,215,0,0.6)';
+                        ctx.lineWidth = 3;
+                        ctx.strokeRect(x, y, imgWidth, imgHeight);
+                    };
+                    
+                    window._gambarData = {
+                        file: file,
+                        dataUrl: e.target.result,
+                        width: lebar,
+                        height: tinggi,
+                        isLandscape: true
+                    };
+                    
+                    if (typeof checkInputCompletion === 'function') {
+                        checkInputCompletion();
+                    }
+                };
+                img.src = e.target.result;
+            };
+            
+            reader.readAsDataURL(file);
+        }
     </script>
 
     <!-- ============ Tawk.to Chat ============ -->
