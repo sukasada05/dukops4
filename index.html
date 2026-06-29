@@ -250,19 +250,6 @@
             display: block;
         }
 
-        .gambar-landscape-badge {
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(46, 204, 113, 0.92);
-            color: white;
-            padding: 4px 14px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-
         .gambar-preview-wrapper {
             position: relative;
             width: 100%;
@@ -1455,7 +1442,7 @@
         });
     </script>
 
-    <!-- ============ PREVIEW GAMBAR DENGAN FILTER LANDSCAPE ============ -->
+    <!-- ============ PREVIEW GAMBAR DENGAN FILTER LANDSCAPE (TANPA LABEL) ============ -->
     <script>
         function previewImage() {
             const input = document.getElementById('gambar');
@@ -1508,13 +1495,11 @@
                     
                     if (errorDiv) errorDiv.style.display = 'none';
                     
+                    // PREVIEW TANPA LABEL LANDSCAPE
                     if (preview) {
                         preview.innerHTML = `
                             <div class="gambar-preview-wrapper">
-                                <img src="${e.target.result}" alt="Preview gambar landscape">
-                                <div class="gambar-landscape-badge">
-                                    ✅ LANDSCAPE (${lebar}×${tinggi})
-                                </div>
+                                <img src="${e.target.result}" alt="Preview gambar">
                             </div>
                         `;
                     }
