@@ -109,9 +109,9 @@
             </div>
         </div>
 
-        <!-- ========== RUNNING TEXT TELEGRAM ========== -->
+        <!-- ========== RUNNING TEXT INFORMASI ========== -->
         <div class="telegram-running-container">
-            <div class="telegram-running-text" id="telegramRunningMessage">📨 Menghubungkan ke Telegram...</div>
+            <div class="telegram-running-text" id="infoRunningMessage">📢 Selamat datang di DUKOPS Digitalisasi Babinsa</div>
         </div>
 
         <!-- ========== NAVIGASI ========== -->
@@ -324,92 +324,54 @@
 
     <!-- ==================== JAVASCRIPT ==================== -->
 
-    <!-- ============ TELEGRAM BOT + RUNNING TEXT ============ -->
+    <!-- ============ RUNNING TEXT INFORMASI ============ -->
     <script>
-        // ========== KONFIGURASI ==========
-        const BOT_TOKEN = 'YOUR_BOT_TOKEN';
-        const CHAT_ID = 'YOUR_CHAT_ID';
-        const USE_REAL_BOT = (BOT_TOKEN !== 'YOUR_BOT_TOKEN' && CHAT_ID !== 'YOUR_CHAT_ID');
-
-        const runningTextEl = document.getElementById('telegramRunningMessage');
+        const infoRunningTextEl = document.getElementById('infoRunningMessage');
 
         // ========== UPDATE RUNNING TEXT ==========
-        function updateRunningText(message) {
-            if (runningTextEl) {
+        function updateInfoRunningText(message) {
+            if (infoRunningTextEl) {
                 let displayMsg = message.length > 100 ? message.substring(0, 97) + '...' : message;
-                runningTextEl.textContent = `📨 ${displayMsg}`;
+                infoRunningTextEl.textContent = `📢 ${displayMsg}`;
 
                 // Reset animasi agar tetap berjalan
-                runningTextEl.style.animation = 'none';
-                void runningTextEl.offsetWidth;
-                runningTextEl.style.animation = 'telegramMarquee 20s linear infinite';
+                infoRunningTextEl.style.animation = 'none';
+                void infoRunningTextEl.offsetWidth;
+                infoRunningTextEl.style.animation = 'telegramMarquee 20s linear infinite';
 
                 console.log("✅ Running text diperbarui:", displayMsg);
             }
         }
 
-        // ========== AMBIL PESAN DARI TELEGRAM ==========
-        async function fetchTelegramMessages() {
-            if (!USE_REAL_BOT) {
-                return;
-            }
-            try {
-                const url = `https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?offset=-1&limit=1`;
-                const response = await fetch(url);
-                const data = await response.json();
-                if (data.ok && data.result && data.result.length > 0) {
-                    const message = data.result[data.result.length - 1].message;
-                    if (message && message.text) {
-                        updateRunningText(message.text);
-                    }
-                }
-            } catch (error) {
-                console.error("Gagal ambil pesan Telegram:", error);
-            }
-        }
-
-        // ========== AUTO-ROUTE PESAN LOKAL (FALLBACK) ==========
+        // ========== AUTO-ROUTE PESAN INFORMASI ==========
         (function() {
             const messages = [
-                "📨 🔄 Terima Kasih Telah Mengirim Laporan DUKOPS dengan tepat waktu dan lengkap",
-                "📢 📡 DUKOPS DIGITALISASI BABINSA • Pastikan laporan terisi dengan benar",
-                "🇮🇩 🎯 Target 9 laporan per desa per bulan • Semangat Babinsa!",
-                "🔄 ✅ Laporan DUKOPS membantu pembinaan teritorial",
-                "📊 📈 Pantau terus laporan bulanan di menu ABSEN"
+                "📢 Selamat datang di DUKOPS Digitalisasi Babinsa",
+                "📢 Pastikan laporan terisi dengan benar dan lengkap",
+                "🇮🇩 Target 9 laporan per desa per bulan • Semangat Babinsa!",
+                "📊 Pantau terus laporan bulanan di menu ABSEN",
+                "✅ Laporan DUKOPS membantu pembinaan teritorial"
             ];
 
             let currentIndex = 0;
-            let isBotActive = USE_REAL_BOT;
 
             function rotateMessage() {
-                if (!runningTextEl) return;
-                if (isBotActive) return;
-
+                if (!infoRunningTextEl) return;
                 currentIndex = (currentIndex + 1) % messages.length;
-                runningTextEl.textContent = messages[currentIndex];
+                infoRunningTextEl.textContent = messages[currentIndex];
 
-                runningTextEl.style.animation = 'none';
-                void runningTextEl.offsetWidth;
-                runningTextEl.style.animation = 'telegramMarquee 20s linear infinite';
+                infoRunningTextEl.style.animation = 'none';
+                void infoRunningTextEl.offsetWidth;
+                infoRunningTextEl.style.animation = 'telegramMarquee 20s linear infinite';
             }
 
-            if (runningTextEl) {
-                if (isBotActive) {
-                    runningTextEl.textContent = '📨 Menghubungkan ke Telegram...';
-                } else {
-                    runningTextEl.textContent = messages[0];
-                }
-                runningTextEl.style.animation = 'telegramMarquee 20s linear infinite';
+            if (infoRunningTextEl) {
+                infoRunningTextEl.textContent = messages[0];
+                infoRunningTextEl.style.animation = 'telegramMarquee 20s linear infinite';
             }
 
-            if (!isBotActive) {
-                setInterval(rotateMessage, 5000);
-                console.log('✅ Running text auto-rotate aktif (tanpa bot)');
-            } else {
-                setInterval(fetchTelegramMessages, 6000);
-                fetchTelegramMessages();
-                console.log('✅ Running text menggunakan Telegram Bot');
-            }
+            setInterval(rotateMessage, 5000);
+            console.log('✅ Running text auto-rotate aktif (tanpa Telegram)');
         })();
     </script>
 
@@ -916,8 +878,7 @@
             ];
 
             function updateRunningText() { const el = document.getElementById('runningTextJadwalBaru'); if (el) el
-                    .textContent = JadwalData.currentHanpangan ? '🌾 JADWAL HANPANGAN HARI INI: ' + JadwalData
-                    .currentHanpangan + ' 🌾' : '🌾 Memuat jadwal hanpangan... 🌾'; }
+                    .textContent = '🌾 JADWAL HANPANGAN HARI INI: ' + JadwalData.currentHanpangan + ' 🌾'; }
 
             function fetchFromGitHub(url) { return new Promise(resolve => { fetch(url + '?t=' + new Date().getTime()).then(
                         res => res.ok ? res.text() : null).then(data => resolve(data)).catch(() => resolve(null)); }); }
@@ -1306,7 +1267,5 @@
             s0.parentNode.insertBefore(s1, s0);
         })();
     </script>
-
 </body>
-
 </html>
