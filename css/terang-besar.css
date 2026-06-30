@@ -176,6 +176,40 @@ button, .nav-btn {
     font-size: 1.4rem !important;
     font-weight: 700 !important;
 }
+/* ============================================================
+   PASTIKAN PREVIEW KOORDINAT & TANGGAL TETAP TERLIHAT
+   ============================================================ */
+
+#previewKordinat,
+#previewTanggal {
+    background: #f5f9ff !important;
+    border: 2px solid #2a5a8a !important;
+    padding: 12px 16px !important;
+    margin: 8px 0 !important;
+    border-radius: 10px !important;
+    font-weight: 500 !important;
+    color: #0a1a2e !important;
+    min-height: 40px !important;
+}
+
+/* Tambahan agar tidak tertutup canvas */
+#previewKordinat {
+    min-height: 50px !important;
+    display: block !important;
+    clear: both !important;
+}
+
+#previewTanggal {
+    min-height: 40px !important;
+    display: block !important;
+    clear: both !important;
+}
+
+/* Preview gambar (canvas) tidak mengganggu elemen di atasnya */
+#canvas {
+    margin-top: 15px !important;
+    clear: both !important;
+}
 
 .modal-template-text {
     font-size: 1.1rem !important;
