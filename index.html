@@ -27,8 +27,17 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+    <!-- ===== CSS MODULAR ===== -->
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/download-png.css">
+    <link rel="stylesheet" href="css/splash.css">
+    <link rel="stylesheet" href="css/navigation.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/form.css">
+    <link rel="stylesheet" href="css/preview.css">
+    <link rel="stylesheet" href="css/attendance.css">
+    <link rel="stylesheet" href="css/jadwal.css">
+    <link rel="stylesheet" href="css/absen.css">
     
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
@@ -213,8 +222,8 @@
         }
 
         .ai-template-btn {
-            background: #2ecc71 !important;
-            color: #0a1a0a !important;
+            background: rgba(255, 255, 255, 0.76);
+            color: #0e0101 !important;
             border: none !important;
             padding: 10px 18px !important;
             border-radius: 10px !important;
@@ -223,7 +232,53 @@
         }
 
         .ai-template-btn:hover {
-            background: #27ae60 !important;
+            background: rgba(135, 16, 16, 0.589);
+        }
+
+        /* ===== THANK YOU POPUP ===== */
+        .thankyou-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .thankyou-content {
+            background: linear-gradient(135deg, #1a2a1a, #2b4d2b);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            border: 2px solid #4CAF50;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            animation: scaleIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .thankyou-content .fa-trophy {
+            animation: pulse 2s infinite;
         }
     </style>
 </head>
@@ -269,7 +324,7 @@
             <div class="dukops-header-row">
                 <div class="dukops-profile-area" id="desaProfileContainerHeader">
                     <img id="desaProfileImgHeader" class="dukops-profile-img" src="favicon-96x96.png" alt="Foto Profil">
-                    <div id="desaProfileNameHeader" class="dukops-profile-name">Pilih Desa</div>
+                    <div id="desaProfileNameHeader" class="dukops-profile-name">Pilih desa/Kelurahan</div>
                 </div>
                 <div class="dukops-title-area">
                     <div class="dukops-header-title">DUKOPS BABINSA</div>
@@ -278,7 +333,6 @@
                         <i class="fas fa-map-marker-alt"></i> Jl. Jelantik Gingsir No. 32 Sukasada Singaraja-Bali 81161
                     </div>
                     <div class="audio-control-wrapper">
-                        <!-- TOMBOL SPEAKER DIHILANGKAN -->
                         <input id="audioVolumeSlider" class="audio-volume-slider" type="range" min="0" max="100" value="30" aria-label="Volume audio">
                     </div>
                     <div><span class="counter-value" id="submissionCounter">0</span></div>
@@ -309,14 +363,14 @@
             <div style="width: 100%; margin: 0 auto;">
                 <label><i class="fas fa-village"></i> Pilih Desa:</label>
                 <select id="selectDesa" onchange="loadSelectedDesa()">
-                    <option value="">-- Pilih Desa --</option>
+                    <option value=""> --Pilih desa/Kelurahan--</option>
                 </select>
                 <div id="loadingDesa" style="display:none;"><i class="fas fa-spinner fa-spin"></i> Memuat...</div>
                 <div class="previewBox" id="previewDesa" style="display:none;"></div>
 
                 <label><i class="fas fa-map-pin"></i> Koordinat:</label>
                 <div id="loadingKoordinat" style="display:none;"><i class="fas fa-spinner fa-spin"></i> Memuat koordinat...</div>
-                <div class="previewBox" id="previewKordinat"><span style="color:#6a7a8a;">Pilih desa untuk melihat koordinat</span></div>
+                <div class="previewBox" id="previewKordinat"><span style="color:#6a7a8a;">Pilih desa/Kelurahan untuk melihat koordinat</span></div>
 
                 <label><i class="fas fa-camera"></i> Foto Kegiatan:</label>
                 <input type="file" id="gambar" accept="image/*" onchange="previewImage()">
@@ -333,7 +387,6 @@
 
                 <!-- AI TEMPLATE -->
                 <div class="ai-template-container">
-                    <span><i class="fas fa-robot" style="color: #2ecc71;"></i> Butuh template narasi?</span>
                     <button class="ai-template-btn" id="aiTemplateBtn">
                         <i class="fas fa-robot"></i> Gunakan Template AI
                     </button>
@@ -566,75 +619,164 @@
         })();
     </script>
 
-    <!-- ============ DATA DESA & KOORDINAT ============ -->
+    <!-- ============ DATA DESA & KOORDINAT (PERBAIKAN) ============ -->
     <script>
         const DESA_LIST_URL = 'data/desa-list.json';
-        const COORDINATES_URL = 'data/coordinates.json';
+        const COORDINATES_BASE_URL = 'data/coordinates/'; // FOLDER KOORDINAT PER DESA
         const PROFILE_BASE_URL = 'profile/';
         const DEFAULT_FAVICON_URL = 'favicon-96x96.png';
 
         let daftarDesaGlobal = [];
         let profileImagesGlobal = {};
-        let coordinatesData = {};
+        let coordinatesCache = {}; // Cache koordinat per desa
 
-        async function loadCoordinates() {
+        // Fungsi untuk memuat koordinat per desa
+        async function loadCoordinatesPerDesa(desaName) {
+            if (!desaName) return null;
+            
+            // Cek cache dulu
+            if (coordinatesCache[desaName]) {
+                return coordinatesCache[desaName];
+            }
+
             try {
-                const response = await fetch(COORDINATES_URL + '?t=' + Date.now());
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const data = await response.json();
-                coordinatesData = data.coordinates || {};
-                console.log("✅ Koordinat berhasil dimuat:", Object.keys(coordinatesData).length, "desa");
-                return true;
-            } catch (error) {
-                console.error("Gagal memuat koordinat:", error);
-                coordinatesData = {};
-                return false;
-            }
-        }
-
-        function getCoordinates(desaName) {
-            if (!desaName || !coordinatesData) return null;
-            for (let key in coordinatesData) {
-                if (key.toLowerCase() === desaName.toLowerCase()) {
-                    return coordinatesData[key];
+                const fileName = desaName + '.json';
+                const url = COORDINATES_BASE_URL + fileName + '?t=' + Date.now();
+                console.log(`📡 Memuat koordinat: ${url}`);
+                
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    console.warn(`Koordinat tidak ditemukan untuk: ${desaName} (HTTP ${response.status})`);
+                    return null;
                 }
+                
+                const data = await response.json();
+                
+                // Validasi format data
+                if (data && data.coordinates && Array.isArray(data.coordinates)) {
+                    coordinatesCache[desaName] = data;
+                    console.log(`✅ Koordinat dimuat untuk: ${desaName}, jumlah titik: ${data.coordinates.length}`);
+                    return data;
+                } else {
+                    console.warn(`Format koordinat tidak valid untuk: ${desaName}`);
+                    return null;
+                }
+            } catch (error) {
+                console.error(`Gagal memuat koordinat untuk ${desaName}:`, error);
+                return null;
             }
-            return null;
         }
 
-        function updateCoordinatesPreview(desaName) {
+        // Fungsi untuk mendapatkan koordinat dari cache atau load
+        async function getCoordinates(desaName) {
+            if (!desaName) return null;
+            
+            // Cek cache
+            if (coordinatesCache[desaName]) {
+                return coordinatesCache[desaName];
+            }
+            
+            // Load dari file
+            return await loadCoordinatesPerDesa(desaName);
+        }
+
+        // Update preview koordinat (async)
+        async function updateCoordinatesPreview(desaName) {
             const previewKordinat = document.getElementById('previewKordinat');
             const loadingKoordinat = document.getElementById('loadingKoordinat');
             
             if (!previewKordinat) return;
-            if (loadingKoordinat) loadingKoordinat.style.display = 'none';
             
             if (!desaName || desaName === "") {
-                previewKordinat.innerHTML = '<span style="color:#6a7a8a;">Pilih desa untuk melihat koordinat</span>';
+                previewKordinat.innerHTML = '<span style="color:#6a7a8a;">Pilih desa/Kelurahan untuk melihat koordinat</span>';
+                if (loadingKoordinat) loadingKoordinat.style.display = 'none';
                 return;
             }
-            
-            const coords = getCoordinates(desaName);
-            if (coords) {
-                previewKordinat.innerHTML = `
-                    <div style="display:flex;flex-direction:column;gap:4px;">
-                        <span><i class="fas fa-location-dot" style="color:#e74c3c;"></i> <strong>Latitude:</strong> ${coords.lat}</span>
-                        <span><i class="fas fa-location-dot" style="color:#3498db;"></i> <strong>Longitude:</strong> ${coords.lng}</span>
-                        ${coords.nama ? `<span><i class="fas fa-map-pin" style="color:#2ecc71;"></i> <strong>Lokasi:</strong> ${coords.nama}</span>` : ''}
-                    </div>
-                `;
-            } else {
-                previewKordinat.innerHTML = `<span style="color:#e67e22;"><i class="fas fa-exclamation-triangle"></i> Koordinat tidak tersedia untuk desa ini</span>`;
+
+            if (loadingKoordinat) loadingKoordinat.style.display = 'block';
+            previewKordinat.innerHTML = '<span style="color:#6a7a8a;"><i class="fas fa-spinner fa-spin"></i> Memuat koordinat...</span>';
+
+            try {
+                const coords = await getCoordinates(desaName);
+                
+                if (loadingKoordinat) loadingKoordinat.style.display = 'none';
+                
+                if (coords && coords.coordinates && coords.coordinates.length > 0) {
+                    // Tampilkan info koordinat
+                    const firstCoord = coords.coordinates[0];
+                    const lastCoord = coords.coordinates[coords.coordinates.length - 1];
+                    const totalPoints = coords.coordinates.length;
+                    
+                    previewKordinat.innerHTML = `
+                        <div style="display:flex;flex-direction:column;gap:6px;padding:4px 0;">
+                            <div style="display:flex;align-items:center;gap:8px;border-bottom:1px solid #e0e8f0;padding-bottom:6px;">
+                                <i class="fas fa-map-pin" style="color:#2ecc71;"></i>
+                                <strong style="color:#0a1a2e;">${coords.desa || desaName}</strong>
+                                <span style="color:#6a7a8a;font-size:0.85rem;">(${totalPoints} titik)</span>
+                            </div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:0.9rem;">
+                                <span><i class="fas fa-arrow-up" style="color:#e74c3c;width:16px;"></i> <strong>Lat:</strong> ${firstCoord.lat}</span>
+                                <span><i class="fas fa-arrow-right" style="color:#3498db;width:16px;"></i> <strong>Lon:</strong> ${firstCoord.lon}</span>
+                                <span><i class="fas fa-mountain" style="color:#f39c12;width:16px;"></i> <strong>Elevasi:</strong> ${firstCoord.elevation || '-'}</span>
+                                <span><i class="fas fa-arrow-down" style="color:#9b59b6;width:16px;"></i> <strong>Akhr:</strong> ${lastCoord.lat}</span>
+                            </div>
+                            <div style="font-size:0.75rem;color:#6a7a8a;margin-top:2px;border-top:1px solid #e0e8f0;padding-top:4px;">
+                                <i class="fas fa-info-circle"></i> Data koordinat tersedia
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    previewKordinat.innerHTML = `<span style="color:#e67e22;"><i class="fas fa-exclamation-triangle"></i> Koordinat tidak tersedia untuk desa ini</span>`;
+                }
+            } catch (error) {
+                if (loadingKoordinat) loadingKoordinat.style.display = 'none';
+                previewKordinat.innerHTML = `<span style="color:#e74c3c;"><i class="fas fa-times-circle"></i> Gagal memuat koordinat</span>`;
+                console.error('Error updateCoordinatesPreview:', error);
             }
         }
 
+        // Fungsi untuk mendapatkan info koordinat untuk narasi
+        async function getCoordinatesForNarasi(desaName) {
+            const coords = await getCoordinates(desaName);
+            if (coords && coords.coordinates && coords.coordinates.length > 0) {
+                const first = coords.coordinates[0];
+                const last = coords.coordinates[coords.coordinates.length - 1];
+                return {
+                    total: coords.coordinates.length,
+                    first: first,
+                    last: last,
+                    desa: coords.desa || desaName
+                };
+            }
+            return null;
+        }
+
+        // Fungsi inject koordinat ke narasi
+        async function injectCoordinatesToNarasi(templateText, desaName) {
+            if (!desaName || desaName === "") return templateText;
+            
+            const coordInfo = await getCoordinatesForNarasi(desaName);
+            if (!coordInfo) return templateText;
+            
+            let hasil = templateText;
+            // Ganti placeholder koordinat jika ada
+            hasil = hasil.replace(/\{jumlah_titik\}/g, coordInfo.total);
+            hasil = hasil.replace(/\{lat_pertama\}/g, coordInfo.first.lat);
+            hasil = hasil.replace(/\{lon_pertama\}/g, coordInfo.first.lon);
+            hasil = hasil.replace(/\{elevasi_pertama\}/g, coordInfo.first.elevation || '');
+            hasil = hasil.replace(/\{lat_terakhir\}/g, coordInfo.last.lat);
+            hasil = hasil.replace(/\{lon_terakhir\}/g, coordInfo.last.lon);
+            
+            return hasil;
+        }
+
+        // Fungsi load desa list
         async function loadDesaListFromGitHub() {
             const selectDesa = document.getElementById('selectDesa');
             const loadingDesa = document.getElementById('loadingDesa');
 
             try {
-                await loadCoordinates();
-
                 const response = await fetch(DESA_LIST_URL + '?t=' + Date.now());
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const data = await response.json();
@@ -691,7 +833,7 @@
 
             if (!desaName || desaName === "") {
                 imgElement.src = DEFAULT_FAVICON_URL;
-                if (nameElement) nameElement.textContent = "Pilih Desa";
+                if (nameElement) nameElement.textContent = "Pilih desa/Kelurahan";
                 updateCoordinatesPreview("");
                 return;
             }
@@ -717,7 +859,7 @@
                 };
             } else {
                 imgElement.src = DEFAULT_FAVICON_URL;
-                if (nameElement) nameElement.textContent = desaName || "Pilih Desa";
+                if (nameElement) nameElement.textContent = desaName || "Pilih Desa/Kelurahan";
             }
             updateCoordinatesPreview(desaName);
         }
@@ -736,10 +878,11 @@
             return option ? option.text : "";
         }
 
-        window.loadSelectedDesa = function() {
+        window.loadSelectedDesa = async function() {
             const selectDesa = document.getElementById('selectDesa');
             const selectedText = selectDesa.options[selectDesa.selectedIndex]?.text || "";
             updateDesaProfile(selectedText);
+            await updateCoordinatesPreview(selectedText);
             if (typeof window.triggerPlayMusic === 'function') {
                 window.triggerPlayMusic();
             }
@@ -848,7 +991,7 @@
         })();
     </script>
 
-    <!-- ============ AI TEMPLATE ============ -->
+    <!-- ============ AI TEMPLATE (DENGAN KOORDINAT) ============ -->
     <script>
         (function() {
             const TEMPLATE_JSON_URL = 'template-narasi.json';
@@ -937,7 +1080,7 @@
                 modalBody.innerHTML = html;
             }
 
-            window.selectTemplate = function(template) {
+            window.selectTemplate = async function(template) {
                 console.log("✅ Template dipilih:", template.substring(0, 50) + '...');
 
                 const narasiField = document.getElementById('narasi');
@@ -945,7 +1088,10 @@
 
                 let finalTemplate = template;
                 if (namaDesa) {
+                    // Inject nama desa
                     finalTemplate = injectDesaKeNarasi(template, namaDesa);
+                    // Inject koordinat jika ada placeholder
+                    finalTemplate = await injectCoordinatesToNarasi(finalTemplate, namaDesa);
                 }
 
                 narasiField.value = finalTemplate;
