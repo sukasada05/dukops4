@@ -1,0 +1,4826 @@
+/* ========================================== */ 
+========================================== */ 
+/*   File: attendance.css                                */ 
+/* ========================================== */ 
+/* ================================================================
+   ATTENDANCE.CSS - ABSENSI
+   ================================================================ */
+
+#attendancePanel {
+    margin-top: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.attendance-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.attendance-header button {
+    margin: 0;
+    padding: 8px 16px;
+    background: rgba(255, 50, 50, 0.08);
+    border: 1px solid rgba(255, 50, 50, 0.1);
+    border-radius: 8px;
+    color: #ff6b6b;
+    font-size: 12px;
+    width: auto;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.attendance-header button:hover {
+    background: rgba(255, 50, 50, 0.15);
+}
+
+.attendance-filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.attendance-filters select,
+.attendance-filters input {
+    flex: 1;
+    min-width: 120px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    background: rgba(0, 0, 0, 0.2);
+    color: #ddeedd;
+    font-size: 12px;
+}
+
+.attendance-summary {
+    background: rgba(255, 255, 255, 0.02);
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 13px;
+}
+
+.summary-row span:last-child {
+    font-weight: 600;
+    color: #FFD700;
+}
+
+.progress-container {
+    background: rgba(255, 255, 255, 0.04);
+    height: 6px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #8bc34a);
+    transition: width 0.6s ease;
+    border-radius: 10px;
+}
+
+.desa-card {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    border-left: 3px solid #4CAF50;
+    transition: all 0.3s ease;
+}
+
+.desa-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.desa-card.incomplete {
+    border-left-color: #FF9800;
+}
+
+.desa-header {
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.desa-name {
+    font-weight: 600;
+    color: #b2d8b2;
+    font-size: 14px;
+}
+
+.desa-count {
+    background: rgba(255, 255, 255, 0.04);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #889988;
+}
+
+.desa-files {
+    padding: 8px 14px 14px 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.file-link {
+    color: #4CAF50;
+    text-decoration: none;
+    font-size: 12px;
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.file-link:hover {
+    background: rgba(76, 175, 80, 0.05);
+} 
+/* ===== End of attendance.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: base.css                                */ 
+/* ========================================== */ 
+/* ================================================================
+   BASE.CSS - RESET & BASE
+   ================================================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #0a1a3a;
+    --secondary: #1a3a6a;
+    --accent: #FFD700;
+    --success: #4CAF50;
+    --bg-dark: #0a120a;
+    --bg-card: #162016;
+    --text-light: #e6ffe6;
+    --text-muted: #889988;
+    --border-glow: rgba(76, 175, 80, 0.3);
+}
+
+body {
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-light);
+    line-height: 1.6;
+    min-height: 100vh;
+    background-image: 
+        radial-gradient(ellipse at 10% 20%, rgba(26, 58, 106, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 90% 80%, rgba(26, 58, 106, 0.10) 0%, transparent 50%);
+}
+
+.container {
+    display: none;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 20px;
+    background: rgba(22, 32, 22, 0.92);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(76, 175, 80, 0.15);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0a120a; }
+::-webkit-scrollbar-thumb { background: #2ecc71; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #4CAF50; } 
+/* ===== End of base.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: buttons.css                                */ 
+/* ========================================== */ 
+/* ================================================================
+   BUTTONS.CSS - TOMBOL
+   ================================================================ */
+
+button {
+    margin-top: 16px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #1a4a1a, #2d6a2d);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: 'Segoe UI', Arial, sans-serif;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(76, 175, 80, 0.1);
+}
+
+button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(76, 175, 80, 0.15);
+    background: linear-gradient(135deg, #2d6a2d, #3d8a3d);
+}
+
+button:disabled {
+    background: #333;
+    cursor: not-allowed;
+    opacity: 0.4;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+button i {
+    margin-right: 8px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+.action-buttons button {
+    width: auto;
+    flex: 1;
+    min-width: 120px;
+    padding: 10px 16px;
+    font-size: 13px;
+}
+
+.action-buttons button:first-child {
+    background: linear-gradient(135deg, #1a4a1a, #2d6a2d);
+    border-color: rgba(76, 175, 80, 0.2);
+}
+
+.action-buttons button:last-child {
+    background: rgba(255, 50, 50, 0.08);
+    border: 1px solid rgba(255, 50, 50, 0.15);
+    color: #ff6b6b;
+}
+
+.action-buttons button:last-child:hover {
+    background: rgba(255, 50, 50, 0.15);
+    box-shadow: 0 8px 30px rgba(255, 50, 50, 0.1);
+}
+
+#installButton {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    background: linear-gradient(135deg, #4CAF50, #2d6a2d);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 8px 30px rgba(76, 175, 80, 0.2);
+    display: none;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+#installButton:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(76, 175, 80, 0.3);
+} 
+/* ===== End of buttons.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: chat-widget.css                                */ 
+/* ========================================== */ 
+/* ================================================================
+   CHAT WIDGET — FLOATING BOTTOM-RIGHT
+   Tema Hijau DUKOPS — Terintegrasi dengan aplikasi
+   ================================================================ */
+
+/* ================================================================
+   CONTAINER WIDGET
+   ================================================================ */
+.chat-widget {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+/* ================================================================
+   TOMBOL BUKA CHAT (💬)
+   ================================================================ */
+.chat-toggle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #1a472a, #2d6a3e);
+    color: #f4f5c8;
+    border: 2px solid #4dff4d;
+    font-size: 28px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(46, 125, 50, 0.4);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.chat-toggle:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 30px rgba(46, 125, 50, 0.5);
+}
+
+.chat-toggle:active {
+    transform: scale(0.95);
+}
+
+/* Badge notifikasi (jumlah pesan belum dibaca) */
+.chat-toggle .badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #ef4444;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 22px;
+    height: 22px;
+    border-radius: 11px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+    animation: badgePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.chat-toggle .badge.show {
+    display: flex;
+}
+
+/* ================================================================
+   TOMBOL TUTUP CHAT (✕) — Muncul saat chat terbuka
+   ================================================================ */
+.chat-toggle-close {
+    display: none;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #1a472a, #2d6a3e);
+    color: #f4f5c8;
+    border: 2px solid #4dff4d;
+    font-size: 28px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(46, 125, 50, 0.4);
+    transition: all 0.3s ease;
+    align-items: center;
+    justify-content: center;
+}
+
+.chat-toggle-close:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 30px rgba(46, 125, 50, 0.5);
+}
+
+.chat-toggle-close:active {
+    transform: scale(0.95);
+}
+
+/* Sembunyikan tombol buka saat chat terbuka, tampilkan tombol tutup */
+.chat-widget.chat-open .chat-toggle {
+    display: none;
+}
+
+.chat-widget.chat-open .chat-toggle-close {
+    display: flex;
+}
+
+/* ================================================================
+   CHAT BOX
+   ================================================================ */
+.chat-box {
+    width: 380px;
+    max-width: calc(100vw - 48px);
+    height: 520px;
+    max-height: calc(100vh - 120px);
+    background: rgba(10, 30, 15, 0.95);
+    border-radius: 16px;
+    border: 1px solid rgba(77, 255, 77, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    margin-bottom: 12px;
+    animation: chatSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(8px);
+}
+
+.chat-box.open {
+    display: flex;
+}
+
+@keyframes chatSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ================================================================
+   HEADER CHAT
+   ================================================================ */
+.chat-header {
+    background: linear-gradient(145deg, #1a472a, #0d2818);
+    color: #f4f5c8;
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(77, 255, 77, 0.2);
+}
+
+.chat-header .title {
+    font-size: 1em;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chat-header .title .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4ade80;
+    display: inline-block;
+    animation: chatPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes chatPulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(0.8);
+    }
+}
+
+.chat-header .close-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #f4f5c8;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.chat-header .close-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: scale(1.05);
+}
+
+.chat-header .close-btn:active {
+    transform: scale(0.9);
+}
+
+/* ================================================================
+   USER BAR
+   ================================================================ */
+.chat-user-bar {
+    padding: 6px 18px;
+    background: rgba(0, 40, 0, 0.6);
+    font-size: 0.75em;
+    color: #9fd49f;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(77, 255, 77, 0.1);
+}
+
+.chat-user-bar .user-name {
+    font-weight: 600;
+    color: #4dff4d;
+}
+
+.chat-user-bar .user-count {
+    color: #8aaa8a;
+}
+
+.chat-user-bar .user-count i {
+    color: #4dff4d;
+    margin-right: 4px;
+}
+
+/* ================================================================
+   MESSAGES AREA
+   ================================================================ */
+.chat-messages-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 16px;
+    background: rgba(0, 20, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* Scrollbar styling */
+.chat-messages-area::-webkit-scrollbar {
+    width: 4px;
+}
+
+.chat-messages-area::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+}
+
+.chat-messages-area::-webkit-scrollbar-thumb {
+    background: #4dff4d;
+    border-radius: 2px;
+}
+
+.chat-messages-area::-webkit-scrollbar-thumb:hover {
+    background: #6aff6a;
+}
+
+/* ================================================================
+   MESSAGE BUBBLES
+   ================================================================ */
+.chat-msg {
+    max-width: 82%;
+    padding: 8px 12px;
+    border-radius: 14px;
+    word-wrap: break-word;
+    animation: chatFadeIn 0.25s ease;
+}
+
+@keyframes chatFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Pesan sendiri (hijau) */
+.chat-msg-own {
+    background: linear-gradient(145deg, #1a472a, #2d6a3e);
+    color: #f4f5c8;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+    border: 1px solid rgba(77, 255, 77, 0.2);
+}
+
+/* Pesan orang lain (abu-abu) */
+.chat-msg-other {
+    background: rgba(30, 50, 30, 0.85);
+    color: #d4e6d4;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Pesan sistem */
+.chat-msg-system {
+    background: rgba(77, 255, 77, 0.06);
+    color: #7aaa7a;
+    align-self: center;
+    font-size: 0.75em;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-style: italic;
+    max-width: 92%;
+    text-align: center;
+    border: 1px solid rgba(77, 255, 77, 0.06);
+}
+
+/* Pesan sistem error */
+.chat-msg-system.error {
+    color: #f87171;
+    border-color: rgba(248, 113, 113, 0.2);
+    background: rgba(248, 113, 113, 0.05);
+}
+
+/* Username di dalam pesan */
+.chat-msg .msg-username {
+    font-weight: 600;
+    font-size: 0.75em;
+    opacity: 0.8;
+    display: block;
+    margin-bottom: 1px;
+}
+
+.chat-msg-own .msg-username {
+    color: #4dff4d;
+    opacity: 0.9;
+}
+
+.chat-msg-other .msg-username {
+    color: #9fd49f;
+}
+
+/* Konten pesan */
+.chat-msg .msg-content {
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
+/* Waktu pesan */
+.chat-msg .msg-time {
+    font-size: 0.6em;
+    opacity: 0.5;
+    display: block;
+    text-align: right;
+    margin-top: 2px;
+}
+
+.chat-msg-own .msg-time {
+    color: #b8d9b8;
+}
+
+.chat-msg-other .msg-time {
+    color: #6a8a6a;
+}
+
+/* ================================================================
+   TYPING INDICATOR
+   ================================================================ */
+.chat-typing {
+    align-self: flex-start;
+    color: #7aaa7a;
+    font-size: 0.75em;
+    padding: 4px 12px;
+    background: rgba(0, 30, 0, 0.5);
+    border-radius: 16px;
+    display: none;
+    animation: chatFadeIn 0.25s ease;
+    border: 1px solid rgba(77, 255, 77, 0.08);
+}
+
+.chat-typing.show {
+    display: block;
+}
+
+.chat-typing-dots span {
+    animation: chatDotBounce 1.4s infinite;
+    display: inline-block;
+}
+
+.chat-typing-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.chat-typing-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes chatDotBounce {
+    0%, 60%, 100% {
+        transform: translateY(0);
+    }
+    30% {
+        transform: translateY(-5px);
+    }
+}
+
+/* ================================================================
+   INPUT AREA (Style WhatsApp)
+   ================================================================ */
+.chat-input-area {
+    padding: 10px 16px 14px;
+    background: rgba(0, 20, 0, 0.85);
+    border-top: 1px solid rgba(77, 255, 77, 0.1);
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+    align-items: center;
+}
+
+.chat-input-area input {
+    flex: 1;
+    padding: 10px 16px;
+    border: 1px solid rgba(77, 255, 77, 0.2);
+    border-radius: 24px;
+    font-size: 0.9em;
+    outline: none;
+    transition: all 0.3s;
+    background: rgba(0, 25, 0, 0.6);
+    color: #e6ffe6;
+}
+
+.chat-input-area input::placeholder {
+    color: #4a6a4a;
+    font-size: 0.85em;
+}
+
+.chat-input-area input:focus {
+    border-color: #4dff4d;
+    box-shadow: 0 0 0 3px rgba(77, 255, 77, 0.1);
+}
+
+.chat-input-area input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Tombol kirim seperti WhatsApp (ikon paper plane) */
+.chat-input-area .send-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #1a472a, #2d6a3e);
+    color: #f4f5c8;
+    border: 1px solid #4dff4d;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.chat-input-area .send-btn:hover:not(:disabled) {
+    transform: scale(1.08);
+    box-shadow: 0 4px 15px rgba(46, 125, 50, 0.35);
+    background: linear-gradient(145deg, #2d6a3e, #1a472a);
+}
+
+.chat-input-area .send-btn:active:not(:disabled) {
+    transform: scale(0.92);
+}
+
+.chat-input-area .send-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+@media (max-width: 500px) {
+    .chat-box {
+        width: calc(100vw - 32px);
+        height: 480px;
+        max-height: calc(100vh - 100px);
+        border-radius: 16px;
+    }
+
+    .chat-widget {
+        bottom: 16px;
+        right: 16px;
+    }
+
+    .chat-toggle,
+    .chat-toggle-close {
+        width: 52px;
+        height: 52px;
+        font-size: 24px;
+    }
+
+    .chat-input-area input {
+        font-size: 0.8em;
+        padding: 8px 12px;
+    }
+
+    .chat-input-area .send-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 15px;
+    }
+
+    .chat-header .title {
+        font-size: 0.85em;
+    }
+
+    .chat-msg {
+        max-width: 88%;
+        padding: 6px 10px;
+    }
+
+    .chat-msg .msg-content {
+        font-size: 0.85em;
+    }
+
+    .chat-messages-area {
+        padding: 8px 10px;
+    }
+}
+
+/* Untuk tablet kecil */
+@media (min-width: 501px) and (max-width: 768px) {
+    .chat-box {
+        width: 340px;
+        height: 480px;
+    }
+
+    .chat-toggle,
+    .chat-toggle-close {
+        width: 56px;
+        height: 56px;
+        font-size: 26px;
+    }
+}
+
+/* Untuk layar sangat kecil (landscape phone) */
+@media (max-height: 600px) and (orientation: landscape) {
+    .chat-box {
+        height: 80vh;
+        max-height: 350px;
+    }
+
+    .chat-messages-area {
+        padding: 6px 10px;
+    }
+
+    .chat-msg {
+        padding: 4px 8px;
+    }
+
+    .chat-msg .msg-content {
+        font-size: 0.8em;
+    }
+
+    .chat-header {
+        padding: 8px 12px;
+    }
+
+    .chat-user-bar {
+        padding: 3px 12px;
+        font-size: 0.65em;
+    }
+
+    .chat-input-area {
+        padding: 6px 10px 8px;
+    }
+
+    .chat-input-area input {
+        padding: 6px 12px;
+        font-size: 0.8em;
+    }
+
+    .chat-input-area .send-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 13px;
+    }
+}
+
+/* ================================================================
+   ANIMASI UNTUK PESAN BARU
+   ================================================================ */
+.chat-msg-new {
+    animation: chatBounceIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes chatBounceIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ================================================================
+   STATUS KONEKSI (Opsional untuk di header)
+   ================================================================ */
+.chat-status {
+    font-size: 0.7em;
+    color: #7aaa7a;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.chat-status .online {
+    color: #4ade80;
+}
+
+.chat-status .offline {
+    color: #f87171;
+}
+
+.chat-status .connecting {
+    color: #fbbf24;
+    animation: chatPulse 1s ease-in-out infinite;
+}
+ 
+/* ===== End of chat-widget.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: combined.css                                */ 
+/* ========================================== */ 
+/* ========================================== */ 
+/*   Gabungan CSS - Dibuat: Wed 07/01/2026  8:06:14.83   */ 
+/*   Total file akan digabung              */ 
+/* ========================================== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: attendance.css                                */ 
+/* ========================================== */ 
+/* ================================================================
+   ATTENDANCE.CSS - ABSENSI
+   ================================================================ */
+
+#attendancePanel {
+    margin-top: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.attendance-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.attendance-header button {
+    margin: 0;
+    padding: 8px 16px;
+    background: rgba(255, 50, 50, 0.08);
+    border: 1px solid rgba(255, 50, 50, 0.1);
+    border-radius: 8px;
+    color: #ff6b6b;
+    font-size: 12px;
+    width: auto;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.attendance-header button:hover {
+    background: rgba(255, 50, 50, 0.15);
+}
+
+.attendance-filters {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.attendance-filters select,
+.attendance-filters input {
+    flex: 1;
+    min-width: 120px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    background: rgba(0, 0, 0, 0.2);
+    color: #ddeedd;
+    font-size: 12px;
+}
+
+.attendance-summary {
+    background: rgba(255, 255, 255, 0.02);
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 13px;
+}
+
+.summary-row span:last-child {
+    font-weight: 600;
+    color: #FFD700;
+}
+
+.progress-container {
+    background: rgba(255, 255, 255, 0.04);
+    height: 6px;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #8bc34a);
+    transition: width 0.6s ease;
+    border-radius: 10px;
+}
+
+.desa-card {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    border-left: 3px solid #4CAF50;
+    transition: all 0.3s ease;
+}
+
+.desa-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.desa-card.incomplete {
+    border-left-color: #FF9800;
+}
+
+.desa-header {
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+.desa-name {
+    font-weight: 600;
+    color: #b2d8b2;
+    font-size: 14px;
+}
+
+.desa-count {
+    background: rgba(255, 255, 255, 0.04);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: #889988;
+}
+
+.desa-files {
+    padding: 8px 14px 14px 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.file-link {
+    color: #4CAF50;
+    text-decoration: none;
+    font-size: 12px;
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.file-link:hover {
+    background: rgba(76, 175, 80, 0.05);
+} 
+/* ===== End of attendance.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: base.css                                */ 
+/* ========================================== */ 
+/* ================================================================
+   BASE.CSS - RESET & BASE
+   ================================================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary: #0a1a3a;
+    --secondary: #1a3a6a;
+    --accent: #FFD700;
+    --success: #4CAF50;
+    --bg-dark: #0a120a;
+    --bg-card: #162016;
+    --text-light: #e6ffe6;
+    --text-muted: #889988;
+    --border-glow: rgba(76, 175, 80, 0.3);
+}
+
+body {
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-light);
+    line-height: 1.6;
+    min-height: 100vh;
+    background-image: 
+        radial-gradient(ellipse at 10% 20%, rgba(26, 58, 106, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 90% 80%, rgba(26, 58, 106, 0.10) 0%, transparent 50%);
+}
+
+.container {
+    display: none;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 20px;
+    background: rgba(22, 32, 22, 0.92);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(76, 175, 80, 0.15);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #0a120a; }
+::-webkit-scrollbar-thumb { background: #2ecc71; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #4CAF50; } 
+/* ===== End of base.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: buttons.css                                */ 
+/* ========================================== */ 
+/* ================================================================
+   BUTTONS.CSS - TOMBOL
+   ================================================================ */
+
+button {
+    margin-top: 16px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #1a4a1a, #2d6a2d);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: 'Segoe UI', Arial, sans-serif;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(76, 175, 80, 0.1);
+}
+
+button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(76, 175, 80, 0.15);
+    background: linear-gradient(135deg, #2d6a2d, #3d8a3d);
+}
+
+button:disabled {
+    background: #333;
+    cursor: not-allowed;
+    opacity: 0.4;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+button i {
+    margin-right: 8px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+.action-buttons button {
+    width: auto;
+    flex: 1;
+    min-width: 120px;
+    padding: 10px 16px;
+    font-size: 13px;
+}
+
+.action-buttons button:first-child {
+    background: linear-gradient(135deg, #1a4a1a, #2d6a2d);
+    border-color: rgba(76, 175, 80, 0.2);
+}
+
+.action-buttons button:last-child {
+    background: rgba(255, 50, 50, 0.08);
+    border: 1px solid rgba(255, 50, 50, 0.15);
+    color: #ff6b6b;
+}
+
+.action-buttons button:last-child:hover {
+    background: rgba(255, 50, 50, 0.15);
+    box-shadow: 0 8px 30px rgba(255, 50, 50, 0.1);
+}
+
+#installButton {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    background: linear-gradient(135deg, #4CAF50, #2d6a2d);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 20px;
+    font-weight: 600;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 8px 30px rgba(76, 175, 80, 0.2);
+    display: none;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+#installButton:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(76, 175, 80, 0.3);
+} 
+/* ===== End of buttons.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: chat-widget.css                                */ 
+/* ========================================== */ 
+/* ================================================================
+   CHAT WIDGET — FLOATING BOTTOM-RIGHT
+   Tema Hijau DUKOPS — Terintegrasi dengan aplikasi
+   ================================================================ */
+
+/* ================================================================
+   CONTAINER WIDGET
+   ================================================================ */
+.chat-widget {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+/* ================================================================
+   TOMBOL BUKA CHAT (💬)
+   ================================================================ */
+.chat-toggle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #1a472a, #2d6a3e);
+    color: #f4f5c8;
+    border: 2px solid #4dff4d;
+    font-size: 28px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(46, 125, 50, 0.4);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.chat-toggle:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 30px rgba(46, 125, 50, 0.5);
+}
+
+.chat-toggle:active {
+    transform: scale(0.95);
+}
+
+/* Badge notifikasi (jumlah pesan belum dibaca) */
+.chat-toggle .badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #ef4444;
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 22px;
+    height: 22px;
+    border-radius: 11px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0 6px;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+    animation: badgePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.chat-toggle .badge.show {
+    display: flex;
+}
+
+/* ================================================================
+   TOMBOL TUTUP CHAT (✕) — Muncul saat chat terbuka
+   ================================================================ */
+.chat-toggle-close {
+    display: none;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #1a472a, #2d6a3e);
+    color: #f4f5c8;
+    border: 2px solid #4dff4d;
+    font-size: 28px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(46, 125, 50, 0.4);
+    transition: all 0.3s ease;
+    align-items: center;
+    justify-content: center;
+}
+
+.chat-toggle-close:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 30px rgba(46, 125, 50, 0.5);
+}
+
+.chat-toggle-close:active {
+    transform: scale(0.95);
+}
+
+/* Sembunyikan tombol buka saat chat terbuka, tampilkan tombol tutup */
+.chat-widget.chat-open .chat-toggle {
+    display: none;
+}
+
+.chat-widget.chat-open .chat-toggle-close {
+    display: flex;
+}
+
+/* ================================================================
+   CHAT BOX
+   ================================================================ */
+.chat-box {
+    width: 380px;
+    max-width: calc(100vw - 48px);
+    height: 520px;
+    max-height: calc(100vh - 120px);
+    background: rgba(10, 30, 15, 0.95);
+    border-radius: 16px;
+    border: 1px solid rgba(77, 255, 77, 0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    margin-bottom: 12px;
+    animation: chatSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    backdrop-filter: blur(8px);
+}
+
+.chat-box.open {
+    display: flex;
+}
+
+@keyframes chatSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ================================================================
+   HEADER CHAT
+   ================================================================ */
+.chat-header {
+    background: linear-gradient(145deg, #1a472a, #0d2818);
+    color: #f4f5c8;
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(77, 255, 77, 0.2);
+}
+
+.chat-header .title {
+    font-size: 1em;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chat-header .title .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #4ade80;
+    display: inline-block;
+    animation: chatPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes chatPulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(0.8);
+    }
+}
+
+.chat-header .close-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #f4f5c8;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.chat-header .close-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: scale(1.05);
+}
+
+.chat-header .close-btn:active {
+    transform: scale(0.9);
+}
+
+/* ================================================================
+   USER BAR
+   ================================================================ */
+.chat-user-bar {
+    padding: 6px 18px;
+    background: rgba(0, 40, 0, 0.6);
+    font-size: 0.75em;
+    color: #9fd49f;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(77, 255, 77, 0.1);
+}
+
+.chat-user-bar .user-name {
+    font-weight: 600;
+    color: #4dff4d;
+}
+
+.chat-user-bar .user-count {
+    color: #8aaa8a;
+}
+
+.chat-user-bar .user-count i {
+    color: #4dff4d;
+    margin-right: 4px;
+}
+
+/* ================================================================
+   MESSAGES AREA
+   ================================================================ */
+.chat-messages-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 16px;
+    background: rgba(0, 20, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* Scrollbar styling */
+.chat-messages-area::-webkit-scrollbar {
+    width: 4px;
+}
+
+.chat-messages-area::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 2px;
+}
+
+.chat-messages-area::-webkit-scrollbar-thumb {
+    background: #4dff4d;
+    border-radius: 2px;
+}
+
+.chat-messages-area::-webkit-scrollbar-thumb:hover {
+    background: #6aff6a;
+}
+
+/* ================================================================
+   MESSAGE BUBBLES
+   ================================================================ */
+.chat-msg {
+    max-width: 82%;
+    padding: 8px 12px;
+    border-radius: 14px;
+    word-wrap: break-word;
+    animation: chatFadeIn 0.25s ease;
+}
+
+@keyframes chatFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Pesan sendiri (hijau) */
+.chat-msg-own {
+    background: linear-gradient(145deg, #1a472a, #2d6a3e);
+    color: #f4f5c8;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+    border: 1px solid rgba(77, 255, 77, 0.2);
+}
+
+/* Pesan orang lain (abu-abu) */
+.chat-msg-other {
+    background: rgba(30, 50, 30, 0.85);
+    color: #d4e6d4;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Pesan sistem */
+.chat-msg-system {
+    background: rgba(77, 255, 77, 0.06);
+    color: #7aaa7a;
+    align-self: center;
+    font-size: 0.75em;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-style: italic;
+    max-width: 92%;
+    text-align: center;
+    border: 1px solid rgba(77, 255, 77, 0.06);
+}
+
+/* Pesan sistem error */
+.chat-msg-system.error {
+    color: #f87171;
+    border-color: rgba(248, 113, 113, 0.2);
+    background: rgba(248, 113, 113, 0.05);
+}
+
+/* Username di dalam pesan */
+.chat-msg .msg-username {
+    font-weight: 600;
+    font-size: 0.75em;
+    opacity: 0.8;
+    display: block;
+    margin-bottom: 1px;
+}
+
+.chat-msg-own .msg-username {
+    color: #4dff4d;
+    opacity: 0.9;
+}
+
+.chat-msg-other .msg-username {
+    color: #9fd49f;
+}
+
+/* Konten pesan */
+.chat-msg .msg-content {
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
+/* Waktu pesan */
+.chat-msg .msg-time {
+    font-size: 0.6em;
+    opacity: 0.5;
+    display: block;
+    text-align: right;
+    margin-top: 2px;
+}
+
+.chat-msg-own .msg-time {
+    color: #b8d9b8;
+}
+
+.chat-msg-other .msg-time {
+    color: #6a8a6a;
+}
+
+/* ================================================================
+   TYPING INDICATOR
+   ================================================================ */
+.chat-typing {
+    align-self: flex-start;
+    color: #7aaa7a;
+    font-size: 0.75em;
+    padding: 4px 12px;
+    background: rgba(0, 30, 0, 0.5);
+    border-radius: 16px;
+    display: none;
+    animation: chatFadeIn 0.25s ease;
+    border: 1px solid rgba(77, 255, 77, 0.08);
+}
+
+.chat-typing.show {
+    display: block;
+}
+
+.chat-typing-dots span {
+    animation: chatDotBounce 1.4s infinite;
+    display: inline-block;
+}
+
+.chat-typing-dots span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.chat-typing-dots span:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes chatDotBounce {
+    0%, 60%, 100% {
+        transform: translateY(0);
+    }
+    30% {
+        transform: translateY(-5px);
+    }
+}
+
+/* ================================================================
+   INPUT AREA (Style WhatsApp)
+   ================================================================ */
+.chat-input-area {
+    padding: 10px 16px 14px;
+    background: rgba(0, 20, 0, 0.85);
+    border-top: 1px solid rgba(77, 255, 77, 0.1);
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+    align-items: center;
+}
+
+.chat-input-area input {
+    flex: 1;
+    padding: 10px 16px;
+    border: 1px solid rgba(77, 255, 77, 0.2);
+    border-radius: 24px;
+    font-size: 0.9em;
+    outline: none;
+    transition: all 0.3s;
+    background: rgba(0, 25, 0, 0.6);
+    color: #e6ffe6;
+}
+
+.chat-input-area input::placeholder {
+    color: #4a6a4a;
+    font-size: 0.85em;
+}
+
+.chat-input-area input:focus {
+    border-color: #4dff4d;
+    box-shadow: 0 0 0 3px rgba(77, 255, 77, 0.1);
+}
+
+.chat-input-area input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Tombol kirim seperti WhatsApp (ikon paper plane) */
+.chat-input-area .send-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #1a472a, #2d6a3e);
+    color: #f4f5c8;
+    border: 1px solid #4dff4d;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.chat-input-area .send-btn:hover:not(:disabled) {
+    transform: scale(1.08);
+    box-shadow: 0 4px 15px rgba(46, 125, 50, 0.35);
+    background: linear-gradient(145deg, #2d6a3e, #1a472a);
+}
+
+.chat-input-area .send-btn:active:not(:disabled) {
+    transform: scale(0.92);
+}
+
+.chat-input-area .send-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ================================================================
+   RESPONSIVE
+   ================================================================ */
+@media (max-width: 500px) {
+    .chat-box {
+        width: calc(100vw - 32px);
+        height: 480px;
+        max-height: calc(100vh - 100px);
+        border-radius: 16px;
+    }
+
+    .chat-widget {
+        bottom: 16px;
+        right: 16px;
+    }
+
+    .chat-toggle,
+    .chat-toggle-close {
+        width: 52px;
+        height: 52px;
+        font-size: 24px;
+    }
+
+    .chat-input-area input {
+        font-size: 0.8em;
+        padding: 8px 12px;
+    }
+
+    .chat-input-area .send-btn {
+        width: 38px;
+        height: 38px;
+        font-size: 15px;
+    }
+
+    .chat-header .title {
+        font-size: 0.85em;
+    }
+
+    .chat-msg {
+        max-width: 88%;
+        padding: 6px 10px;
+    }
+
+    .chat-msg .msg-content {
+        font-size: 0.85em;
+    }
+
+    .chat-messages-area {
+        padding: 8px 10px;
+    }
+}
+
+/* Untuk tablet kecil */
+@media (min-width: 501px) and (max-width: 768px) {
+    .chat-box {
+        width: 340px;
+        height: 480px;
+    }
+
+    .chat-toggle,
+    .chat-toggle-close {
+        width: 56px;
+        height: 56px;
+        font-size: 26px;
+    }
+}
+
+/* Untuk layar sangat kecil (landscape phone) */
+@media (max-height: 600px) and (orientation: landscape) {
+    .chat-box {
+        height: 80vh;
+        max-height: 350px;
+    }
+
+    .chat-messages-area {
+        padding: 6px 10px;
+    }
+
+    .chat-msg {
+        padding: 4px 8px;
+    }
+
+    .chat-msg .msg-content {
+        font-size: 0.8em;
+    }
+
+    .chat-header {
+        padding: 8px 12px;
+    }
+
+    .chat-user-bar {
+        padding: 3px 12px;
+        font-size: 0.65em;
+    }
+
+    .chat-input-area {
+        padding: 6px 10px 8px;
+    }
+
+    .chat-input-area input {
+        padding: 6px 12px;
+        font-size: 0.8em;
+    }
+
+    .chat-input-area .send-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 13px;
+    }
+}
+
+/* ================================================================
+   ANIMASI UNTUK PESAN BARU
+   ================================================================ */
+.chat-msg-new {
+    animation: chatBounceIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes chatBounceIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ================================================================
+   STATUS KONEKSI (Opsional untuk di header)
+   ================================================================ */
+.chat-status {
+    font-size: 0.7em;
+    color: #7aaa7a;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.chat-status .online {
+    color: #4ade80;
+}
+
+.chat-status .offline {
+    color: #f87171;
+}
+
+.chat-status .connecting {
+    color: #fbbf24;
+    animation: chatPulse 1s ease-in-out infinite;
+}
+ 
+/* ===== End of chat-widget.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: combined.css                                */ 
+/* ========================================== */ 
+/* ========================================== */ 
+/*   Gabungan CSS - Dibuat: Wed 07/01/2026  8:06:14.83   */ 
+/*   Total file akan digabung              */ 
+/* ========================================== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: attendance.css                                */ 
+/* ========================================== */ 
+/* =============================================================== 
+/* ===== End of combined.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: download-png.css                                */ 
+/* ========================================== */ 
+/* download-png.css - CSS untuk halaman download absen PNG */
+
+/* Container utama untuk area screenshot */
+.png-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 15px;
+    background: #ffffff;
+    border-radius: 12px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Header PNG */
+.png-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px 10px 16px;
+    background: linear-gradient(135deg, #1a2332, #2c3e50);
+    border-radius: 10px 10px 0 0;
+    color: white;
+}
+
+.png-header div:first-child {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.png-header div:last-child {
+    font-size: 8px;
+    opacity: 0.7;
+}
+
+/* Stats grid untuk PNG */
+.png-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin: 8px 0 10px 0;
+}
+
+.png-stat-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 8px 4px;
+    text-align: center;
+    border: 1px solid #e9ecef;
+}
+
+.png-stat-card div:first-child {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.png-stat-card div:last-child {
+    font-size: 7px;
+    color: #6b7a8f;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* Progress bar PNG */
+.png-progress-bar {
+    width: 100%;
+    height: 6px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 2px 0;
+}
+
+.png-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #66BB6A);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+/* Item desa untuk PNG */
+.png-desa-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 6px;
+    border-bottom: 1px solid #f0f2f5;
+    font-size: 10px;
+}
+
+.png-desa-item:last-child {
+    border-bottom: none;
+}
+
+.png-desa-item .desa-name {
+    flex: 2;
+    font-weight: 500;
+    color: #000;
+    font-size: 10px;
+}
+
+.png-desa-item .desa-count {
+    width: 35px;
+    text-align: center;
+    font-size: 9px;
+    color: #000;
+}
+
+.png-desa-item .desa-progress {
+    width: 50px;
+}
+
+.png-desa-item .desa-progress-bar {
+    background: #e0e0e0;
+    border-radius: 6px;
+    height: 4px;
+    overflow: hidden;
+}
+
+.png-desa-item .desa-progress-fill {
+    height: 4px;
+    border-radius: 6px;
+}
+
+.png-desa-item .desa-status {
+    width: 45px;
+    text-align: center;
+    font-size: 8px;
+    padding: 2px 4px;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+/* Status badge untuk PNG */
+.png-status-lengkap {
+    background: #e8f5e9;
+    color: #4caf50;
+}
+
+.png-status-bl {
+    background: #fff3e0;
+    color: #ff9800;
+}
+
+.png-status-belum {
+    background: #ffebee;
+    color: #f44336;
+}
+
+/* Footer PNG */
+.png-footer {
+    text-align: center;
+    padding: 8px 0 4px 0;
+    font-size: 7px;
+    color: #999;
+    border-top: 1px solid #f0f2f5;
+    margin-top: 8px;
+}
+
+/* Style untuk tombol download di halaman absen */
+.absen-btn-download-png {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #e91e63, #c2185b);
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+    margin: 10px 0;
+}
+
+.absen-btn-download-png:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(233, 30, 99, 0.4);
+}
+
+.absen-btn-download-png:active {
+    transform: translateY(0);
+}
+
+.absen-btn-download-png i {
+    font-size: 18px;
+}
+
+/* Responsif untuk PNG */
+@media (max-width: 480px) {
+    .png-container {
+        padding: 10px;
+        max-width: 100%;
+    }
+    
+    .png-stats {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 4px;
+    }
+    
+    .png-stat-card {
+        padding: 5px 2px;
+    }
+    
+    .png-stat-card div:first-child {
+        font-size: 10px;
+    }
+    
+    .png-stat-card div:last-child {
+        font-size: 6px;
+    }
+    
+    .png-desa-item {
+        padding: 4px 4px;
+        font-size: 8px;
+        gap: 4px;
+    }
+    
+    .png-desa-item .desa-name {
+        font-size: 8px;
+    }
+    
+    .png-desa-item .desa-count {
+        font-size: 7px;
+        width: 28px;
+    }
+    
+    .png-desa-item .desa-progress {
+        width: 35px;
+    }
+    
+    .png-desa-item .desa-status {
+        font-size: 6px;
+        width: 35px;
+        padding: 1px 3px;
+    }
+    
+    .png-header div:first-child {
+        font-size: 12px;
+    }
+    
+    .png-header div:last-child {
+        font-size: 6px;
+    }
+}
+
+/* Print style untuk PNG */
+@media print {
+    .png-container {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+        max-width: 100% !important;
+    }
+    
+    .png-header {
+        background: #1a2332 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    .png-stat-card {
+        background: #f8f9fa !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    .png-progress-fill {
+        background: #4CAF50 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    .png-status-lengkap,
+    .png-status-bl,
+    .png-status-belum {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}
+ 
+/* ===== End of download-png.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: form.css                                */ 
+/* ========================================== */ 
+/* ================================================================
+   FORM.CSS - FORM ELEMENTS
+   ================================================================ */
+
+label {
+    display: block;
+    margin-top: 16px;
+    font-weight: 600;
+    color: #effb04;
+    font-size: 20px;
+    letter-spacing: 0.5px;
+}
+
+label i {
+    color: #ffffff;
+    margin-right: 6px;
+}
+
+select,
+input,
+textarea {
+    width: 100%;
+    padding: 10px 14px;
+    margin-top: 6px;
+    border-radius: 10px;
+    border: 1px solid rgba(76, 175, 80, 0.12);
+    background: rgba(0, 0, 0, 0.3);
+    color: #e6ffe6;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+select:focus,
+input:focus,
+textarea:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.08);
+}
+
+select option {
+    background: #0a1a0a;
+    color: #e6ffe6;
+    padding: 8px;
+}
+
+textarea {
+    min-height: 120px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+.narasi-wrapper {
+    position: relative;
+    margin-top: 6px;
+}
+
+.narasi-wrapper textarea {
+    margin-top: 0;
+    padding-right: 50px;
+    min-height: 150px;
+}
+
+.ai-template-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 10px;
+    padding: 10px 14px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.ai-template-container span {
+    font-size: 12px;
+    color: #889988;
+    letter-spacing: 0.3px;
+}
+
+.ai-template-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #1a4a2a, #2d6a3d);
+    border: none;
+    padding: 8px 18px;
+    border-radius: 30px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 0;
+    width: auto;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    border: 1px solid rgba(46, 204, 113, 0.15);
+}
+
+.ai-template-btn i {
+    font-size: 15px;
+    color: #2ecc71;
+}
+
+.ai-template-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(46, 204, 113, 0.15);
+    background: linear-gradient(135deg, #2d6a3d, #3d8a4d);
+}
+
+.ai-template-btn:active {
+    transform: scale(0.96);
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.col {
+    flex: 1;
+    min-width: 0;
+}
+
+.previewBox {
+    font-size: 13px;
+    color: #889988;
+    margin-top: 6px;
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    min-height: 2em;
+}
+
+canvas {
+    display: block;
+    margin-top: 16px;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: #000;
+}
+
+.app-loading {
+    text-align: center;
+    padding: 20px;
+    color: #4dff4d;
+    display: none;
+    font-weight: 600;
+}
+
+.auto-height-textarea {
+    width: 100%;
+    padding: 10px 14px;
+    margin-top: 6px;
+    border-radius: 10px;
+    border: 1px solid rgba(76, 175, 80, 0.12);
+    background: rgba(0, 0, 0, 0.3);
+    color: #e6ffe6;
+    font-size: 14px;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    resize: none;
+    overflow-y: hidden;
+    transition: height 0.1s ease;
+    line-height: 1.6;
+}
+
+.auto-height-textarea:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.08);
+}
+
+/* ================================================================
+   TELEGRAM GROUP SELECTOR - DIHAPUS
+   ================================================================ */ 
+/* ===== End of form.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: header.css                                */ 
+/* ========================================== */ 
+/* ================================================================
+   HEADER.CSS - HEADER + ANNOUNCEMENT + RUNNING TEXT
+   ================================================================ */
+
+.dukops-header {
+    background: url('header/header-background.png') center/cover no-repeat;
+    background-color: #0d1f0d;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 215, 0, 0.12);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.dukops-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #FFD700, #FFA500, #FFD700, transparent);
+    animation: headerGoldLine 3s ease-in-out infinite;
+    background-size: 200% 100%;
+}
+
+@keyframes headerGoldLine {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.dukops-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.15), transparent);
+}
+
+.dukops-header-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+}
+
+.dukops-profile-area {
+    flex-shrink: 0;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 8px;
+    border-radius: 16px;
+    width: 100px;
+    border: 1px solid rgba(255, 215, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.dukops-profile-area:hover {
+    border-color: rgba(144, 241, 7, 0.903)03));
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.05);
+}
+
+.dukops-profile-img {
+    width: 100%;
+    height: 85px;
+    border-radius: 12px;
+    border: 2px solid rgba(255, 215, 0, 0.12);
+    object-fit: cover;
+    background: linear-gradient(135deg, #0d1f0d, #1a3a1a);
+    transition: all 0.3s ease;
+}
+
+.dukops-profile-img:hover {
+    border-color: #FFD700;
+    transform: scale(1.02);
+}
+
+.dukops-profile-name {
+    font-size: 10px;
+    font-weight: 600;
+    color: #FFD700;
+    margin-top: 6px;
+    letter-spacing: 0.5px;
+    opacity: 0.8;
+}
+
+.dukops-title-area {
+    flex: 1;
+    min-width: 180px;
+}
+
+.dukops-header-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #FFD700;
+    margin: 1px 0;
+    letter-spacing: 1px;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.08);
+}
+
+.dukops-header-title:last-of-type {
+    font-size: 14px;
+    color: #FFC107;
+    font-weight: 600;
+}
+
+.dukops-header-address {
+    font-size: 10px;
+    color: #88dd88;
+    margin-top: 4px;
+    opacity: 0.8;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dukops-header-address i {
+    color: #FFD700;
+    font-size: 11px;
+}
+
+.audio-control-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 4px 12px 4px 8px;
+    border-radius: 30px;
+    border: 1px solid rgba(255, 215, 0, 0.06);
+}
+
+.audio-control-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.05);
+    color: #ddeedd;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 13px;
+}
+
+.audio-control-btn:hover {
+    background: rgba(255, 215, 0, 0.12);
+    color: #FFD700;
+    transform: scale(1.05);
+}
+
+.audio-volume-slider {
+    display: none;
+    width: 80px;
+    height: 3px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    outline: none;
+}
+
+.audio-volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #FFD700;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+.counter-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #FFD700;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 2px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 215, 0, 0.08);
+    font-family: 'Courier New', monospace;
+    min-width: 30px;
+    text-align: center;
+}
+
+/* ================================================================
+   TELEGRAM RUNNING TEXT - DIHAPUS
+   ================================================================ */
+
+.running-text-container {
+    background: rgba(0, 30, 0, 0.4);
+    border-radius: 12px;
+    padding: 10px 16px;
+    margin: 10px 0;
+    border: 1px solid rgba(255, 204, 0, 0.08);
+    overflow: hidden;
+    white-space: nowrap;
+    backdrop-filter: blur(4px);
+}
+
+.running-text {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 12s linear infinite;
+    color: #FFD700;
+    font-weight: 600;
+    font-size: 13px;
+    padding-right: 50px;
+}
+
+@keyframes marquee {
+    0% { transform: translateX(100%); }
+    50% { transform: translateX(0%); }
+    100% { transform: translateX(-100%); }
+}
+
+.running-text-container:hover .running-text {
+    animation-play-state: paused;
+}
+
+.dukops-announcement-bar {
+    width: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.03), transparent);
+    color: #ffffff;
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.04);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.dukops-announcement-text {
+    display: inline-block;
+    padding-left: 100%;
+    animation: dukops-running-text 35s linear infinite;
+    color: #88dd88;
+    letter-spacing: 0.5px;
+}
+
+@keyframes dukops-running-text {
+    from { transform: translateX(0); }
+    to { transform: translateX(-100%); }
+} 
+/* ===== End of header.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: jadwal.css                                */ 
+/* ========================================== */ 
+/* ================================================================
+   JADWAL.CSS - JADWAL PIKET (FULL UPGRADE - SIAP PAKAI)
+   ================================================================ */
+
+.jadwal-header {
+    text-align: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.jadwal-title {
+    color: #FFD700;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.05);
+}
+
+.jadwal-logo {
+    max-width: 100%;
+    height: auto;
+    max-height: 80px;
+    border-radius: 12px;
+    border: 1px solid rgba(76, 175, 80, 0.1);
+    margin-bottom: 8px;
+}
+
+.jadwal-header p {
+    font-size: 12px;
+    color: #889988;
+    letter-spacing: 0.5px;
+}
+
+.jadwal-section {
+    background: rgba(0, 40, 0, 0.3);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 14px;
+    border: 1px solid rgba(76, 175, 80, 0.06);
+    backdrop-filter: blur(4px);
+    transition: all 0.3s ease;
+}
+
+.jadwal-section:hover {
+    border-color: rgba(76, 175, 80, 0.1);
+}
+
+/* ================================================================
+   SUPERPOWER CENTER - SEMUA LABEL PASTI TENGAH
+   (kecuali textarea preview, biar rata kiri)
+   ================================================================ */
+.jadwal-section,
+.jadwal-section *,
+.jadwal-section h3,
+.jadwal-section p,
+.jadwal-section div,
+.jadwal-section span,
+.jadwal-section label,
+.jadwal-section li,
+.section-title-koramil,
+.section-title-kediaman,
+.section-title-makodim {
+    text-align: center !important;
+}
+
+/* ================================================================
+   HEADING JADWAL - STYLE UPGRADE
+   ================================================================ */
+.jadwal-section h3 {
+    margin: 8px 0 12px 0 !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px !important;
+    text-align: center !important;
+    text-transform: uppercase;
+    display: block !important;
+    width: 100% !important;
+}
+
+/* ================================================================
+   WARNA LABEL DIBEDAKAN TAJAM (DENGAN GLOW)
+   ================================================================ */
+
+/* 🟢 PIKET KORAMIL - HIJAU TERANG */
+.section-title-koramil,
+h3.section-title-koramil {
+    color: #4dff4d !important;
+    text-shadow: 0 0 15px rgba(77, 255, 77, 0.4);
+}
+
+/* 🟡 JAGA KEDIAMAN - EMAS */
+.section-title-kediaman,
+h3.section-title-kediaman {
+    color: #FFD700 !important;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+}
+
+/* 🔵 PIKET MAKODIM - BIRU ELEKTRIK */
+.section-title-makodim,
+h3.section-title-makodim {
+    color: #00ccff !important;
+    text-shadow: 0 0 15px rgba(0, 204, 255, 0.4);
+}
+
+/* ================================================================
+   ROW DAN COL UNTUK SELECT (TETAP RAPI)
+   ================================================================ */
+.jadwal-section .section-content {
+    display: block;
+    width: 100%;
+}
+
+.jadwal-section .row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.jadwal-section .col {
+    flex: 1 1 140px;
+    max-width: 200px;
+    text-align: center;
+}
+
+.jadwal-section select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #0f1f0f;
+    color: #e0ffe0;
+    border: 1px solid rgba(76, 175, 80, 0.25);
+    font-size: 13px;
+    cursor: pointer;
+    outline: none;
+}
+
+/* ================================================================
+   BOX OUTPUT PESAN (PREVIEW) - TETAP RATA KIRI SEPERTI AWAL
+   ================================================================ */
+#j_hasilPesanBaru {
+    width: 100%;
+    min-height: 200px;
+    padding: 14px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 136, 204, 0.08);
+    background: rgba(0, 0, 0, 0.3);
+    color: #ddeedd;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    resize: vertical;
+    margin-top: 10px;
+    white-space: pre-wrap;
+    overflow-y: auto;
+    text-align: left !important;   /* ✅ PENGECUALIAN: preview tetap rata kiri */
+}
+
+#j_hasilPesanBaru:focus {
+    outline: none;
+    border-color: rgba(0, 136, 204, 0.2);
+}
+
+/* ================================================================
+   RESPONSIVE - MOBILE
+   ================================================================ */
+@media (max-width: 600px) {
+    .jadwal-section {
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+    .jadwal-section h3 {
+        font-size: 14px !important;
+    }
+    .jadwal-title {
+        font-size: 18px;
+    }
+    .jadwal-section .col {
+        min-width: 120px;
+    }
+} 
+/* ===== End of jadwal.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: led-effects.css                                */ 
+/* ========================================== */ 
+/* ================================================================
+   LED-EFFECTS.CSS - LED EFFECTS UNTUK JUDUL
+   ================================================================ */
+
+/* ================================================================
+   1. LED JUDUL UTAMA - EFFECT BERKEDIP
+   ================================================================ */
+.led-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    font-family: 'Courier New', 'Segoe UI', monospace;
+    text-align: center;
+    padding: 15px 20px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+    border-radius: 16px;
+    border: 2px solid rgba(255, 215, 0, 0.15);
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.05);
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* LED Border Animasi */
+.led-title::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        #ff0000, #ff8800, #ffff00, #00ff00, 
+        #0088ff, #8800ff, #ff00ff, #ff0000
+    );
+    background-size: 300% 100%;
+    animation: ledBorderMove 3s linear infinite;
+}
+
+@keyframes ledBorderMove {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 300% 0%; }
+}
+
+/* LED Letter Effect */
+.led-title .led-char {
+    display: inline-block;
+    animation: ledBlinkChar 0.8s ease-in-out infinite alternate;
+    padding: 0 2px;
+}
+
+.led-title .led-char:nth-child(odd) {
+    animation-delay: 0.1s;
+}
+
+.led-title .led-char:nth-child(3n) {
+    animation-delay: 0.3s;
+}
+
+.led-title .led-char:nth-child(5n+2) {
+    animation-delay: 0.5s;
+}
+
+@keyframes ledBlinkChar {
+    0% { 
+        opacity: 0.4; 
+        text-shadow: 0 0 5px currentColor;
+    }
+    100% { 
+        opacity: 1; 
+        text-shadow: 
+            0 0 10px currentColor,
+            0 0 20px currentColor,
+            0 0 40px currentColor;
+    }
+}
+
+/* Warna LED untuk judul */
+.led-title-red .led-char { color: #ff0000; }
+.led-title-green .led-char { color: #00ff00; }
+.led-title-blue .led-char { color: #0088ff; }
+.led-title-gold .led-char { color: #ffd700; }
+.led-title-cyan .led-char { color: #00ffff; }
+.led-title-magenta .led-char { color: #ff00ff; }
+.led-title-orange .led-char { color: #ff8800; }
+.led-title-white .led-char { color: #ffffff; }
+.led-title-rainbow .led-char {
+    animation: rainbowColors 2s linear infinite;
+}
+
+@keyframes rainbowColors {
+    0% { color: #ff0000; }
+    17% { color: #ff8800; }
+    33% { color: #ffff00; }
+    50% { color: #00ff00; }
+    67% { color: #0088ff; }
+    83% { color: #8800ff; }
+    100% { color: #ff0000; }
+}
+
+/* ================================================================
+   2. LED JUDUL SUB - EFFECT SCROLLING
+   ================================================================ */
+.led-subtitle-scroll {
+    font-size: 1.2rem;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+    text-align: center;
+    padding: 10px 0;
+    color: #ffd700;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+    overflow: hidden;
+    white-space: nowrap;
+    position: relative;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 30px;
+    border: 1px solid rgba(255, 215, 0, 0.06);
+}
+
+.led-subtitle-scroll .scroll-text {
+    display: inline-block;
+    animation: ledScroll 12s linear infinite;
+    padding-right: 50px;
+}
+
+@keyframes ledScroll {
+    0% { transform: translateX(100%); }
+    50% { transform: translateX(0%); }
+    100% { transform: translateX(-100%); }
+}
+
+.led-subtitle-scroll:hover .scroll-text {
+    animation-play-state: paused;
+}
+
+/* ================================================================
+   3. LED GLOW EFFECT - UNTUK HEADER
+   ================================================================ */
+.led-glow-header {
+    font-size: 2rem;
+    font-weight: 800;
+    text-align: center;
+    padding: 12px 20px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    animation: ledGlowPulse 1.5s ease-in-out infinite;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.led-glow-header.glow-red { color: #ff0000; text-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000, 0 0 80px #ff0000; }
+.led-glow-header.glow-green { color: #00ff00; text-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00, 0 0 80px #00ff00; }
+.led-glow-header.glow-gold { color: #ffd700; text-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700, 0 0 80px #ffd700; }
+.led-glow-header.glow-blue { color: #0088ff; text-shadow: 0 0 20px #0088ff, 0 0 40px #0088ff, 0 0 80px #0088ff; }
+.led-glow-header.glow-cyan { color: #00ffff; text-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff, 0 0 80px #00ffff; }
+.led-glow-header.glow-magenta { color: #ff00ff; text-shadow: 0 0 20px #ff00ff, 0 0 40px #ff00ff, 0 0 80px #ff00ff; }
+.led-glow-header.glow-orange { color: #ff8800; text-shadow: 0 0 20px #ff8800, 0 0 40px #ff8800, 0 0 80px #ff8800; }
+.led-glow-header.glow-white { color: #ffffff; text-shadow: 0 0 20px #ffffff, 0 0 40px #ffffff, 0 0 80px rgba(255,255,255,0.3); }
+
+@keyframes ledGlowPulse {
+    0% { opacity: 0.8; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.02); }
+    100% { opacity: 0.8; transform: scale(1); }
+}
+
+/* ================================================================
+   4. LED MATRIX EFFECT - HURUF BERGERAK
+   ================================================================ */
+.led-matrix {
+    font-size: 1.8rem;
+    font-weight: 900;
+    font-family: 'Courier New', monospace;
+    text-align: center;
+    padding: 15px 20px;
+    background: #000;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 255, 0, 0.1);
+    color: #00ff00;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+    letter-spacing: 5px;
+    position: relative;
+    overflow: hidden;
+}
+
+.led-matrix::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(0, 255, 0, 0.05), transparent);
+    animation: matrixScan 3s ease-in-out infinite;
+}
+
+@keyframes matrixScan {
+    0% { left: -100%; }
+    50% { left: 100%; }
+    100% { left: 100%; }
+}
+
+/* ================================================================
+   5. LED NEON EFFECT - BORDER BERCAHAYA
+   ================================================================ */
+.led-neon-box {
+    padding: 15px 25px;
+    border-radius: 16px;
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 800;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    background: rgba(0, 0, 0, 0.4);
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.led-neon-box.neon-red {
+    color: #ff0000;
+    border: 2px solid #ff0000;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.2), inset 0 0 20px rgba(255, 0, 0, 0.05);
+    animation: neonPulseRed 1.5s ease-in-out infinite;
+}
+
+.led-neon-box.neon-green {
+    color: #00ff00;
+    border: 2px solid #00ff00;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.2), inset 0 0 20px rgba(0, 255, 0, 0.05);
+    animation: neonPulseGreen 1.5s ease-in-out infinite;
+}
+
+.led-neon-box.neon-gold {
+    color: #ffd700;
+    border: 2px solid #ffd700;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.2), inset 0 0 20px rgba(255, 215, 0, 0.05);
+    animation: neonPulseGold 1.5s ease-in-out infinite;
+}
+
+.led-neon-box.neon-blue {
+    color: #0088ff;
+    border: 2px solid #0088ff;
+    box-shadow: 0 0 20px rgba(0, 136, 255, 0.2), inset 0 0 20px rgba(0, 136, 255, 0.05);
+    animation: neonPulseBlue 1.5s ease-in-out infinite;
+}
+
+.led-neon-box.neon-rainbow {
+    border: 2px solid transparent;
+    background: linear-gradient(#000, #000) padding-box,
+                linear-gradient(90deg, #ff0000, #ff8800, #ffff00, #00ff00, #0088ff, #8800ff, #ff0000) border-box;
+    animation: neonPulseRainbow 2s ease-in-out infinite;
+}
+
+@keyframes neonPulseRed {
+    0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.2), inset 0 0 20px rgba(255, 0, 0, 0.05); }
+    50% { box-shadow: 0 0 40px rgba(255, 0, 0, 0.4), inset 0 0 40px rgba(255, 0, 0, 0.1); }
+}
+
+@keyframes neonPulseGreen {
+    0%, 100% { box-shadow: 0 0 20px rgba(0, 255, 0, 0.2), inset 0 0 20px rgba(0, 255, 0, 0.05); }
+    50% { box-shadow: 0 0 40px rgba(0, 255, 0, 0.4), inset 0 0 40px rgba(0, 255, 0, 0.1); }
+}
+
+@keyframes neonPulseGold {
+    0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.2), inset 0 0 20px rgba(255, 215, 0, 0.05); }
+    50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.4), inset 0 0 40px rgba(255, 215, 0, 0.1); }
+}
+
+@keyframes neonPulseBlue {
+    0%, 100% { box-shadow: 0 0 20px rgba(0, 136, 255, 0.2), inset 0 0 20px rgba(0, 136, 255, 0.05); }
+    50% { box-shadow: 0 0 40px rgba(0, 136, 255, 0.4), inset 0 0 40px rgba(0, 136, 255, 0.1); }
+}
+
+@keyframes neonPulseRainbow {
+    0%, 100% { box-shadow: 0 0 30px rgba(255, 0, 0, 0.3); }
+    17% { box-shadow: 0 0 30px rgba(255, 136, 0, 0.3); }
+    33% { box-shadow: 0 0 30px rgba(255, 255, 0, 0.3); }
+    50% { box-shadow: 0 0 30px rgba(0, 255, 0, 0.3); }
+    67% { box-shadow: 0 0 30px rgba(0, 136, 255, 0.3); }
+    83% { box-shadow: 0 0 30px rgba(136, 0, 255, 0.3); }
+}
+
+/* ================================================================
+   6. LED KETIK (TYPEWRITER) EFFECT
+   ================================================================ */
+.led-typewriter {
+    font-size: 2rem;
+    font-weight: 700;
+    font-family: 'Courier New', monospace;
+    color: #00ff00;
+    text-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+    text-align: center;
+    padding: 15px 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 255, 0, 0.06);
+    overflow: hidden;
+    white-space: nowrap;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.led-typewriter .type-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.2em;
+    background: #00ff00;
+    animation: cursorBlink 0.8s step-end infinite;
+    vertical-align: text-bottom;
+    margin-left: 2px;
+}
+
+@keyframes cursorBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+/* ================================================================
+   7. LED SPARKLE EFFECT
+   ================================================================ */
+.led-sparkle {
+    font-size: 2.2rem;
+    font-weight: 900;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    padding: 15px 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+}
+
+.led-sparkle .sparkle-char {
+    display: inline-block;
+    animation: sparkle 1.5s ease-in-out infinite;
+}
+
+.led-sparkle .sparkle-char:nth-child(odd) { animation-delay: 0.1s; }
+.led-sparkle .sparkle-char:nth-child(3n) { animation-delay: 0.3s; }
+.led-sparkle .sparkle-char:nth-child(5n+2) { animation-delay: 0.5s; }
+.led-sparkle .sparkle-char:nth-child(7n+4) { animation-delay: 0.7s; }
+
+@keyframes sparkle {
+    0%, 100% { 
+        opacity: 0.3; 
+        text-shadow: 0 0 5px currentColor;
+        transform: scale(0.9);
+    }
+    50% { 
+        opacity: 1; 
+        text-shadow: 
+            0 0 15px currentColor,
+            0 0 30px currentColor;
+        transform: scale(1.05);
+    }
+}
+
+.led-sparkle.sparkle-gold .sparkle-char { color: #ffd700; }
+.led-sparkle.sparkle-red .sparkle-char { color: #ff0000; }
+.led-sparkle.sparkle-green .sparkle-char { color: #00ff00; }
+.led-sparkle.sparkle-blue .sparkle-char { color: #0088ff; }
+.led-sparkle.sparkle-rainbow .sparkle-char {
+    animation: sparkleRainbow 2s linear infinite;
+}
+
+@keyframes sparkleRainbow {
+    0% { color: #ff0000; }
+    17% { color: #ff8800; }
+    33% { color: #ffff00; }
+    50% { color: #00ff00; }
+    67% { color: #0088ff; }
+    83% { color: #8800ff; }
+    100% { color: #ff0000; }
+}
+
+/* ================================================================
+   8. RESPONSIVE
+   ================================================================ */
+@media (max-width: 768px) {
+    .led-title {
+        font-size: 1.8rem;
+        padding: 10px 15px;
+        letter-spacing: 2px;
+    }
+    .led-glow-header {
+        font-size: 1.5rem;
+        padding: 10px 15px;
+    }
+    .led-neon-box {
+        font-size: 1.3rem;
+        padding: 10px 15px;
+    }
+    .led-matrix {
+        font-size: 1.3rem;
+        padding: 10px 15px;
+    }
+    .led-typewriter {
+        font-size: 1.3rem;
+        padding: 10px 15px;
+    }
+    .led-sparkle {
+        font-size: 1.5rem;
+        padding: 10px 15px;
+    }
+    .led-subtitle-scroll {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .led-title {
+        font-size: 1.4rem;
+        padding: 8px 12px;
+        letter-spacing: 1px;
+    }
+    .led-glow-header {
+        font-size: 1.2rem;
+        padding: 8px 12px;
+    }
+    .led-neon-box {
+        font-size: 1rem;
+        padding: 8px 12px;
+    }
+    .led-matrix {
+        font-size: 1rem;
+        padding: 8px 12px;
+        letter-spacing: 3px;
+    }
+    .led-typewriter {
+        font-size: 1rem;
+        padding: 8px 12px;
+    }
+    .led-sparkle {
+        font-size: 1.2rem;
+        padding: 8px 12px;
+        letter-spacing: 2px;
+    }
+} 
+/* ===== End of led-effects.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: main.css                                */ 
+/* ========================================== */ 
+/* ================================================================
+   MAIN.CSS - IMPORT SEMUA FILE CSS
+   ================================================================ */
+
+@import url('base.css');
+@import url('splash.css');
+@import url('header.css');
+@import url('navigation.css');
+@import url('form.css');
+@import url('buttons.css');
+@import url('notification.css');
+@import url('jadwal.css');
+@import url('attendance.css');
+@import url('tab-absen.css');
+@import url('popup.css');
+@import url('led-effects.css');
+@import url('responsive.css'); 
+/* ===== End of main.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: modal.css                                */ 
+/* ========================================== */ 
+/* ============ MODAL PILIH DESA ============ */
+.modal-pilih-desa {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease;
+}
+
+.modal-pilih-desa.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-desa-card {
+    background: linear-gradient(145deg, #1a2a3a, #0f1a24);
+    width: 90%;
+    max-width: 400px;
+    border-radius: 32px;
+    padding: 32px 28px;
+    text-align: center;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,215,0,0.2);
+    animation: modalPop 0.4s cubic-bezier(0.34, 1.2, 0.64, 1);
+}
+
+@keyframes modalPop {
+    from { opacity: 0; transform: scale(0.9) translateY(-20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-desa-card h2 {
+    font-size: 26px;
+    margin-bottom: 8px;
+    color: #FFD700;
+}
+
+.modal-desa-card p {
+    color: #B0C4DE;
+    margin-bottom: 24px;
+    font-size: 13px;
+}
+
+.modal-desa-card select {
+    width: 100%;
+    padding: 14px 18px;
+    font-size: 16px;
+    border: 1.5px solid #FFD700;
+    border-radius: 60px;
+    background: #0a1a2a;
+    color: #FFFFFF;
+    cursor: pointer;
+    outline: none;
+    margin-bottom: 20px;
+}
+
+.modal-desa-card select option {
+    background: #1a2a3a;
+    color: #FFFFFF;
+}
+
+.btn-masuk {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #0a1a3a;
+    border: none;
+    width: 100%;
+    padding: 14px;
+    border-radius: 60px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-masuk:active {
+    transform: scale(0.97);
+}
+
+.btn-masuk:hover {
+    box-shadow: 0 4px 15px rgba(255,215,0,0.3);
+} 
+/* ===== End of modal.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: navigation.css                                */ 
+/* ========================================== */ 
+/* ================================================================
+   NAVIGATION.CSS - NAVIGASI
+   ================================================================ */
+
+.nav-buttons {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    padding: 4px;
+    background: none;
+    border-radius: 14px;
+    border: none;
+}
+
+.nav-btn : .nav-btn.active{
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 18px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: transparent;
+    color: #e2af07f1;
+}
+
+.nav-btn i {
+    font-size: bold 26px;
+    transition: transform 0.3s ease;
+}
+
+.nav-btn:hover {
+    color: #04094b;
+    background: rgb(242, 237, 237);
+}
+
+.nav-btn:hover i {
+    transform: translateY(-2px);
+}
+
+.nav-btn.active {
+    color: #fff;
+}
+
+.nav-btn-dukops.active {
+    background: linear-gradient(135deg, #11a409, hsl(22, 93%, 49%));
+    box-shadow: 0 4px 20px rgba(255, 165, 0, 0.2);
+}
+
+.nav-btn-piket.active {
+    background: linear-gradient(135deg, #11a409, hsl(22, 93%, 49%));
+    box-shadow: 0 4px 20px rgba(255, 165, 0, 0.2);
+}
+
+.nav-btn-absen.active {
+    background: linear-gradient(135deg, #11a409, hsl(22, 93%, 49%));
+    box-shadow: 0 4px 20px rgba(255, 165, 0, 0.2);
+} 
+/* ===== End of navigation.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: notification.css                                */ 
+/* ========================================== */ 
+/* ================================================================
+   NOTIFICATION.CSS - NOTIFIKASI
+   ================================================================ */
+
+.notification {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 14px 24px;
+    border-radius: 14px;
+    z-index: 1000;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    max-width: 90%;
+    min-width: 280px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+    animation: notifSlideUp 0.4s ease-out;
+}
+
+@keyframes notifSlideUp {
+    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.notification.success {
+    background: rgba(46, 125, 50, 0.9);
+    color: #a5d6a7;
+    border-color: rgba(76, 175, 80, 0.2);
+}
+
+.notification.error {
+    background: rgba(183, 28, 28, 0.9);
+    color: #ef9a9a;
+    border-color: rgba(244, 67, 54, 0.2);
+}
+
+.notification.warning {
+    background: rgba(230, 81, 0, 0.9);
+    color: #ffcc80;
+    border-color: rgba(255, 152, 0, 0.2);
+}
+
+.jadwal-toast {
+    position: fixed;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 14px 24px;
+    border-radius: 30px;
+    z-index: 10000;
+    opacity: 0;
+    transition: all 0.4s ease;
+    max-width: 90%;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
+    pointer-events: none;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.jadwal-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+} 
+/* ===== End of notification.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: popup.css                                */ 
+/* ========================================== */ 
+/* ================================================================
+   POPUP.CSS - MODAL AI & THANK YOU
+   ================================================================ */
+
+/* ============ AI TEMPLATE MODAL ============ */
+.modal-ai {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-ai.show {
+    display: flex !important;
+}
+
+.modal-ai-content {
+    background: linear-gradient(145deg, #1a2a1f, #0f1a12);
+    margin: 0 auto;
+    padding: 0;
+    width: 95%;
+    max-width: 680px;
+    height: 80vh;
+    max-height: 580px;
+    border-radius: 20px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(46, 204, 113, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from { opacity: 0; transform: translateY(-30px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal-ai-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #0d2a1d, #0a1f15);
+    border-bottom: 1px solid #2e8b57;
+    flex-shrink: 0;
+}
+
+.modal-ai-header h3 {
+    margin: 0;
+    color: #9fd49f;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.modal-ai-header h3 i {
+    margin-right: 8px;
+    color: #2ecc71;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #9fd49f;
+    transition: all 0.2s;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #ff6b6b;
+    transform: rotate(90deg);
+}
+
+.modal-ai-tabs {
+    padding: 12px 16px;
+    background: #0e1712;
+    border-bottom: 1px solid #1e3a2a;
+    flex-shrink: 0;
+}
+
+#categorySelect {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: #1a2a1f;
+    color: #e6ffe6;
+    border: 1px solid rgba(46, 204, 113, 0.2);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+#categorySelect:hover {
+    border-color: #2ecc71;
+    background: #2a3a2a;
+}
+
+#categorySelect:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.1);
+}
+
+.modal-ai-body {
+    padding: 16px;
+    overflow-y: auto;
+    flex: 1;
+    scrollbar-width: thin;
+    scrollbar-color: #2ecc71 #1a2a1f;
+}
+
+.modal-ai-body::-webkit-scrollbar {
+    width: 5px;
+}
+
+.modal-ai-body::-webkit-scrollbar-track {
+    background: #1a2a1f;
+    border-radius: 10px;
+}
+
+.modal-ai-body::-webkit-scrollbar-thumb {
+    background: #2ecc71;
+    border-radius: 10px;
+}
+
+.modal-template-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.modal-template-item {
+    background: #0f1a12;
+    border-radius: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    border: 1px solid #2a4a2a;
+}
+
+.modal-template-item:hover {
+    background: #1a2a1f;
+    border-color: #2ecc71;
+    transform: translateX(4px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.modal-template-item:active {
+    transform: scale(0.98);
+}
+
+.modal-template-text {
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: #c8e6d0;
+}
+
+.loading-templates {
+    text-align: center;
+    padding: 40px;
+    color: #9fd49f;
+    font-size: 0.9rem;
+}
+
+.loading-templates i {
+    margin-right: 8px;
+}
+
+/* ================= THANK YOU POPUP ================= */
+.thankyou-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: popupFade 0.4s ease-out;
+}
+
+@keyframes popupFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.thankyou-content {
+    background: linear-gradient(145deg, #0d1a0d, #1a3a1a);
+    padding: 32px 36px;
+    border-radius: 20px;
+    max-width: 90%;
+    width: 440px;
+    text-align: center;
+    border: 1px solid rgba(255, 215, 0, 0.06);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: popupScale 0.4s ease-out;
+}
+
+@keyframes popupScale {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.thankyou-content .icon {
+    font-size: 56px;
+    color: #FFD700;
+    margin-bottom: 12px;
+    display: block;
+}
+
+.thankyou-content h2 {
+    color: #FFD700;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+}
+
+.thankyou-content p {
+    color: #b2d8b2;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.thankyou-content .highlight {
+    background: rgba(255, 215, 0, 0.04);
+    border: 1px solid rgba(255, 215, 0, 0.06);
+    border-radius: 12px;
+    padding: 12px;
+    margin: 14px 0;
+    color: #FFD700;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.thankyou-content .sub {
+    color: #889988;
+    font-size: 12px;
+    margin-bottom: 16px;
+}
+
+.thankyou-content button {
+    background: linear-gradient(135deg, #1a4a1a, #2d6a2d);
+    border: 1px solid rgba(76, 175, 80, 0.1);
+    border-radius: 12px;
+    padding: 12px 24px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.thankyou-content button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(76, 175, 80, 0.15);
+} 
+/* ===== End of popup.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: responsive.css                                */ 
+/* ========================================== */ 
+/* ================================================================
+   RESPONSIVE.CSS - RESPONSIVE
+   ================================================================ */
+
+@media (max-width: 768px) {
+    .container {
+        padding: 14px;
+        border-radius: 14px;
+        margin: 10px;
+    }
+    
+    .dukops-header-row {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+    }
+    
+    .dukops-title-area {
+        text-align: center;
+    }
+    
+    .dukops-profile-area {
+        width: 80px;
+    }
+    
+    .dukops-profile-img {
+        height: 70px;
+    }
+    
+    .dukops-header-title {
+        font-size: 16px;
+    }
+    
+    .dukops-header-title:last-of-type {
+        font-size: 13px;
+    }
+    
+    .nav-buttons {
+        gap: 6px;
+        padding: 4px;
+    }
+    
+    .nav-btn {
+        font-size: 11px;
+        padding: 10px 12px;
+    }
+    
+    .nav-btn i {
+        font-size: 14px;
+    }
+    
+    .absen-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .splash-title-center {
+        font-size: 26px;
+    }
+    
+    .splash-title-center:last-of-type {
+        font-size: 18px;
+    }
+    
+    .thankyou-content {
+        padding: 24px;
+        width: 92%;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 10px;
+        border-radius: 12px;
+        margin: 6px;
+    }
+    
+    .dukops-header {
+        padding: 12px 14px;
+    }
+    
+    .dukops-profile-area {
+        width: 70px;
+        padding: 4px;
+    }
+    
+    .dukops-profile-img {
+        height: 60px;
+    }
+    
+    .dukops-profile-name {
+        font-size: 9px;
+    }
+    
+    .dukops-header-title {
+        font-size: 14px;
+    }
+    
+    .dukops-header-title:last-of-type {
+        font-size: 12px;
+    }
+    
+    .dukops-header-address {
+        font-size: 9px;
+    }
+    
+    .audio-control-wrapper {
+        padding: 2px 8px;
+    }
+    
+    .audio-volume-slider {
+        width: 60px;
+    }
+    
+    .counter-value {
+        font-size: 14px;
+        padding: 1px 10px;
+    }
+    
+    .nav-buttons {
+        flex-wrap: wrap;
+        gap: 4px;
+    }
+    
+    .nav-btn {
+        font-size: 10px;
+        padding: 8px 10px;
+        flex: 1 1 30%;
+    }
+    
+    .nav-btn i {
+        font-size: 12px;
+    }
+    
+    /* ================================================================
+       TELEGRAM RESPONSIVE - DIHAPUS
+       ================================================================ */
+    
+    .dukops-announcement-bar {
+        font-size: 10px;
+        padding: 6px 0;
+    }
+    
+    .dukops-announcement-text {
+        animation-duration: 15s;
+    }
+    
+    .running-text-container {
+        padding: 6px 12px;
+    }
+    
+    .running-text {
+        font-size: 11px;
+        animation-duration: 10s;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .action-buttons button {
+        width: 100%;
+        min-width: auto;
+        font-size: 12px;
+    }
+    
+    .jadwal-section {
+        padding: 12px;
+    }
+    
+    .jadwal-section h3 {
+        font-size: 13px;
+    }
+    
+    .jadwal-title {
+        font-size: 18px;
+    }
+    
+    #j_hasilPesanBaru {
+        font-size: 11px;
+        min-height: 120px;
+        padding: 10px;
+    }
+    
+    .absen-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 6px;
+    }
+    
+    .absen-stat-value {
+        font-size: 1.1rem;
+    }
+    
+    .absen-desa-item {
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 6px 8px;
+    }
+    
+    .absen-desa-name {
+        flex: 1 1 100%;
+        font-size: 0.7rem;
+    }
+    
+    .absen-desa-progress {
+        min-width: 50px;
+    }
+    
+    .absen-status-badge {
+        font-size: 0.5rem;
+        min-width: 50px;
+        padding: 1px 6px;
+    }
+    
+    .splash-title-center {
+        font-size: 22px;
+    }
+    
+    .splash-title-center:last-of-type {
+        font-size: 16px;
+    }
+    
+    .splash-logo-center img {
+        width: 60px;
+    }
+    
+    .splash-progress-center {
+        width: 150px;
+    }
+    
+    .modal-ai-content {
+        width: 98%;
+        height: 90vh;
+        border-radius: 14px;
+    }
+    
+    .modal-template-text {
+        font-size: 0.7rem;
+    }
+    
+    .modal-ai-header h3 {
+        font-size: 1rem;
+    }
+    
+    #categorySelect {
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+    
+    .thankyou-content {
+        padding: 20px;
+    }
+    
+    .thankyou-content .icon {
+        font-size: 48px;
+    }
+    
+    .thankyou-content h2 {
+        font-size: 20px;
+    }
+    
+    .thankyou-content p {
+        font-size: 13px;
+    }
+    
+    .led-letter {
+        font-size: 16px;
+        padding: 0 2px;
+    }
+    
+    .led-running-text {
+        animation-duration: 10s;
+    }
+    
+    .knight-rider-text {
+        font-size: 12px;
+    }
+    
+    .knight-rider-container {
+        padding: 6px 12px;
+        border-radius: 20px;
+    }
+}
+
+@media (max-width: 360px) {
+    .dukops-profile-area {
+        width: 60px;
+    }
+    
+    .dukops-profile-img {
+        height: 50px;
+    }
+    
+    .dukops-header-title {
+        font-size: 12px;
+    }
+    
+    .dukops-header-title:last-of-type {
+        font-size: 10px;
+    }
+    
+    .dukops-header-address {
+        font-size: 8px;
+    }
+    
+    .counter-value {
+        font-size: 12px;
+        padding: 1px 8px;
+    }
+    
+    .audio-control-btn {
+        width: 26px;
+        height: 26px;
+        font-size: 11px;
+    }
+    
+    .nav-btn {
+        font-size: 9px;
+        padding: 6px 6px;
+        gap: 3px;
+    }
+    
+    .nav-btn i {
+        font-size: 10px;
+    }
+    
+    .absen-btn {
+        font-size: 10px;
+        padding: 6px 10px;
+    }
+    
+    .jadwal-title {
+        font-size: 16px;
+    }
+} 
+/* ===== End of responsive.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: splash.css                                */ 
+/* ========================================== */ 
+/* ================================================================
+   SPLASH.CSS - SPLASH SCREEN
+   ================================================================ */
+
+.splash-container-modern {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(145deg, #050d1a 0%, #0a1a3a 40%, #0d2a4a 70%, #0a1a2a 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.splash-container-modern::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.03) 0%, transparent 70%);
+    animation: splashGlow 6s ease-in-out infinite;
+}
+
+@keyframes splashGlow {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.2); opacity: 1; }
+}
+
+.splash-content {
+    text-align: center;
+    padding: 20px;
+    max-width: 400px;
+    position: relative;
+    z-index: 1;
+    animation: splashFadeUp 0.8s ease-out;
+}
+
+@keyframes splashFadeUp {
+    from { opacity: 0; transform: translateY(40px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.splash-logo-center img {
+    width: 90px;
+    height: auto;
+    filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.2));
+    animation: splashPulse 2s ease-in-out infinite;
+}
+
+@keyframes splashPulse {
+    0%, 100% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.05); opacity: 1; filter: drop-shadow(0 0 40px rgba(255, 215, 0, 0.3)); }
+}
+
+.splash-title-center {
+    font-size: 34px;
+    font-weight: 800;
+    color: #FFD700;
+    letter-spacing: 4px;
+    margin: 5px 0;
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.15);
+}
+
+.splash-title-center:last-of-type {
+    font-size: 20px;
+    color: #FFC107;
+    letter-spacing: 2px;
+}
+
+.splash-divider-center {
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #FFD700, transparent);
+    margin: 10px auto;
+    border-radius: 3px;
+}
+
+.splash-subtitle-center {
+    font-size: 12px;
+    color: #88aacc;
+    letter-spacing: 2px;
+    margin-top: 8px;
+    text-transform: uppercase;
+}
+
+.splash-unit-center {
+    font-size: 14px;
+    color: #aaccee;
+    font-weight: 500;
+    margin-top: 12px;
+    letter-spacing: 1px;
+}
+
+.splash-kodim-center {
+    font-size: 11px;
+    color: #6688aa;
+    margin-top: 4px;
+}
+
+.splash-progress-center {
+    width: 200px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    margin: 25px auto 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.splash-progress-bar-center {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #FFD700, #FFA500);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    position: relative;
+}
+
+.splash-progress-bar-center::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    animation: progressShine 1.5s infinite;
+}
+
+@keyframes progressShine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.splash-percentage-center {
+    font-size: 12px;
+    color: #FFD700;
+    font-weight: bold;
+    letter-spacing: 1px;
+} 
+/* ===== End of splash.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: tab-absen.css                                */ 
+/* ========================================== */ 
+/* ================================================================
+   TAB-ABSEN.CSS - TAB ABSENSI
+   ================================================================ */
+
+.absen-card {
+    background: rgba(0, 40, 0, 0.2);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(76, 175, 80, 0.04);
+    backdrop-filter: blur(4px);
+}
+
+.absen-card select {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(76, 175, 80, 0.06);
+    margin-top: 4px;
+}
+
+.absen-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin: 16px 0;
+}
+
+.absen-stat-card {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+.absen-stat-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.absen-stat-label {
+    font-size: 0.65rem;
+    color: #889988;
+    margin-top: 2px;
+}
+
+.absen-progress-container {
+    margin: 12px 0;
+}
+
+.absen-progress-bar {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 10px;
+    height: 6px;
+    overflow: hidden;
+}
+
+.absen-progress-fill {
+    background: linear-gradient(90deg, #4CAF50, #8bc34a);
+    height: 100%;
+    width: 0%;
+    border-radius: 10px;
+    transition: width 0.6s ease;
+}
+
+.absen-desa-list {
+    max-height: none;
+    overflow-y: visible;
+}
+
+.absen-desa-item {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-radius: 6px;
+    padding: 8px 10px;
+}
+
+.absen-desa-item:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.absen-desa-name {
+    flex: 2;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.absen-desa-stats {
+    min-width: 45px;
+    font-size: 0.7rem;
+    text-align: center;
+    color: #889988;
+}
+
+.absen-desa-progress {
+    flex: 1;
+    min-width: 60px;
+}
+
+.absen-desa-progress-bar {
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 5px;
+    height: 4px;
+}
+
+.absen-desa-progress-fill {
+    height: 4px;
+    border-radius: 5px;
+    transition: width 0.6s ease;
+}
+
+.absen-status-badge {
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.55rem;
+    font-weight: 600;
+    min-width: 60px;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+.absen-status-lengkap {
+    background: rgba(27, 94, 32, 0.3);
+    color: #a5d6a7;
+    border: 1px solid rgba(27, 94, 32, 0.1);
+}
+
+.absen-status-belum-lengkap {
+    background: rgba(230, 81, 0, 0.2);
+    color: #ffcc80;
+    border: 1px solid rgba(230, 81, 0, 0.1);
+}
+
+.absen-status-belum {
+    background: rgba(183, 28, 28, 0.2);
+    color: #ef9a9a;
+    border: 1px solid rgba(183, 28, 28, 0.1);
+}
+
+.absen-btn {
+    background: rgba(255, 255, 255, 0.03);
+    color: #ddeedd;
+    border: 1px solid rgba(76, 175, 80, 0.06);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.3s ease;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.absen-btn:hover {
+    background: rgba(76, 175, 80, 0.05);
+    border-color: rgba(76, 175, 80, 0.1);
+}
+
+.absen-btn-primary {
+    background: linear-gradient(135deg, #1a4a7a, #2d6a9a);
+    border-color: rgba(52, 152, 219, 0.1);
+}
+
+.absen-btn-primary:hover {
+    background: linear-gradient(135deg, #2d6a9a, #3d8aba);
+}
+
+.button-row-absen {
+    display: flex;
+    gap: 10px;
+    margin: 12px 0;
+}
+
+.button-row-absen button {
+    flex: 1;
+    margin: 0;
+}
+
+.absen-loading {
+    text-align: center;
+    padding: 30px;
+    color: #4dff4d;
+}
+
+.absen-spinner {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border: 3px solid rgba(76, 175, 80, 0.05);
+    border-top-color: #4CAF50;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.absen-info-text {
+    text-align: center;
+    font-size: 0.6rem;
+    margin-top: 12px;
+    color: #889988;
+    letter-spacing: 0.5px;
+} 
+/* ===== End of tab-absen.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: telegram-running-container.css                                */ 
+/* ========================================== */ 
+/* ============ RUNNING TEXT PENERIMA PESAN TELEGRAM ============ */
+.telegram-running-container {
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 40px;
+    padding: 10px 18px;
+    margin-bottom: 16px;
+    border: 1px solid #ffcc00;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.telegram-running-text {
+    display: inline-block;
+    white-space: nowrap;
+    animation: telegramMarquee 13s linear infinite;
+    color: #ffdd44;
+    font-weight: bold;
+    font-size: 14px;
+    padding-right: 50px;
+}
+
+@keyframes telegramMarquee {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+
+.telegram-running-container:hover .telegram-running-text {
+    animation-play-state: paused;
+} 
+/* ===== End of telegram-running-container.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   File: terang-besar.css                                */ 
+/* ========================================== */ 
+/* ============================================
+   TAMPILAN TERANG & FONT BESAR
+   ============================================ */
+
+/* ----- DASAR ----- */
+* {
+    font-size: 28px;
+}
+
+body {
+    background: #edf2f9 !important;
+    color: #0a1a2e !important;
+}
+
+.container {
+    background: #ffffff !important;
+    max-width: 500px !important;
+    padding: 16px !important;
+}
+
+/* ----- HEADER ----- */
+.dukops-header {
+    background: linear-gradient(135deg, #dce8f8, #b8cce8) !important;
+    border-bottom: 3px solid #2a6a9a !important;
+    padding: 18px 16px !important;
+    border-radius: 14px 14px 0 0 !important;
+}
+
+.dukops-header-title {
+    font-size: 1.8rem !important;
+    font-weight: 700 !important;
+    color: #0a1a3a !important;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.5) !important;
+}
+
+.dukops-header-address {
+    font-size: 1rem !important;
+    color: #1a2a4a !important;
+}
+
+/* ----- LABEL & INPUT ----- */
+label {
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
+    color: #0a1a3a !important;
+    margin-top: 14px !important;
+    display: block !important;
+}
+
+select, input, textarea {
+    font-size: 1.15rem !important;
+    padding: 14px 18px !important;
+    border-radius: 12px !important;
+    border: 2px solid #c8d8e8 !important;
+    background: #faffff !important;
+    width: 100% !important;
+}
+
+select:focus, input:focus, textarea:focus {
+    border-color: #2a7acc !important;
+    box-shadow: 0 0 0 4px rgba(42, 122, 204, 0.15) !important;
+}
+
+/* ----- PREVIEW BOX ----- */
+.previewBox {
+    background: #f5f9ff !important;
+    border: 2px solid #dce6f0 !important;
+    border-radius: 14px !important;
+    padding: 18px 20px !important;
+    margin: 6px 0 14px 0 !important;
+    font-size: 1.1rem !important;
+    color: #0a1a2e !important;
+}
+
+/* ----- TEXTAREA ----- */
+textarea#narasi {
+    font-size: 1.15rem !important;
+    line-height: 1.9 !important;
+    padding: 18px !important;
+    min-height: 200px !important;
+}
+
+/* ----- TOMBOL ----- */
+button, .nav-btn {
+    font-size: 1.15rem !important;
+    padding: 16px 26px !important;
+    border-radius: 14px !important;
+    font-weight: 600 !important;
+}
+
+#submitBtn {
+    background: #1a6a3a !important;
+    color: #ffffff !important;
+    font-size: 1.2rem !important;
+    padding: 18px 28px !important;
+}
+
+#resetBtn {
+    background: #e8ecf0 !important;
+    color: #1a2a3a !important;
+    font-size: 1.1rem !important;
+}
+
+/* ----- RUNNING TEXT ----- */
+.telegram-running-container {
+    background: #dce8f8 !important;
+    padding: 8px 0 !important;
+}
+
+.telegram-running-text {
+    font-size: 1.3rem !important;
+    font-weight: 600 !important;
+    color: #0a1a3a !important;
+    padding: 14px 0 !important;
+}
+
+/* ----- COUNTER ----- */
+.counter-value {
+    font-size: 1.6rem !important;
+    font-weight: 800 !important;
+    color: #0a1a3a !important;
+    background: #ffd700 !important;
+    padding: 4px 18px !important;
+    border-radius: 30px !important;
+}
+
+/* ----- JADWAL PIKET ----- */
+.jadwal-title {
+    font-size: 2.2rem !important;
+    font-weight: 800 !important;
+    color: #0a1a3a !important;
+}
+
+.jadwal-section {
+    background: #f5f9ff !important;
+    border: 2px solid #dce6f0 !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+    margin: 12px 0 !important;
+}
+
+.section-title-koramil,
+.section-title-kediaman,
+.section-title-makodim {
+    font-size: 1.3rem !important;
+    font-weight: 700 !important;
+    color: #0a1a3a !important;
+}
+
+/* ----- ABSENSI ----- */
+.absen-card {
+    background: #f5f9ff !important;
+    border: 2px solid #dce6f0 !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+}
+
+.absen-stat-value {
+    font-size: 2rem !important;
+    font-weight: 800 !important;
+}
+
+.absen-desa-name {
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+}
+
+/* ----- MODAL AI ----- */
+.modal-ai-content {
+    background: #ffffff !important;
+    border-radius: 20px !important;
+    padding: 24px !important;
+}
+
+.modal-ai-header h3 {
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+}
+
+.modal-template-text {
+    font-size: 1.1rem !important;
+    line-height: 1.7 !important;
+}
+
+/* ----- ANNOUNCEMENT BAR ----- */
+.dukops-announcement-bar {
+    background: #1a2a4a !important;
+    padding: 10px 0 !important;
+}
+
+.dukops-announcement-text {
+    font-size: 1rem !important;
+    color: #ffdd77 !important;
+}
+ 
+/* ===== End of terang-besar.css ===== */ 
+ 
+ 
+/* ========================================== */ 
+/*   Total file: 20                       */ 
+/*   Selesai digabung: Wed 07/01/2026  8:06:15.22          */ 
+/* ========================================== */ 

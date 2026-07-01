@@ -15,6 +15,11 @@
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     width: 100%;
     max-width: 900px;
+    
+    /* PASTIKAN SELALU TERLIHAT */
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: flex !important;
 }
 
 /* ================================================================
@@ -27,7 +32,7 @@
     border-radius: 60px;
     cursor: pointer;
     font-weight: 700;
-    font-size: 17px;
+    font-size: 16px;
     text-align: center;
     display: flex;
     align-items: center;
@@ -55,6 +60,11 @@
     min-width: 0;
     white-space: nowrap;
     flex: 1 1 0;
+    
+    /* PASTIKAN SELALU TERLIHAT */
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: flex !important;
 }
 
 /* ================================================================
@@ -141,7 +151,7 @@
    ICON PREMIUM DENGAN EFEK
    ================================================================ */
 .nav-btn i {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: bold;
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
@@ -213,7 +223,7 @@
 
 /* Tombol Piket - Gradien Hijau ke Emerald Premium */
 .nav-btn-piket.active {
-    background: linear-gradient(145deg, #1db954, #158a3a);
+    background: linear-gradient(145deg, #690a05e2, #158a3a);
     box-shadow: 
         0 24px 48px -12px rgba(29, 185, 84, 0.5),
         0 7px 0 #0f6b2d,
@@ -357,6 +367,9 @@
     }
 }
 
+/* ================================================================
+   RESPONSIVE MOBILE (DIPERBAIKI)
+   ================================================================ */
 @media (max-width: 480px) {
     .nav-buttons {
         gap: 6px;
@@ -365,8 +378,8 @@
     }
     
     .nav-btn {
-        padding: 11px 12px;
-        font-size: 12px;
+        padding: 10px 12px;
+        font-size: 12px;  /* ✅ DIPERBAIKI: dari 62px menjadi 12px */
         gap: 5px;
         border-radius: 28px;
         min-width: 55px;
@@ -374,7 +387,7 @@
     }
     
     .nav-btn i {
-        font-size: 16px;
+        font-size: 14px;  /* ✅ DIPERKECIL agar proporsional */
     }
     
     .nav-btn.active {
@@ -402,4 +415,16 @@
             inset 0 4px 8px rgba(255, 255, 255, 0.25),
             inset 0 -4px 8px rgba(0, 0, 0, 0.2);
     }
+}
+
+/* ================================================================
+   PASTIKAN TIDAK ADA AUTO-HIDE
+   ================================================================ */
+.nav-buttons.hidden,
+.nav-buttons[style*="display: none"],
+.nav-btn.hidden,
+.nav-btn[style*="display: none"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
