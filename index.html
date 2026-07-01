@@ -29,258 +29,9 @@
 
     <!-- ===== CSS MODULAR ===== -->
     <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/download-png.css">
-    <link rel="stylesheet" href="css/splash.css">
-    <link rel="stylesheet" href="css/navigation.css">
-    <link rel="stylesheet" href="css/header.css">
-    <link rel="stylesheet" href="css/form.css">
-    <link rel="stylesheet" href="css/preview.css">
-    <link rel="stylesheet" href="css/attendance.css">
-    <link rel="stylesheet" href="css/jadwal.css">
-    <link rel="stylesheet" href="css/absen.css">
-    
+
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
-    <style>
-        /* ===== PERBAIKAN TAMBAHAN ===== */
-        select, input, textarea {
-            color: #0a1a2e !important;
-            background: #ffffff !important;
-            font-weight: 500 !important;
-            border: 2px solid #2a5a8a !important;
-        }
-
-        select option {
-            color: #0a1a2e !important;
-            background: #ffffff !important;
-            font-weight: 500 !important;
-        }
-
-        ::placeholder {
-            color: #6a7a8a !important;
-            font-weight: 400 !important;
-            opacity: 1 !important;
-        }
-
-        .previewBox {
-            color: #0a1a2e !important;
-            font-weight: 500 !important;
-            border: 2px solid #2a5a8a !important;
-            background: #f5f9ff !important;
-        }
-
-        .previewBox * {
-            color: #0a1a2e !important;
-        }
-
-        #previewDesa, #previewKordinat, #previewGambar, #previewTanggal {
-            color: #0a1a2e !important;
-            font-weight: 500 !important;
-        }
-
-        select {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230a1a2e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 18px;
-            padding-right: 40px !important;
-        }
-
-        select:focus, input:focus, textarea:focus {
-            border-color: #1a5a9a !important;
-            box-shadow: 0 0 0 4px rgba(26, 90, 154, 0.2) !important;
-            outline: none !important;
-        }
-
-        /* Hilangkan preview desa */
-        #previewDesa {
-            display: none !important;
-        }
-
-        #loadingKoordinat {
-            color: #0a1a2e !important;
-            font-weight: 500 !important;
-        }
-
-        #previewKordinat {
-            min-height: 30px !important;
-        }
-
-        /* ===== TINGGI NARASI ===== */
-        #narasi {
-            min-height: 350px !important;
-            height: auto !important;
-            max-height: 500px !important;
-            resize: vertical !important;
-            padding: 18px !important;
-            font-size: 1.15rem !important;
-            line-height: 1.9 !important;
-            color: #0a1a2e !important;
-            background: #ffffff !important;
-            font-weight: 500 !important;
-            border: 2px solid #2a5a8a !important;
-            border-radius: 12px !important;
-        }
-
-        /* ===== SLIDER VOLUME PUTIH ===== */
-        .audio-volume-slider {
-            display: inline-block !important;
-            width: 100px !important;
-            height: 6px !important;
-            border-radius: 999px !important;
-            background: rgba(255,255,255,0.4) !important;
-            outline: none !important;
-            -webkit-appearance: none !important;
-            appearance: none !important;
-            cursor: pointer !important;
-        }
-
-        .audio-volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none !important;
-            appearance: none !important;
-            width: 16px !important;
-            height: 16px !important;
-            border-radius: 50% !important;
-            background: #ffffff !important;
-            cursor: pointer !important;
-            box-shadow: 0 0 8px rgba(0,0,0,0.3) !important;
-            border: 2px solid #2a5a8a !important;
-        }
-
-        .audio-volume-slider::-moz-range-thumb {
-            width: 16px !important;
-            height: 16px !important;
-            border-radius: 50% !important;
-            background: #ffffff !important;
-            cursor: pointer !important;
-            border: 2px solid #2a5a8a !important;
-        }
-
-        /* ===== HILANGKAN TOMBOL SPEAKER ===== */
-        #mp3ControlBtn {
-            display: none !important;
-        }
-
-        /* ===== AUDIO WRAPPER ===== */
-        .audio-control-wrapper {
-            display: flex !important;
-            align-items: center !important;
-            gap: 10px !important;
-            margin-top: 8px !important;
-        }
-
-        /* ===== INSTALL BUTTON ===== */
-        #installButton {
-            display: none;
-            margin-bottom: 15px;
-            background: #4CAF50 !important;
-            color: white !important;
-            border: none !important;
-            padding: 12px !important;
-            border-radius: 10px !important;
-            font-weight: bold !important;
-            width: 100% !important;
-        }
-
-        /* ===== ANNOUNCEMENT ===== */
-        .dukops-announcement-bar {
-            background: #1a2a4a !important;
-            padding: 10px 0 !important;
-        }
-
-        .dukops-announcement-text {
-            font-size: 1rem !important;
-            color: #ffdd77 !important;
-        }
-
-        .container {
-            max-width: 500px !important;
-            padding: 16px !important;
-        }
-
-        /* ===== ACTION BUTTONS ===== */
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .action-buttons button {
-            flex: 1;
-        }
-
-        /* ===== AI TEMPLATE ===== */
-        .ai-template-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin: 10px 0;
-            flex-wrap: wrap;
-        }
-
-        .ai-template-btn {
-            background: rgba(255, 255, 255, 0.76);
-            color: #0e0101 !important;
-            border: none !important;
-            padding: 10px 18px !important;
-            border-radius: 10px !important;
-            font-weight: 600 !important;
-            cursor: pointer !important;
-        }
-
-        .ai-template-btn:hover {
-            background: rgba(135, 16, 16, 0.589);
-        }
-
-        /* ===== THANK YOU POPUP ===== */
-        .thankyou-popup {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 99999;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .thankyou-content {
-            background: linear-gradient(135deg, #1a2a1a, #2b4d2b);
-            padding: 40px;
-            border-radius: 20px;
-            max-width: 400px;
-            width: 90%;
-            text-align: center;
-            border: 2px solid #4CAF50;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-            animation: scaleIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes scaleIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .thankyou-content .fa-trophy {
-            animation: pulse 2s infinite;
-        }
-    </style>
 </head>
 
 <body>
@@ -342,7 +93,7 @@
 
         <!-- ========== RUNNING TEXT INFORMASI ========== -->
         <div class="telegram-running-container">
-            <div class="telegram-running-text" id="infoRunningMessage">📢 Selamat datang di DUKOPS Digitalisasi Babinsa</div>
+            <div class="telegram-running-text" id="infoRunningMessage"></div>
         </div>
 
         <!-- ========== NAVIGASI ========== -->
@@ -382,7 +133,7 @@
 
                 <label><i class="fas fa-file-alt"></i> Narasi Kegiatan:</label>
                 <div class="narasi-wrapper">
-                    <textarea id="narasi" rows="18" placeholder="Masukkan narasi kegiatan..." oninput="checkInputCompletion()"></textarea>
+                    <textarea id="narasi" rows="6" placeholder="Masukkan narasi kegiatan..." oninput="checkInputCompletion()"></textarea>
                 </div>
 
                 <!-- AI TEMPLATE -->
@@ -619,41 +370,32 @@
         })();
     </script>
 
-    <!-- ============ DATA DESA & KOORDINAT (PERBAIKAN) ============ -->
+    <!-- ============ DATA DESA & KOORDINAT ============ -->
     <script>
         const DESA_LIST_URL = 'data/desa-list.json';
-        const COORDINATES_BASE_URL = 'data/coordinates/'; // FOLDER KOORDINAT PER DESA
+        const COORDINATES_BASE_URL = 'data/coordinates/';
         const PROFILE_BASE_URL = 'profile/';
         const DEFAULT_FAVICON_URL = 'favicon-96x96.png';
 
         let daftarDesaGlobal = [];
         let profileImagesGlobal = {};
-        let coordinatesCache = {}; // Cache koordinat per desa
+        let coordinatesCache = {};
 
-        // Fungsi untuk memuat koordinat per desa
         async function loadCoordinatesPerDesa(desaName) {
             if (!desaName) return null;
-            
-            // Cek cache dulu
             if (coordinatesCache[desaName]) {
                 return coordinatesCache[desaName];
             }
-
             try {
                 const fileName = desaName + '.json';
                 const url = COORDINATES_BASE_URL + fileName + '?t=' + Date.now();
                 console.log(`📡 Memuat koordinat: ${url}`);
-                
                 const response = await fetch(url);
-                
                 if (!response.ok) {
                     console.warn(`Koordinat tidak ditemukan untuk: ${desaName} (HTTP ${response.status})`);
                     return null;
                 }
-                
                 const data = await response.json();
-                
-                // Validasi format data
                 if (data && data.coordinates && Array.isArray(data.coordinates)) {
                     coordinatesCache[desaName] = data;
                     console.log(`✅ Koordinat dimuat untuk: ${desaName}, jumlah titik: ${data.coordinates.length}`);
@@ -668,46 +410,32 @@
             }
         }
 
-        // Fungsi untuk mendapatkan koordinat dari cache atau load
         async function getCoordinates(desaName) {
             if (!desaName) return null;
-            
-            // Cek cache
             if (coordinatesCache[desaName]) {
                 return coordinatesCache[desaName];
             }
-            
-            // Load dari file
             return await loadCoordinatesPerDesa(desaName);
         }
 
-        // Update preview koordinat (async)
         async function updateCoordinatesPreview(desaName) {
             const previewKordinat = document.getElementById('previewKordinat');
             const loadingKoordinat = document.getElementById('loadingKoordinat');
-            
             if (!previewKordinat) return;
-            
             if (!desaName || desaName === "") {
                 previewKordinat.innerHTML = '<span style="color:#6a7a8a;">Pilih desa/Kelurahan untuk melihat koordinat</span>';
                 if (loadingKoordinat) loadingKoordinat.style.display = 'none';
                 return;
             }
-
             if (loadingKoordinat) loadingKoordinat.style.display = 'block';
             previewKordinat.innerHTML = '<span style="color:#6a7a8a;"><i class="fas fa-spinner fa-spin"></i> Memuat koordinat...</span>';
-
             try {
                 const coords = await getCoordinates(desaName);
-                
                 if (loadingKoordinat) loadingKoordinat.style.display = 'none';
-                
                 if (coords && coords.coordinates && coords.coordinates.length > 0) {
-                    // Tampilkan info koordinat
                     const firstCoord = coords.coordinates[0];
                     const lastCoord = coords.coordinates[coords.coordinates.length - 1];
                     const totalPoints = coords.coordinates.length;
-                    
                     previewKordinat.innerHTML = `
                         <div style="display:flex;flex-direction:column;gap:6px;padding:4px 0;">
                             <div style="display:flex;align-items:center;gap:8px;border-bottom:1px solid #e0e8f0;padding-bottom:6px;">
@@ -736,7 +464,6 @@
             }
         }
 
-        // Fungsi untuk mendapatkan info koordinat untuk narasi
         async function getCoordinatesForNarasi(desaName) {
             const coords = await getCoordinates(desaName);
             if (coords && coords.coordinates && coords.coordinates.length > 0) {
@@ -752,44 +479,34 @@
             return null;
         }
 
-        // Fungsi inject koordinat ke narasi
         async function injectCoordinatesToNarasi(templateText, desaName) {
             if (!desaName || desaName === "") return templateText;
-            
             const coordInfo = await getCoordinatesForNarasi(desaName);
             if (!coordInfo) return templateText;
-            
             let hasil = templateText;
-            // Ganti placeholder koordinat jika ada
             hasil = hasil.replace(/\{jumlah_titik\}/g, coordInfo.total);
             hasil = hasil.replace(/\{lat_pertama\}/g, coordInfo.first.lat);
             hasil = hasil.replace(/\{lon_pertama\}/g, coordInfo.first.lon);
             hasil = hasil.replace(/\{elevasi_pertama\}/g, coordInfo.first.elevation || '');
             hasil = hasil.replace(/\{lat_terakhir\}/g, coordInfo.last.lat);
             hasil = hasil.replace(/\{lon_terakhir\}/g, coordInfo.last.lon);
-            
             return hasil;
         }
 
-        // Fungsi load desa list
         async function loadDesaListFromGitHub() {
             const selectDesa = document.getElementById('selectDesa');
             const loadingDesa = document.getElementById('loadingDesa');
-
             try {
                 const response = await fetch(DESA_LIST_URL + '?t=' + Date.now());
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const data = await response.json();
                 daftarDesaGlobal = data.desaList || [];
                 console.log("✅ Daftar desa berhasil dimuat:", daftarDesaGlobal.length, "desa");
-
                 daftarDesaGlobal.forEach(desa => {
                     let fileName = desa.toLowerCase() + '.png';
                     profileImagesGlobal[desa] = fileName;
                 });
-
                 populateDesaDropdown();
-
             } catch (error) {
                 console.error("Gagal memuat daftar desa:", error);
                 if (loadingDesa) {
@@ -811,7 +528,6 @@
         function populateDesaDropdown() {
             const selectDesa = document.getElementById('selectDesa');
             if (!selectDesa) return;
-
             selectDesa.disabled = false;
             selectDesa.innerHTML = '<option value="">-- Pilih Desa/Kelurahan --</option>';
             daftarDesaGlobal.forEach(desa => {
@@ -820,7 +536,6 @@
                 option.textContent = desa;
                 selectDesa.appendChild(option);
             });
-
             selectDesa.value = "";
             const loadingDesa = document.getElementById('loadingDesa');
             if (loadingDesa) loadingDesa.style.display = 'none';
@@ -830,14 +545,12 @@
         function updateDesaProfile(desaName) {
             const imgElement = document.getElementById('desaProfileImgHeader');
             const nameElement = document.getElementById('desaProfileNameHeader');
-
             if (!desaName || desaName === "") {
                 imgElement.src = DEFAULT_FAVICON_URL;
                 if (nameElement) nameElement.textContent = "Pilih desa/Kelurahan";
                 updateCoordinatesPreview("");
                 return;
             }
-
             let matchedKey = null;
             for (let key in profileImagesGlobal) {
                 if (desaName.toLowerCase() === key.toLowerCase()) {
@@ -845,13 +558,11 @@
                     break;
                 }
             }
-
             if (matchedKey) {
                 const fileName = profileImagesGlobal[matchedKey];
                 const imageUrl = PROFILE_BASE_URL + fileName;
                 imgElement.src = imageUrl;
                 if (nameElement) nameElement.textContent = matchedKey;
-
                 imgElement.onerror = function() {
                     console.warn(`Gagal memuat profil untuk ${matchedKey}`);
                     imgElement.src = DEFAULT_FAVICON_URL;
@@ -898,9 +609,7 @@
         function startSplashProgress() {
             const progressBar = document.getElementById('splashProgressBar');
             const percentageText = document.getElementById('progressPercentage');
-
             if (!progressBar || !percentageText) return;
-
             splashInterval = setInterval(function() {
                 if (splashProgress < 100) {
                     splashProgress += Math.floor(Math.random() * 15) + 5;
@@ -908,14 +617,12 @@
                     progressBar.style.width = splashProgress + '%';
                     percentageText.textContent = splashProgress + '%';
                 }
-
                 if (splashProgress === 100 && !loadingComplete) {
                     clearInterval(splashInterval);
                     loadingComplete = true;
                     setTimeout(function() {
                         const splash = document.getElementById('splashScreen');
                         const appContainer = document.getElementById('appContainer');
-
                         if (splash) {
                             splash.style.opacity = '0';
                             setTimeout(function() {
@@ -940,7 +647,6 @@
             startSplashProgress();
             loadDesaListFromGitHub();
             resetCanvas();
-            
             const selectDesa = document.getElementById('selectDesa');
             if (selectDesa) {
                 selectDesa.addEventListener('change', function() {
@@ -956,7 +662,6 @@
         (function() {
             let deferredPrompt;
             const installBtn = document.getElementById('installButton');
-
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();
                 deferredPrompt = e;
@@ -964,16 +669,13 @@
                     installBtn.style.display = 'block';
                 }
             });
-
             window.addEventListener('appinstalled', () => {
                 installBtn.style.display = 'none';
                 deferredPrompt = null;
             });
-
             if (window.matchMedia('(display-mode: standalone)').matches) {
                 installBtn.style.display = 'none';
             }
-
             if (installBtn) {
                 installBtn.addEventListener('click', async () => {
                     if (deferredPrompt) {
@@ -991,14 +693,13 @@
         })();
     </script>
 
-    <!-- ============ AI TEMPLATE (DENGAN KOORDINAT) ============ -->
+    <!-- ============ AI TEMPLATE ============ -->
     <script>
         (function() {
             const TEMPLATE_JSON_URL = 'template-narasi.json';
             let templateData = null;
             let activeTab = null;
             let categoryKeys = [];
-
             const modal = document.getElementById('templateModal');
             const openModalBtn = document.getElementById('aiTemplateBtn');
             const closeModalBtn = document.getElementById('closeModalBtn');
@@ -1029,14 +730,11 @@
                     modalTabs.innerHTML = '<div style="color:#889988; padding:12px; text-align:center;">Memuat kategori...</div>';
                     return;
                 }
-
                 const selectWrapper = document.createElement('div');
                 selectWrapper.style.cssText = 'width:100%; margin-bottom:8px;';
-
                 const selectElement = document.createElement('select');
                 selectElement.id = 'categorySelect';
                 selectElement.style.cssText = 'width:100%; padding:10px 14px; border-radius:12px; background:#1a2a1f; color:#e6ffe6; border:1px solid rgba(46,204,113,0.2); font-size:14px; cursor:pointer;';
-
                 categoryKeys.forEach(key => {
                     const option = document.createElement('option');
                     option.value = key;
@@ -1044,12 +742,10 @@
                     if (activeTab === key) option.selected = true;
                     selectElement.appendChild(option);
                 });
-
                 selectElement.onchange = (e) => {
                     activeTab = e.target.value;
                     renderModalTemplateList();
                 };
-
                 selectWrapper.appendChild(selectElement);
                 modalTabs.appendChild(selectWrapper);
             }
@@ -1064,7 +760,6 @@
                     modalBody.innerHTML = '<div class="loading-templates" style="color:#889988; text-align:center; padding:40px;">📭 Belum ada template</div>';
                     return;
                 }
-
                 let html = '<div class="modal-template-list">';
                 templates.forEach((template, idx) => {
                     const escapedTemplate = template.replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n');
@@ -1082,31 +777,22 @@
 
             window.selectTemplate = async function(template) {
                 console.log("✅ Template dipilih:", template.substring(0, 50) + '...');
-
                 const narasiField = document.getElementById('narasi');
                 const namaDesa = getNamaDesaTerpilih();
-
                 let finalTemplate = template;
                 if (namaDesa) {
-                    // Inject nama desa
                     finalTemplate = injectDesaKeNarasi(template, namaDesa);
-                    // Inject koordinat jika ada placeholder
                     finalTemplate = await injectCoordinatesToNarasi(finalTemplate, namaDesa);
                 }
-
                 narasiField.value = finalTemplate;
-
                 const modalEl = document.getElementById('templateModal');
                 modalEl.classList.remove('show');
                 modalEl.style.display = 'none';
-
                 const event = new Event('input', { bubbles: true });
                 narasiField.dispatchEvent(event);
-
                 if (typeof checkInputCompletion === 'function') {
                     checkInputCompletion();
                 }
-
                 if (typeof showNotification === 'function') {
                     showNotification('✅ Template berhasil diterapkan!', 'success');
                 }
