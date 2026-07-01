@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lan
+<html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -104,26 +105,26 @@
         <!-- ==================== DUKOPS CONTENT ==================== -->
         <div id="dukopsContent">
             <div style="width: 100%; margin: 0 auto;">
-                <label><i class=""></i>Pilih Desa:</label>
+                <label><i class="fas fa-city"></i> Pilih Desa:</label>
                 <select id="selectDesa" onchange="loadSelectedDesa()">
                     <option value="">--Pilih desa/Kelurahan--</option>
                 </select>
-                <div id="loadingDesa" style="display:none;"><i class=""></i>Memuat...</div>
+                <div id="loadingDesa" style="display:none;"><i class=""></i> Memuat...</div>
                 <div class="previewBox" id="previewDesa" style="display:none;"></div>
 
-                <label><i class=""></i>Koordinat:</label>
-                <div id="loadingKoordinat" style="display:none;"><i class=""></i>Memuat koordinat...</div>
+                <label><i class=""></i> Koordinat:</label>
+                <div id="loadingKoordinat" style="display:none;"><i class=""></i> Memuat koordinat...</div>
                 <div class="previewBox" id="previewKordinat"><span style="color:#6a7a8a;"></span></div>
 
                 <label><i class=""></i> Foto Kegiatan:</label>
                 <input type="file" id="gambar" accept="image/*" onchange="previewImage()">
                 <div class="previewBox" id="previewGambar"></div>
 
-                <label><i class=""></i>Tanggal & Waktu:</label>
+                <label><i class=""></i> Tanggal & Waktu:</label>
                 <input type="datetime-local" id="tanggalWaktu" onchange="updateDatePreview()">
                 <div class="previewBox" id="previewTanggal"></div>
 
-                <label><i class=""></i>𓂃🪶Narasi Kegiatan:</label>
+                <label><i class=""></i> Narasi Kegiatan:</label>
                 <div class="narasi-wrapper">
                     <textarea id="narasi" rows="6" placeholder="Masukkan narasi kegiatan...✍️" oninput="checkInputCompletion()"></textarea>
                 </div>
@@ -139,9 +140,9 @@
 
                 <div class="action-buttons">
     <button id="submitBtn" onclick="processSubmission()" disabled>
-        <i class="fas fa-send">download</i>+KIRIM
+        <i class="fas fa-download"></i> DOWNLOAD
     </button>
-    <button id="resetBtn" onclick="resetAll()"><i class="fas fa-redo"></i>RESET</button>
+    <button id="resetBtn" onclick="resetAll()"><i class="fas fa-redo"></i> RESET</button>
     <button id="showAttendanceBtn" onclick="showAttendance()" class="btn-attendance">
         <i class="fas fa-chart-bar"></i> CEK LAPORAN
     </button>
@@ -157,7 +158,7 @@
                         <input type="month" id="attendanceMonthFilter" onchange="loadAttendanceData()">
                     </div>
                     <div id="attendanceLoading" style="display: none; text-align: center; padding: 20px;">
-                        <i class=""></i>🪖Tunggu..laporan akan di tampilkan
+                        <i class="fas fa-spinner fa-spin"></i> 🪖 Tunggu..laporan akan di tampilkan
                     </div>
                     <div id="attendanceSummary" class="attendance-summary" style="display: none;">
                         <div class="summary-row"><span>Total Laporan:</span><span id="totalReports">0</span></div>
@@ -181,7 +182,7 @@
             </div>
 
             <div class="running-text-container">
-                <div class="running-text" id="runningTextJadwalBaru">🌾...🌾...🌾🌾🌾🌾...🌾hanpangan..🌾</div>
+                <div class="running-text" id="runningTextJadwalBaru">🌾 Memuat jadwal hanpangan... 🌾</div>
             </div>
 
             <div class="jadwal-section">
@@ -243,7 +244,7 @@
 
             <button id="whatsappBtnBaru" class="whatsapp-transparent-btn">
                 <i class="fab fa-whatsapp"></i>
-                <span>KIRIM ➢ WHATSAPP</span>
+                <span>KIRIM KE WHATSAPP</span>
             </button>
 
             <div class="jadwal-section">
@@ -257,11 +258,11 @@
         <div id="absenContent" style="display: none;">
             <div class="absen-card">
                 <div class="form-group" style="margin-bottom: 15px;">
-                    <label style="color: rgb(2, 74, 90);">📅 TAHUN</label>
+                    <label style="color: #4dff4d;">📅 TAHUN</label>
                     <select id="absenTahunSelect"><option>Memuat...</option></select>
                 </div>
                 <div class="form-group" style="margin-bottom: 15px;">
-                    <label style="color: rgba(184, 51, 7, 0.828)828)
+                    <label style="color: #4dff4d;">📆 BULAN</label>
                     <select id="absenBulanSelect" disabled><option>Pilih tahun</option></select>
                 </div>
             </div>
@@ -279,7 +280,7 @@
     <div id="templateModal" class="modal-ai">
         <div class="modal-ai-content">
             <div class="modal-ai-header">
-                <h3><i class=""></i> 🤖Template Narasi AI</h3>
+                <h3><i class="fas fa-robot"></i> Template Narasi AI</h3>
                 <button class="modal-close" id="closeModalBtn">&times;</button>
             </div>
             <div class="modal-ai-tabs" id="modalTabs"></div>
@@ -887,7 +888,7 @@
             function updatePreview() { const now = new Date(),
                     tomorrow = new Date();
                 tomorrow.setDate(now.getDate() + 1); let result =
-                    "*=========================*\n*KORAMIL 1609-05/SUKASADA*\n    *JADWAL DINAS DALAM*\n*=========================*\n\n";
+                    "*=======================*\n*KORAMIL 1609-05/SUKASADA*\n    *JADWAL DINAS DALAM*\n*=======================*\n\n";
                 const getVal = (id) => document.getElementById(id)?.value || ""; const sections = [{ names: [getVal(
                         'j_nama1a_baru'), getVal('j_nama1b_baru')], title: formatTanggal(now), suffix: "" }, { names: [
                         getVal('j_nama2a_baru'), getVal('j_nama2b_baru')
