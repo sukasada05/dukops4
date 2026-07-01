@@ -252,3 +252,21 @@
     from { transform: translateX(0); }
     to { transform: translateX(-100%); }
 }
+.counter-value {
+    font-size: 36px;
+    font-weight: 900;
+    font-family: 'Arial Black', sans-serif;
+    color: #FFD700 !important;
+    padding: 2px 18px;
+    display: inline-block;
+    animation: floatGold 2s ease-in-out infinite;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+    text-shadow: 
+        0 0 20px rgba(255, 215, 0, 0.4),
+        0 0 40px rgba(255, 215, 0, 0.2);
+}
+
+@keyframes floatGold {
+    0%, 100% { transform: translateY(0px) scale(1); }
+    50% { transform: translateY(-8px) scale(1.05); }
+}
