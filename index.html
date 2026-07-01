@@ -92,13 +92,13 @@
         <!-- ========== NAVIGASI ========== -->
         <div class="nav-buttons">
             <button class="nav-btn nav-btn-dukops active" id="btnDukops" onclick="showDukops()">
-                <i class=""></i> DUKOPS
+                <i class="fas fa-file-upload"></i> DUKOPS
             </button>
             <button class="nav-btn nav-btn-piket" id="btnJadwal" onclick="showJadwalPiketBaru()">
-                <i class=""></i> PIKET
+                <i class="fas fa-calendar-alt"></i> PIKET
             </button>
             <button class="nav-btn nav-btn-absen" id="btnAbsen" onclick="showAbsenTab()">
-                <i class=""></i> ABSEN
+                <i class="fas fa-chart-line"></i> ABSEN
             </button>
         </div>
 
@@ -109,22 +109,22 @@
                 <select id="selectDesa" onchange="loadSelectedDesa()">
                     <option value="">--Pilih desa/Kelurahan--</option>
                 </select>
-                <div id="loadingDesa" style="display:none;"><i class=""></i> Memuat...</div>
+                <div id="loadingDesa" style="display:none;"><i class="fas fa-spinner fa-spin"></i> Memuat...</div>
                 <div class="previewBox" id="previewDesa" style="display:none;"></div>
 
-                <label><i class=""></i> Koordinat:</label>
-                <div id="loadingKoordinat" style="display:none;"><i class=""></i> Memuat koordinat...</div>
-                <div class="previewBox" id="previewKordinat"><span style="color:#6a7a8a;"></span></div>
+                <label><i class="fas fa-map-pin"></i> Koordinat:</label>
+                <div id="loadingKoordinat" style="display:none;"><i class="fas fa-spinner fa-spin"></i> Memuat koordinat...</div>
+                <div class="previewBox" id="previewKordinat"><span style="color:#6a7a8a;">Pilih desa/Kelurahan untuk melihat koordinat</span></div>
 
-                <label><i class=""></i> Foto Kegiatan:</label>
+                <label><i class="fas fa-camera"></i> Foto Kegiatan:</label>
                 <input type="file" id="gambar" accept="image/*" onchange="previewImage()">
                 <div class="previewBox" id="previewGambar"></div>
 
-                <label><i class=""></i> Tanggal & Waktu:</label>
+                <label><i class="fas fa-calendar-alt"></i> Tanggal & Waktu:</label>
                 <input type="datetime-local" id="tanggalWaktu" onchange="updateDatePreview()">
                 <div class="previewBox" id="previewTanggal"></div>
 
-                <label><i class=""></i> Narasi Kegiatan:</label>
+                <label><i class="fas fa-file-alt"></i> Narasi Kegiatan:</label>
                 <div class="narasi-wrapper">
                     <textarea id="narasi" rows="6" placeholder="Masukkan narasi kegiatan...✍️" oninput="checkInputCompletion()"></textarea>
                 </div>
@@ -132,21 +132,22 @@
                 <!-- AI TEMPLATE -->
                 <div class="ai-template-container">
                     <button class="ai-template-btn" id="aiTemplateBtn">
-                        <i class=""></i> Gunakan Template AI
+                        <i class="fas fa-robot"></i> Gunakan Template AI
                     </button>
                 </div>
 
                 <canvas id="canvas"></canvas>
 
                 <div class="action-buttons">
-    <button id="submitBtn" onclick="processSubmission()" disabled>
-        <i class="fas fa-download"></i> DOWNLOAD
-    </button>
-    <button id="resetBtn" onclick="resetAll()"><i class="fas fa-redo"></i> RESET</button>
-    <button id="showAttendanceBtn" onclick="showAttendance()" class="btn-attendance">
-        <i class="fas fa-chart-bar"></i> CEK LAPORAN
-    </button>
-</div>
+                    <button id="submitBtn" onclick="processSubmission()" disabled>
+                        <i class="fas fa-download">KIRIM</i> dan DOWNLOAD
+                    </button>
+                    <button id="resetBtn" onclick="resetAll()"><i class="fas fa-redo"></i> RESET</button>
+                    <button id="showAttendanceBtn" onclick="showAttendance()" class="btn-attendance">
+                        <i class="fas fa-chart-bar"></i> LAPORAN
+                    </button>
+                </div>
+
                 <div id="attendancePanel" style="display: none;">
                     <div class="attendance-header">
                         <button onclick="hideAttendance()" style="background:#ff4444; color:#ffffff; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:600;">✕ TUTUP</button>
@@ -174,7 +175,7 @@
         <!-- ==================== JADWAL PIKET ==================== -->
         <div id="jadwalPiketContainerBaru" style="display: none;">
             <div class="jadwal-header">
-                <h1 class="jadwal-title">JADWAL PIKET</h1>
+                <h1 class="jadwal-title">📋 JADWAL PIKET</h1>
                 <div class="app-logo-container">
                     <img src="LOGO KOREM163 Wirasatya.png" alt="Logo Korem 163 Wirasatya" class="jadwal-logo">
                 </div>
@@ -254,27 +255,30 @@
             <div class="app-loading" id="j_loadingIndicatorBaru"><i class="fas fa-spinner fa-spin"></i> Memuat data...</div>
         </div>
 
-        <!-- ==================== TAB ABSENSI ==================== -->
-        <div id="absenContent" style="display: none;">
-            <div class="absen-card">
-                <div class="form-group" style="margin-bottom: 15px;">
-                    <label style="color: #4dff4d;">📅 TAHUN</label>
-                    <select id="absenTahunSelect"><option>Memuat...</option></select>
-                </div>
-                <div class="form-group" style="margin-bottom: 15px;">
-                    <label style="color: #4dff4d;">📆 BULAN</label>
-                    <select id="absenBulanSelect" disabled><option>Pilih tahun</option></select>
-                </div>
+ <!-- ==================== TAB ABSENSI ==================== -->
+<div id="absenContent" style="display: none;">
+    <div class="absen-card">
+        <!-- TAHUN & BULAN BERJAJAR KIRI KANAN -->
+        <div class="absen-filter-row">
+            <div class="form-group">
+                <label>📅 TAHUN</label>
+                <select id="absenTahunSelect"><option>Memuat...</option></select>
             </div>
-
-            <div id="absenResultContainer"></div>
-            <div class="absen-info-text">✨ Tap desa untuk detail | Data tersimpan offline</div>
+            <div class="form-group">
+                <label>📆 BULAN</label>
+                <select id="absenBulanSelect" disabled><option>Pilih tahun</option></select>
+            </div>
         </div>
-
-        <div class="jadwal-toast" id="j_toastNotificationBaru"></div>
     </div>
 
-    <div id="absenScreenshotArea" style="position: fixed; left: -9999px; top: 0; width: 500px; background: white;"></div>
+    <div id="absenResultContainer"></div>
+    <div class="absen-info-text">✨ Tap desa untuk detail | Data tersimpan offline</div>
+</div>
+
+<div class="jadwal-toast" id="j_toastNotificationBaru"></div>
+</div>
+
+<div id="absenScreenshotArea" style="position: fixed; left: -9999px; top: 0; width: 500px; background: white;"></div>
 
     <!-- ==================== MODAL TEMPLATE AI ==================== -->
     <div id="templateModal" class="modal-ai">
@@ -414,7 +418,7 @@
             const loadingKoordinat = document.getElementById('loadingKoordinat');
             if (!previewKordinat) return;
             if (!desaName || desaName === "") {
-                previewKordinat.innerHTML = '<span style="color:#6a7a8a;"></span>';
+                previewKordinat.innerHTML = '<span style="color:#6a7a8a;">Pilih desa/Kelurahan untuk melihat koordinat</span>';
                 if (loadingKoordinat) loadingKoordinat.style.display = 'none';
                 return;
             }
@@ -949,7 +953,7 @@
         })();
     </script>
 
-    <!-- ============ TAB ABSEN ============ -->
+    <!-- ============ TAB ABSEN (DENGAN PERBAIKAN DOWNLOAD PNG) ============ -->
     <script>
         (function() {
             var SCRIPT_URL =
@@ -1098,60 +1102,125 @@
             window.showDetailAbsen = function(n, j, p, s) { alert((s === 'LENGKAP' ? '✅ ' : (s === 'BELUM_LENGKAP' ?
                     '⚠️ ' : '❌ ')) + n + '\n' + j + '/9 (' + p + '%)'); };
 
-            window.shareAsPNGAbsen = async function() { if (!currentDataAbsen) return; if (screenshotAreaAbsen)
-                    screenshotAreaAbsen.innerHTML = (function() { var d = currentDataAbsen,
-                        t = d.total_desa || 0,
-                        p = t > 0 ? Math.round((d.desa_lengkap / t) * 100) : 0,
-                        tg = new Date().toLocaleDateString('id-ID'),
-                        lh = '';
-                    for (var i = 0; i < d.details.length; i++) { var de = d.details[i],
-                            w = (de.status === 'LENGKAP') ? '#4caf50' : ((de.status === 'BELUM_LENGKAP') ?
-                                '#ff9800' : '#f44336'),
-                            em = (de.status === 'LENGKAP') ? '✅' : ((de.status === 'BELUM_LENGKAP') ?
-                                '⚠️' : '❌'),
-                            st = (de.status === 'LENGKAP') ? 'LENGKAP' : ((de.status ===
-                                'BELUM_LENGKAP') ? 'BL' : 'BELUM'),
-                            sb = (de.status === 'LENGKAP') ? '#e8f5e9' : ((de.status ===
-                                'BELUM_LENGKAP') ? '#fff3e0' : '#ffebee');
-                        lh +=
-                            '<div class="png-desa-item"><div style="width:24px;font-size:10px;">' +
-                            em +
-                            '</div><div style="flex:2;font-size:10px;font-weight:500;color:#000;">' +
-                            escapeHtmlAbsen(de.nama) +
-                            '</div><div style="width:35px;font-size:9px;text-align:center;color:#000;">' +
-                            de.jumlah_file +
-                            '/9</div><div style="width:50px;"><div style="background:#e0e0e0;border-radius:6px;height:4px;"><div style="background:' +
-                            w + ';width:' + de.persentase +
-                            '%;height:4px;border-radius:6px;"></div></div></div><div style="width:45px;font-size:8px;text-align:center;padding:2px 4px;border-radius:8px;background:' +
-                            sb + ';color:' + w + ';">' + st + '</div></div>';
-                    } return '<div class="png-container"><div class="png-header"><div style="font-size:16px;font-weight:bold;">📊 ABSENSI DUKOPS</div><div style="font-size:8px;">Koramil Monitoring</div></div><div style="padding:10px;"><div style="text-align:center;margin-bottom:8px;"><div style="font-size:14px;font-weight:bold;color:#000;">' +
-                        (d.nama_bulan || '') + ' ' + (d.tahun || '') +
-                        '</div><div style="font-size:7px;color:#666;">' + tg +
-                        '</div></div><div class="png-stats"><div class="png-stat-card"><div style="font-size:12px;font-weight:bold;color:#1a73e8;">' +
-                        d.total_desa +
-                        '</div><div style="font-size:7px;">DESA</div></div><div class="png-stat-card"><div style="font-size:12px;font-weight:bold;color:#4caf50;">' +
-                        d.desa_lengkap +
-                        '</div><div style="font-size:7px;">LENGKAP</div></div><div class="png-stat-card"><div style="font-size:12px;font-weight:bold;color:#ff9800;">' +
-                        d.desa_belum_lengkap +
-                        '</div><div style="font-size:7px;">BL</div></div><div class="png-stat-card"><div style="font-size:12px;font-weight:bold;color:#f44336;">' +
-                        d.desa_belum +
-                        '</div><div style="font-size:7px;">BELUM</div></div></div><div style="margin-bottom:8px;"><div style="display:flex;justify-content:space-between;font-size:8px;color:#000;"><span>PROGRESS</span><span><b>' +
-                        p +
-                        '%</b></span></div><div class="png-progress-bar"><div class="png-progress-fill" style="width:' +
-                        p +
-                        '%"></div></div></div><div style="font-size:9px;font-weight:bold;margin:6px 0 4px;color:#000;">📋 DAFTAR DESA (' +
-                        d.total_desa +
-                        ')</div><div style="max-height:550px;overflow:hidden;">' + lh +
-                        '</div></div></div>';
-                    })();
-                var el = screenshotAreaAbsen ? screenshotAreaAbsen.firstChild : null; if (!el) return; try { var canvas =
-                        await html2canvas(el, { scale: 2, backgroundColor: '#ffffff' });
+            // ===== PERBAIKAN DOWNLOAD PNG DENGAN CSS INLINE =====
+            window.shareAsPNGAbsen = async function() {
+                if (!currentDataAbsen) return;
+                if (screenshotAreaAbsen) {
+                    var d = currentDataAbsen;
+                    var t = d.total_desa || 0;
+                    var p = t > 0 ? Math.round((d.desa_lengkap / t) * 100) : 0;
+                    var tg = new Date().toLocaleDateString('id-ID');
+                    var lh = '';
+                    
+                    for (var i = 0; i < d.details.length; i++) {
+                        var de = d.details[i];
+                        var w = (de.status === 'LENGKAP') ? '#4caf50' : ((de.status === 'BELUM_LENGKAP') ? '#ff9800' : '#f44336');
+                        var em = (de.status === 'LENGKAP') ? '✅' : ((de.status === 'BELUM_LENGKAP') ? '⚠️' : '❌');
+                        var st = (de.status === 'LENGKAP') ? 'LENGKAP' : ((de.status === 'BELUM_LENGKAP') ? 'BL' : 'BELUM');
+                        var sb = (de.status === 'LENGKAP') ? '#e8f5e9' : ((de.status === 'BELUM_LENGKAP') ? '#fff3e0' : '#ffebee');
+                        
+                        lh += `
+                            <div style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:1px solid #f0f0f0;font-size:12px;">
+                                <div style="width:24px;font-size:14px;text-align:center;">${em}</div>
+                                <div style="flex:2;font-size:12px;font-weight:500;color:#000;">${escapeHtmlAbsen(de.nama)}</div>
+                                <div style="width:40px;font-size:11px;text-align:center;color:#000;">${de.jumlah_file}/9</div>
+                                <div style="width:60px;">
+                                    <div style="background:#e0e0e0;border-radius:6px;height:6px;overflow:hidden;">
+                                        <div style="background:${w};width:${de.persentase}%;height:6px;border-radius:6px;"></div>
+                                    </div>
+                                </div>
+                                <div style="width:50px;font-size:9px;text-align:center;padding:2px 6px;border-radius:8px;background:${sb};color:${w};font-weight:600;">${st}</div>
+                            </div>
+                        `;
+                    }
+                    
+                    screenshotAreaAbsen.innerHTML = `
+                        <div style="max-width:600px;margin:0 auto;padding:20px;background:#ffffff;border-radius:12px;font-family:'Segoe UI',Arial,sans-serif;box-shadow:0 2px 16px rgba(0,0,0,0.08);">
+                            <!-- HEADER -->
+                            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:linear-gradient(135deg,#1a2332,#2c3e50);border-radius:10px 10px 0 0;color:white;">
+                                <div style="font-size:16px;font-weight:700;">📊 ABSENSI DUKOPS</div>
+                                <div style="font-size:8px;opacity:0.7;">Koramil Monitoring</div>
+                            </div>
+                            
+                            <!-- BODY -->
+                            <div style="padding:16px;">
+                                <!-- TANGGAL -->
+                                <div style="text-align:center;margin-bottom:12px;">
+                                    <div style="font-size:16px;font-weight:700;color:#000;">${d.nama_bulan || ''} ${d.tahun || ''}</div>
+                                    <div style="font-size:10px;color:#666;">${tg}</div>
+                                </div>
+                                
+                                <!-- STATS -->
+                                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;">
+                                    <div style="background:#f8f9fa;border-radius:8px;padding:10px 4px;text-align:center;border:1px solid #e9ecef;">
+                                        <div style="font-size:14px;font-weight:700;color:#1a73e8;">${d.total_desa}</div>
+                                        <div style="font-size:8px;color:#6b7a8f;text-transform:uppercase;">DESA</div>
+                                    </div>
+                                    <div style="background:#f8f9fa;border-radius:8px;padding:10px 4px;text-align:center;border:1px solid #e9ecef;">
+                                        <div style="font-size:14px;font-weight:700;color:#4caf50;">${d.desa_lengkap}</div>
+                                        <div style="font-size:8px;color:#6b7a8f;text-transform:uppercase;">LENGKAP</div>
+                                    </div>
+                                    <div style="background:#f8f9fa;border-radius:8px;padding:10px 4px;text-align:center;border:1px solid #e9ecef;">
+                                        <div style="font-size:14px;font-weight:700;color:#ff9800;">${d.desa_belum_lengkap}</div>
+                                        <div style="font-size:8px;color:#6b7a8f;text-transform:uppercase;">BL</div>
+                                    </div>
+                                    <div style="background:#f8f9fa;border-radius:8px;padding:10px 4px;text-align:center;border:1px solid #e9ecef;">
+                                        <div style="font-size:14px;font-weight:700;color:#f44336;">${d.desa_belum}</div>
+                                        <div style="font-size:8px;color:#6b7a8f;text-transform:uppercase;">BELUM</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- PROGRESS -->
+                                <div style="margin:12px 0;">
+                                    <div style="display:flex;justify-content:space-between;font-size:10px;color:#000;">
+                                        <span>📈 PROGRESS</span>
+                                        <span><b>${p}%</b></span>
+                                    </div>
+                                    <div style="background:#e9ecef;border-radius:6px;height:8px;overflow:hidden;">
+                                        <div style="background:linear-gradient(90deg,#4CAF50,#66BB6A);width:${p}%;height:8px;border-radius:6px;"></div>
+                                    </div>
+                                </div>
+                                
+                                <!-- DAFTAR DESA -->
+                                <div style="font-size:11px;font-weight:600;margin:12px 0 6px 0;color:#000;">📋 DAFTAR DESA (${d.total_desa})</div>
+                                <div style="max-height:400px;overflow:hidden;">
+                                    ${lh}
+                                </div>
+                            </div>
+                            
+                            <!-- FOOTER -->
+                            <div style="text-align:center;padding:8px 0 4px 0;font-size:8px;color:#999;border-top:1px solid #f0f2f5;margin-top:8px;">
+                                DUKOPS • Koramil Monitoring
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                var el = screenshotAreaAbsen ? screenshotAreaAbsen.firstChild : null;
+                if (!el) return;
+                
+                try {
+                    var canvas = await html2canvas(el, { 
+                        scale: 2, 
+                        backgroundColor: '#ffffff',
+                        useCORS: true,
+                        logging: false,
+                        allowTaint: true
+                    });
+                    
                     var link = document.createElement('a');
-                    link.download = 'Absensi_' + (currentDataAbsen.nama_bulan || '') + '_' + (currentDataAbsen.tahun ||
-                        '') + '.png';
+                    link.download = 'Absensi_' + (currentDataAbsen.nama_bulan || '') + '_' + (currentDataAbsen.tahun || '') + '.png';
                     link.href = canvas.toDataURL('image/png');
-                    link.click(); } catch (e) {} setTimeout(function() { if (screenshotAreaAbsen) screenshotAreaAbsen
-                        .innerHTML = ''; }, 500); };
+                    link.click();
+                } catch (e) {
+                    console.error('Gagal screenshot:', e);
+                }
+                
+                setTimeout(function() {
+                    if (screenshotAreaAbsen) screenshotAreaAbsen.innerHTML = '';
+                }, 500);
+            };
+
             window.loadAbsenTahun = loadAbsenTahun;
         })();
     </script>
