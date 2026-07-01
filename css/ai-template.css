@@ -1,0 +1,48 @@
+/* ================================================================
+   AI-TEMPLATE.CSS - TEMPLATE AI
+   ================================================================ */
+
+.ai-template-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+    flex-wrap: wrap;
+}
+
+.ai-template-btn {
+    background: rgba(255, 255, 255, 0.76);
+    color: #0e0101 !important;
+    border: none !important;
+    padding: 10px 18px !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ai-template-btn:hover {
+    background: rgba(135, 16, 16, 0.589);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+.ai-template-btn i {
+    font-size: 16px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 480px) {
+    .ai-template-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .ai-template-btn {
+        justify-content: center;
+    }
+}
+/* ===== End of ai-template.css ===== */
