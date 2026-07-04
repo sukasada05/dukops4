@@ -2,6 +2,7 @@
    JADWAL.CSS - JADWAL PIKET (FULL UPGRADE - SIAP PAKAI)
    ================================================================ */
 
+/* ===== HEADER JADWAL ===== */
 .jadwal-header {
     text-align: center;
     margin-bottom: 24px;
@@ -33,6 +34,7 @@
     letter-spacing: 0.5px;
 }
 
+/* ===== SECTION JADWAL ===== */
 .jadwal-section {
     background: rgba(0, 40, 0, 0.3);
     border-radius: 14px;
@@ -126,6 +128,18 @@ h3.section-title-makodim {
     text-align: center;
 }
 
+.jadwal-section .col label {
+    font-size: 11px;
+    color: #889988;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.jadwal-section .col label .tanggal-label {
+    color: #FFD700;
+    font-weight: bold;
+}
+
 .jadwal-section select {
     width: 100%;
     padding: 10px 12px;
@@ -136,6 +150,30 @@ h3.section-title-makodim {
     font-size: 13px;
     cursor: pointer;
     outline: none;
+    transition: all 0.3s ease;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234dff4d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+}
+
+.jadwal-section select:focus {
+    border-color: #4dff4d;
+    box-shadow: 0 0 20px rgba(77, 255, 77, 0.1);
+}
+
+.jadwal-section select option {
+    background: #0f1f0f;
+    color: #e0ffe0;
+    padding: 8px;
+}
+
+.jadwal-section select option.saved-value {
+    background: #1a3a1a;
+    color: #4dff4d;
+    font-weight: bold;
 }
 
 /* ================================================================
@@ -164,6 +202,311 @@ h3.section-title-makodim {
     border-color: rgba(0, 136, 204, 0.2);
 }
 
+#j_hasilPesanBaru::placeholder {
+    color: #556655;
+}
+
+/* ================================================================
+   TOMBOL WHATSAPP
+   ================================================================ */
+.whatsapp-transparent-btn {
+    width: 100%;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 12px 0 8px 0;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 20px rgba(37, 211, 102, 0.15);
+}
+
+.whatsapp-transparent-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(37, 211, 102, 0.3);
+}
+
+.whatsapp-transparent-btn:active {
+    transform: scale(0.98);
+}
+
+.whatsapp-transparent-btn i {
+    font-size: 22px;
+}
+
+/* ================================================================
+   TOMBOL RIWAYAT
+   ================================================================ */
+.btn-riwayat-jadwal {
+    width: 100%;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #2196F3, #0D47A1);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 6px 0 10px 0;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 20px rgba(33, 150, 243, 0.15);
+}
+
+.btn-riwayat-jadwal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(33, 150, 243, 0.3);
+}
+
+.btn-riwayat-jadwal:active {
+    transform: scale(0.98);
+}
+
+/* ================================================================
+   RUNNING TEXT HANPANGAN
+   ================================================================ */
+.running-text-container {
+    background: rgba(255, 215, 0, 0.04);
+    border: 1px solid rgba(255, 215, 0, 0.08);
+    border-radius: 12px;
+    padding: 12px 16px;
+    margin-bottom: 18px;
+    overflow: hidden;
+    position: relative;
+}
+
+.running-text {
+    color: #FFD700;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 0.5px;
+    animation: running-text-piket 20s linear infinite;
+    white-space: nowrap;
+}
+
+@keyframes running-text-piket {
+    0% { transform: translateX(100%); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateX(-100%); opacity: 0; }
+}
+
+/* ================================================================
+   STATUS BAR SUPABASE
+   ================================================================ */
+.status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    flex-wrap: wrap;
+    gap: 6px;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.status-online {
+    background: rgba(46, 125, 50, 0.15);
+    border-color: #4caf50;
+    color: #4caf50;
+}
+
+.status-offline {
+    background: rgba(198, 40, 40, 0.15);
+    border-color: #f44336;
+    color: #f44336;
+}
+
+.status-checking {
+    background: rgba(255, 193, 7, 0.15);
+    border-color: #ffc107;
+    color: #ffc107;
+}
+
+.status-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+    animation: status-dot-pulse 1.5s ease-in-out infinite;
+}
+
+.dot-online { 
+    background: #4caf50;
+    box-shadow: 0 0 12px rgba(76, 175, 80, 0.4);
+}
+.dot-offline { 
+    background: #f44336;
+    box-shadow: 0 0 12px rgba(244, 67, 54, 0.4);
+}
+.dot-checking { 
+    background: #ffc107;
+    box-shadow: 0 0 12px rgba(255, 193, 7, 0.4);
+}
+
+@keyframes status-dot-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.85); }
+}
+
+.status-detail {
+    font-size: 11px;
+    opacity: 0.7;
+    width: 100%;
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    text-align: center !important;
+}
+
+/* ================================================================
+   TANGGAL INFO
+   ================================================================ */
+.tanggal-info {
+    font-size: 13px;
+    color: #FFD700;
+    text-align: center;
+    padding: 8px 14px;
+    background: rgba(255, 215, 0, 0.04);
+    border-radius: 8px;
+    margin-bottom: 14px;
+    border: 1px solid rgba(255, 215, 0, 0.06);
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+/* ================================================================
+   BADGE COUNT
+   ================================================================ */
+.badge-count {
+    background: rgba(255, 215, 0, 0.12);
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    color: #FFD700;
+    border: 1px solid rgba(255, 215, 0, 0.06);
+}
+
+/* ================================================================
+   PREVIEW STATUS
+   ================================================================ */
+.preview-status {
+    font-size: 11px;
+    color: #4caf50;
+    text-align: right;
+    margin-top: 4px;
+    padding-right: 4px;
+    font-weight: 500;
+}
+
+.preview-status.loading {
+    color: #ffc107;
+}
+
+.preview-status.error {
+    color: #f44336;
+}
+
+/* ================================================================
+   DATA INFO
+   ================================================================ */
+.data-info {
+    font-size: 11px;
+    color: #667766;
+    text-align: center;
+    margin-top: 6px;
+    padding: 6px;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.15);
+}
+
+/* ================================================================
+   LOADING INDICATOR
+   ================================================================ */
+.app-loading {
+    text-align: center;
+    padding: 18px;
+    color: #FFD700;
+    font-size: 14px;
+}
+
+.app-loading i {
+    animation: spin-loading 1s linear infinite;
+    margin-right: 8px;
+}
+
+@keyframes spin-loading {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ================================================================
+   TOAST NOTIFICATION
+   ================================================================ */
+.jadwal-toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    padding: 14px 28px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.92);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 9999;
+    opacity: 0;
+    transition: all 0.4s ease;
+    max-width: 90%;
+    text-align: center;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    pointer-events: none;
+}
+
+.jadwal-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+}
+
+.jadwal-toast.success {
+    border-color: #4caf50;
+    background: rgba(0, 30, 0, 0.95);
+}
+
+.jadwal-toast.error {
+    border-color: #f44336;
+    background: rgba(30, 0, 0, 0.95);
+}
+
+.jadwal-toast.info {
+    border-color: #2196F3;
+    background: rgba(0, 20, 40, 0.95);
+}
+
+.jadwal-toast.warning {
+    border-color: #ff9800;
+    background: rgba(30, 20, 0, 0.95);
+}
+
 /* ================================================================
    RESPONSIVE - MOBILE
    ================================================================ */
@@ -172,13 +515,137 @@ h3.section-title-makodim {
         padding: 12px;
         margin-bottom: 10px;
     }
+    
     .jadwal-section h3 {
         font-size: 14px !important;
     }
+    
     .jadwal-title {
         font-size: 18px;
     }
+    
     .jadwal-section .col {
         min-width: 120px;
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+    
+    .jadwal-section .row {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .jadwal-section select {
+        font-size: 14px;
+        padding: 12px 14px;
+    }
+    
+    .whatsapp-transparent-btn {
+        font-size: 14px;
+        padding: 12px 16px;
+    }
+    
+    .btn-riwayat-jadwal {
+        font-size: 13px;
+        padding: 10px 16px;
+    }
+    
+    #j_hasilPesanBaru {
+        font-size: 12px;
+        min-height: 150px;
+        padding: 12px;
+    }
+    
+    .status-bar {
+        font-size: 11px;
+        padding: 8px 12px;
+    }
+    
+    .running-text {
+        font-size: 12px;
+    }
+    
+    .tanggal-info {
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+    
+    .jadwal-toast {
+        font-size: 12px;
+        padding: 10px 18px;
+        bottom: 20px;
+    }
+}
+
+/* ================================================================
+   RESPONSIVE - TABLET
+   ================================================================ */
+@media (min-width: 601px) and (max-width: 768px) {
+    .jadwal-section .col {
+        flex: 1 1 45%;
+        max-width: 45%;
+    }
+}
+
+/* ================================================================
+   RESPONSIVE - DESKTOP
+   ================================================================ */
+@media (min-width: 769px) {
+    .jadwal-section {
+        padding: 20px 24px;
+    }
+    
+    .jadwal-section .col {
+        flex: 1 1 160px;
+        max-width: 220px;
+    }
+    
+    .jadwal-title {
+        font-size: 28px;
+    }
+    
+    .jadwal-section h3 {
+        font-size: 18px !important;
+    }
+}
+
+/* ================================================================
+   DARK MODE COMPATIBILITY
+   ================================================================ */
+@media (prefers-color-scheme: light) {
+    .jadwal-section {
+        background: rgba(0, 40, 0, 0.08);
+    }
+    
+    .jadwal-section select {
+        background: #f0f8f0;
+        color: #1a2a1a;
+        border-color: rgba(0, 80, 0, 0.2);
+    }
+    
+    .jadwal-section select option {
+        background: #f0f8f0;
+        color: #1a2a1a;
+    }
+    
+    #j_hasilPesanBaru {
+        background: rgba(255, 255, 255, 0.08);
+        color: #1a2a1a;
+    }
+    
+    .status-online {
+        background: rgba(46, 125, 50, 0.08);
+    }
+    
+    .status-offline {
+        background: rgba(198, 40, 40, 0.08);
+    }
+    
+    .status-checking {
+        background: rgba(255, 193, 7, 0.08);
+    }
+    
+    .tanggal-info {
+        background: rgba(255, 215, 0, 0.06);
     }
 }
