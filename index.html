@@ -33,7 +33,116 @@
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
     <style>
-        /* Tambahan style untuk status bar di tab piket */
+        /* ============================================================
+           SUPABASE INDICATOR - BULAT KECIL POJOK KANAN ATAS
+           ============================================================ */
+        .supabase-indicator {
+            position: fixed;
+            top: 14px;
+            right: 14px;
+            width: 14px;
+            height: 14px;
+            z-index: 9999;
+            cursor: default;
+            transition: all 0.3s ease;
+        }
+
+        .indicator-dot {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        /* Status Online - Hijau */
+        .indicator-online .indicator-dot {
+            background: #4caf50;
+            box-shadow: 0 0 12px rgba(76, 175, 80, 0.6);
+            animation: pulse-online 2s ease-in-out infinite;
+        }
+
+        /* Status Offline - Merah */
+        .indicator-offline .indicator-dot {
+            background: #f44336;
+            box-shadow: 0 0 12px rgba(244, 67, 54, 0.6);
+            animation: pulse-offline 1s ease-in-out infinite;
+        }
+
+        /* Status Checking - Kuning */
+        .indicator-checking .indicator-dot {
+            background: #ffc107;
+            box-shadow: 0 0 12px rgba(255, 193, 7, 0.6);
+            animation: pulse-checking 0.8s ease-in-out infinite;
+        }
+
+        @keyframes pulse-online {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        @keyframes pulse-offline {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(0.85); opacity: 0.5; }
+        }
+
+        @keyframes pulse-checking {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.5; }
+        }
+
+        /* Tooltip hover */
+        .supabase-indicator:hover .indicator-tooltip {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+
+        .indicator-tooltip {
+            position: absolute;
+            top: 50%;
+            right: 22px;
+            transform: translateX(-8px) translateY(-50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 10px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .indicator-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -6px;
+            transform: translateY(-50%);
+            border-left: 6px solid rgba(0, 0, 0, 0.85);
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .supabase-indicator {
+                width: 12px;
+                height: 12px;
+                top: 10px;
+                right: 10px;
+            }
+            .indicator-tooltip {
+                font-size: 9px;
+                padding: 3px 8px;
+                right: 18px;
+            }
+        }
+
+        /* ============================================================
+           STATUS BAR - TETAP ADA (TAPI TANPA POPUP)
+           ============================================================ */
         .status-bar {
             display: flex;
             justify-content: space-between;
@@ -134,33 +243,6 @@
             margin-top: 5px;
         }
         
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 14px 28px;
-            border-radius: 12px;
-            color: white;
-            font-weight: bold;
-            font-size: 0.9em;
-            z-index: 9999;
-            opacity: 0;
-            transition: opacity 0.3s;
-            max-width: 90%;
-            text-align: center;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-        }
-        
-        .toast.show {
-            opacity: 1;
-        }
-        
-        .toast-success { background: rgba(46, 125, 50, 0.95); }
-        .toast-error { background: rgba(198, 40, 40, 0.95); }
-        .toast-info { background: rgba(30, 136, 229, 0.95); }
-        .toast-warning { background: rgba(237, 108, 2, 0.95); }
-        
         .loading {
             display: none;
             text-align: center;
@@ -181,6 +263,13 @@
 </head>
 
 <body>
+
+    <!-- ===== INDICATOR SUPABASE - BULAT KECIL POJOK KANAN ATAS ===== -->
+    <div id="supabaseIndicator" class="supabase-indicator indicator-checking" title="Status Koneksi Supabase">
+        <div class="indicator-dot"></div>
+        <span class="indicator-tooltip">Menghubungkan...</span>
+    </div>
+
     <!-- ================= SPLASH SCREEN ================= -->
     <div id="splashScreen" class="splash-container-modern">
         <div class="splash-content">
@@ -332,7 +421,7 @@
                 <div class="running-text" id="runningTextJadwalBaru">🌾 Memuat jadwal hanpangan... 🌾</div>
             </div>
 
-            <!-- STATUS SUPABASE DI DALAM TAB PIKET -->
+            <!-- STATUS SUPABASE DI DALAM TAB PIKET (TANPA POPUP) -->
             <div id="statusBar" class="status-bar status-checking">
                 <span>
                     <span class="status-dot dot-checking"></span> 
@@ -1015,9 +1104,39 @@
             let autoSaveTimer = null;
 
             // ============================================================
+            //  UPDATE INDICATOR - BULAT KECIL POJOK KANAN ATAS
+            // ============================================================
+            function updateIndicator(status, message = '') {
+                const indicator = document.getElementById('supabaseIndicator');
+                if (!indicator) return;
+                
+                indicator.classList.remove('indicator-online', 'indicator-offline', 'indicator-checking');
+                
+                if (status === 'online') {
+                    indicator.classList.add('indicator-online');
+                    indicator.title = '🟢 Supabase Terhubung';
+                } else if (status === 'offline') {
+                    indicator.classList.add('indicator-offline');
+                    indicator.title = '🔴 Supabase Terputus';
+                } else {
+                    indicator.classList.add('indicator-checking');
+                    indicator.title = '🟡 Menghubungkan...';
+                }
+                
+                const tooltip = indicator.querySelector('.indicator-tooltip');
+                if (tooltip) {
+                    tooltip.textContent = message || (status === 'online' ? 'Terhubung' : status === 'offline' ? 'Terputus' : 'Menghubungkan...');
+                }
+            }
+
+            // ============================================================
             //  UPDATE STATUS
             // ============================================================
             function updateStatus(status, message, detail = '') {
+                // Update indicator bulat kecil
+                updateIndicator(status, message);
+                
+                // Update status bar (tetap ada)
                 const bar = document.getElementById('statusBar');
                 if (!bar) return;
                 const text = document.getElementById('statusText');
@@ -1456,7 +1575,8 @@
                 const pesan = preview ? preview.value.trim() : "";
                 
                 if (!pesan) {
-                    showToast('❌ Tidak ada pesan untuk dikirim', 'error');
+                    // Tampilkan di status bar, bukan popup
+                    updateStatus('offline', '❌ Tidak ada pesan', 'Pilih nama terlebih dahulu');
                     return false;
                 }
                 
@@ -1469,22 +1589,13 @@
             }
 
             // ============================================================
-            //  TOAST
+            //  TOAST - DINONAKTIFKAN (TIDAK ADA POPUP)
             // ============================================================
             function showToast(message, type = 'info') {
-                const toast = document.getElementById('j_toastNotificationBaru');
-                if (!toast) {
-                    console.log('📢 ' + message);
-                    return;
-                }
-                
-                toast.textContent = message;
-                toast.className = 'toast show';
-                toast.classList.add('toast-' + type);
-                
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 3000);
+                // SEMUA POPUP DINONAKTIFKAN
+                // Hanya log ke console
+                console.log('📢 [Toast Dinonaktifkan]', message);
+                return;
             }
 
             // ============================================================
@@ -1524,7 +1635,7 @@
             }
 
             // ============================================================
-            //  INIT SUPABASE
+            //  INIT SUPABASE - TANPA POPUP
             // ============================================================
             async function initSupabase() {
                 updateStatus('checking', 'Menghubungkan ke Supabase...', '⏳ Membuat koneksi...');
@@ -1545,7 +1656,6 @@
                     if (error) {
                         if (error.message.includes('relation') || error.message.includes('does not exist')) {
                             updateStatus('offline', 'Tabel belum dibuat!', '❌ Jalankan SQL di Supabase');
-                            showToast('⚠️ Tabel jadwal_piket belum dibuat!', 'error');
                         } else {
                             updateStatus('offline', 'Error: ' + error.message, '❌ ' + error.message);
                         }
@@ -1564,7 +1674,8 @@
                     
                     await loadDataFromSupabase();
                     
-                    showToast('✅ Supabase terhubung!', 'success');
+                    // TIDAK ADA POPUP!
+                    
                     return true;
                     
                 } catch (error) {
@@ -1619,7 +1730,6 @@
                 document.getElementById('btnJadwal').classList.add('active'); 
                 document.getElementById('btnAbsen').classList.remove('active');
                 
-                // Jalankan init jika belum
                 if (!window._jadwalInitialized) {
                     window._jadwalInitialized = true;
                     initJadwalBaru();
@@ -1647,7 +1757,6 @@
 
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', function() {
-                    // Inisialisasi awal, tapi jangan load otomatis
                     console.log('📌 Klik tab PIKET untuk mengaktifkan Supabase');
                 });
             }
