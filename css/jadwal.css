@@ -1,5 +1,5 @@
 /* ================================================================
-   JADWAL.CSS - JADWAL PIKET (PREMIUM + TANPA RUBAH HTML)
+   JADWAL.CSS - JADWAL PIKET (RAPI & PREMIUM)
    ================================================================ */
 
 /* ================================================================
@@ -47,7 +47,7 @@
 .jadwal-section {
     background: rgba(0, 40, 0, 0.12) !important;
     border: 1px solid rgba(255, 255, 255, 0.03) !important;
-    padding: 10px 12px !important;
+    padding: 10px 14px !important;
     margin-bottom: 6px !important;
     border-radius: 10px !important;
     backdrop-filter: blur(4px) !important;
@@ -118,32 +118,45 @@ h3.section-title-makodim {
 }
 
 /* ================================================================
-   ROW & COL - LEBIH RAPAT
+   ROW & COL - DIBUAT VERTIKAL (SATU KOLOM) AGAR RAPI
    ================================================================ */
+.jadwal-section .section-content {
+    display: block !important;
+    width: 100% !important;
+}
+
 .jadwal-section .row {
+    display: flex !important;
+    flex-direction: column !important;  /* VERTIKAL */
     gap: 6px !important;
     margin-top: 4px !important;
+    align-items: stretch !important;
 }
 
 .jadwal-section .col {
-    flex: 1 1 120px !important;
-    max-width: 180px !important;
+    flex: 1 1 100% !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    text-align: center !important;
 }
 
 .jadwal-section .col label {
     font-size: 9px !important;
     color: #889988 !important;
-    margin-bottom: 3px !important;
+    margin-bottom: 2px !important;
+    text-align: center !important;
 }
 
 .jadwal-section .col label .tanggal-label {
     font-size: 10px !important;
+    color: #FFD700 !important;
 }
 
 /* ================================================================
-   SELECT DROPDOWN - LEBIH RAPAT
+   SELECT DROPDOWN - FULL WIDTH
    ================================================================ */
 .jadwal-section select {
+    width: 100% !important;
     padding: 8px 12px !important;
     font-size: 12px !important;
     border-radius: 8px !important;
@@ -155,6 +168,8 @@ h3.section-title-makodim {
     background-position: right 10px center !important;
     background-size: 14px !important;
     padding-right: 32px !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
 }
 
 .jadwal-section select:focus {
@@ -177,7 +192,7 @@ h3.section-title-makodim {
    PREVIEW TEXTAREA - HITAM PEKAT + GRADIEN + 3D
    ================================================================ */
 #j_hasilPesanBaru {
-    width: 100%;
+    width: 100% !important;
     min-height: 180px !important;
     padding: 16px 18px !important;
     border-radius: 14px !important;
@@ -209,7 +224,6 @@ h3.section-title-makodim {
     position: relative !important;
 }
 
-/* ----- FOCUS - EFEK 3D TERANGKAT ----- */
 #j_hasilPesanBaru:focus {
     outline: none !important;
     box-shadow: 
@@ -251,6 +265,7 @@ h3.section-title-makodim {
    TOMBOL WHATSAPP - LEBIH RAPAT
    ================================================================ */
 .whatsapp-transparent-btn {
+    width: 100% !important;
     padding: 12px 18px !important;
     font-size: 14px !important;
     margin: 8px 0 6px 0 !important;
@@ -285,6 +300,7 @@ h3.section-title-makodim {
    TOMBOL RIWAYAT - LEBIH RAPAT
    ================================================================ */
 .btn-riwayat-jadwal {
+    width: 100% !important;
     padding: 10px 16px !important;
     font-size: 13px !important;
     margin: 4px 0 8px 0 !important;
@@ -319,6 +335,7 @@ h3.section-title-makodim {
     margin-top: 2px !important;
     padding-right: 2px !important;
     color: #889988 !important;
+    text-align: right !important;
 }
 
 .preview-status.loading {
@@ -407,16 +424,6 @@ h3.section-title-makodim {
         margin: 2px 0 6px 0 !important;
     }
     
-    .jadwal-section .col {
-        flex: 1 1 100% !important;
-        max-width: 100% !important;
-    }
-    
-    .jadwal-section .row {
-        flex-direction: column !important;
-        gap: 4px !important;
-    }
-    
     .jadwal-section select {
         padding: 6px 10px !important;
         font-size: 11px !important;
@@ -454,35 +461,23 @@ h3.section-title-makodim {
 }
 
 /* ================================================================
-   RESPONSIVE - TABLET
+   RESPONSIVE - TABLET & DESKTOP (TETAP VERTIKAL)
    ================================================================ */
-@media (min-width: 601px) and (max-width: 768px) {
+@media (min-width: 601px) {
+    .jadwal-section .row {
+        flex-direction: column !important;  /* TETAP VERTIKAL */
+        gap: 6px !important;
+    }
+    
     .jadwal-section .col {
-        flex: 1 1 45% !important;
-        max-width: 45% !important;
-    }
-    
-    .jadwal-title {
-        font-size: 18px !important;
-    }
-    
-    #j_hasilPesanBaru {
-        min-height: 150px !important;
-        font-size: 12px !important;
+        flex: 1 1 100% !important;
+        max-width: 100% !important;
     }
 }
 
-/* ================================================================
-   RESPONSIVE - DESKTOP
-   ================================================================ */
 @media (min-width: 769px) {
     .jadwal-section {
-        padding: 14px 18px !important;
-    }
-    
-    .jadwal-section .col {
-        flex: 1 1 140px !important;
-        max-width: 200px !important;
+        padding: 14px 20px !important;
     }
     
     .jadwal-title {
