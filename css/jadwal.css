@@ -1,57 +1,143 @@
 /* ================================================================
-   JADWAL.CSS - JADWAL PIKET (FULL UPGRADE - SIAP PAKAI)
+   JADWAL.CSS - JADWAL PIKET (PREMIUM EDITION)
    ================================================================ */
 
-/* ===== HEADER JADWAL ===== */
+/* ================================================================
+   ROOT VARIABLES
+   ================================================================ */
+:root {
+    --jadwal-primary: #FFD700;
+    --jadwal-primary-glow: rgba(255, 215, 0, 0.25);
+    --jadwal-green: #4dff4d;
+    --jadwal-green-glow: rgba(77, 255, 77, 0.25);
+    --jadwal-gold: #FFD700;
+    --jadwal-gold-glow: rgba(255, 215, 0, 0.25);
+    --jadwal-blue: #00ccff;
+    --jadwal-blue-glow: rgba(0, 204, 255, 0.25);
+    --jadwal-bg-dark: rgba(0, 20, 0, 0.5);
+    --jadwal-bg-light: rgba(255, 255, 255, 0.03);
+    --jadwal-border: rgba(255, 255, 255, 0.06);
+    --jadwal-text: #e6ffe6;
+    --jadwal-text-muted: #889988;
+    --jadwal-radius: 16px;
+    --jadwal-radius-sm: 10px;
+    --jadwal-transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ================================================================
+   HEADER JADWAL - PREMIUM
+   ================================================================ */
 .jadwal-header {
     text-align: center;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    margin-bottom: 28px;
+    padding: 20px 0 18px 0;
+    position: relative;
+    background: linear-gradient(180deg, rgba(255, 215, 0, 0.03) 0%, transparent 100%);
+    border-bottom: 1px solid rgba(255, 215, 0, 0.06);
+}
+
+.jadwal-header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 20%;
+    right: 20%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.2), transparent);
 }
 
 .jadwal-title {
-    color: #FFD700;
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    margin-bottom: 8px;
-    text-shadow: 0 0 30px rgba(255, 215, 0, 0.05);
+    color: var(--jadwal-primary);
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    margin-bottom: 6px;
+    text-shadow: 0 0 40px rgba(255, 215, 0, 0.08), 0 4px 20px rgba(0, 0, 0, 0.3);
+    position: relative;
+    display: inline-block;
+}
+
+.jadwal-title::before {
+    content: '✦';
+    color: var(--jadwal-primary);
+    opacity: 0.3;
+    margin-right: 12px;
+    font-size: 18px;
+}
+
+.jadwal-title::after {
+    content: '✦';
+    color: var(--jadwal-primary);
+    opacity: 0.3;
+    margin-left: 12px;
+    font-size: 18px;
 }
 
 .jadwal-logo {
     max-width: 100%;
     height: auto;
     max-height: 80px;
-    border-radius: 12px;
-    border: 1px solid rgba(76, 175, 80, 0.1);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 215, 0, 0.08);
     margin-bottom: 8px;
+    padding: 4px;
+    background: rgba(255, 215, 0, 0.02);
+    transition: var(--jadwal-transition);
+}
+
+.jadwal-logo:hover {
+    border-color: rgba(255, 215, 0, 0.2);
+    transform: scale(1.02);
 }
 
 .jadwal-header p {
     font-size: 12px;
-    color: #889988;
-    letter-spacing: 0.5px;
-}
-
-/* ===== SECTION JADWAL ===== */
-.jadwal-section {
-    background: rgba(0, 40, 0, 0.3);
-    border-radius: 14px;
-    padding: 16px;
-    margin-bottom: 14px;
-    border: 1px solid rgba(76, 175, 80, 0.06);
-    backdrop-filter: blur(4px);
-    transition: all 0.3s ease;
-}
-
-.jadwal-section:hover {
-    border-color: rgba(76, 175, 80, 0.1);
+    color: var(--jadwal-text-muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 400;
 }
 
 /* ================================================================
-   SUPERPOWER CENTER - SEMUA LABEL PASTI TENGAH
-   (kecuali textarea preview, biar rata kiri)
+   SECTION JADWAL - PREMIUM
+   ================================================================ */
+.jadwal-section {
+    background: var(--jadwal-bg-dark);
+    border-radius: var(--jadwal-radius);
+    padding: 18px 20px 20px 20px;
+    margin-bottom: 16px;
+    border: 1px solid var(--jadwal-border);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: var(--jadwal-transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.jadwal-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+    opacity: 0;
+    transition: var(--jadwal-transition);
+}
+
+.jadwal-section:hover {
+    border-color: rgba(255, 215, 0, 0.08);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+}
+
+.jadwal-section:hover::before {
+    opacity: 1;
+}
+
+/* ================================================================
+   SUPER POWER CENTER
    ================================================================ */
 .jadwal-section,
 .jadwal-section *,
@@ -68,46 +154,73 @@
 }
 
 /* ================================================================
-   HEADING JADWAL - STYLE UPGRADE
+   HEADING JADWAL - PREMIUM
    ================================================================ */
 .jadwal-section h3 {
-    margin: 8px 0 12px 0 !important;
-    font-size: 16px !important;
+    margin: 4px 0 14px 0 !important;
+    font-size: 17px !important;
     font-weight: 700 !important;
-    letter-spacing: 1px !important;
+    letter-spacing: 1.5px !important;
     text-align: center !important;
     text-transform: uppercase;
     display: block !important;
     width: 100% !important;
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.jadwal-section h3::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, transparent, currentColor, transparent);
+    opacity: 0.3;
 }
 
 /* ================================================================
-   WARNA LABEL DIBEDAKAN TAJAM (DENGAN GLOW)
+   WARNA LABEL - PREMIUM GLOW
    ================================================================ */
 
-/* 🟢 PIKET KORAMIL - HIJAU TERANG */
+/* 🟢 PIKET KORAMIL - HIJAU NEON */
 .section-title-koramil,
 h3.section-title-koramil {
-    color: #4dff4d !important;
-    text-shadow: 0 0 15px rgba(77, 255, 77, 0.4);
+    color: var(--jadwal-green) !important;
+    text-shadow: 0 0 20px rgba(77, 255, 77, 0.15), 0 0 60px rgba(77, 255, 77, 0.05);
 }
 
-/* 🟡 JAGA KEDIAMAN - EMAS */
+.section-title-koramil::after {
+    background: linear-gradient(90deg, transparent, var(--jadwal-green), transparent) !important;
+}
+
+/* 🟡 JAGA KEDIAMAN - EMAS MELEK */
 .section-title-kediaman,
 h3.section-title-kediaman {
-    color: #FFD700 !important;
-    text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+    color: var(--jadwal-gold) !important;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.15), 0 0 60px rgba(255, 215, 0, 0.05);
+}
+
+.section-title-kediaman::after {
+    background: linear-gradient(90deg, transparent, var(--jadwal-gold), transparent) !important;
 }
 
 /* 🔵 PIKET MAKODIM - BIRU ELEKTRIK */
 .section-title-makodim,
 h3.section-title-makodim {
-    color: #00ccff !important;
-    text-shadow: 0 0 15px rgba(0, 204, 255, 0.4);
+    color: var(--jadwal-blue) !important;
+    text-shadow: 0 0 20px rgba(0, 204, 255, 0.15), 0 0 60px rgba(0, 204, 255, 0.05);
+}
+
+.section-title-makodim::after {
+    background: linear-gradient(90deg, transparent, var(--jadwal-blue), transparent) !important;
 }
 
 /* ================================================================
-   ROW DAN COL UNTUK SELECT (TETAP RAPI)
+   ROW & COL - PREMIUM
    ================================================================ */
 .jadwal-section .section-content {
     display: block;
@@ -118,302 +231,307 @@ h3.section-title-makodim {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 10px;
-    margin-top: 6px;
+    gap: 12px;
+    margin-top: 8px;
 }
 
 .jadwal-section .col {
     flex: 1 1 140px;
     max-width: 200px;
     text-align: center;
+    position: relative;
 }
 
 .jadwal-section .col label {
-    font-size: 11px;
-    color: #889988;
+    font-size: 10px;
+    color: var(--jadwal-text-muted);
     display: block;
-    margin-bottom: 4px;
+    margin-bottom: 5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
 }
 
 .jadwal-section .col label .tanggal-label {
-    color: #FFD700;
-    font-weight: bold;
+    color: var(--jadwal-primary);
+    font-weight: 700;
+    font-size: 11px;
 }
 
+/* ================================================================
+   SELECT DROPDOWN - PREMIUM
+   ================================================================ */
 .jadwal-section select {
     width: 100%;
-    padding: 10px 12px;
-    border-radius: 10px;
-    background: #0f1f0f;
-    color: #e0ffe0;
-    border: 1px solid rgba(76, 175, 80, 0.25);
+    padding: 12px 14px;
+    border-radius: var(--jadwal-radius-sm);
+    background: rgba(0, 0, 0, 0.4);
+    color: var(--jadwal-text);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     font-size: 13px;
+    font-weight: 500;
     cursor: pointer;
     outline: none;
-    transition: all 0.3s ease;
+    transition: var(--jadwal-transition);
     appearance: none;
     -webkit-appearance: none;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234dff4d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
     background-repeat: no-repeat;
-    background-position: right 12px center;
+    background-position: right 14px center;
     background-size: 16px;
+    padding-right: 40px;
+    position: relative;
+}
+
+.jadwal-section select:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(0, 0, 0, 0.5);
 }
 
 .jadwal-section select:focus {
-    border-color: #4dff4d;
-    box-shadow: 0 0 20px rgba(77, 255, 77, 0.1);
+    border-color: var(--jadwal-primary);
+    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.05), 0 0 30px rgba(255, 215, 0, 0.02);
+    background: rgba(0, 0, 0, 0.6);
 }
 
 .jadwal-section select option {
-    background: #0f1f0f;
-    color: #e0ffe0;
-    padding: 8px;
+    background: #0a1a0a;
+    color: var(--jadwal-text);
+    padding: 10px 14px;
 }
 
 .jadwal-section select option.saved-value {
-    background: #1a3a1a;
-    color: #4dff4d;
-    font-weight: bold;
+    background: rgba(77, 255, 77, 0.1);
+    color: var(--jadwal-green);
+    font-weight: 700;
 }
 
 /* ================================================================
-   BOX OUTPUT PESAN (PREVIEW) - FONT ARIAL
+   TEXTAREA PREVIEW - PREMIUM
    ================================================================ */
 #j_hasilPesanBaru {
     width: 100%;
     min-height: 200px;
-    padding: 14px;
-    border-radius: 12px;
-    border: 1px solid rgba(0, 136, 204, 0.08);
-    background: rgba(0, 0, 0, 0.3);
-    color: #ddeedd;
-    font-family: 'Arial', sans-serif !important;
+    padding: 16px 18px;
+    border-radius: var(--jadwal-radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    background: rgba(0, 0, 0, 0.35);
+    color: #e8f0e8;
+    font-family: 'Courier New', monospace !important;
     font-size: 13px;
-    line-height: 1.7;
+    line-height: 1.8;
     resize: vertical;
     margin-top: 10px;
     white-space: pre-wrap;
     overflow-y: auto;
     text-align: left !important;
+    transition: var(--jadwal-transition);
 }
 
 #j_hasilPesanBaru:focus {
     outline: none;
-    border-color: rgba(0, 136, 204, 0.2);
+    border-color: rgba(255, 215, 0, 0.1);
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.02);
 }
 
 #j_hasilPesanBaru::placeholder {
-    color: #556655;
+    color: #445544;
+    font-weight: 300;
 }
 
 /* ================================================================
-   TOMBOL WHATSAPP
+   TOMBOL WHATSAPP - PREMIUM
    ================================================================ */
 .whatsapp-transparent-btn {
     width: 100%;
-    padding: 14px 20px;
-    background: linear-gradient(135deg, #25D366, #128C7E);
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
     color: white;
     border: none;
-    border-radius: 12px;
-    font-size: 16px;
+    border-radius: var(--jadwal-radius-sm);
+    font-size: 17px;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: var(--jadwal-transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin: 14px 0 10px 0;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 30px rgba(37, 211, 102, 0.12);
+    position: relative;
+    overflow: hidden;
+}
+
+.whatsapp-transparent-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    right: 0;
+    bottom: 0;
+    width: 300%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    transform: skewX(-15deg);
+    transition: var(--jadwal-transition);
+}
+
+.whatsapp-transparent-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 40px rgba(37, 211, 102, 0.25);
+}
+
+.whatsapp-transparent-btn:hover::before {
+    left: 100%;
+}
+
+.whatsapp-transparent-btn:active {
+    transform: scale(0.97);
+}
+
+.whatsapp-transparent-btn i {
+    font-size: 24px;
+}
+
+/* ================================================================
+   TOMBOL RIWAYAT - PREMIUM
+   ================================================================ */
+.btn-riwayat-jadwal {
+    width: 100%;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #1a73e8 0%, #0D47A1 100%);
+    color: white;
+    border: none;
+    border-radius: var(--jadwal-radius-sm);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--jadwal-transition);
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 12px;
-    margin: 12px 0 8px 0;
+    margin: 6px 0 12px 0;
     letter-spacing: 0.5px;
-    box-shadow: 0 4px 20px rgba(37, 211, 102, 0.15);
+    box-shadow: 0 4px 30px rgba(26, 115, 232, 0.1);
+    position: relative;
+    overflow: hidden;
 }
 
-.whatsapp-transparent-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(37, 211, 102, 0.3);
-}
-
-.whatsapp-transparent-btn:active {
-    transform: scale(0.98);
-}
-
-.whatsapp-transparent-btn i {
-    font-size: 22px;
-}
-
-/* ================================================================
-   TOMBOL RIWAYAT
-   ================================================================ */
-.btn-riwayat-jadwal {
-    width: 100%;
-    padding: 12px 20px;
-    background: linear-gradient(135deg, #2196F3, #0D47A1);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin: 6px 0 10px 0;
-    letter-spacing: 0.5px;
-    box-shadow: 0 4px 20px rgba(33, 150, 243, 0.15);
+.btn-riwayat-jadwal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    right: 0;
+    bottom: 0;
+    width: 300%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    transform: skewX(-15deg);
+    transition: var(--jadwal-transition);
 }
 
 .btn-riwayat-jadwal:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 30px rgba(33, 150, 243, 0.3);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 40px rgba(26, 115, 232, 0.2);
+}
+
+.btn-riwayat-jadwal:hover::before {
+    left: 100%;
 }
 
 .btn-riwayat-jadwal:active {
-    transform: scale(0.98);
+    transform: scale(0.97);
 }
 
 /* ================================================================
-   RUNNING TEXT HANPANGAN
+   RUNNING TEXT - PREMIUM
    ================================================================ */
 .running-text-container {
-    background: rgba(255, 215, 0, 0.04);
-    border: 1px solid rgba(255, 215, 0, 0.08);
-    border-radius: 12px;
-    padding: 12px 16px;
-    margin-bottom: 18px;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.02), rgba(255, 215, 0, 0.05), rgba(255, 215, 0, 0.02));
+    border: 1px solid rgba(255, 215, 0, 0.06);
+    border-radius: var(--jadwal-radius-sm);
+    padding: 14px 20px;
+    margin-bottom: 20px;
     overflow: hidden;
     position: relative;
 }
 
+.running-text-container::before {
+    content: '✦';
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 215, 0, 0.1);
+    font-size: 12px;
+}
+
+.running-text-container::after {
+    content: '✦';
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 215, 0, 0.1);
+    font-size: 12px;
+}
+
 .running-text {
-    color: #FFD700;
+    color: var(--jadwal-primary);
     font-size: 14px;
     font-weight: 700;
     text-align: center;
-    letter-spacing: 0.5px;
-    animation: running-text-piket 20s linear infinite;
+    letter-spacing: 1px;
+    animation: running-text-piket 25s linear infinite;
     white-space: nowrap;
+    padding: 0 24px;
 }
 
 @keyframes running-text-piket {
     0% { transform: translateX(100%); opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 1; }
+    5% { opacity: 1; }
+    95% { opacity: 1; }
     100% { transform: translateX(-100%); opacity: 0; }
 }
 
 /* ================================================================
-   STATUS BAR SUPABASE
-   ================================================================ */
-.status-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 16px;
-    border-radius: 10px;
-    margin-bottom: 14px;
-    font-size: 13px;
-    flex-wrap: wrap;
-    gap: 6px;
-    transition: all 0.3s ease;
-    border: 1px solid transparent;
-}
-
-.status-online {
-    background: rgba(46, 125, 50, 0.15);
-    border-color: #4caf50;
-    color: #4caf50;
-}
-
-.status-offline {
-    background: rgba(198, 40, 40, 0.15);
-    border-color: #f44336;
-    color: #f44336;
-}
-
-.status-checking {
-    background: rgba(255, 193, 7, 0.15);
-    border-color: #ffc107;
-    color: #ffc107;
-}
-
-.status-dot {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    margin-right: 8px;
-    animation: status-dot-pulse 1.5s ease-in-out infinite;
-}
-
-.dot-online { 
-    background: #4caf50;
-    box-shadow: 0 0 12px rgba(76, 175, 80, 0.4);
-}
-.dot-offline { 
-    background: #f44336;
-    box-shadow: 0 0 12px rgba(244, 67, 54, 0.4);
-}
-.dot-checking { 
-    background: #ffc107;
-    box-shadow: 0 0 12px rgba(255, 193, 7, 0.4);
-}
-
-@keyframes status-dot-pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.6; transform: scale(0.85); }
-}
-
-.status-detail {
-    font-size: 11px;
-    opacity: 0.7;
-    width: 100%;
-    margin-top: 4px;
-    padding-top: 4px;
-    border-top: 1px solid rgba(255, 255, 255, 0.04);
-    text-align: center !important;
-}
-
-/* ================================================================
-   TANGGAL INFO
+   TANGGAL INFO - PREMIUM
    ================================================================ */
 .tanggal-info {
     font-size: 13px;
-    color: #FFD700;
+    color: var(--jadwal-primary);
     text-align: center;
-    padding: 8px 14px;
-    background: rgba(255, 215, 0, 0.04);
-    border-radius: 8px;
-    margin-bottom: 14px;
-    border: 1px solid rgba(255, 215, 0, 0.06);
+    padding: 10px 16px;
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.03), rgba(255, 215, 0, 0.06));
+    border-radius: var(--jadwal-radius-sm);
+    margin-bottom: 16px;
+    border: 1px solid rgba(255, 215, 0, 0.04);
     font-weight: 500;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.tanggal-info::before {
+    content: '📅';
+    font-size: 14px;
 }
 
 /* ================================================================
-   BADGE COUNT
-   ================================================================ */
-.badge-count {
-    background: rgba(255, 215, 0, 0.12);
-    padding: 3px 12px;
-    border-radius: 20px;
-    font-size: 11px;
-    color: #FFD700;
-    border: 1px solid rgba(255, 215, 0, 0.06);
-}
-
-/* ================================================================
-   PREVIEW STATUS
+   PREVIEW STATUS - PREMIUM
    ================================================================ */
 .preview-status {
-    font-size: 11px;
-    color: #4caf50;
+    font-size: 10px;
+    color: var(--jadwal-text-muted);
     text-align: right;
-    margin-top: 4px;
+    margin-top: 6px;
     padding-right: 4px;
     font-weight: 500;
+    letter-spacing: 0.3px;
 }
 
 .preview-status.loading {
@@ -424,32 +542,41 @@ h3.section-title-makodim {
     color: #f44336;
 }
 
-/* ================================================================
-   DATA INFO
-   ================================================================ */
-.data-info {
-    font-size: 11px;
-    color: #667766;
-    text-align: center;
-    margin-top: 6px;
-    padding: 6px;
-    border-radius: 6px;
-    background: rgba(0, 0, 0, 0.15);
+.preview-status.success {
+    color: var(--jadwal-green);
 }
 
 /* ================================================================
-   LOADING INDICATOR
+   DATA INFO - PREMIUM
+   ================================================================ */
+.data-info {
+    font-size: 10px;
+    color: var(--jadwal-text-muted);
+    text-align: center;
+    margin-top: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.15);
+    letter-spacing: 0.3px;
+    border: 1px solid rgba(255, 255, 255, 0.02);
+}
+
+/* ================================================================
+   LOADING INDICATOR - PREMIUM
    ================================================================ */
 .app-loading {
     text-align: center;
-    padding: 18px;
-    color: #FFD700;
+    padding: 20px;
+    color: var(--jadwal-primary);
     font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
 }
 
 .app-loading i {
     animation: spin-loading 1s linear infinite;
-    margin-right: 8px;
+    margin-right: 10px;
+    font-size: 18px;
 }
 
 @keyframes spin-loading {
@@ -458,74 +585,31 @@ h3.section-title-makodim {
 }
 
 /* ================================================================
-   TOAST NOTIFICATION
-   ================================================================ */
-.jadwal-toast {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    padding: 14px 28px;
-    border-radius: 12px;
-    background: rgba(0, 0, 0, 0.92);
-    color: #fff;
-    font-size: 14px;
-    font-weight: 600;
-    z-index: 9999;
-    opacity: 0;
-    transition: all 0.4s ease;
-    max-width: 90%;
-    text-align: center;
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    pointer-events: none;
-}
-
-.jadwal-toast.show {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-    pointer-events: auto;
-}
-
-.jadwal-toast.success {
-    border-color: #4caf50;
-    background: rgba(0, 30, 0, 0.95);
-}
-
-.jadwal-toast.error {
-    border-color: #f44336;
-    background: rgba(30, 0, 0, 0.95);
-}
-
-.jadwal-toast.info {
-    border-color: #2196F3;
-    background: rgba(0, 20, 40, 0.95);
-}
-
-.jadwal-toast.warning {
-    border-color: #ff9800;
-    background: rgba(30, 20, 0, 0.95);
-}
-
-/* ================================================================
    RESPONSIVE - MOBILE
    ================================================================ */
 @media (max-width: 600px) {
     .jadwal-section {
-        padding: 12px;
+        padding: 14px 12px;
         margin-bottom: 10px;
     }
     
     .jadwal-section h3 {
         font-size: 14px !important;
+        letter-spacing: 1px !important;
     }
     
     .jadwal-title {
         font-size: 18px;
+        letter-spacing: 2px;
+    }
+    
+    .jadwal-title::before,
+    .jadwal-title::after {
+        display: none;
     }
     
     .jadwal-section .col {
-        min-width: 120px;
+        min-width: 100px;
         flex: 1 1 100%;
         max-width: 100%;
     }
@@ -533,47 +617,64 @@ h3.section-title-makodim {
     .jadwal-section .row {
         flex-direction: column;
         align-items: center;
+        gap: 8px;
     }
     
     .jadwal-section select {
         font-size: 14px;
-        padding: 12px 14px;
+        padding: 12px 16px;
     }
     
     .whatsapp-transparent-btn {
         font-size: 14px;
-        padding: 12px 16px;
+        padding: 14px 18px;
+    }
+    
+    .whatsapp-transparent-btn i {
+        font-size: 20px;
     }
     
     .btn-riwayat-jadwal {
         font-size: 13px;
-        padding: 10px 16px;
+        padding: 12px 16px;
     }
     
     #j_hasilPesanBaru {
         font-size: 12px;
-        min-height: 150px;
-        padding: 12px;
-    }
-    
-    .status-bar {
-        font-size: 11px;
-        padding: 8px 12px;
+        min-height: 140px;
+        padding: 12px 14px;
     }
     
     .running-text {
         font-size: 12px;
+        padding: 0 16px;
+    }
+    
+    .running-text-container {
+        padding: 10px 12px;
+    }
+    
+    .running-text-container::before,
+    .running-text-container::after {
+        display: none;
     }
     
     .tanggal-info {
         font-size: 11px;
-        padding: 6px 10px;
+        padding: 8px 12px;
     }
     
-    .jadwal-toast {
-        font-size: 12px;
-        padding: 10px 18px;
-        bottom: 20px;
+    .jadwal-header {
+        padding: 14px 0 12px 0;
+        margin-bottom: 18px;
+    }
+    
+    .jadwal-logo {
+        max-height: 55px;
+    }
+    
+    .jadwal-header p {
+        font-size: 10px;
     }
 }
 
@@ -585,6 +686,10 @@ h3.section-title-makodim {
         flex: 1 1 45%;
         max-width: 45%;
     }
+    
+    .jadwal-title {
+        font-size: 22px;
+    }
 }
 
 /* ================================================================
@@ -592,7 +697,8 @@ h3.section-title-makodim {
    ================================================================ */
 @media (min-width: 769px) {
     .jadwal-section {
-        padding: 20px 24px;
+        padding: 24px 28px;
+        border-radius: var(--jadwal-radius);
     }
     
     .jadwal-section .col {
@@ -601,11 +707,34 @@ h3.section-title-makodim {
     }
     
     .jadwal-title {
-        font-size: 28px;
+        font-size: 30px;
+        letter-spacing: 4px;
     }
     
     .jadwal-section h3 {
         font-size: 18px !important;
+        letter-spacing: 2px !important;
+    }
+    
+    .jadwal-section select {
+        font-size: 14px;
+        padding: 14px 18px;
+    }
+    
+    .jadwal-header {
+        margin-bottom: 32px;
+        padding: 24px 0 20px 0;
+    }
+    
+    #j_hasilPesanBaru {
+        min-height: 240px;
+        font-size: 14px;
+        padding: 18px 22px;
+    }
+    
+    .whatsapp-transparent-btn {
+        font-size: 18px;
+        padding: 18px 28px;
     }
 }
 
@@ -613,39 +742,130 @@ h3.section-title-makodim {
    DARK MODE COMPATIBILITY
    ================================================================ */
 @media (prefers-color-scheme: light) {
+    :root {
+        --jadwal-bg-dark: rgba(255, 255, 255, 0.04);
+        --jadwal-text: #1a2a1a;
+        --jadwal-text-muted: #667766;
+        --jadwal-border: rgba(0, 0, 0, 0.04);
+    }
+    
     .jadwal-section {
-        background: rgba(0, 40, 0, 0.08);
+        background: rgba(0, 40, 0, 0.04);
+        backdrop-filter: none;
     }
     
     .jadwal-section select {
-        background: #f0f8f0;
+        background: rgba(255, 255, 255, 0.8);
         color: #1a2a1a;
-        border-color: rgba(0, 80, 0, 0.2);
+        border-color: rgba(0, 0, 0, 0.06);
     }
     
     .jadwal-section select option {
-        background: #f0f8f0;
+        background: #ffffff;
         color: #1a2a1a;
+    }
+    
+    .jadwal-section select option.saved-value {
+        background: rgba(76, 175, 80, 0.08);
+        color: #2e7d32;
     }
     
     #j_hasilPesanBaru {
-        background: rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.85);
         color: #1a2a1a;
+        border-color: rgba(0, 0, 0, 0.04);
     }
     
-    .status-online {
-        background: rgba(46, 125, 50, 0.08);
-    }
-    
-    .status-offline {
-        background: rgba(198, 40, 40, 0.08);
-    }
-    
-    .status-checking {
-        background: rgba(255, 193, 7, 0.08);
+    .running-text-container {
+        background: rgba(255, 215, 0, 0.03);
+        border-color: rgba(255, 215, 0, 0.06);
     }
     
     .tanggal-info {
-        background: rgba(255, 215, 0, 0.06);
+        background: rgba(255, 215, 0, 0.03);
+        border-color: rgba(255, 215, 0, 0.04);
+        color: #b8860b;
     }
+    
+    .data-info {
+        background: rgba(0, 0, 0, 0.03);
+    }
+    
+    .jadwal-header {
+        border-color: rgba(0, 0, 0, 0.04);
+    }
+    
+    .jadwal-title {
+        text-shadow: 0 0 20px rgba(255, 215, 0, 0.05);
+    }
+    
+    .preview-status {
+        color: #667766;
+    }
+}
+
+/* ================================================================
+   ANIMASI MASUK - PREMIUM
+   ================================================================ */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.jadwal-section {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.jadwal-section:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.jadwal-section:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.jadwal-section:nth-child(4) {
+    animation-delay: 0.3s;
+}
+
+/* ================================================================
+   SCROLLBAR STYLING
+   ================================================================ */
+#j_hasilPesanBaru::-webkit-scrollbar {
+    width: 6px;
+}
+
+#j_hasilPesanBaru::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 3px;
+}
+
+#j_hasilPesanBaru::-webkit-scrollbar-thumb {
+    background: rgba(255, 215, 0, 0.15);
+    border-radius: 3px;
+}
+
+#j_hasilPesanBaru::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 215, 0, 0.25);
+}
+
+/* ================================================================
+   GLOW EFFECTS
+   ================================================================ */
+.glow-green {
+    box-shadow: 0 0 30px rgba(77, 255, 77, 0.02);
+}
+
+.glow-gold {
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.02);
+}
+
+.glow-blue {
+    box-shadow: 0 0 30px rgba(0, 204, 255, 0.02);
 }
