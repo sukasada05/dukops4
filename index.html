@@ -140,12 +140,7 @@
             }
         }
 
-        /* ============================================================
-           STATUS BAR - SUDAH DIHAPUS, PAKAI INDICATOR
-           ============================================================ */
-        /* Status bar sudah dihapus, tidak ada lagi teks "Terhubung ke Supabase" */
-
-        /* ============================================================
+       /* ============================================================
            STYLE LAINNYA
            ============================================================ */
         .tanggal-info {
@@ -732,7 +727,7 @@
         <!-- ==================== DUKOPS CONTENT ==================== -->
         <div id="dukopsContent">
             <div style="width: 100%; margin: 0 auto;">
-                <label id="labelPilihDesa"><i class="fas fa-city"></i> Pilih Desa:</label>
+                <label id="labelPilihDesa"><i class="fas fa-city"></i> Pilih Desa/Kelurahan:</label>
                 <select id="selectDesa" onchange="loadSelectedDesa()">
                     <option value="">--Pilih desa/Kelurahan--</option>
                 </select>
@@ -756,7 +751,7 @@
                     <!-- AI TEMPLATE -->
                     <div class="ai-template-container">
                         <button class="ai-template-btn" id="aiTemplateBtn">
-                            <i class="fas fa-robot"></i> Gunakan Template AI
+                            <i class="fas fa-robot"></i> Template AI
                         </button>
                     </div>
                 </div>
@@ -765,7 +760,7 @@
 
                 <div class="action-buttons">
                     <button id="submitBtn" onclick="processSubmission()" disabled>
-                        <i class="fas fa-download">KIRIM</i> dan DOWNLOAD
+                        <i class="fas fa-download"></i> KIRIM dan DOWNLOAD
                     </button>
                     <button id="resetBtn" onclick="resetAll()"><i class="fas fa-redo"></i> RESET</button>
                     <button id="showAttendanceBtn" onclick="showAttendance()" class="btn-attendance">
@@ -779,7 +774,7 @@
                     </div>
                     <div class="attendance-filters">
                         <select id="attendanceDesaFilter" onchange="loadAttendanceData()">
-                            <option value="">Semua Desa</option>
+                            <option value="">--Pilih Desa/Kelurahan--</option>
                         </select>
                         <input type="month" id="attendanceMonthFilter" onchange="loadAttendanceData()">
                     </div>
@@ -800,7 +795,7 @@
         <!-- ==================== JADWAL PIKET ==================== -->
         <div id="jadwalPiketContainerBaru" style="display: none;">
             <div class="jadwal-header">
-                <h1 class="jadwal-title">📋 JADWAL PIKET</h1>
+                <h1 class="jadwal-title">JADWAL PIKET</h1>
                 <div class="app-logo-container">
                     <img src="LOGO KOREM163 Wirasatya.png" alt="Logo Korem 163 Wirasatya" class="jadwal-logo">
                 </div>
@@ -883,7 +878,7 @@
                 <div class="preview-status" id="previewInfo">⏳ Memuat data dari Supabase...</div>
             </div>
 
-            <div class="data-info" id="dataInfo">📌 Data otomatis tersimpan ke Supabase</div>
+            <div class="data-info" id="dataInfo">📌 Data otomatis tersimpan</div>
 
             <div class="app-loading" id="j_loadingIndicatorBaru"><i class="fas fa-spinner fa-spin"></i> Memuat data...</div>
         </div>
@@ -904,7 +899,7 @@
             </div>
 
             <div id="absenResultContainer"></div>
-            <div class="absen-info-text">✨ Tap desa untuk detail | Data tersimpan offline</div>
+            <div class="absen-info-text">✨ Mangsatria@2026</div>
         </div>
 
         <!-- ==================== TAB HANPANGAN (TAMBAHAN BARU) ==================== -->
