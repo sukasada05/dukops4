@@ -596,6 +596,57 @@
         .telegram-running-container:hover .telegram-running-text {
             animation-play-state: paused !important;
         }
+
+        /* ============================================================
+           TAB HANPANGAN (IFRAME) - TAMBAHAN BARU
+           ============================================================ */
+        #hanpanganContent {
+            display: none;
+            width: 100%;
+            height: 600px;
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 15px;
+            background: #0a1a0a;
+        }
+
+        #hanpanganContent iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 12px;
+        }
+
+        @media (max-width: 768px) {
+            #hanpanganContent {
+                height: 500px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #hanpanganContent {
+                height: 400px;
+            }
+        }
+
+        .nav-btn-hanpangan {
+            background: rgba(255, 215, 0, 0.08) !important;
+            border: 1px solid rgba(255, 215, 0, 0.15) !important;
+            color: #FFD700 !important;
+        }
+
+        .nav-btn-hanpangan:hover {
+            background: rgba(255, 215, 0, 0.15) !important;
+            border-color: rgba(255, 215, 0, 0.3) !important;
+        }
+
+        .nav-btn-hanpangan.active {
+            background: rgba(255, 215, 0, 0.2) !important;
+            border-color: #FFD700 !important;
+            color: #FFD700 !important;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.1) !important;
+        }
     </style>
 
 </head>
@@ -672,6 +723,9 @@
             </button>
             <button class="nav-btn nav-btn-absen" id="btnAbsen" onclick="showAbsenTab()">
                 ABSEN
+            </button>
+            <button class="nav-btn nav-btn-hanpangan" id="btnHanpangan" onclick="showHanpangan()">
+                HANPANGAN
             </button>
         </div>
 
@@ -851,6 +905,11 @@
 
             <div id="absenResultContainer"></div>
             <div class="absen-info-text">✨ Tap desa untuk detail | Data tersimpan offline</div>
+        </div>
+
+        <!-- ==================== TAB HANPANGAN (TAMBAHAN BARU) ==================== -->
+        <div id="hanpanganContent">
+            <iframe src="https://sukasada05.github.io/Hanpangan/" title="HANPANGAN"></iframe>
         </div>
 
         <div class="jadwal-toast" id="j_toastNotificationBaru"></div>
@@ -2075,9 +2134,11 @@
                 document.getElementById('dukopsContent').style.display = 'none';
                 document.getElementById('jadwalPiketContainerBaru').style.display = 'block'; 
                 document.getElementById('absenContent').style.display = 'none'; 
+                document.getElementById('hanpanganContent').style.display = 'none';
                 document.getElementById('btnDukops').classList.remove('active'); 
                 document.getElementById('btnJadwal').classList.add('active'); 
                 document.getElementById('btnAbsen').classList.remove('active');
+                document.getElementById('btnHanpangan').classList.remove('active');
                 
                 if (!window._jadwalInitialized) {
                     window._jadwalInitialized = true;
@@ -2089,19 +2150,47 @@
                 document.getElementById('dukopsContent').style.display = 'block';
                 document.getElementById('jadwalPiketContainerBaru').style.display = 'none'; 
                 document.getElementById('absenContent').style.display = 'none'; 
+                document.getElementById('hanpanganContent').style.display = 'none';
                 document.getElementById('btnDukops').classList.add('active'); 
                 document.getElementById('btnJadwal').classList.remove('active'); 
-                document.getElementById('btnAbsen').classList.remove('active'); 
+                document.getElementById('btnAbsen').classList.remove('active');
+                document.getElementById('btnHanpangan').classList.remove('active');
             };
 
             window.showAbsenTab = function() { 
                 document.getElementById('dukopsContent').style.display = 'none';
                 document.getElementById('jadwalPiketContainerBaru').style.display = 'none'; 
                 document.getElementById('absenContent').style.display = 'block'; 
+                document.getElementById('hanpanganContent').style.display = 'none';
                 document.getElementById('btnDukops').classList.remove('active'); 
                 document.getElementById('btnJadwal').classList.remove('active'); 
-                document.getElementById('btnAbsen').classList.add('active'); 
+                document.getElementById('btnAbsen').classList.add('active');
+                document.getElementById('btnHanpangan').classList.remove('active');
                 if (typeof loadAbsenTahun === 'function') loadAbsenTahun(); 
+            };
+
+            // ============================================================
+            //  SHOW HANPANGAN - TAMBAHAN BARU
+            // ============================================================
+            window.showHanpangan = function() {
+                // SEMBUNYIKAN SEMUA KONTEN LAIN
+                document.getElementById('dukopsContent').style.display = 'none';
+                document.getElementById('jadwalPiketContainerBaru').style.display = 'none';
+                document.getElementById('absenContent').style.display = 'none';
+                
+                // TAMPILKAN HANPANGAN
+                document.getElementById('hanpanganContent').style.display = 'block';
+                
+                // UPDATE CLASS ACTIVE
+                document.getElementById('btnDukops').classList.remove('active');
+                document.getElementById('btnJadwal').classList.remove('active');
+                document.getElementById('btnAbsen').classList.remove('active');
+                document.getElementById('btnHanpangan').classList.add('active');
+                
+                // PLAY MUSIC
+                if (typeof window.triggerPlayMusic === 'function') {
+                    window.triggerPlayMusic();
+                }
             };
 
             if (document.readyState === 'loading') {
