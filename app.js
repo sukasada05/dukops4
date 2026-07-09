@@ -1921,10 +1921,10 @@ function updateJadwalPreview() {
         return days[date.getDay()] + ", " + date.getDate() + " " + months[date.getMonth()] + " " + date.getFullYear();
     };
 
-    let result = "=======================\n" +
+let result = "_______________________\n" +
         "*KORAMIL 1609-05/SUKASADA*\n" +
         "    *JADWAL DINAS DALAM*\n" +
-        "=======================\n\n";
+        "_______________________\n\n";
 
     const sections = [
         {
