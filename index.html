@@ -2089,7 +2089,78 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
             }
 
             // ============================================================
-            //  INIT JADWAL
+            //  🔥 ROTASI OTOMATIS (besok -> hari ini)
+            // ============================================================
+            const ROTATION_KEY = 'jadwal_rotation_date';
+
+            async function autoRotateSchedule() {
+                if (!supabaseClient || !isSupabaseConnected) {
+                    console.log('⏳ Supabase belum siap, skip rotasi');
+                    return;
+                }
+
+                const today = new Date();
+                const todayStr = formatDateDB(today);
+
+                // Cek apakah rotasi sudah dilakukan hari ini
+                let lastRotation = localStorage.getItem(ROTATION_KEY);
+                if (lastRotation && lastRotation === todayStr) {
+                    console.log('⏩ Rotasi sudah dilakukan hari ini, skip.');
+                    return;
+                }
+
+                console.log('🔄 Memulai rotasi otomatis (besok -> hari ini)...');
+
+                try {
+                    // 1. Cari data di tanggal HARI INI yang berjenis "besok"
+                    const { data: todayBesokData, error: fetchError } = await supabaseClient
+                        .from('jadwal_piket')
+                        .select('*')
+                        .eq('tanggal_jadwal', todayStr)
+                        .ilike('jenis', '%besok');
+
+                    if (fetchError) throw fetchError;
+
+                    if (todayBesokData && todayBesokData.length > 0) {
+                        // 2. Ubah jenis dari "besok" menjadi "hari_ini"
+                        for (const item of todayBesokData) {
+                            const newJenis = item.jenis.replace('besok', 'hari_ini');
+                            const { error: updateError } = await supabaseClient
+                                .from('jadwal_piket')
+                                .update({ jenis: newJenis })
+                                .eq('id', item.id);
+
+                            if (updateError) throw updateError;
+                        }
+                        console.log(`✅ ${todayBesokData.length} data berhasil dirotasi ke hari ini.`);
+                    } else {
+                        console.log('ℹ️ Tidak ada data "besok" untuk hari ini.');
+                    }
+
+                    // 3. Hapus data untuk tanggal BESOK (biar dropdown besok kosong)
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(today.getDate() + 1);
+                    const tomorrowStr = formatDateDB(tomorrow);
+
+                    const { error: deleteError } = await supabaseClient
+                        .from('jadwal_piket')
+                        .delete()
+                        .eq('tanggal_jadwal', tomorrowStr);
+
+                    if (deleteError) throw deleteError;
+                    console.log(`🗑️ Data untuk tanggal besok (${tomorrowStr}) direset.`);
+
+                    // 4. Simpan tanggal rotasi agar tidak diulang hari ini
+                    localStorage.setItem(ROTATION_KEY, todayStr);
+
+                    // 5. Refresh tampilan akan dilakukan di initJadwalBaru
+                } catch (error) {
+                    console.error('❌ Gagal rotasi:', error);
+                }
+            }
+
+            // ============================================================
+            //  INIT JADWAL (DENGAN ROTASI)
             // ============================================================
             async function initJadwalBaru() { 
                 console.log('🔍 Inisialisasi Aplikasi...');
@@ -2117,6 +2188,12 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
                 autoResizeTextarea();
                 
                 await initSupabase();
+                
+                // 🔥🔥🔥 PANGGIL ROTASI OTOMATIS 🔥🔥🔥
+                await autoRotateSchedule();
+                
+                // Muat ulang data setelah rotasi
+                await loadDataFromSupabase();
                 
                 console.log('✅ Aplikasi siap!');
             }
