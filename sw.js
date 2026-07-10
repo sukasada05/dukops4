@@ -1,13 +1,12 @@
 // sw.js - Service Worker untuk DUKOPS
 const CACHE_NAME = 'dukops-v1';
 const urlsToCache = [
-    '/dukops4/',
-    '/dukops4/index.html',
-    '/dukops4/css/main.css',
-    '/dukops4/favicon-96x96.png',
-    '/dukops4/favicon.svg',
-    '/dukops4/site.webmanifest',
-    '/dukops4/LOGO KOREM163 Wirasatya.png'
+    'index.html',
+    'css/main.css',
+    'icons/favicon-96x96.png',
+    'icons/favicon.svg',
+    'site.webmanifest',
+    'LOGO KOREM163 Wirasatya.png'
 ];
 
 // Install Service Worker
@@ -73,7 +72,7 @@ self.addEventListener('fetch', event => {
                         <body>
                             <h1>📱 DUKOPS BABINSA</h1>
                             <p>Anda sedang offline. Silakan cek koneksi internet.</p>
-                            <p><a href="/dukops4/">Coba lagi</a></p>
+                            <p><a href="./">Coba lagi</a></p>
                         </body>
                     </html>
                 `, {
