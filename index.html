@@ -34,6 +34,13 @@
 
     <style>
         /* ============================================================
+           ROOT VARIABLES - FIXED
+           ============================================================ */
+        :root {
+            --sys-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif;
+        }
+
+        /* ============================================================
            SUPABASE INDICATOR - BULAT KECIL POJOK KANAN ATAS
            ============================================================ */
         .supabase-indicator {
@@ -667,6 +674,45 @@
             color: #FFD700 !important;
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.1) !important;
         }
+
+        /* ============================================================
+           TOMBOL DOWNLOAD PNG ABSEN
+           ============================================================ */
+        .absen-btn-download {
+            background: linear-gradient(135deg, #1a73e8, #0d47a1) !important;
+            color: white !important;
+            border: none !important;
+            padding: 12px 28px !important;
+            border-radius: 10px !important;
+            font-size: 15px !important;
+            font-weight: 700 !important;
+            cursor: pointer !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            box-shadow: 0 4px 16px rgba(26, 115, 232, 0.35) !important;
+            transition: all 0.3s ease !important;
+            width: 100% !important;
+            justify-content: center !important;
+        }
+
+        .absen-btn-download:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 24px rgba(26, 115, 232, 0.45) !important;
+        }
+
+        .absen-btn-download:active {
+            transform: translateY(0px) !important;
+        }
+
+        .absen-btn-download i {
+            font-size: 18px !important;
+        }
+
+        .absen-btn-download-container {
+            margin: 12px 0 8px 0 !important;
+            padding: 0 4px !important;
+        }
     </style>
 
 </head>
@@ -919,6 +965,12 @@
                         <label>📆 BULAN</label>
                         <select id="absenBulanSelect" disabled><option>Pilih tahun</option></select>
                     </div>
+                </div>
+                <!-- TOMBOL DOWNLOAD PNG -->
+                <div class="absen-btn-download-container">
+                    <button onclick="shareAsPNGAbsen()" class="absen-btn-download" id="downloadAbsenBtn">
+                        <i class="fas fa-download"></i> DOWNLOAD ABSEN PNG
+                    </button>
                 </div>
             </div>
 
@@ -2434,7 +2486,7 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
                     '%"></div></div></div><div style="font-size:0.7rem;font-weight:600;margin:10px 0 5px;">📋 DAFTAR DESA (' +
                     d.total_desa +
                     ')</div><div class="absen-desa-list">' + dh +
-                    '</div><div style="margin-top:15px;text-align:center;"><button onclick="shareAsPNGAbsen()" class="absen-btn absen-btn-primary" style="background:#e91e63;">📸 DOWNLOAD ABSEN</button></div></div>';
+                    '</div></div>';
             }
 
             function getCacheAbsen() { try { var c = localStorage.getItem(CACHE_KEY_ABSEN); if (c) return JSON.parse(c); }
@@ -2456,14 +2508,45 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
                     '⚠️ ' : '❌ ')) + n + '\n' + j + '/9 (' + p + '%)'); };
 
             window.shareAsPNGAbsen = async function() {
-                if (!currentDataAbsen) return;
-                if (screenshotAreaAbsen) {
+                var btn = document.getElementById('downloadAbsenBtn');
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> MEMBUAT PNG...';
+                }
+
+                if (!currentDataAbsen) {
+                    alert('⚠️ Belum ada data absensi. Silakan pilih Tahun dan Bulan terlebih dahulu.');
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-download"></i> DOWNLOAD ABSEN PNG';
+                    }
+                    return;
+                }
+
+                if (typeof html2canvas === 'undefined') {
+                    alert('❌ Library html2canvas tidak ditemukan. Silakan refresh halaman.');
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-download"></i> DOWNLOAD ABSEN PNG';
+                    }
+                    return;
+                }
+
+                if (!screenshotAreaAbsen) {
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-download"></i> DOWNLOAD ABSEN PNG';
+                    }
+                    return;
+                }
+
+                try {
                     var d = currentDataAbsen;
                     var t = d.total_desa || 0;
                     var p = t > 0 ? Math.round((d.desa_lengkap / t) * 100) : 0;
-                    var tg = new Date().toLocaleDateString('id-ID');
-                    var lh = '';
+                    var tg = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
                     
+                    var lh = '';
                     for (var i = 0; i < d.details.length; i++) {
                         var de = d.details[i];
                         var w = (de.status === 'LENGKAP') ? '#4caf50' : ((de.status === 'BELUM_LENGKAP') ? '#ff9800' : '#f44336');
@@ -2534,31 +2617,46 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
                             </div>
                         </div>
                     `;
-                }
-                
-                var el = screenshotAreaAbsen ? screenshotAreaAbsen.firstChild : null;
-                if (!el) return;
-                
-                try {
+                    
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    
+                    var el = screenshotAreaAbsen.firstChild;
+                    if (!el) {
+                        throw new Error('Konten screenshot tidak ditemukan');
+                    }
+                    
                     var canvas = await html2canvas(el, { 
                         scale: 2, 
                         backgroundColor: '#ffffff',
                         useCORS: true,
                         logging: false,
-                        allowTaint: true
+                        allowTaint: true,
+                        width: 600
                     });
                     
                     var link = document.createElement('a');
-                    link.download = 'Absensi_' + (currentDataAbsen.nama_bulan || '') + '_' + (currentDataAbsen.tahun || '') + '.png';
+                    var fileName = 'Absensi_' + (d.nama_bulan || 'bulan') + '_' + (d.tahun || 'tahun') + '.png';
+                    link.download = fileName;
                     link.href = canvas.toDataURL('image/png');
+                    document.body.appendChild(link);
                     link.click();
+                    document.body.removeChild(link);
+                    
+                    console.log('✅ Download PNG berhasil:', fileName);
+                    
                 } catch (e) {
-                    console.error('Gagal screenshot:', e);
+                    console.error('❌ Gagal screenshot:', e);
+                    alert('❌ Gagal membuat gambar: ' + e.message);
                 }
                 
                 setTimeout(function() {
                     if (screenshotAreaAbsen) screenshotAreaAbsen.innerHTML = '';
                 }, 500);
+                
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-download"></i> DOWNLOAD ABSEN PNG';
+                }
             };
 
             window.loadAbsenTahun = loadAbsenTahun;
@@ -2615,31 +2713,21 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
         });
     </script>
 
-    <!-- ============ Tawk.to Chat ============ -->
-<script type="text/javascript">
-    var Tawk_API = Tawk_API || {},
-        Tawk_LoadStart = new Date();
-    (function() {
-        var s1 = document.createElement("script"),
-            s0 = document.getElementsByTagName("script")[0];
-        s1.async = true;
-        s1.src = 'https://embed.tawk.to/6a31083849b4571d39e86fa2/1jr7og7jc';
-        s1.charset = 'UTF-8';
-        s1.setAttribute('crossorigin', '*');
-        s0.parentNode.insertBefore(s1, s0);
-    })();
-</script>  <!-- ✅ Tambahkan ini! -->
-
-<script>
-    // Register Service Worker
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js')
-                    console.log('❌ Service Worker registration failed:', error);
-                });
-        });
-    }
-</script>
+    <!-- ============ SERVICE WORKER - PERBAIKAN ============ -->
+    <script>
+        // Register Service Worker - FIXED
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('sw.js')
+                    .then(function(registration) {
+                        console.log('✅ Service Worker registered:', registration);
+                    })
+                    .catch(function(error) {
+                        console.log('❌ Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
 
 </body>
 </html>
