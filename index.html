@@ -24,7 +24,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- Twemoji: normalize emoji rendering across old OS/browsers by replacing with images for display -->
+    <!-- Twemoji: normalize emoji rendering -->
     <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
 
     <!-- ===== CSS MODULAR ===== -->
@@ -34,7 +34,7 @@
 
     <style>
         /* ============================================================
-           ROOT VARIABLES - FIXED
+           ROOT VARIABLES
            ============================================================ */
         :root {
             --sys-font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif;
@@ -61,21 +61,18 @@
             transition: all 0.3s ease;
         }
 
-        /* Status Online - Hijau */
         .indicator-online .indicator-dot {
             background: #4caf50;
             box-shadow: 0 0 12px rgba(76, 175, 80, 0.6);
             animation: pulse-online 2s ease-in-out infinite;
         }
 
-        /* Status Offline - Merah */
         .indicator-offline .indicator-dot {
             background: #f44336;
             box-shadow: 0 0 12px rgba(244, 67, 54, 0.6);
             animation: pulse-offline 1s ease-in-out infinite;
         }
 
-        /* Status Checking - Kuning */
         .indicator-checking .indicator-dot {
             background: #ffc107;
             box-shadow: 0 0 12px rgba(255, 193, 7, 0.6);
@@ -97,7 +94,6 @@
             50% { transform: scale(1.1); opacity: 0.5; }
         }
 
-        /* Tooltip hover */
         .supabase-indicator:hover .indicator-tooltip {
             opacity: 1;
             transform: translateX(0);
@@ -132,7 +128,6 @@
             border-bottom: 6px solid transparent;
         }
 
-        /* Responsive */
         @media (max-width: 480px) {
             .supabase-indicator {
                 width: 12px;
@@ -147,7 +142,7 @@
             }
         }
 
-       /* ============================================================
+        /* ============================================================
            STYLE LAINNYA
            ============================================================ */
         .tanggal-info {
@@ -159,35 +154,19 @@
             border-radius: 6px;
             margin-bottom: 10px;
         }
-        
+
         .preview-status {
             font-size: 0.6em;
             color: #4caf50;
             text-align: right;
             margin-top: 3px;
         }
-        
+
         .data-info {
             font-size: 0.65em;
             color: #888;
             text-align: center;
             margin-top: 5px;
-        }
-        
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 20px;
-            color: #ffd700;
-        }
-        
-        .loading i {
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
 
         .toast {
@@ -207,18 +186,18 @@
             text-align: center;
             box-shadow: 0 8px 32px rgba(0,0,0,0.4);
         }
-        
+
         .toast.show {
             opacity: 1;
         }
-        
+
         .toast-success { background: rgba(46, 125, 50, 0.95); }
         .toast-error { background: rgba(198, 40, 40, 0.95); }
         .toast-info { background: rgba(30, 136, 229, 0.95); }
         .toast-warning { background: rgba(237, 108, 2, 0.95); }
 
         /* ============================================================
-           HEADER DUKOPS - GREEN ARMY TUA (FIXED)
+           HEADER DUKOPS
            ============================================================ */
         .dukops-header {
             background-image: url('header/header-background.png'), linear-gradient(145deg, rgba(10, 26, 10, 0.95), rgba(13, 43, 13, 0.95), rgba(10, 26, 10, 0.95));
@@ -235,7 +214,6 @@
             min-height: clamp(65px, 9vw, 100px) !important;
         }
 
-        /* Garis emas di atas (tanpa animasi) */
         .dukops-header::before {
             content: '' !important;
             position: absolute !important;
@@ -247,7 +225,6 @@
             z-index: 2 !important;
         }
 
-        /* Garis bawah */
         .dukops-header::after {
             content: '' !important;
             position: absolute !important;
@@ -286,11 +263,6 @@
             box-shadow: none !important;
             transition: none !important;
             overflow: visible !important;
-        }
-
-        .dukops-profile-area:hover {
-            border-color: transparent !important;
-            box-shadow: none !important;
         }
 
         .dukops-profile-img {
@@ -342,12 +314,7 @@
             letter-spacing: 2px !important;
             line-height: 1.1 !important;
             margin: 0 !important;
-            text-shadow:
-                0 1px 0 rgba(0,0,0,0.85),
-                0 2px 0 rgba(0,0,0,0.85),
-                0 3px 0 rgba(0,0,0,0.75),
-                0 5px 10px rgba(0,0,0,0.65),
-                0 0 1px rgba(255,255,255,0.15);
+            text-shadow: 0 1px 0 rgba(0,0,0,0.85), 0 2px 0 rgba(0,0,0,0.85), 0 3px 0 rgba(0,0,0,0.75), 0 5px 10px rgba(0,0,0,0.65), 0 0 1px rgba(255,255,255,0.15);
             -webkit-text-stroke: 0.8px rgba(0,0,0,0.8) !important;
             -webkit-text-fill-color: currentColor !important;
             background: none !important;
@@ -362,11 +329,7 @@
             text-transform: uppercase !important;
             letter-spacing: 1.5px !important;
             margin-top: 4px !important;
-            text-shadow:
-                0 1px 0 rgba(0,0,0,0.85),
-                0 2px 0 rgba(0,0,0,0.75),
-                0 4px 8px rgba(0,0,0,0.6),
-                0 0 1px rgba(255,255,255,0.12);
+            text-shadow: 0 1px 0 rgba(0,0,0,0.85), 0 2px 0 rgba(0,0,0,0.75), 0 4px 8px rgba(0,0,0,0.6), 0 0 1px rgba(255,255,255,0.12);
             -webkit-text-stroke: 0.7px rgba(0,0,0,0.8) !important;
             -webkit-text-fill-color: currentColor !important;
             background: none !important;
@@ -426,15 +389,7 @@
             box-shadow: 0 0 10px rgba(255, 215, 0, 0.2) !important;
         }
 
-        .dukops-title-area > div:last-child {
-            flex: 0 0 auto !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            margin-left: auto !important;
-        }
-
-            .counter-value {
+        .counter-value {
             font-size: clamp(28px, 5vw, 52px) !important;
             font-weight: 900 !important;
             font-family: var(--sys-font) !important;
@@ -464,168 +419,96 @@
             display: none !important;
         }
 
-        /* ============================================================
-           RESPONSIVE HEADER
-           ============================================================ */
         @media (max-width: 480px) {
-            .dukops-header {
-                padding: 8px 10px !important;
-                min-height: 50px !important;
-            }
-            .dukops-header-row {
-                gap: 6px !important;
-                flex-wrap: nowrap !important;
-            }
-            .dukops-profile-area {
-                padding: 2px 4px 2px 2px !important;
-                gap: 4px !important;
-            }
-            .dukops-profile-img {
-                width: 32px !important;
-                height: 32px !important;
-            }
-            .dukops-header-title {
-                font-size: 14px !important;
-                letter-spacing: 1px !important;
-            }
-            .dukops-header-title:last-of-type {
-                font-size: 11px !important;
-            }
-            .dukops-header-address {
-                font-size: 8px !important;
-                white-space: nowrap !important;
-            }
-            .dukops-header-address i {
-                font-size: 8px !important;
-            }
-            .counter-value {
-                font-size: 20px !important;
-                padding: 2px 8px !important;
-                min-width: 20px !important;
-            }
-            .counter-value::before {
-                font-size: 10px !important;
-            }
-            .audio-control-wrapper {
-                padding: 1px 6px 1px 4px !important;
-                gap: 4px !important;
-                margin-top: 2px !important;
-            }
-            .telegram-running-text {
-                font-size: 9px !important;
-            }
+            .dukops-header { padding: 8px 10px !important; min-height: 50px !important; }
+            .dukops-header-row { gap: 6px !important; flex-wrap: nowrap !important; }
+            .dukops-profile-area { padding: 2px 4px 2px 2px !important; gap: 4px !important; }
+            .dukops-profile-img { width: 32px !important; height: 32px !important; }
+            .dukops-header-title { font-size: 14px !important; letter-spacing: 1px !important; }
+            .dukops-header-title:last-of-type { font-size: 11px !important; }
+            .dukops-header-address { font-size: 8px !important; white-space: nowrap !important; }
+            .dukops-header-address i { font-size: 8px !important; }
+            .counter-value { font-size: 20px !important; padding: 2px 8px !important; min-width: 20px !important; }
+            .counter-value::before { font-size: 10px !important; }
+            .audio-control-wrapper { padding: 1px 6px 1px 4px !important; gap: 4px !important; margin-top: 2px !important; }
         }
 
         @media (min-width: 481px) and (max-width: 600px) {
-            .dukops-header-row {
-                gap: 8px !important;
-                flex-wrap: nowrap !important;
-            }
-            .dukops-profile-img {
-                width: 38px !important;
-                height: 38px !important;
-            }
-            .dukops-header-title {
-                font-size: 16px !important;
-            }
-            .dukops-header-title:last-of-type {
-                font-size: 12px !important;
-            }
-            .dukops-header-address {
-                font-size: 9px !important;
-            }
-            .counter-value {
-                font-size: 22px !important;
-                padding: 2px 10px !important;
-            }
+            .dukops-header-row { gap: 8px !important; flex-wrap: nowrap !important; }
+            .dukops-profile-img { width: 38px !important; height: 38px !important; }
+            .dukops-header-title { font-size: 16px !important; }
+            .dukops-header-title:last-of-type { font-size: 12px !important; }
+            .dukops-header-address { font-size: 9px !important; }
+            .counter-value { font-size: 22px !important; padding: 2px 10px !important; }
         }
 
         @media (min-width: 601px) and (max-width: 1024px) {
-            .dukops-header-row {
-                gap: 12px !important;
-                flex-wrap: nowrap !important;
-            }
-            .dukops-profile-img {
-                width: 90px !important;
-                height: 80px !important;
-            }
-            .dukops-header-title {
-                font-size: 22px !important;
-            }
-            .dukops-header-title:last-of-type {
-                font-size: 16px !important;
-            }
-            .dukops-header-address {
-                font-size: 11px !important;
-            }
-            .counter-value {
-                font-size: 30px !important;
-                padding: 4px 14px !important;
-            }
+            .dukops-header-row { gap: 12px !important; flex-wrap: nowrap !important; }
+            .dukops-profile-img { width: 90px !important; height: 80px !important; }
+            .dukops-header-title { font-size: 22px !important; }
+            .dukops-header-title:last-of-type { font-size: 16px !important; }
+            .dukops-header-address { font-size: 11px !important; }
+            .counter-value { font-size: 30px !important; padding: 4px 14px !important; }
         }
 
         @media (min-width: 1025px) {
-            .dukops-header-row {
-                gap: 20px !important;
-                flex-wrap: nowrap !important;
-            }
-            .dukops-profile-img {
-                width: 90px !important;
-                height: 80px !important;
-            }
-            .dukops-header-title {
-                font-size: 36px !important;
-                letter-spacing: 4px !important;
-            }
-            .dukops-header-title:last-of-type {
-                font-size: 24px !important;
-                letter-spacing: 3px !important;
-            }
-            .dukops-header-address {
-                font-size: 14px !important;
-            }
-            .counter-value {
-                font-size: 44px !important;
-                padding: 4px 20px !important;
-            }
+            .dukops-header-row { gap: 20px !important; flex-wrap: nowrap !important; }
+            .dukops-profile-img { width: 90px !important; height: 80px !important; }
+            .dukops-header-title { font-size: 36px !important; letter-spacing: 4px !important; }
+            .dukops-header-title:last-of-type { font-size: 24px !important; letter-spacing: 3px !important; }
+            .dukops-header-address { font-size: 14px !important; }
+            .counter-value { font-size: 44px !important; padding: 4px 20px !important; }
         }
 
         /* ============================================================
-           RUNNING TEXT (TELEGRAM)
+           JADWAL PIKET - LABEL TANGGAL
            ============================================================ */
-        .telegram-running-container {
-            background: rgba(0, 30, 0, 0.3) !important;
+        .tanggal-label {
+            font-size: 0.6em !important;
+            color: #ffd700 !important;
+            background: rgba(255, 215, 0, 0.1) !important;
+            padding: 2px 10px !important;
             border-radius: 12px !important;
-            padding: 8px 14px !important;
-            margin: 8px 0 !important;
-            border: 1px solid rgba(255, 204, 0, 0.06) !important;
-            overflow: hidden !important;
-            white-space: nowrap !important;
-            backdrop-filter: blur(4px) !important;
-        }
-
-        .telegram-running-text {
             display: inline-block !important;
-            white-space: nowrap !important;
-            animation: marquee 12s linear infinite !important;
-            color: #FFD700 !important;
+            margin-left: 8px !important;
             font-weight: 600 !important;
-            font-size: 13px !important;
-            padding-right: 50px !important;
+            border: 1px solid rgba(255, 215, 0, 0.15) !important;
         }
 
-        @keyframes marquee {
-            0% { transform: translateX(100%); }
-            50% { transform: translateX(0%); }
-            100% { transform: translateX(-100%); }
+        .dropdown-label {
+            display: block !important;
+            font-size: 0.65em !important;
+            color: #8899aa !important;
+            margin-bottom: 3px !important;
+            font-weight: 500 !important;
+            letter-spacing: 0.5px !important;
         }
 
-        .telegram-running-container:hover .telegram-running-text {
-            animation-play-state: paused !important;
+        .section-title-koramil,
+        .section-title-kediaman,
+        .section-title-makodim {
+            display: flex !important;
+            align-items: center !important;
+            flex-wrap: wrap !important;
+            gap: 6px !important;
+            margin-bottom: 8px !important;
+        }
+
+        @media (max-width: 480px) {
+            .tanggal-label {
+                font-size: 0.5em !important;
+                padding: 1px 6px !important;
+                margin-left: 4px !important;
+            }
+            .section-title-koramil,
+            .section-title-kediaman,
+            .section-title-makodim {
+                font-size: 0.85em !important;
+            }
         }
 
         /* ============================================================
-           TAB HANPANGAN (IFRAME) - TAMBAHAN BARU
+           TAB HANPANGAN
            ============================================================ */
         #hanpanganContent {
             display: none;
@@ -646,15 +529,11 @@
         }
 
         @media (max-width: 768px) {
-            #hanpanganContent {
-                height: 500px;
-            }
+            #hanpanganContent { height: 500px; }
         }
 
         @media (max-width: 480px) {
-            #hanpanganContent {
-                height: 400px;
-            }
+            #hanpanganContent { height: 400px; }
         }
 
         .nav-btn-hanpangan {
@@ -713,13 +592,120 @@
             margin: 12px 0 8px 0 !important;
             padding: 0 4px !important;
         }
+
+        /* ============================================================
+           SPLASH SCREEN
+           ============================================================ */
+        .splash-container-modern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a1a0a 0%, #1a3a1a 50%, #0a1a0a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            transition: opacity 0.8s ease;
+        }
+
+        .splash-content {
+            text-align: center;
+            padding: 20px;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .splash-logo-center img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 10px;
+            animation: pulse-logo 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-logo {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .splash-title-center {
+            font-size: 28px;
+            font-weight: 900;
+            color: #FFD700;
+            text-shadow: 0 2px 20px rgba(255, 215, 0, 0.3);
+            letter-spacing: 2px;
+        }
+
+        .splash-title-center:last-of-type {
+            font-size: 18px;
+            color: #f8e28e;
+            margin-top: 4px;
+        }
+
+        .splash-divider-center {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #FFD700, transparent);
+            margin: 12px auto;
+        }
+
+        .splash-subtitle-center {
+            font-size: 14px;
+            color: #88dd88;
+            margin-top: 6px;
+        }
+
+        .splash-unit-center {
+            font-size: 12px;
+            color: #aaddaa;
+            margin-top: 2px;
+        }
+
+        .splash-kodim-center {
+            font-size: 11px;
+            color: #668866;
+            margin-top: 4px;
+        }
+
+        .splash-progress-center {
+            width: 100%;
+            max-width: 280px;
+            margin: 18px auto 10px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .splash-progress-bar-center {
+            height: 100%;
+            width: 20%;
+            background: linear-gradient(90deg, #FFD700, #FFA500);
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .splash-percentage-center {
+            font-size: 12px;
+            color: #889988;
+            margin-top: 4px;
+        }
+
+        .splash-army img {
+            max-width: 200px;
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
     </style>
 
 </head>
 
 <body>
 
-    <!-- ===== INDICATOR SUPABASE - BULAT KECIL POJOK KANAN ATAS ===== -->
+    <!-- ===== INDICATOR SUPABASE ===== -->
     <div id="supabaseIndicator" class="supabase-indicator indicator-checking" title="Status Koneksi Supabase">
         <div class="indicator-dot"></div>
         <span class="indicator-tooltip">Menghubungkan...</span>
@@ -741,8 +727,8 @@
                 <div class="splash-progress-bar-center" id="splashProgressBar"></div>
             </div>
             <div class="splash-percentage-center" id="progressPercentage">20%</div>
-            <div class="splash-army" style="text-align:center; margin-top:12px;">
-                <img id="splashArmyGif" src="army.gif" alt="army" style="max-width:240px; width:100%; height:auto; display:block; margin:0 auto;">
+            <div class="splash-army">
+                <img id="splashArmyGif" src="army.gif" alt="army" style="max-width:200px; width:100%; height:auto; display:block; margin:0 auto;">
             </div>
         </div>
     </div>
@@ -816,7 +802,6 @@
                 <label><i class="fas fa-file-alt"></i> Narasi Kegiatan:</label>
                 <div class="narasi-wrapper">
                     <textarea id="narasi" class="auto-height-textarea" rows="6" placeholder="Masukkan narasi kegiatan...✍️" oninput="checkInputCompletion(); autoResizeNarasi()"></textarea>
-                    <!-- AI TEMPLATE -->
                     <div class="ai-template-container">
                         <button class="ai-template-btn" id="aiTemplateBtn">
                             <i class="fas fa-robot"></i> Template AI
@@ -855,7 +840,6 @@
                         <div class="summary-row"><span>Total Laporan:</span><span id="totalReports">0</span></div>
                         <div class="summary-row"><span>Total Desa:</span><span id="totalDesa">0</span></div>
                         <div class="summary-row"><span>Pencapaian Target:</span><span id="targetStatus">0%</span></div>
-                        
                     </div>
                     <div id="attendanceList" style="max-height: 400px; overflow-y: auto;"></div>
                 </div>
@@ -876,63 +860,117 @@
                 <div class="running-text" id="runningTextJadwalBaru">🌾 Memuat jadwal hanpangan... 🌾</div>
             </div>
 
-            <!-- STATUS BAR DIHAPUS - PAKAI INDICATOR BULAT DI POJOK KANAN ATAS -->
-
-            <!-- TANGGAL INFO -->
             <div class="tanggal-info" id="tanggalInfo">📅 Memuat tanggal...</div>
 
+            <!-- ===== PIKET KORAMIL ===== -->
             <div class="jadwal-section">
                 <div class="section-content">
                     <div>
-                        <h3 class="section-title-koramil">Piket Koramil Hari Ini :</h3>
+                        <h3 class="section-title-koramil">
+                            Piket Koramil Hari Ini
+                            <span class="tanggal-label" id="labelHariIniKoramil">(Memuat...)</span>
+                        </h3>
                         <div class="row">
-                            <div class="col"><select id="j_nama1a_baru"><option value="">「 ✦ 𝐍𝐚𝐦a ✦ 」</option></select></div>
-                            <div class="col"><select id="j_nama1b_baru"><option value="">=✪=Nama=✪=</option></select></div>
+                            <div class="col">
+                                <label class="dropdown-label">Personel 1</label>
+                                <select id="j_nama1a_baru"><option value="">「 ✦ 𝐍𝐚𝐦a ✦ 」</option></select>
+                            </div>
+                            <div class="col">
+                                <label class="dropdown-label">Personel 2</label>
+                                <select id="j_nama1b_baru"><option value="">=✪=Nama=✪=</option></select>
+                            </div>
                         </div>
                     </div>
                     <div>
-                        <h3 class="section-title-koramil">Piket Koramil Besok :</h3>
+                        <h3 class="section-title-koramil">
+                            Piket Koramil Besok
+                            <span class="tanggal-label" id="labelBesokKoramil">(Memuat...)</span>
+                        </h3>
                         <div class="row">
-                            <div class="col"><select id="j_nama2a_baru"><option value="">-- Pilih Nama --</option></select></div>
-                            <div class="col"><select id="j_nama2b_baru"><option value="">-- Pilih Nama --</option></select></div>
+                            <div class="col">
+                                <label class="dropdown-label">Personel 1</label>
+                                <select id="j_nama2a_baru"><option value="">-- Pilih Nama --</option></select>
+                            </div>
+                            <div class="col">
+                                <label class="dropdown-label">Personel 2</label>
+                                <select id="j_nama2b_baru"><option value="">-- Pilih Nama --</option></select>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- ===== JAGA KEDIAMAN ===== -->
             <div class="jadwal-section">
                 <div class="section-content">
                     <div>
-                        <h3 class="section-title-kediaman">Jaga Kediaman Hari Ini :</h3>
+                        <h3 class="section-title-kediaman">
+                            Jaga Kediaman Hari Ini
+                            <span class="tanggal-label" id="labelHariIniKediaman">(Memuat...)</span>
+                        </h3>
                         <div class="row">
-                            <div class="col"><select id="j_nama3a_baru"><option value="">-- Pilih Nama --</option></select></div>
-                            <div class="col"><select id="j_nama3b_baru"><option value="">-- Pilih Nama --</option></select></div>
+                            <div class="col">
+                                <label class="dropdown-label">Personel 1</label>
+                                <select id="j_nama3a_baru"><option value="">-- Pilih Nama --</option></select>
+                            </div>
+                            <div class="col">
+                                <label class="dropdown-label">Personel 2</label>
+                                <select id="j_nama3b_baru"><option value="">-- Pilih Nama --</option></select>
+                            </div>
                         </div>
                     </div>
                     <div>
-                        <h3 class="section-title-kediaman">Jaga Kediaman Besok :</h3>
+                        <h3 class="section-title-kediaman">
+                            Jaga Kediaman Besok
+                            <span class="tanggal-label" id="labelBesokKediaman">(Memuat...)</span>
+                        </h3>
                         <div class="row">
-                            <div class="col"><select id="j_nama3c_baru"><option value="">-- Pilih Nama --</option></select></div>
-                            <div class="col"><select id="j_nama3d_baru"><option value="">-- Pilih Nama --</option></select></div>
+                            <div class="col">
+                                <label class="dropdown-label">Personel 1</label>
+                                <select id="j_nama3c_baru"><option value="">-- Pilih Nama --</option></select>
+                            </div>
+                            <div class="col">
+                                <label class="dropdown-label">Personel 2</label>
+                                <select id="j_nama3d_baru"><option value="">-- Pilih Nama --</option></select>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- ===== PIKET MAKODIM ===== -->
             <div class="jadwal-section">
                 <div class="section-content">
                     <div>
-                        <h3 class="section-title-makodim">Piket Makodim Hari ini :</h3>
+                        <h3 class="section-title-makodim">
+                            Piket Makodim Hari Ini
+                            <span class="tanggal-label" id="labelHariIniMakodim">(Memuat...)</span>
+                        </h3>
                         <div class="row">
-                            <div class="col"><select id="j_nama4a_baru"><option value="">-- Pilih Nama --</option></select></div>
-                            <div class="col"><select id="j_nama4b_baru"><option value="">-- Pilih Nama --</option></select></div>
+                            <div class="col">
+                                <label class="dropdown-label">Personel 1</label>
+                                <select id="j_nama4a_baru"><option value="">-- Pilih Nama --</option></select>
+                            </div>
+                            <div class="col">
+                                <label class="dropdown-label">Personel 2</label>
+                                <select id="j_nama4b_baru"><option value="">-- Pilih Nama --</option></select>
+                            </div>
                         </div>
                     </div>
                     <div>
-                        <h3 class="section-title-makodim">Piket Makodim Besok :</h3>
+                        <h3 class="section-title-makodim">
+                            Piket Makodim Besok
+                            <span class="tanggal-label" id="labelBesokMakodim">(Memuat...)</span>
+                        </h3>
                         <div class="row">
-                            <div class="col"><select id="j_nama4c_baru"><option value="">-- Pilih Nama --</option></select></div>
-                            <div class="col"><select id="j_nama4d_baru"><option value="">-- Pilih Nama --</option></select></div>
+                            <div class="col">
+                                <label class="dropdown-label">Personel 1</label>
+                                <select id="j_nama4c_baru"><option value="">-- Pilih Nama --</option></select>
+                            </div>
+                            <div class="col">
+                                <label class="dropdown-label">Personel 2</label>
+                                <select id="j_nama4d_baru"><option value="">-- Pilih Nama --</option></select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -966,7 +1004,6 @@
                         <select id="absenBulanSelect" disabled><option>Pilih tahun</option></select>
                     </div>
                 </div>
-                <!-- TOMBOL DOWNLOAD PNG -->
                 <div class="absen-btn-download-container">
                     <button onclick="shareAsPNGAbsen()" class="absen-btn-download" id="downloadAbsenBtn">
                         <i class="fas fa-download"></i> DOWNLOAD ABSEN PNG
@@ -978,7 +1015,7 @@
             <div class="absen-info-text">✨ Mangsatria@2026</div>
         </div>
 
-        <!-- ==================== TAB HANPANGAN (TAMBAHAN BARU) ==================== -->
+        <!-- ==================== TAB HANPANGAN ==================== -->
         <div id="hanpanganContent">
             <iframe src="https://sukasada05.github.io/Hanpangan/" title="HANPANGAN"></iframe>
         </div>
@@ -1326,27 +1363,20 @@
             }
         };
 
-        // Initialize profile label visibility on page load
         document.addEventListener('DOMContentLoaded', function() {
             try {
                 const current = getNamaDesaTerpilih();
                 updateDesaProfile(current);
-            } catch (e) {
-                // ignore
-            }
+            } catch (e) {}
             try {
                 if (window.twemoji && typeof twemoji.parse === 'function') {
-                    // Parse the document body to normalize emoji rendering
-                    // Ensure parsed images get the 'emoji' class and are not draggable
                     twemoji.parse(document.body, {
                         folder: 'svg',
                         ext: '.svg',
                         attributes: function () { return { class: 'emoji', draggable: 'false' }; }
                     });
                 }
-            } catch (e) {
-                // ignore
-            }
+            } catch (e) {}
         });
     </script>
 
@@ -1598,9 +1628,6 @@
                 'j_nama4d_baru'
             ];
 
-            // ============================================================
-            //  SUPABASE CONFIGURATION
-            // ============================================================
             const SUPABASE_URL = 'https://wausfsflcehizpuqdwbg.supabase.co';
             const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhdXNmc2ZsY2VoaXpwdXFkd2JnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxMTA3ODQsImV4cCI6MjA5ODY4Njc4NH0.2zF7iogzuTwWoQc451-uKxQdNN1C-qkB0O9Jvz1ZoI0';
 
@@ -1608,15 +1635,10 @@
             let isSupabaseConnected = false;
             let autoSaveTimer = null;
 
-            // ============================================================
-            //  UPDATE INDICATOR - BULAT KECIL POJOK KANAN ATAS
-            // ============================================================
             function updateIndicator(status, message = '') {
                 const indicator = document.getElementById('supabaseIndicator');
                 if (!indicator) return;
-                
                 indicator.classList.remove('indicator-online', 'indicator-offline', 'indicator-checking');
-                
                 if (status === 'online') {
                     indicator.classList.add('indicator-online');
                     indicator.title = '🟢 Supabase Terhubung';
@@ -1627,20 +1649,14 @@
                     indicator.classList.add('indicator-checking');
                     indicator.title = '📡 Menghubungkan...';
                 }
-                
                 const tooltip = indicator.querySelector('.indicator-tooltip');
                 if (tooltip) {
                     tooltip.textContent = message || (status === 'online' ? 'Terhubung' : status === 'offline' ? 'Terputus' : 'Menghubungkan...');
                 }
             }
 
-            // ============================================================
-            //  UPDATE STATUS - HANYA INDICATOR (TANPA TEKS DI STATUS BAR)
-            // ============================================================
             function updateStatus(status, message, detail = '') {
-                // Hanya update indicator bulat kecil di pojok kanan atas
                 updateIndicator(status, message);
-                // Status bar sudah dihapus dari HTML, tidak perlu update lagi
                 console.log('🔵 Status Supabase:', status, message);
             }
 
@@ -1664,7 +1680,6 @@
                 return fetchFromGitHub(GITHUB_URLS.PIKET).then(data => { 
                     if (data) { 
                         JadwalData.daftarNama = data.trim().split('\n').filter(l => l.trim()).map(n => n.trim());
-                        
                         JADWAL_DROPDOWN_IDS.forEach(id => { 
                             const select = document.getElementById(id); 
                             if (select) { 
@@ -1742,34 +1757,74 @@
                 return date.toISOString().split('T')[0];
             }
 
-            function updateTanggalInfo() {
+            // ============================================================
+            // UPDATE LABEL TANGGAL PADA SEMUA SECTION
+            // ============================================================
+            function updateAllDateLabels() {
                 const now = new Date();
-                const tomorrow = new Date();
+                const tomorrow = new Date(now);
                 tomorrow.setDate(now.getDate() + 1);
                 
-                const hariIniFull = formatTanggal(now);
-                const besokFull = formatTanggal(tomorrow);
+                const formatFull = (date) => {
+                    const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+                    const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", 
+                                   "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+                    return days[date.getDay()] + ", " + date.getDate() + " " + months[date.getMonth()] + " " + date.getFullYear();
+                };
+                
+                const formatShort = (date) => {
+                    const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
+                    return date.getDate() + " " + months[date.getMonth()] + " " + date.getFullYear();
+                };
+                
+                const hariIniFull = formatFull(now);
+                const besokFull = formatFull(tomorrow);
+                const hariIniShort = formatShort(now);
+                const besokShort = formatShort(tomorrow);
+                
+                const labelIds = {
+                    'labelHariIniKoramil': hariIniShort,
+                    'labelBesokKoramil': besokShort,
+                    'labelHariIniKediaman': hariIniShort,
+                    'labelBesokKediaman': besokShort,
+                    'labelHariIniMakodim': hariIniShort,
+                    'labelBesokMakodim': besokShort
+                };
+                
+                for (const [id, text] of Object.entries(labelIds)) {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.textContent = '📅 ' + text;
+                        el.title = id.includes('Besok') ? besokFull : hariIniFull;
+                    }
+                }
                 
                 const infoEl = document.getElementById('tanggalInfo');
                 if (infoEl) {
                     infoEl.textContent = '📅 Hari Ini: ' + hariIniFull + ' | Besok: ' + besokFull;
                 }
                 
-                const labelIds = ['labelHariIni', 'labelHariIni2', 'labelHariIni3', 'labelHariIni4', 'labelHariIni5', 'labelHariIni6'];
-                const labelIdsBesok = ['labelBesok', 'labelBesok2', 'labelBesok3', 'labelBesok4', 'labelBesok5', 'labelBesok6'];
-                
-                const hariIniText = formatTanggalShort(now);
-                const besokText = formatTanggalShort(tomorrow);
-                
-                labelIds.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.textContent = '(' + hariIniText + ')';
-                });
-                
-                labelIdsBesok.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.textContent = '(' + besokText + ')';
-                });
+                console.log('✅ Label tanggal diperbarui:', hariIniShort, '|', besokShort);
+            }
+
+            function initDateLabelUpdater() {
+                updateAllDateLabels();
+                let lastDate = new Date().toDateString();
+                setInterval(() => {
+                    const currentDate = new Date().toDateString();
+                    if (currentDate !== lastDate) {
+                        console.log('📅 Tanggal berubah! Memperbarui label...');
+                        lastDate = currentDate;
+                        updateAllDateLabels();
+                        if (typeof autoRotateAndFillSchedule === 'function') {
+                            autoRotateAndFillSchedule();
+                        }
+                    }
+                }, 60000);
+            }
+
+            function updateTanggalInfo() {
+                updateAllDateLabels();
             }
 
             function autoResizeTextarea() { 
@@ -1796,7 +1851,8 @@
                     { names: [getVal('j_nama4c_baru'), getVal('j_nama4d_baru')], title: formatTanggal(tomorrow), suffix: " (Makodim)" }
                 ]; 
                 
-let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JADWAL DINAS DALAM*\n_____________________________\n\n";                let sectionCount = 0; 
+                let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JADWAL DINAS DALAM*\n_____________________________\n\n";
+                let sectionCount = 0; 
                 
                 for (const s of sections) { 
                     const valid = s.names.filter(n => n && n.trim()); 
@@ -1821,7 +1877,7 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
             }
 
             // ============================================================
-            //  🔥 LOAD DATA DARI SUPABASE
+            // LOAD DATA DARI SUPABASE
             // ============================================================
             async function loadDataFromSupabase() {
                 if (!supabaseClient || !isSupabaseConnected) {
@@ -1900,7 +1956,7 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
             }
 
             // ============================================================
-            //  🔥 AUTO SAVE KE SUPABASE
+            // AUTO SAVE KE SUPABASE
             // ============================================================
             async function autoSaveToSupabase() {
                 if (!supabaseClient || !isSupabaseConnected) {
@@ -1968,7 +2024,7 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
             }
 
             // ============================================================
-            //  SAVE RIWAYAT HARIAN
+            // SAVE RIWAYAT HARIAN
             // ============================================================
             async function saveRiwayatHarian(jadwalList) {
                 if (!supabaseClient || !jadwalList || jadwalList.length === 0) return;
@@ -2037,17 +2093,15 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
             }
 
             // ============================================================
-            //  SEND TO WHATSAPP
+            // SEND TO WHATSAPP
             // ============================================================
             async function sendToWhatsApp() {
                 const preview = document.getElementById('j_hasilPesanBaru');
-                // If preview is a textarea use its value, otherwise reconstruct plain text (handles twemoji <img> replacements)
                 function extractPlainText(el) {
                     if (!el) return '';
                     if (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') {
                         return el.value.trim();
                     }
-                    // For HTML elements possibly containing twemoji <img alt="😀">
                     let out = '';
                     el.childNodes.forEach(node => {
                         if (node.nodeType === Node.TEXT_NODE) {
@@ -2067,7 +2121,6 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
                 const pesan = extractPlainText(preview || document.getElementById('j_hasilPesan'));
                 
                 if (!pesan) {
-                    // Tampilkan di console, bukan popup
                     console.log('❌ Tidak ada pesan untuk dikirim');
                     return false;
                 }
@@ -2076,24 +2129,15 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
                     await autoSaveToSupabase();
                 }
                 
-                // Send Unicode emoji characters to WhatsApp (WhatsApp expects UTF-8). Use encodeURIComponent.
                 window.open("https://wa.me/?text=" + encodeURIComponent(pesan), "_blank");
                 return false;
             }
 
-            // ============================================================
-            //  TOAST - DINONAKTIFKAN (TIDAK ADA POPUP)
-            // ============================================================
             function showToast(message, type = 'info') {
-                // SEMUA POPUP DINONAKTIFKAN
-                // Hanya log ke console
                 console.log('📢 [Toast Dinonaktifkan]', message);
                 return;
             }
 
-            // ============================================================
-            //  TRIGGER AUTO SAVE
-            // ============================================================
             function triggerAutoSave() {
                 if (autoSaveTimer) {
                     clearTimeout(autoSaveTimer);
@@ -2108,9 +2152,6 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
                 }, 1500);
             }
 
-            // ============================================================
-            //  LOAD ALL DATA
-            // ============================================================
             let isLoading = false;
 
             function loadAllJadwalData() { 
@@ -2128,7 +2169,193 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
             }
 
             // ============================================================
-            //  INIT SUPABASE - TANPA POPUP
+            // AUTO FILL TOMORROW SCHEDULE
+            // ============================================================
+            async function autoFillTomorrowSchedule() {
+                if (!supabaseClient || !isSupabaseConnected) {
+                    console.log('⏳ Supabase belum siap, skip auto-fill');
+                    return;
+                }
+
+                try {
+                    const today = new Date();
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(today.getDate() + 1);
+                    const tomorrowStr = formatDateDB(tomorrow);
+                    
+                    const { data: existingData, error: checkError } = await supabaseClient
+                        .from('jadwal_piket')
+                        .select('*')
+                        .eq('tanggal_jadwal', tomorrowStr);
+                    
+                    if (checkError) throw checkError;
+                    
+                    if (existingData && existingData.length > 0) {
+                        console.log('✅ Data besok sudah ada, skip auto-fill');
+                        return;
+                    }
+                    
+                    const todayStr = formatDateDB(today);
+                    const { data: todayData, error: todayError } = await supabaseClient
+                        .from('jadwal_piket')
+                        .select('*')
+                        .eq('tanggal_jadwal', todayStr);
+                    
+                    if (todayError) throw todayError;
+                    
+                    if (!todayData || todayData.length === 0) {
+                        console.log('📝 Tidak ada data hari ini, menggunakan default untuk besok');
+                        
+                        const namaList = JadwalData.daftarNama;
+                        if (namaList.length === 0) {
+                            console.log('⚠️ Daftar nama kosong, tidak bisa auto-fill');
+                            return;
+                        }
+                        
+                        const defaultJadwal = [
+                            { jenis: 'koramil_besok', nama1: namaList[0] || '', nama2: namaList[1] || '' },
+                            { jenis: 'kediaman_besok', nama1: namaList[2] || '', nama2: namaList[3] || '' },
+                            { jenis: 'makodim_besok', nama1: namaList[4] || '', nama2: namaList[5] || '' }
+                        ];
+                        
+                        for (const j of defaultJadwal) {
+                            await supabaseClient
+                                .from('jadwal_piket')
+                                .insert([{
+                                    tanggal_jadwal: tomorrowStr,
+                                    jenis: j.jenis,
+                                    nama1: j.nama1 || null,
+                                    nama2: j.nama2 || null,
+                                    tanggal_input: new Date().toISOString()
+                                }]);
+                        }
+                        
+                        console.log('✅ Default jadwal besok berhasil dibuat');
+                        return;
+                    }
+                    
+                    console.log('📝 Membuat jadwal besok dari data hari ini...');
+                    
+                    const shiftMapping = {
+                        'koramil_hari_ini': 'koramil_besok',
+                        'kediaman_hari_ini': 'kediaman_besok',
+                        'makodim_hari_ini': 'makodim_besok'
+                    };
+                    
+                    for (const item of todayData) {
+                        const newJenis = shiftMapping[item.jenis];
+                        if (newJenis) {
+                            await supabaseClient
+                                .from('jadwal_piket')
+                                .insert([{
+                                    tanggal_jadwal: tomorrowStr,
+                                    jenis: newJenis,
+                                    nama1: item.nama1 || null,
+                                    nama2: item.nama2 || null,
+                                    tanggal_input: new Date().toISOString()
+                                }]);
+                        }
+                    }
+                    
+                    console.log('✅ Jadwal besok berhasil dibuat dari data hari ini');
+                    
+                } catch (error) {
+                    console.error('❌ Error auto-fill besok:', error);
+                }
+            }
+
+            // ============================================================
+            // AUTO ROTATE AND FILL SCHEDULE
+            // ============================================================
+            async function autoRotateAndFillSchedule() {
+                if (!supabaseClient || !isSupabaseConnected) {
+                    console.log('⏳ Supabase belum siap, skip auto-rotate');
+                    return;
+                }
+
+                const today = new Date();
+                const todayStr = formatDateDB(today);
+
+                const ROTATION_KEY = 'jadwal_rotation_date';
+                let lastRotation = localStorage.getItem(ROTATION_KEY);
+                
+                if (lastRotation && lastRotation === todayStr) {
+                    console.log('⏩ Rotasi sudah dilakukan hari ini, skip.');
+                    await autoFillTomorrowSchedule();
+                    updateAllDateLabels();
+                    return;
+                }
+
+                console.log('🔄 Memulai rotasi otomatis lengkap...');
+
+                try {
+                    const { data: todayBesokData, error: fetchError } = await supabaseClient
+                        .from('jadwal_piket')
+                        .select('*')
+                        .eq('tanggal_jadwal', todayStr)
+                        .ilike('jenis', '%besok');
+
+                    if (fetchError) throw fetchError;
+
+                    if (todayBesokData && todayBesokData.length > 0) {
+                        for (const item of todayBesokData) {
+                            const newJenis = item.jenis.replace('besok', 'hari_ini');
+                            const { error: updateError } = await supabaseClient
+                                .from('jadwal_piket')
+                                .update({ jenis: newJenis })
+                                .eq('id', item.id);
+
+                            if (updateError) throw updateError;
+                        }
+                        console.log(`✅ ${todayBesokData.length} data berhasil dirotasi ke hari ini.`);
+                    } else {
+                        console.log('ℹ️ Tidak ada data "besok" untuk hari ini.');
+                    }
+
+                    const tomorrow = new Date(today);
+                    tomorrow.setDate(today.getDate() + 1);
+                    const tomorrowStr = formatDateDB(tomorrow);
+
+                    const { error: deleteError } = await supabaseClient
+                        .from('jadwal_piket')
+                        .delete()
+                        .eq('tanggal_jadwal', tomorrowStr);
+
+                    if (deleteError) throw deleteError;
+                    console.log(`🗑️ Data untuk tanggal besok (${tomorrowStr}) direset.`);
+
+                    await autoFillTomorrowSchedule();
+
+                    localStorage.setItem(ROTATION_KEY, todayStr);
+
+                    await loadDataFromSupabase();
+                    
+                    updateAllDateLabels();
+                    
+                    console.log('✅ Rotasi dan pengisian jadwal selesai!');
+
+                } catch (error) {
+                    console.error('❌ Gagal rotasi:', error);
+                }
+            }
+
+            // ============================================================
+            // SCHEDULE AUTO ROTATE
+            // ============================================================
+            function scheduleAutoRotate() {
+                setInterval(async () => {
+                    const now = new Date();
+                    if (now.getHours() === 0 && now.getMinutes() === 0) {
+                        console.log('🕛 Tengah malam! Menjalankan rotasi otomatis...');
+                        await autoRotateAndFillSchedule();
+                    }
+                }, 60000);
+                
+                console.log('⏰ Auto-rotate scheduler aktif (cek setiap menit)');
+            }
+
+            // ============================================================
+            // INIT SUPABASE
             // ============================================================
             async function initSupabase() {
                 updateStatus('checking', 'Menghubungkan ke Supabase...', '⏳ Membuat koneksi...');
@@ -2162,8 +2389,6 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
                     
                     await loadDataFromSupabase();
                     
-                    // TIDAK ADA POPUP!
-                    
                     return true;
                     
                 } catch (error) {
@@ -2175,83 +2400,13 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
             }
 
             // ============================================================
-            //  🔥 ROTASI OTOMATIS (besok -> hari ini)
-            // ============================================================
-            const ROTATION_KEY = 'jadwal_rotation_date';
-
-            async function autoRotateSchedule() {
-                if (!supabaseClient || !isSupabaseConnected) {
-                    console.log('⏳ Supabase belum siap, skip rotasi');
-                    return;
-                }
-
-                const today = new Date();
-                const todayStr = formatDateDB(today);
-
-                // Cek apakah rotasi sudah dilakukan hari ini
-                let lastRotation = localStorage.getItem(ROTATION_KEY);
-                if (lastRotation && lastRotation === todayStr) {
-                    console.log('⏩ Rotasi sudah dilakukan hari ini, skip.');
-                    return;
-                }
-
-                console.log('🔄 Memulai rotasi otomatis (besok -> hari ini)...');
-
-                try {
-                    // 1. Cari data di tanggal HARI INI yang berjenis "besok"
-                    const { data: todayBesokData, error: fetchError } = await supabaseClient
-                        .from('jadwal_piket')
-                        .select('*')
-                        .eq('tanggal_jadwal', todayStr)
-                        .ilike('jenis', '%besok');
-
-                    if (fetchError) throw fetchError;
-
-                    if (todayBesokData && todayBesokData.length > 0) {
-                        // 2. Ubah jenis dari "besok" menjadi "hari_ini"
-                        for (const item of todayBesokData) {
-                            const newJenis = item.jenis.replace('besok', 'hari_ini');
-                            const { error: updateError } = await supabaseClient
-                                .from('jadwal_piket')
-                                .update({ jenis: newJenis })
-                                .eq('id', item.id);
-
-                            if (updateError) throw updateError;
-                        }
-                        console.log(`✅ ${todayBesokData.length} data berhasil dirotasi ke hari ini.`);
-                    } else {
-                        console.log('ℹ️ Tidak ada data "besok" untuk hari ini.');
-                    }
-
-                    // 3. Hapus data untuk tanggal BESOK (biar dropdown besok kosong)
-                    const tomorrow = new Date(today);
-                    tomorrow.setDate(today.getDate() + 1);
-                    const tomorrowStr = formatDateDB(tomorrow);
-
-                    const { error: deleteError } = await supabaseClient
-                        .from('jadwal_piket')
-                        .delete()
-                        .eq('tanggal_jadwal', tomorrowStr);
-
-                    if (deleteError) throw deleteError;
-                    console.log(`🗑️ Data untuk tanggal besok (${tomorrowStr}) direset.`);
-
-                    // 4. Simpan tanggal rotasi agar tidak diulang hari ini
-                    localStorage.setItem(ROTATION_KEY, todayStr);
-
-                    // 5. Refresh tampilan akan dilakukan di initJadwalBaru
-                } catch (error) {
-                    console.error('❌ Gagal rotasi:', error);
-                }
-            }
-
-            // ============================================================
-            //  INIT JADWAL (DENGAN ROTASI)
+            // INIT JADWAL
             // ============================================================
             async function initJadwalBaru() { 
                 console.log('🔍 Inisialisasi Aplikasi...');
                 
-                updateTanggalInfo();
+                updateAllDateLabels();
+                initDateLabelUpdater();
                 
                 JADWAL_DROPDOWN_IDS.forEach(id => { 
                     const sel = document.getElementById(id); 
@@ -2275,17 +2430,17 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
                 
                 await initSupabase();
                 
-                // 🔥🔥🔥 PANGGIL ROTASI OTOMATIS 🔥🔥🔥
-                await autoRotateSchedule();
+                await autoRotateAndFillSchedule();
                 
-                // Muat ulang data setelah rotasi
                 await loadDataFromSupabase();
                 
-                console.log('✅ Aplikasi siap!');
+                scheduleAutoRotate();
+                
+                console.log('✅ Aplikasi siap! Auto-rotate dan label tanggal aktif.');
             }
 
             // ============================================================
-            //  EXPOSE
+            // EXPOSE
             // ============================================================
             window.showJadwalPiketBaru = function() { 
                 document.getElementById('dukopsContent').style.display = 'none';
@@ -2326,25 +2481,15 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
                 if (typeof loadAbsenTahun === 'function') loadAbsenTahun(); 
             };
 
-            // ============================================================
-            //  SHOW HANPANGAN - TAMBAHAN BARU
-            // ============================================================
             window.showHanpangan = function() {
-                // SEMBUNYIKAN SEMUA KONTEN LAIN
                 document.getElementById('dukopsContent').style.display = 'none';
                 document.getElementById('jadwalPiketContainerBaru').style.display = 'none';
                 document.getElementById('absenContent').style.display = 'none';
-                
-                // TAMPILKAN HANPANGAN
                 document.getElementById('hanpanganContent').style.display = 'block';
-                
-                // UPDATE CLASS ACTIVE
                 document.getElementById('btnDukops').classList.remove('active');
                 document.getElementById('btnJadwal').classList.remove('active');
                 document.getElementById('btnAbsen').classList.remove('active');
                 document.getElementById('btnHanpangan').classList.add('active');
-                
-                // PLAY MUSIC
                 if (typeof window.triggerPlayMusic === 'function') {
                     window.triggerPlayMusic();
                 }
@@ -2358,7 +2503,7 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
         })();
     </script>
 
-    <!-- ============ TAB ABSEN (DENGAN PERBAIKAN DOWNLOAD PNG) ============ -->
+    <!-- ============ TAB ABSEN ============ -->
     <script>
         (function() {
             var SCRIPT_URL =
@@ -2713,9 +2858,8 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
         });
     </script>
 
-    <!-- ============ SERVICE WORKER - PERBAIKAN ============ -->
+    <!-- ============ SERVICE WORKER ============ -->
     <script>
-        // Register Service Worker - FIXED
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('sw.js')
