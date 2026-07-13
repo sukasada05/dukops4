@@ -475,15 +475,6 @@
             border: 1px solid rgba(255, 215, 0, 0.15) !important;
         }
 
-        .dropdown-label {
-            display: block !important;
-            font-size: 0.65em !important;
-            color: #8899aa !important;
-            margin-bottom: 3px !important;
-            font-weight: 500 !important;
-            letter-spacing: 0.5px !important;
-        }
-
         .section-title-koramil,
         .section-title-kediaman,
         .section-title-makodim {
@@ -555,41 +546,50 @@
         }
 
         /* ============================================================
-           TOMBOL DOWNLOAD PNG ABSEN
+           TOMBOL DOWNLOAD PNG ABSEN - DIPERBAIKI
            ============================================================ */
         .absen-btn-download {
             background: linear-gradient(135deg, #1a73e8, #0d47a1) !important;
             color: white !important;
             border: none !important;
-            padding: 12px 28px !important;
-            border-radius: 10px !important;
-            font-size: 15px !important;
+            padding: 14px 32px !important;
+            border-radius: 12px !important;
+            font-size: 16px !important;
             font-weight: 700 !important;
             cursor: pointer !important;
             display: inline-flex !important;
             align-items: center !important;
-            gap: 10px !important;
-            box-shadow: 0 4px 16px rgba(26, 115, 232, 0.35) !important;
+            gap: 12px !important;
+            box-shadow: 0 4px 20px rgba(26, 115, 232, 0.4) !important;
             transition: all 0.3s ease !important;
             width: 100% !important;
             justify-content: center !important;
+            letter-spacing: 0.5px !important;
         }
 
         .absen-btn-download:hover {
-            transform: translateY(-2px) !important;
-            box-shadow: 0 6px 24px rgba(26, 115, 232, 0.45) !important;
+            transform: translateY(-3px) !important;
+            box-shadow: 0 8px 32px rgba(26, 115, 232, 0.5) !important;
+            background: linear-gradient(135deg, #1565c0, #0a3d7a) !important;
         }
 
         .absen-btn-download:active {
             transform: translateY(0px) !important;
+            box-shadow: 0 2px 10px rgba(26, 115, 232, 0.3) !important;
+        }
+
+        .absen-btn-download:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none !important;
         }
 
         .absen-btn-download i {
-            font-size: 18px !important;
+            font-size: 20px !important;
         }
 
         .absen-btn-download-container {
-            margin: 12px 0 8px 0 !important;
+            margin: 14px 0 10px 0 !important;
             padding: 0 4px !important;
         }
 
@@ -698,6 +698,220 @@
             height: auto;
             display: block;
             margin: 0 auto;
+        }
+
+        /* ============================================================
+           ABSENSI - STYLE TAMBAHAN
+           ============================================================ */
+        .absen-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .absen-filter-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .absen-filter-row .form-group {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .absen-filter-row .form-group label {
+            display: block;
+            font-size: 11px;
+            color: #8899aa;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .absen-filter-row .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            color: #e0e8f0;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .absen-filter-row .form-group select:focus {
+            outline: none;
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .absen-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .absen-stat-card {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 8px;
+            padding: 12px 8px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .absen-stat-value {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .absen-stat-label {
+            font-size: 9px;
+            color: #8899aa;
+            text-transform: uppercase;
+            margin-top: 2px;
+            letter-spacing: 0.5px;
+        }
+
+        .absen-progress-container {
+            margin: 12px 0;
+        }
+
+        .absen-progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .absen-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #66BB6A);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .absen-desa-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 8px;
+        }
+
+        .absen-desa-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            cursor: pointer;
+            transition: background 0.2s;
+            border-radius: 4px;
+        }
+
+        .absen-desa-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .absen-desa-name {
+            flex: 2;
+            font-size: 13px;
+            font-weight: 500;
+            color: #e0e8f0;
+        }
+
+        .absen-desa-stats {
+            width: 40px;
+            font-size: 12px;
+            text-align: center;
+            color: #8899aa;
+        }
+
+        .absen-desa-progress {
+            width: 60px;
+        }
+
+        .absen-desa-progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .absen-desa-progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+
+        .absen-status-badge {
+            width: 50px;
+            font-size: 9px;
+            text-align: center;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .absen-status-lengkap {
+            background: #e8f5e9;
+            color: #4caf50;
+        }
+
+        .absen-status-belum-lengkap {
+            background: #fff3e0;
+            color: #ff9800;
+        }
+
+        .absen-status-belum {
+            background: #ffebee;
+            color: #f44336;
+        }
+
+        .absen-loading {
+            text-align: center;
+            padding: 30px;
+            color: #8899aa;
+        }
+
+        .absen-spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255, 215, 0, 0.1);
+            border-top-color: #FFD700;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 12px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .absen-info-text {
+            text-align: center;
+            font-size: 11px;
+            color: #445566;
+            margin-top: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* Scrollbar styling */
+        .absen-desa-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .absen-desa-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+        }
+
+        .absen-desa-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 215, 0, 0.2);
+            border-radius: 10px;
         }
     </style>
 
@@ -923,7 +1137,6 @@
                                 <select id="j_nama3c_baru"><option value="">-- Pilih Nama --</option></select>
                             </div>
                             <div class="col">
-                                <label class="dropdown-label">Personel 2</label>
                                 <select id="j_nama3d_baru"><option value="">-- Pilih Nama --</option></select>
                             </div>
                         </div>
@@ -2492,7 +2705,7 @@
         })();
     </script>
 
-    <!-- ============ TAB ABSEN ============ -->
+    <!-- ============ TAB ABSEN (DENGAN PERBAIKAN DOWNLOAD PNG) ============ -->
     <script>
         (function() {
             var SCRIPT_URL =
@@ -2641,6 +2854,9 @@
             window.showDetailAbsen = function(n, j, p, s) { alert((s === 'LENGKAP' ? '✅ ' : (s === 'BELUM_LENGKAP' ?
                     '⚠️ ' : '❌ ')) + n + '\n' + j + '/9 (' + p + '%)'); };
 
+            // ============================================================
+            // DOWNLOAD ABSEN PNG - DIPERBAIKI
+            // ============================================================
             window.shareAsPNGAbsen = async function() {
                 var btn = document.getElementById('downloadAbsenBtn');
                 if (btn) {
@@ -2752,7 +2968,7 @@
                         </div>
                     `;
                     
-                    await new Promise(resolve => setTimeout(resolve, 300));
+                    await new Promise(resolve => setTimeout(resolve, 400));
                     
                     var el = screenshotAreaAbsen.firstChild;
                     if (!el) {
@@ -2760,12 +2976,19 @@
                     }
                     
                     var canvas = await html2canvas(el, { 
-                        scale: 2, 
+                        scale: 2.5, 
                         backgroundColor: '#ffffff',
                         useCORS: true,
                         logging: false,
                         allowTaint: true,
-                        width: 600
+                        width: 600,
+                        onclone: function(doc) {
+                            // Memastikan semua elemen ter-render
+                            var allDivs = doc.querySelectorAll('div');
+                            allDivs.forEach(function(div) {
+                                div.style.transform = 'none';
+                            });
+                        }
                     });
                     
                     var link = document.createElement('a');
