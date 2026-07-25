@@ -1994,20 +1994,29 @@
         });
     </script>
 
-    <!-- ============ SERVICE WORKER ============ -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/dukops4/sw.js')
-                    .then(function(registration) {
-                        console.log('✅ Service Worker registered:', registration);
-                    })
-                    .catch(function(error) {
-                        console.log('❌ Service Worker registration failed:', error);
-                    });
-            });
-        }
-    </script>
+<!-- ============ SERVICE WORKER ============ -->
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            console.log('🔧 Registering Service Worker...');
+            navigator.serviceWorker.register('/dukops4/sw.js')
+                .then(function(registration) {
+                    console.log('✅ Service Worker registered successfully!');
+                    console.log('📦 Scope:', registration.scope);
+                    
+                    // Cek apakah SW sudah aktif
+                    if (registration.active) {
+                        console.log('✅ Service Worker is active!');
+                    }
+                })
+                .catch(function(error) {
+                    console.log('❌ Service Worker registration failed:', error);
+                });
+        });
+    } else {
+        console.log('⚠️ Service Worker not supported in this browser.');
+    }
+</script>
 
 </body>
 </html>
