@@ -2,13 +2,13 @@
   "name": "DUKOPS BABINSA",
   "short_name": "DUKOPS",
   "description": "Sistem Pelaporan Digitalisasi Babinsa Koramil 1609-05/Sukasada",
-  "start_url": "/",
+  "start_url": "/dukops4/",
   "display": "standalone",
   "theme_color": "#0a1a3a",
   "background_color": "#0a1a0a",
   "orientation": "portrait",
   "lang": "id",
-  "scope": "/",
+  "scope": "/dukops4/",
   "icons": [
     {
       "src": "icons/favicon-96x96.png",
@@ -40,7 +40,7 @@
   "shortcuts": [
     {
       "name": "📋 DUKOPS",
-      "url": "/",
+      "url": "/dukops4/",
       "description": "Buka halaman utama DUKOPS",
       "icons": [
         {
@@ -52,7 +52,7 @@
     },
     {
       "name": "📅 PIKET",
-      "url": "/#piket",
+      "url": "/dukops4/#piket",
       "description": "Lihat jadwal piket",
       "icons": [
         {
@@ -64,7 +64,7 @@
     },
     {
       "name": "📊 ABSEN",
-      "url": "/#absen",
+      "url": "/dukops4/#absen",
       "description": "Lihat laporan absensi",
       "icons": [
         {
