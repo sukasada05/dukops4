@@ -11,6 +11,9 @@
     <meta name="apple-mobile-web-app-title" content="DUKOPS">
     <title>SISTEM PELAPORAN DUKOPS BABINSA dan JADWAL PIKET KORAMIL</title>
     <meta name="theme-color" content="#0a1a3a">
+    
+    <!-- ===== BASE URL UNTUK PWA ===== -->
+    <base href="/dukops4/">
 
     <link rel="icon" type="image/x-icon" href="icons/favicon.ico" />
     <link rel="icon" type="image/png" href="icons/favicon-96x96.png" sizes="96x96" />
@@ -1995,7 +1998,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
-                navigator.serviceWorker.register('sw.js')
+                navigator.serviceWorker.register('/dukops4/sw.js')
                     .then(function(registration) {
                         console.log('✅ Service Worker registered:', registration);
                     })
