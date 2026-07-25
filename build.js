@@ -1,54 +1,16 @@
-// ============================================================
-// build.js - Simple build script
-// ============================================================
+// Simple build script: copy selected files/folders into `dist/`
 const fs = require('fs');
 const path = require('path');
 
 const root = process.cwd();
 const dist = path.join(root, 'dist');
 
-// ===== FILE & FOLDER YANG AKAN DISALIN =====
 const pathsToCopy = [
-  // File utama
-  'index.html',
-  'app.js',
-  'sw.js',
-  
-  // CSS
-  'css',
-  
-  // JavaScript
-  'js',
-  
-  // Assets
-  'assets',
-  
-  // Data
-  'data',
-  
-  // Icons
-  'icons',
-  
-  // Header background
-  'header',
-  
-  // Profile images (huruf kecil)
-  'profile',
-  
-  // Gambar pendukung
-  'army.gif',
+  'index.html', 'app.js', 'styles.css', 'site.json', 'site.webmanifest', 'README.md',
   'LOGO KOREM163 Wirasatya.png',
-  
-  // PWA
-  'site.webmanifest',
-  
-  // Dokumentasi
-  'README.md'
+  'css', 'js', 'assets', 'data', 'icons', 'header', 'Profile', 'support'
 ];
 
-// ============================================================
-// FUNGSI UTILITY
-// ============================================================
 function rimraf(dir) {
   if (!fs.existsSync(dir)) return;
   for (const entry of fs.readdirSync(dir)) {
@@ -76,68 +38,29 @@ function copy(src, dest) {
   }
 }
 
-// ============================================================
-// FUNGSI BUILD
-// ============================================================
 function build() {
-  console.log('🚀 Starting build...\n');
-
-  // Hapus dist/ jika ada
-  if (fs.existsSync(dist)) {
-    console.log('🗑️  Cleaning dist/...');
-    rimraf(dist);
-  }
-
-  // Buat folder dist/
+  if (fs.existsSync(dist)) rimraf(dist);
   fs.mkdirSync(dist, { recursive: true });
-  console.log('📁 Created dist/\n');
-
-  // Copy semua file & folder
-  let copiedCount = 0;
-  let skippedCount = 0;
 
   for (const p of pathsToCopy) {
     const abs = path.join(root, p);
-    if (!fs.existsSync(abs)) {
-      console.log(`⚠️  Skipping ${p} (not found)`);
-      skippedCount++;
-      continue;
-    }
-
+    if (!fs.existsSync(abs)) continue;
     const dest = path.join(dist, p);
     try {
       copy(abs, dest);
-      console.log(`✅ Copied ${p}`);
-      copiedCount++;
+      console.log('Copied', p);
     } catch (e) {
-      console.log(`❌ Failed to copy ${p}: ${e.message}`);
-      skippedCount++;
+      console.warn('Skipping', p, '(', e.message, ')');
     }
   }
 
-  console.log('\n' + '='.repeat(50));
-  console.log(`📊 Build Summary:`);
-  console.log(`   ✅ Copied: ${copiedCount} items`);
-  console.log(`   ⚠️  Skipped: ${skippedCount} items`);
-  console.log(`   📁 Output: ${dist}`);
-  console.log('='.repeat(50));
-  console.log('\n✅ Build complete!');
+  console.log('\nBuild complete: dist/ ready');
 }
 
-// ============================================================
-// CLEAN COMMAND
-// ============================================================
 if (process.argv.includes('--clean')) {
-  if (fs.existsSync(dist)) {
-    rimraf(dist);
-    console.log('🗑️  dist/ removed');
-  } else {
-    console.log('ℹ️  dist/ does not exist');
-  }
+  rimraf(dist);
+  console.log('dist/ removed');
   process.exit(0);
 }
 
-// ============================================================
-// RUN BUILD
-// ============================================================
 build();

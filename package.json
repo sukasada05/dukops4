@@ -3,28 +3,13 @@
   "version": "1.0.0",
   "description": "Local scaffold for DUKOPS app — static server and simple build",
   "private": true,
-  "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js",
+    "start:dist": "NODE_ENV=production node server.js dist",
     "build": "node build.js",
-    "clean": "node build.js --clean",
-    "serve": "node server.js",
-    "serve:dist": "node server.js dist",
-    "start:dist": "node server.js dist",
-    "preview": "node server.js dist"
+    "clean": "node build.js --clean"
   },
   "engines": {
     "node": ">=14"
-  },
-  "keywords": [
-    "dukops",
-    "babinsa",
-    "koramil",
-    "sukasada",
-    "piket",
-    "absensi"
-  ],
-  "author": "KORAMIL 1609-05/SUKASADA",
-  "license": "MIT"
+  }
 }
