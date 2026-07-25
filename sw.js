@@ -8,6 +8,7 @@ const urlsToCache = [
     BASE_PATH + 'styles.css',
     BASE_PATH + 'app.js',
     BASE_PATH + 'css/main.css',
+    BASE_PATH + 'css/piket.css',
     BASE_PATH + 'icons/favicon-96x96.png',
     BASE_PATH + 'icons/favicon.svg',
     BASE_PATH + 'site.webmanifest',
@@ -15,9 +16,7 @@ const urlsToCache = [
     BASE_PATH + 'army.gif'
 ];
 
-// ============================================================
-// INSTALL - Caching assets
-// ============================================================
+// Install Service Worker
 self.addEventListener('install', event => {
     console.log('🔧 SW Install event triggered');
     event.waitUntil(
@@ -39,9 +38,7 @@ self.addEventListener('install', event => {
     );
 });
 
-// ============================================================
-// ACTIVATE - Clean old caches
-// ============================================================
+// Activate Service Worker
 self.addEventListener('activate', event => {
     console.log('🔧 SW Activate event triggered');
     event.waitUntil(
@@ -61,9 +58,7 @@ self.addEventListener('activate', event => {
     );
 });
 
-// ============================================================
-// FETCH - Cache-first strategy
-// ============================================================
+// Fetch dari cache jika offline
 self.addEventListener('fetch', event => {
     const url = new URL(event.request.url);
     
