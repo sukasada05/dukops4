@@ -1,27 +1,113 @@
 /* ================================================================
-   MAIN.CSS - IMPORT SEMUA FILE CSS
+   MAIN.CSS - IMPORT SEMUA FILE CSS DUKOPS
+   VERSI DIPERBAIKI - HANYA FILE YANG ADA
    ================================================================ */
 
+/* ================================================================
+   URUTAN IMPORT (DARI DASAR KE SPESIFIK)
+   ================================================================ */
+
+/* ----- 1. BASE & RESET ----- */
 @import url('base.css');
-@import url('splash.css');
+
+/* ----- 2. LAYOUT ----- */
 @import url('header.css');
-@import url('navigation.css');
+
+/* ----- 3. KOMPONEN DASAR ----- */
 @import url('form.css');
 @import url('buttons.css');
-@import url('notification.css');
+
+/* ----- 4. KOMPONEN SPESIFIK ----- */
+@import url('action-buttons.css');
+@import url('announcement.css');
+
+/* ----- 5. TAB & HALAMAN ----- */
 @import url('jadwal.css');
 @import url('attendance.css');
-@import url('tab-absen.css');
-@import url('popup.css');
-@import url('responsive.css');
 
-/* ===== FILE-FILE BARU ===== */
-@import url('slider-volume.css');
-@import url('announcement.css');
-@import url('action-buttons.css');
-@import url('thankyou-popup.css');
-@import url('ai-template.css');
-@import url('preview-fixes.css');
-@import url('form-3d.css');
+/* ----- 6. UTILITY ----- */
+/* @import url('responsive.css'); */  /* Sudah di dalam masing-masing file */
 
-/* ===== End of main.css ===== */
+/* ================================================================
+   FILE YANG TIDAK ADA (DIKOMENTAR)
+   ================================================================ */
+/* @import url('splash.css'); */
+/* @import url('navigation.css'); */
+/* @import url('notification.css'); */
+/* @import url('tab-absen.css'); */
+/* @import url('popup.css'); */
+/* @import url('responsive.css'); */
+/* @import url('slider-volume.css'); */
+/* @import url('thankyou-popup.css'); */
+/* @import url('ai-template.css'); */
+/* @import url('preview-fixes.css'); */
+/* @import url('form-3d.css'); */
+
+/* ================================================================
+   FALLBACK STYLE - UNTUK FILE YANG TIDAK ADA
+   ================================================================ */
+
+/* ----- NAVIGATION FALLBACK ----- */
+.nav-buttons {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.nav-btn {
+    padding: 8px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 30px;
+    background: transparent;
+    color: #889988;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-btn.active {
+    background: rgba(255, 215, 0, 0.12);
+    color: #FFD700;
+    border-color: rgba(255, 215, 0, 0.2);
+}
+
+/* ----- NOTIFICATION FALLBACK ----- */
+.notification {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 24px;
+    border-radius: 30px;
+    z-index: 9999;
+    font-weight: 600;
+    font-size: 13px;
+    display: none;
+    max-width: 90%;
+    text-align: center;
+}
+
+.notification.show { display: block; }
+.notification.success { background: #2ecc71; color: #0a1a0a; }
+.notification.error { background: #e74c3c; color: #ffffff; }
+.notification.warning { background: #f39c12; color: #ffffff; }
+.notification.info { background: #3498db; color: #ffffff; }
+
+/* ----- RESPONSIVE FALLBACK ----- */
+@media (max-width: 480px) {
+    .nav-btn {
+        font-size: 11px;
+        padding: 6px 12px;
+    }
+}
+
+/* ================================================================
+   END OF main.css
+   ================================================================ */
