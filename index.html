@@ -22,8 +22,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <!-- Twemoji: normalize emoji rendering across old OS/browsers by replacing with images for display -->
     <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
 
@@ -33,113 +31,6 @@
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
     <style>
-        /* ============================================================
-           SUPABASE INDICATOR - BULAT KECIL POJOK KANAN ATAS
-           ============================================================ */
-        .supabase-indicator {
-            position: fixed;
-            top: 14px;
-            right: 14px;
-            width: 14px;
-            height: 14px;
-            z-index: 9999;
-            cursor: default;
-            transition: all 0.3s ease;
-        }
-
-        .indicator-dot {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-
-        /* Status Online - Hijau */
-        .indicator-online .indicator-dot {
-            background: #4caf50;
-            box-shadow: 0 0 12px rgba(76, 175, 80, 0.6);
-            animation: pulse-online 2s ease-in-out infinite;
-        }
-
-        /* Status Offline - Merah */
-        .indicator-offline .indicator-dot {
-            background: #f44336;
-            box-shadow: 0 0 12px rgba(244, 67, 54, 0.6);
-            animation: pulse-offline 1s ease-in-out infinite;
-        }
-
-        /* Status Checking - Kuning */
-        .indicator-checking .indicator-dot {
-            background: #ffc107;
-            box-shadow: 0 0 12px rgba(255, 193, 7, 0.6);
-            animation: pulse-checking 0.8s ease-in-out infinite;
-        }
-
-        @keyframes pulse-online {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.8; }
-        }
-
-        @keyframes pulse-offline {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(0.85); opacity: 0.5; }
-        }
-
-        @keyframes pulse-checking {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.5; }
-        }
-
-        /* Tooltip hover */
-        .supabase-indicator:hover .indicator-tooltip {
-            opacity: 1;
-            transform: translateX(0);
-            pointer-events: auto;
-        }
-
-        .indicator-tooltip {
-            position: absolute;
-            top: 50%;
-            right: 22px;
-            transform: translateX(-8px) translateY(-50%);
-            background: rgba(0, 0, 0, 0.85);
-            color: #fff;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 10px;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .indicator-tooltip::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            right: -6px;
-            transform: translateY(-50%);
-            border-left: 6px solid rgba(0, 0, 0, 0.85);
-            border-top: 6px solid transparent;
-            border-bottom: 6px solid transparent;
-        }
-
-        /* Responsive */
-        @media (max-width: 480px) {
-            .supabase-indicator {
-                width: 12px;
-                height: 12px;
-                top: 10px;
-                right: 10px;
-            }
-            .indicator-tooltip {
-                font-size: 9px;
-                padding: 3px 8px;
-                right: 18px;
-            }
-        }
-
        /* ============================================================
            STYLE LAINNYA
            ============================================================ */
@@ -228,7 +119,6 @@
             min-height: clamp(65px, 9vw, 100px) !important;
         }
 
-        /* Garis emas di atas (tanpa animasi) */
         .dukops-header::before {
             content: '' !important;
             position: absolute !important;
@@ -240,7 +130,6 @@
             z-index: 2 !important;
         }
 
-        /* Garis bawah */
         .dukops-header::after {
             content: '' !important;
             position: absolute !important;
@@ -673,12 +562,6 @@
 
 <body>
 
-    <!-- ===== INDICATOR SUPABASE - BULAT KECIL POJOK KANAN ATAS ===== -->
-    <div id="supabaseIndicator" class="supabase-indicator indicator-checking" title="Status Koneksi Supabase">
-        <div class="indicator-dot"></div>
-        <span class="indicator-tooltip">Menghubungkan...</span>
-    </div>
-
     <!-- ================= SPLASH SCREEN ================= -->
     <div id="splashScreen" class="splash-container-modern">
         <div class="splash-content">
@@ -830,8 +713,6 @@
                 <div class="running-text" id="runningTextJadwalBaru">🌾 Memuat jadwal hanpangan... 🌾</div>
             </div>
 
-            <!-- STATUS BAR DIHAPUS - PAKAI INDICATOR BULAT DI POJOK KANAN ATAS -->
-
             <!-- TANGGAL INFO -->
             <div class="tanggal-info" id="tanggalInfo">📅 Memuat tanggal...</div>
 
@@ -899,7 +780,7 @@
 
             <div class="jadwal-section">
                 <textarea id="j_hasilPesanBaru" class="auto-height-textarea" readonly placeholder="Preview pesan akan muncul di sini setelah memilih nama..."></textarea>
-                <div class="preview-status" id="previewInfo">⏳ Memuat data dari Supabase...</div>
+                <div class="preview-status" id="previewInfo">⏳ Memuat data dari GitHub...</div>
             </div>
 
             <div class="data-info" id="dataInfo">📌 Data otomatis tersimpan</div>
@@ -1274,7 +1155,6 @@
             }
         };
 
-        // Initialize profile label visibility on page load
         document.addEventListener('DOMContentLoaded', function() {
             try {
                 const current = getNamaDesaTerpilih();
@@ -1284,8 +1164,6 @@
             }
             try {
                 if (window.twemoji && typeof twemoji.parse === 'function') {
-                    // Parse the document body to normalize emoji rendering
-                    // Ensure parsed images get the 'emoji' class and are not draggable
                     twemoji.parse(document.body, {
                         folder: 'svg',
                         ext: '.svg',
@@ -1535,7 +1413,7 @@
     <!-- ============ APPLICATION SCRIPTS ============ -->
     <script src="app.js"></script>
 
-    <!-- ============ JADWAL PIKET (SCRIPT BARU DENGAN SUPABASE) ============ -->
+    <!-- ============ JADWAL PIKET (TANPA SUPABASE) ============ -->
     <script>
         (function() {
             const HANPANGAN_URL = "https://raw.githubusercontent.com/sukasada05/dukops4/main/data/hanpangan.txt";
@@ -1545,52 +1423,6 @@
                 'j_nama3b_baru', 'j_nama3c_baru', 'j_nama3d_baru', 'j_nama4a_baru', 'j_nama4b_baru', 'j_nama4c_baru',
                 'j_nama4d_baru'
             ];
-
-            // ============================================================
-            //  SUPABASE CONFIGURATION
-            // ============================================================
-            const SUPABASE_URL = 'https://wausfsflcehizpuqdwbg.supabase.co';
-            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndhdXNmc2ZsY2VoaXpwdXFkd2JnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMxMTA3ODQsImV4cCI6MjA5ODY4Njc4NH0.2zF7iogzuTwWoQc451-uKxQdNN1C-qkB0O9Jvz1ZoI0';
-
-            let supabaseClient = null;
-            let isSupabaseConnected = false;
-            let autoSaveTimer = null;
-
-            // ============================================================
-            //  UPDATE INDICATOR - BULAT KECIL POJOK KANAN ATAS
-            // ============================================================
-            function updateIndicator(status, message = '') {
-                const indicator = document.getElementById('supabaseIndicator');
-                if (!indicator) return;
-                
-                indicator.classList.remove('indicator-online', 'indicator-offline', 'indicator-checking');
-                
-                if (status === 'online') {
-                    indicator.classList.add('indicator-online');
-                    indicator.title = '🟢 Supabase Terhubung';
-                } else if (status === 'offline') {
-                    indicator.classList.add('indicator-offline');
-                    indicator.title = '🔴 Supabase Terputus';
-                } else {
-                    indicator.classList.add('indicator-checking');
-                    indicator.title = '📡 Menghubungkan...';
-                }
-                
-                const tooltip = indicator.querySelector('.indicator-tooltip');
-                if (tooltip) {
-                    tooltip.textContent = message || (status === 'online' ? 'Terhubung' : status === 'offline' ? 'Terputus' : 'Menghubungkan...');
-                }
-            }
-
-            // ============================================================
-            //  UPDATE STATUS - HANYA INDICATOR (TANPA TEKS DI STATUS BAR)
-            // ============================================================
-            function updateStatus(status, message, detail = '') {
-                // Hanya update indicator bulat kecil di pojok kanan atas
-                updateIndicator(status, message);
-                // Status bar sudah dihapus dari HTML, tidak perlu update lagi
-                console.log('🔵 Status Supabase:', status, message);
-            }
 
             function updateRunningText() { 
                 const el = document.getElementById('runningTextJadwalBaru'); 
@@ -1682,12 +1514,8 @@
             }
 
             function formatTanggalShort(date) {
-                const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
+                const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
                 return date.getDate() + " " + months[date.getMonth()] + " " + date.getFullYear();
-            }
-
-            function formatDateDB(date) {
-                return date.toISOString().split('T')[0];
             }
 
             function updateTanggalInfo() {
@@ -1702,22 +1530,6 @@
                 if (infoEl) {
                     infoEl.textContent = '📅 Hari Ini: ' + hariIniFull + ' | Besok: ' + besokFull;
                 }
-                
-                const labelIds = ['labelHariIni', 'labelHariIni2', 'labelHariIni3', 'labelHariIni4', 'labelHariIni5', 'labelHariIni6'];
-                const labelIdsBesok = ['labelBesok', 'labelBesok2', 'labelBesok3', 'labelBesok4', 'labelBesok5', 'labelBesok6'];
-                
-                const hariIniText = formatTanggalShort(now);
-                const besokText = formatTanggalShort(tomorrow);
-                
-                labelIds.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.textContent = '(' + hariIniText + ')';
-                });
-                
-                labelIdsBesok.forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.textContent = '(' + besokText + ')';
-                });
             }
 
             function autoResizeTextarea() { 
@@ -1744,7 +1556,8 @@
                     { names: [getVal('j_nama4c_baru'), getVal('j_nama4d_baru')], title: formatTanggal(tomorrow), suffix: " (Makodim)" }
                 ]; 
                 
-let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JADWAL DINAS DALAM*\n_____________________________\n\n";                let sectionCount = 0; 
+                let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JADWAL DINAS DALAM*\n_____________________________\n\n";                
+                let sectionCount = 0; 
                 
                 for (const s of sections) { 
                     const valid = s.names.filter(n => n && n.trim()); 
@@ -1769,233 +1582,15 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
             }
 
             // ============================================================
-            //  🔥 LOAD DATA DARI SUPABASE
-            // ============================================================
-            async function loadDataFromSupabase() {
-                if (!supabaseClient || !isSupabaseConnected) {
-                    console.log('⏳ Supabase belum siap');
-                    return;
-                }
-                
-                try {
-                    const now = new Date();
-                    const tomorrow = new Date();
-                    tomorrow.setDate(now.getDate() + 1);
-                    
-                    const todayStrLocal = formatDateDB(now);
-                    const tomorrowStrLocal = formatDateDB(tomorrow);
-                    
-                    console.log('📅 Mencari data untuk:', todayStrLocal, 'dan', tomorrowStrLocal);
-                    
-                    const { data, error } = await supabaseClient
-                        .from('jadwal_piket')
-                        .select('*')
-                        .or(`tanggal_jadwal.eq.${todayStrLocal},tanggal_jadwal.eq.${tomorrowStrLocal}`)
-                        .order('tanggal_jadwal', { ascending: true });
-                    
-                    if (error) throw error;
-                    
-                    JADWAL_DROPDOWN_IDS.forEach(id => {
-                        const select = document.getElementById(id);
-                        if (select) select.value = '';
-                    });
-                    
-                    if (data && data.length > 0) {
-                        console.log('📊 Data dari Supabase:', data.length, 'item');
-                        
-                        const mapping = {
-                            'koramil_hari_ini': ['j_nama1a_baru', 'j_nama1b_baru'],
-                            'koramil_besok': ['j_nama2a_baru', 'j_nama2b_baru'],
-                            'kediaman_hari_ini': ['j_nama3a_baru', 'j_nama3b_baru'],
-                            'kediaman_besok': ['j_nama3c_baru', 'j_nama3d_baru'],
-                            'makodim_hari_ini': ['j_nama4a_baru', 'j_nama4b_baru'],
-                            'makodim_besok': ['j_nama4c_baru', 'j_nama4d_baru']
-                        };
-                        
-                        data.forEach(item => {
-                            const ids = mapping[item.jenis];
-                            if (ids) {
-                                if (item.nama1) {
-                                    const select1 = document.getElementById(ids[0]);
-                                    if (select1 && JadwalData.daftarNama.includes(item.nama1)) {
-                                        select1.value = item.nama1;
-                                    }
-                                }
-                                if (item.nama2) {
-                                    const select2 = document.getElementById(ids[1]);
-                                    if (select2 && JadwalData.daftarNama.includes(item.nama2)) {
-                                        select2.value = item.nama2;
-                                    }
-                                }
-                            }
-                        });
-                        
-                        document.getElementById('previewInfo').textContent = '✅ Data dari Supabase (' + data.length + ' item)';
-                        document.getElementById('previewInfo').style.color = '#4caf50';
-                        
-                    } else {
-                        document.getElementById('previewInfo').textContent = '📭 Belum ada data, silakan pilih nama';
-                        document.getElementById('previewInfo').style.color = '#ff9800';
-                    }
-                    
-                    updatePreview();
-                    
-                } catch (error) {
-                    console.error('❌ Error load data:', error);
-                    document.getElementById('previewInfo').textContent = '❌ Gagal memuat data';
-                    document.getElementById('previewInfo').style.color = '#f44336';
-                }
-            }
-
-            // ============================================================
-            //  🔥 AUTO SAVE KE SUPABASE
-            // ============================================================
-            async function autoSaveToSupabase() {
-                if (!supabaseClient || !isSupabaseConnected) {
-                    console.log('⏳ Supabase belum siap, skip auto-save');
-                    return;
-                }
-                
-                try {
-                    const getVal = (id) => document.getElementById(id)?.value.trim() || '';
-                    const now = new Date();
-                    const tomorrow = new Date();
-                    tomorrow.setDate(now.getDate() + 1);
-                    
-                    const todayStrLocal = formatDateDB(now);
-                    const tomorrowStrLocal = formatDateDB(tomorrow);
-                    
-                    const jadwalList = [
-                        { tanggal: todayStrLocal, jenis: 'koramil_hari_ini', nama1: getVal('j_nama1a_baru'), nama2: getVal('j_nama1b_baru') },
-                        { tanggal: tomorrowStrLocal, jenis: 'koramil_besok', nama1: getVal('j_nama2a_baru'), nama2: getVal('j_nama2b_baru') },
-                        { tanggal: todayStrLocal, jenis: 'kediaman_hari_ini', nama1: getVal('j_nama3a_baru'), nama2: getVal('j_nama3b_baru') },
-                        { tanggal: tomorrowStrLocal, jenis: 'kediaman_besok', nama1: getVal('j_nama3c_baru'), nama2: getVal('j_nama3d_baru') },
-                        { tanggal: todayStrLocal, jenis: 'makodim_hari_ini', nama1: getVal('j_nama4a_baru'), nama2: getVal('j_nama4b_baru') },
-                        { tanggal: tomorrowStrLocal, jenis: 'makodim_besok', nama1: getVal('j_nama4c_baru'), nama2: getVal('j_nama4d_baru') }
-                    ];
-                    
-                    const validJadwal = jadwalList.filter(j => j.nama1 || j.nama2);
-                    
-                    if (validJadwal.length === 0) {
-                        console.log('ℹ️ Tidak ada data untuk disimpan');
-                        return;
-                    }
-                    
-                    console.log('💾 Menyimpan ' + validJadwal.length + ' data ke Supabase...');
-                    
-                    await supabaseClient
-                        .from('jadwal_piket')
-                        .delete()
-                        .or(`tanggal_jadwal.eq.${todayStrLocal},tanggal_jadwal.eq.${tomorrowStrLocal}`);
-                    
-                    for (const jadwal of validJadwal) {
-                        await supabaseClient
-                            .from('jadwal_piket')
-                            .insert([{
-                                tanggal_jadwal: jadwal.tanggal,
-                                jenis: jadwal.jenis,
-                                nama1: jadwal.nama1 || null,
-                                nama2: jadwal.nama2 || null,
-                                tanggal_input: new Date().toISOString()
-                            }]);
-                    }
-                    
-                    await saveRiwayatHarian(validJadwal);
-                    
-                    console.log('✅ Auto-save berhasil');
-                    document.getElementById('previewInfo').textContent = '✅ Auto-saved ke Supabase';
-                    document.getElementById('previewInfo').style.color = '#4caf50';
-                    
-                    setTimeout(() => {
-                        document.getElementById('previewInfo').textContent = '✅ Data dari Supabase';
-                    }, 2000);
-                    
-                } catch (error) {
-                    console.error('❌ Auto-save error:', error);
-                }
-            }
-
-            // ============================================================
-            //  SAVE RIWAYAT HARIAN
-            // ============================================================
-            async function saveRiwayatHarian(jadwalList) {
-                if (!supabaseClient || !jadwalList || jadwalList.length === 0) return;
-                try {
-                    const dataMap = {};
-                    jadwalList.forEach(j => {
-                        if (!dataMap[j.tanggal]) {
-                            dataMap[j.tanggal] = { tanggal: j.tanggal };
-                        }
-                        dataMap[j.tanggal][j.jenis + '_nama1'] = j.nama1;
-                        dataMap[j.tanggal][j.jenis + '_nama2'] = j.nama2;
-                    });
-                    
-                    for (const tanggal in dataMap) {
-                        const data = dataMap[tanggal];
-                        
-                        const { data: existing } = await supabaseClient
-                            .from('riwayat_jadwal_harian')
-                            .select('*')
-                            .eq('tanggal', tanggal)
-                            .maybeSingle();
-                        
-                        if (existing) {
-                            await supabaseClient
-                                .from('riwayat_jadwal_harian')
-                                .update({
-                                    koramil_hari_ini_nama1: data.koramil_hari_ini_nama1 || existing.koramil_hari_ini_nama1,
-                                    koramil_hari_ini_nama2: data.koramil_hari_ini_nama2 || existing.koramil_hari_ini_nama2,
-                                    koramil_besok_nama1: data.koramil_besok_nama1 || existing.koramil_besok_nama1,
-                                    koramil_besok_nama2: data.koramil_besok_nama2 || existing.koramil_besok_nama2,
-                                    kediaman_hari_ini_nama1: data.kediaman_hari_ini_nama1 || existing.kediaman_hari_ini_nama1,
-                                    kediaman_hari_ini_nama2: data.kediaman_hari_ini_nama2 || existing.kediaman_hari_ini_nama2,
-                                    kediaman_besok_nama1: data.kediaman_besok_nama1 || existing.kediaman_besok_nama1,
-                                    kediaman_besok_nama2: data.kediaman_besok_nama2 || existing.kediaman_besok_nama2,
-                                    makodim_hari_ini_nama1: data.makodim_hari_ini_nama1 || existing.makodim_hari_ini_nama1,
-                                    makodim_hari_ini_nama2: data.makodim_hari_ini_nama2 || existing.makodim_hari_ini_nama2,
-                                    makodim_besok_nama1: data.makodim_besok_nama1 || existing.makodim_besok_nama1,
-                                    makodim_besok_nama2: data.makodim_besok_nama2 || existing.makodim_besok_nama2,
-                                    hanpangan_hari_ini: JadwalData.currentHanpangan || existing.hanpangan_hari_ini
-                                })
-                                .eq('tanggal', tanggal);
-                        } else {
-                            await supabaseClient
-                                .from('riwayat_jadwal_harian')
-                                .insert([{
-                                    tanggal: tanggal,
-                                    koramil_hari_ini_nama1: data.koramil_hari_ini_nama1 || null,
-                                    koramil_hari_ini_nama2: data.koramil_hari_ini_nama2 || null,
-                                    koramil_besok_nama1: data.koramil_besok_nama1 || null,
-                                    koramil_besok_nama2: data.koramil_besok_nama2 || null,
-                                    kediaman_hari_ini_nama1: data.kediaman_hari_ini_nama1 || null,
-                                    kediaman_hari_ini_nama2: data.kediaman_hari_ini_nama2 || null,
-                                    kediaman_besok_nama1: data.kediaman_besok_nama1 || null,
-                                    kediaman_besok_nama2: data.kediaman_besok_nama2 || null,
-                                    makodim_hari_ini_nama1: data.makodim_hari_ini_nama1 || null,
-                                    makodim_hari_ini_nama2: data.makodim_hari_ini_nama2 || null,
-                                    makodim_besok_nama1: data.makodim_besok_nama1 || null,
-                                    makodim_besok_nama2: data.makodim_besok_nama2 || null,
-                                    hanpangan_hari_ini: JadwalData.currentHanpangan || null
-                                }]);
-                        }
-                    }
-                } catch (error) {
-                    console.error('❌ Error riwayat:', error);
-                }
-            }
-
-            // ============================================================
             //  SEND TO WHATSAPP
             // ============================================================
             async function sendToWhatsApp() {
                 const preview = document.getElementById('j_hasilPesanBaru');
-                // If preview is a textarea use its value, otherwise reconstruct plain text (handles twemoji <img> replacements)
                 function extractPlainText(el) {
                     if (!el) return '';
                     if (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') {
                         return el.value.trim();
                     }
-                    // For HTML elements possibly containing twemoji <img alt="😀">
                     let out = '';
                     el.childNodes.forEach(node => {
                         if (node.nodeType === Node.TEXT_NODE) {
@@ -2015,45 +1610,12 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
                 const pesan = extractPlainText(preview || document.getElementById('j_hasilPesan'));
                 
                 if (!pesan) {
-                    // Tampilkan di console, bukan popup
                     console.log('❌ Tidak ada pesan untuk dikirim');
                     return false;
                 }
                 
-                if (isSupabaseConnected && supabaseClient) {
-                    await autoSaveToSupabase();
-                }
-                
-                // Send Unicode emoji characters to WhatsApp (WhatsApp expects UTF-8). Use encodeURIComponent.
                 window.open("https://wa.me/?text=" + encodeURIComponent(pesan), "_blank");
                 return false;
-            }
-
-            // ============================================================
-            //  TOAST - DINONAKTIFKAN (TIDAK ADA POPUP)
-            // ============================================================
-            function showToast(message, type = 'info') {
-                // SEMUA POPUP DINONAKTIFKAN
-                // Hanya log ke console
-                console.log('📢 [Toast Dinonaktifkan]', message);
-                return;
-            }
-
-            // ============================================================
-            //  TRIGGER AUTO SAVE
-            // ============================================================
-            function triggerAutoSave() {
-                if (autoSaveTimer) {
-                    clearTimeout(autoSaveTimer);
-                }
-                
-                updatePreview();
-                
-                autoSaveTimer = setTimeout(() => {
-                    if (isSupabaseConnected) {
-                        autoSaveToSupabase();
-                    }
-                }, 1500);
             }
 
             // ============================================================
@@ -2068,135 +1630,22 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
                 Promise.all([loadPiketData(), loadHanpanganData()])
                     .then(() => {
                         updatePreview();
+                        document.getElementById('previewInfo').textContent = '✅ Data dimuat dari GitHub';
+                        document.getElementById('previewInfo').style.color = '#4caf50';
                     })
-                    .catch(() => {})
+                    .catch(() => {
+                        document.getElementById('previewInfo').textContent = '⚠️ Gagal memuat data, gunakan default';
+                        document.getElementById('previewInfo').style.color = '#ff9800';
+                    })
                     .finally(() => { 
                         isLoading = false; 
                     }); 
             }
 
             // ============================================================
-            //  INIT SUPABASE - TANPA POPUP
+            //  INIT JADWAL
             // ============================================================
-            async function initSupabase() {
-                updateStatus('checking', 'Menghubungkan ke Supabase...', '⏳ Membuat koneksi...');
-                
-                try {
-                    if (typeof supabase === 'undefined') {
-                        updateStatus('offline', 'SDK Supabase tidak ditemukan!', '❌ Cek koneksi internet');
-                        return false;
-                    }
-                    
-                    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-                    
-                    const { error } = await supabaseClient
-                        .from('jadwal_piket')
-                        .select('id')
-                        .limit(1);
-                    
-                    if (error) {
-                        if (error.message.includes('relation') || error.message.includes('does not exist')) {
-                            updateStatus('offline', 'Tabel belum dibuat!', '❌ Jalankan SQL di Supabase');
-                        } else {
-                            updateStatus('offline', 'Error: ' + error.message, '❌ ' + error.message);
-                        }
-                        isSupabaseConnected = false;
-                        return false;
-                    }
-                    
-                    isSupabaseConnected = true;
-                    
-                    updateStatus('online', 'Terhubung ke Supabase!', '✅ Database siap digunakan');
-                    
-                    await loadDataFromSupabase();
-                    
-                    // TIDAK ADA POPUP!
-                    
-                    return true;
-                    
-                } catch (error) {
-                    console.error('❌ Error init:', error);
-                    updateStatus('offline', 'Gagal konek: ' + error.message, '❌ ' + error.message);
-                    isSupabaseConnected = false;
-                    return false;
-                }
-            }
-
-            // ============================================================
-            //  🔥 ROTASI OTOMATIS (besok -> hari ini)
-            // ============================================================
-            const ROTATION_KEY = 'jadwal_rotation_date';
-
-            async function autoRotateSchedule() {
-                if (!supabaseClient || !isSupabaseConnected) {
-                    console.log('⏳ Supabase belum siap, skip rotasi');
-                    return;
-                }
-
-                const today = new Date();
-                const todayStr = formatDateDB(today);
-
-                // Cek apakah rotasi sudah dilakukan hari ini
-                let lastRotation = localStorage.getItem(ROTATION_KEY);
-                if (lastRotation && lastRotation === todayStr) {
-                    console.log('⏩ Rotasi sudah dilakukan hari ini, skip.');
-                    return;
-                }
-
-                console.log('🔄 Memulai rotasi otomatis (besok -> hari ini)...');
-
-                try {
-                    // 1. Cari data di tanggal HARI INI yang berjenis "besok"
-                    const { data: todayBesokData, error: fetchError } = await supabaseClient
-                        .from('jadwal_piket')
-                        .select('*')
-                        .eq('tanggal_jadwal', todayStr)
-                        .ilike('jenis', '%besok');
-
-                    if (fetchError) throw fetchError;
-
-                    if (todayBesokData && todayBesokData.length > 0) {
-                        // 2. Ubah jenis dari "besok" menjadi "hari_ini"
-                        for (const item of todayBesokData) {
-                            const newJenis = item.jenis.replace('besok', 'hari_ini');
-                            const { error: updateError } = await supabaseClient
-                                .from('jadwal_piket')
-                                .update({ jenis: newJenis })
-                                .eq('id', item.id);
-
-                            if (updateError) throw updateError;
-                        }
-                        console.log(`✅ ${todayBesokData.length} data berhasil dirotasi ke hari ini.`);
-                    } else {
-                        console.log('ℹ️ Tidak ada data "besok" untuk hari ini.');
-                    }
-
-                    // 3. Hapus data untuk tanggal BESOK (biar dropdown besok kosong)
-                    const tomorrow = new Date(today);
-                    tomorrow.setDate(today.getDate() + 1);
-                    const tomorrowStr = formatDateDB(tomorrow);
-
-                    const { error: deleteError } = await supabaseClient
-                        .from('jadwal_piket')
-                        .delete()
-                        .eq('tanggal_jadwal', tomorrowStr);
-
-                    if (deleteError) throw deleteError;
-                    console.log(`🗑️ Data untuk tanggal besok (${tomorrowStr}) direset.`);
-
-                    // 4. Simpan tanggal rotasi agar tidak diulang hari ini
-                    localStorage.setItem(ROTATION_KEY, todayStr);
-
-                    // 5. Refresh tampilan akan dilakukan di initJadwalBaru
-                } catch (error) {
-                    console.error('❌ Gagal rotasi:', error);
-                }
-            }
-
-            // ============================================================
-            //  INIT JADWAL (DENGAN ROTASI)
-            // ============================================================
-            async function initJadwalBaru() { 
+            function initJadwalBaru() { 
                 console.log('🔍 Inisialisasi Aplikasi...');
                 
                 updateTanggalInfo();
@@ -2204,7 +1653,7 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
                 JADWAL_DROPDOWN_IDS.forEach(id => { 
                     const sel = document.getElementById(id); 
                     if (sel) {
-                        sel.addEventListener('change', triggerAutoSave);
+                        sel.addEventListener('change', updatePreview);
                     }
                 }); 
                 
@@ -2220,14 +1669,6 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
                 
                 loadAllJadwalData();
                 autoResizeTextarea();
-                
-                await initSupabase();
-                
-                // 🔥🔥🔥 PANGGIL ROTASI OTOMATIS 🔥🔥🔥
-                await autoRotateSchedule();
-                
-                // Muat ulang data setelah rotasi
-                await loadDataFromSupabase();
                 
                 console.log('✅ Aplikasi siap!');
             }
@@ -2274,25 +1715,15 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
                 if (typeof loadAbsenTahun === 'function') loadAbsenTahun(); 
             };
 
-            // ============================================================
-            //  SHOW HANPANGAN - TAMBAHAN BARU
-            // ============================================================
             window.showHanpangan = function() {
-                // SEMBUNYIKAN SEMUA KONTEN LAIN
                 document.getElementById('dukopsContent').style.display = 'none';
                 document.getElementById('jadwalPiketContainerBaru').style.display = 'none';
                 document.getElementById('absenContent').style.display = 'none';
-                
-                // TAMPILKAN HANPANGAN
                 document.getElementById('hanpanganContent').style.display = 'block';
-                
-                // UPDATE CLASS ACTIVE
                 document.getElementById('btnDukops').classList.remove('active');
                 document.getElementById('btnJadwal').classList.remove('active');
                 document.getElementById('btnAbsen').classList.remove('active');
                 document.getElementById('btnHanpangan').classList.add('active');
-                
-                // PLAY MUSIC
                 if (typeof window.triggerPlayMusic === 'function') {
                     window.triggerPlayMusic();
                 }
@@ -2300,7 +1731,7 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
 
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', function() {
-                    console.log('📌 Klik tab PIKET untuk mengaktifkan Supabase');
+                    console.log('📌 Klik tab PIKET untuk mengaktifkan');
                 });
             }
         })();
@@ -2616,30 +2047,34 @@ let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JA
     </script>
 
     <!-- ============ Tawk.to Chat ============ -->
-<script type="text/javascript">
-    var Tawk_API = Tawk_API || {},
-        Tawk_LoadStart = new Date();
-    (function() {
-        var s1 = document.createElement("script"),
-            s0 = document.getElementsByTagName("script")[0];
-        s1.async = true;
-        s1.src = 'https://embed.tawk.to/6a31083849b4571d39e86fa2/1jr7og7jc';
-        s1.charset = 'UTF-8';
-        s1.setAttribute('crossorigin', '*');
-        s0.parentNode.insertBefore(s1, s0);
-    })();
-</script>  <!-- ✅ Tambahkan ini! -->
+    <script type="text/javascript">
+        var Tawk_API = Tawk_API || {},
+            Tawk_LoadStart = new Date();
+        (function() {
+            var s1 = document.createElement("script"),
+                s0 = document.getElementsByTagName("script")[0];
+            s1.async = true;
+            s1.src = 'https://embed.tawk.to/6a31083849b4571d39e86fa2/1jr7og7jc';
+            s1.charset = 'UTF-8';
+            s1.setAttribute('crossorigin', '*');
+            s0.parentNode.insertBefore(s1, s0);
+        })();
+    </script>
 
-<script>
-    // Register Service Worker
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js')
-                    console.log('❌ Service Worker registration failed:', error);
-                });
-        });
-    }
-</script>
+    <script>
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => {
+                        console.log('✅ Service Worker registered successfully:', registration);
+                    })
+                    .catch(error => {
+                        console.log('❌ Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
 
 </body>
 </html>
