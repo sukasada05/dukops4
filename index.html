@@ -1787,160 +1787,197 @@
                     '%)');
             };
 
-            window.shareAsPNGAbsen = async function() {
-                var btn = document.getElementById('downloadAbsenBtn');
-                if (btn) {
-                    btn.disabled = true;
-                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> MEMBUAT PNG...';
-                }
+window.shareAsPNGAbsen = async function() {
+    var btn = document.getElementById('downloadAbsenBtn');
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> MEMBUAT PNG...';
+    }
 
-                if (!currentDataAbsen) {
-                    alert('⚠️ Belum ada data absensi. Silakan pilih Tahun dan Bulan terlebih dahulu.');
-                    if (btn) {
-                        btn.disabled = false;
-                        btn.innerHTML = '<i class="fas fa-download"></i> DOWNLOAD ABSEN PNG';
-                    }
-                    return;
-                }
+    // ===== CEK DATA =====
+    if (!currentDataAbsen) {
+        alert('⚠️ Belum ada data absensi. Silakan pilih Tahun dan Bulan terlebih dahulu.');
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-download"></i> DOWNLOAD ABSEN PNG';
+        }
+        return;
+    }
 
-                if (typeof html2canvas === 'undefined') {
-                    alert('❌ Library html2canvas tidak ditemukan. Silakan refresh halaman.');
-                    if (btn) {
-                        btn.disabled = false;
-                        btn.innerHTML = '<i class="fas fa-download"></i> DOWNLOAD ABSEN PNG';
-                    }
-                    return;
-                }
+    // ===== CEK LIBRARY =====
+    if (typeof html2canvas === 'undefined') {
+        alert('❌ Library html2canvas tidak ditemukan. Silakan refresh halaman.');
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-download"></i> DOWNLOAD ABSEN PNG';
+        }
+        return;
+    }
 
-                if (!screenshotArea) {
-                    if (btn) {
-                        btn.disabled = false;
-                        btn.innerHTML = '<i class="fas fa-download"></i> DOWNLOAD ABSEN PNG';
-                    }
-                    return;
-                }
+    // ===== CEK ELEMEN =====
+    var screenshotArea = document.getElementById('absenScreenshotArea');
+    if (!screenshotArea) {
+        alert('❌ Elemen screenshot tidak ditemukan.');
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-download"></i> DOWNLOAD ABSEN PNG';
+        }
+        return;
+    }
 
-                try {
-                    var d = currentDataAbsen;
-                    var t = d.total_desa || 0;
-                    var p = t > 0 ? Math.round((d.desa_lengkap / t) * 100) : 0;
-                    var tg = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+    try {
+        var d = currentDataAbsen;
+        
+        // ===== VALIDASI DATA =====
+        var totalDesa = d.total_desa || 0;
+        var desaLengkap = d.desa_lengkap || 0;
+        var persentase = totalDesa > 0 ? Math.round((desaLengkap / totalDesa) * 100) : 0;
+        var tanggal = new Date().toLocaleDateString('id-ID', { 
+            day: 'numeric', 
+            month: 'long', 
+            year: 'numeric' 
+        });
 
-                    var lh = '';
-                    for (var i = 0; i < d.details.length; i++) {
-                        var de = d.details[i];
-                        var w = (de.status === 'LENGKAP') ? '#4caf50' : ((de.status === 'BELUM_LENGKAP') ? '#ff9800' :
-                            '#f44336');
-                        var em = (de.status === 'LENGKAP') ? '✅' : ((de.status === 'BELUM_LENGKAP') ? '⚠️' : '❌');
-                        var st = (de.status === 'LENGKAP') ? 'LENGKAP' : ((de.status === 'BELUM_LENGKAP') ? 'BL' :
-                            'BELUM');
-                        var sb = (de.status === 'LENGKAP') ? '#e8f5e9' : ((de.status === 'BELUM_LENGKAP') ? '#fff3e0' :
-                            '#ffebee');
+        // ===== FALLBACK UNTUK NAMA BULAN & TAHUN =====
+        var bulanTahun = d.nama_bulan || '';
+        var tahun = d.tahun || '';
+        
+        // Jika bulan kosong, ambil dari input
+        if (!bulanTahun) {
+            var bulanSelect = document.getElementById('absenBulanSelect');
+            if (bulanSelect && bulanSelect.value) {
+                var bulanText = bulanSelect.options[bulanSelect.selectedIndex]?.text || '';
+                var tahunSelect = document.getElementById('absenTahunSelect');
+                var tahunText = tahunSelect ? tahunSelect.value : '';
+                bulanTahun = bulanText + ' ' + tahunText;
+            }
+        }
 
-                        lh += `
-                            <div style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:1px solid #f0f0f0;font-size:12px;">
-                                <div style="width:24px;font-size:14px;text-align:center;">${em}</div>
-                                <div style="flex:2;font-size:12px;font-weight:500;color:#000;">${escapeHtml(de.nama)}</div>
-                                <div style="width:40px;font-size:11px;text-align:center;color:#000;">${de.jumlah_file}/9</div>
-                                <div style="width:60px;">
-                                    <div style="background:#e0e0e0;border-radius:6px;height:6px;overflow:hidden;">
-                                        <div style="background:${w};width:${de.persentase}%;height:6px;border-radius:6px;"></div>
-                                    </div>
-                                </div>
-                                <div style="width:50px;font-size:9px;text-align:center;padding:2px 6px;border-radius:8px;background:${sb};color:${w};font-weight:600;">${st}</div>
-                            </div>
-                        `;
-                    }
-
-                    screenshotArea.innerHTML = `
-                        <div style="max-width:600px;margin:0 auto;padding:20px;background:#ffffff;border-radius:12px;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif;box-shadow:0 2px 16px rgba(0,0,0,0.08);">
-                            <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#1a2332;border-radius:10px 10px 0 0;color:white;">
-                                <div style="font-size:16px;font-weight:700;">📊 ABSENSI DUKOPS</div>
-                                <div style="font-size:8px;opacity:0.7;">Koramil Monitoring</div>
-                            </div>
-                            <div style="padding:16px;">
-                                <div style="text-align:center;margin-bottom:12px;">
-                                    <div style="font-size:16px;font-weight:700;color:#000;">${d.nama_bulan || ''} ${d.tahun || ''}</div>
-                                    <div style="font-size:10px;color:#666;">${tg}</div>
-                                </div>
-                                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;">
-                                    <div style="background:#f8f9fa;border-radius:8px;padding:10px 4px;text-align:center;border:1px solid #e9ecef;">
-                                        <div style="font-size:14px;font-weight:700;color:#1a73e8;">${d.total_desa}</div>
-                                        <div style="font-size:8px;color:#6b7a8f;text-transform:uppercase;">DESA</div>
-                                    </div>
-                                    <div style="background:#f8f9fa;border-radius:8px;padding:10px 4px;text-align:center;border:1px solid #e9ecef;">
-                                        <div style="font-size:14px;font-weight:700;color:#4caf50;">${d.desa_lengkap}</div>
-                                        <div style="font-size:8px;color:#6b7a8f;text-transform:uppercase;">LENGKAP</div>
-                                    </div>
-                                    <div style="background:#f8f9fa;border-radius:8px;padding:10px 4px;text-align:center;border:1px solid #e9ecef;">
-                                        <div style="font-size:14px;font-weight:700;color:#ff9800;">${d.desa_belum_lengkap}</div>
-                                        <div style="font-size:8px;color:#6b7a8f;text-transform:uppercase;">BL</div>
-                                    </div>
-                                    <div style="background:#f8f9fa;border-radius:8px;padding:10px 4px;text-align:center;border:1px solid #e9ecef;">
-                                        <div style="font-size:14px;font-weight:700;color:#f44336;">${d.desa_belum}</div>
-                                        <div style="font-size:8px;color:#6b7a8f;text-transform:uppercase;">BELUM</div>
-                                    </div>
-                                </div>
-                                <div style="margin:12px 0;">
-                                    <div style="display:flex;justify-content:space-between;font-size:10px;color:#000;">
-                                        <span>📈 PROGRESS</span>
-                                        <span><b>${p}%</b></span>
-                                    </div>
-                                    <div style="background:#e9ecef;border-radius:6px;height:8px;overflow:hidden;">
-                                        <div style="background:linear-gradient(90deg,#4CAF50,#66BB6A);width:${p}%;height:8px;border-radius:6px;"></div>
-                                    </div>
-                                </div>
-                                <div style="font-size:11px;font-weight:600;margin:12px 0 6px 0;color:#000;">📋 DAFTAR DESA (${d.total_desa})</div>
-                                <div style="max-height:400px;overflow:hidden;">
-                                    ${lh}
-                                </div>
-                            </div>
-                            <div style="text-align:center;padding:8px 0 4px 0;font-size:8px;color:#999;border-top:1px solid #f0f2f5;margin-top:8px;">
-                                DUKOPS • Koramil Monitoring
+        // ===== BUILD HTML UNTUK SCREENSHOT =====
+        var lh = '';
+        if (d.details && d.details.length > 0) {
+            for (var i = 0; i < d.details.length; i++) {
+                var de = d.details[i];
+                var w = (de.status === 'LENGKAP') ? '#4caf50' : 
+                        ((de.status === 'BELUM_LENGKAP') ? '#ff9800' : '#f44336');
+                var em = (de.status === 'LENGKAP') ? '✅' : 
+                         ((de.status === 'BELUM_LENGKAP') ? '⚠️' : '❌');
+                var st = (de.status === 'LENGKAP') ? 'LENGKAP' : 
+                         ((de.status === 'BELUM_LENGKAP') ? 'BL' : 'BELUM');
+                var sb = (de.status === 'LENGKAP') ? '#e8f5e9' : 
+                         ((de.status === 'BELUM_LENGKAP') ? '#fff3e0' : '#ffebee');
+                
+                lh += `
+                    <div style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-bottom:1px solid #f0f0f0;font-size:12px;">
+                        <div style="width:24px;font-size:14px;text-align:center;">${em}</div>
+                        <div style="flex:2;font-size:12px;font-weight:500;color:#000;">${escapeHtml(de.nama || '')}</div>
+                        <div style="width:40px;font-size:11px;text-align:center;color:#000;">${de.jumlah_file || 0}/9</div>
+                        <div style="width:60px;">
+                            <div style="background:#e0e0e0;border-radius:6px;height:6px;overflow:hidden;">
+                                <div style="background:${w};width:${de.persentase || 0}%;height:6px;border-radius:6px;"></div>
                             </div>
                         </div>
-                    `;
+                        <div style="width:50px;font-size:9px;text-align:center;padding:2px 6px;border-radius:8px;background:${sb};color:${w};font-weight:600;">${st}</div>
+                    </div>
+                `;
+            }
+        } else {
+            lh = '<div style="text-align:center;padding:20px;color:#999;">Tidak ada data desa</div>';
+        }
 
-                    await new Promise(resolve => setTimeout(resolve, 300));
+        screenshotArea.innerHTML = `
+            <div style="max-width:600px;margin:0 auto;padding:20px;background:#ffffff;border-radius:12px;font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif;box-shadow:0 2px 16px rgba(0,0,0,0.08);">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#1a2332;border-radius:10px 10px 0 0;color:white;">
+                    <div style="font-size:16px;font-weight:700;">📊 ABSENSI DUKOPS</div>
+                    <div style="font-size:8px;opacity:0.7;">Koramil Monitoring</div>
+                </div>
+                <div style="padding:16px;">
+                    <div style="text-align:center;margin-bottom:12px;">
+                        <div style="font-size:16px;font-weight:700;color:#000;">${bulanTahun || 'Data Absensi'}</div>
+                        <div style="font-size:10px;color:#666;">${tanggal}</div>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;">
+                        <div style="background:#f8f9fa;border-radius:8px;padding:10px 4px;text-align:center;border:1px solid #e9ecef;">
+                            <div style="font-size:14px;font-weight:700;color:#1a73e8;">${totalDesa}</div>
+                            <div style="font-size:8px;color:#6b7a8f;text-transform:uppercase;">DESA</div>
+                        </div>
+                        <div style="background:#f8f9fa;border-radius:8px;padding:10px 4px;text-align:center;border:1px solid #e9ecef;">
+                            <div style="font-size:14px;font-weight:700;color:#4caf50;">${desaLengkap}</div>
+                            <div style="font-size:8px;color:#6b7a8f;text-transform:uppercase;">LENGKAP</div>
+                        </div>
+                        <div style="background:#f8f9fa;border-radius:8px;padding:10px 4px;text-align:center;border:1px solid #e9ecef;">
+                            <div style="font-size:14px;font-weight:700;color:#ff9800;">${d.desa_belum_lengkap || 0}</div>
+                            <div style="font-size:8px;color:#6b7a8f;text-transform:uppercase;">BL</div>
+                        </div>
+                        <div style="background:#f8f9fa;border-radius:8px;padding:10px 4px;text-align:center;border:1px solid #e9ecef;">
+                            <div style="font-size:14px;font-weight:700;color:#f44336;">${d.desa_belum || 0}</div>
+                            <div style="font-size:8px;color:#6b7a8f;text-transform:uppercase;">BELUM</div>
+                        </div>
+                    </div>
+                    <div style="margin:12px 0;">
+                        <div style="display:flex;justify-content:space-between;font-size:10px;color:#000;">
+                            <span>📈 PROGRESS</span>
+                            <span><b>${persentase}%</b></span>
+                        </div>
+                        <div style="background:#e9ecef;border-radius:6px;height:8px;overflow:hidden;">
+                            <div style="background:linear-gradient(90deg,#4CAF50,#66BB6A);width:${persentase}%;height:8px;border-radius:6px;"></div>
+                        </div>
+                    </div>
+                    <div style="font-size:11px;font-weight:600;margin:12px 0 6px 0;color:#000;">📋 DAFTAR DESA (${totalDesa})</div>
+                    <div style="max-height:400px;overflow:hidden;">
+                        ${lh}
+                    </div>
+                </div>
+                <div style="text-align:center;padding:8px 0 4px 0;font-size:8px;color:#999;border-top:1px solid #f0f2f5;margin-top:8px;">
+                    DUKOPS • Koramil Monitoring
+                </div>
+            </div>
+        `;
 
-                    var el = screenshotArea.firstChild;
-                    if (!el) throw new Error('Konten screenshot tidak ditemukan');
+        // Tunggu sebentar agar DOM siap
+        await new Promise(resolve => setTimeout(resolve, 300));
 
-                    var canvas = await html2canvas(el, {
-                        scale: 2,
-                        backgroundColor: '#ffffff',
-                        useCORS: true,
-                        logging: false,
-                        allowTaint: true,
-                        width: 600
-                    });
+        var el = screenshotArea.firstChild;
+        if (!el) {
+            throw new Error('Konten screenshot tidak ditemukan');
+        }
 
-                    var link = document.createElement('a');
-                    var fileName = 'Absensi_' + (d.nama_bulan || 'bulan') + '_' + (d.tahun || 'tahun') + '.png';
-                    link.download = fileName;
-                    link.href = canvas.toDataURL('image/png');
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
+        var canvas = await html2canvas(el, {
+            scale: 2,
+            backgroundColor: '#ffffff',
+            useCORS: true,
+            logging: false,
+            allowTaint: true,
+            width: 600
+        });
 
-                    console.log('✅ Download PNG berhasil:', fileName);
+        var link = document.createElement('a');
+        var fileName = 'Absensi_' + (bulanTahun || 'data') + '_' + new Date().toISOString().slice(0,10) + '.png';
+        link.download = fileName;
+        link.href = canvas.toDataURL('image/png');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
 
-                } catch (e) {
-                    console.error('❌ Gagal screenshot:', e);
-                    alert('❌ Gagal membuat gambar: ' + e.message);
-                }
+        console.log('✅ Download PNG berhasil:', fileName);
 
-                setTimeout(function() {
-                    if (screenshotArea) screenshotArea.innerHTML = '';
-                }, 500);
+    } catch (e) {
+        console.error('❌ Gagal screenshot:', e);
+        alert('❌ Gagal membuat gambar: ' + e.message);
+    }
 
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fas fa-download"></i> DOWNLOAD ABSEN PNG';
-                }
-            };
+    // Bersihkan screenshot area
+    setTimeout(function() {
+        var sa = document.getElementById('absenScreenshotArea');
+        if (sa) sa.innerHTML = '';
+    }, 500);
 
-            window.loadAbsenTahun = loadAbsenTahun;
+    if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-download"></i> DOWNLOAD ABSEN PNG';
+    }
+};
+window.loadAbsenTahun = loadAbsenTahun;
         })();
     </script>
 
