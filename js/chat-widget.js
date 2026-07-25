@@ -1,23 +1,32 @@
 /**
  * CHAT WIDGET — Supabase Live Chat untuk DUKOPS
  * Floating Bottom-Right dengan Tema Hijau
+ * VERSI DIPERBAIKI
  */
 
 (function() {
     'use strict';
 
     // ================================================================
-    // 1️⃣ KONFIGURASI SUPABASE — GANTI DENGAN MILIKMU!
+    // 1️⃣ KONFIGURASI SUPABASE
     // ================================================================
     const SUPABASE_URL = 'https://xlpmsxcxkcznswwgpcof.supabase.co';
     const SUPABASE_ANON_KEY =
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhscG1zeGN4a2N6bnN3d2dwY29mIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE4NzQ0NzEsImV4cCI6MjA5NzQ1MDQ3MX0.32yiGrcybThwIcc2VQoI981DYZ_fKgXY_lxKMhIycZU';
 
     // ================================================================
-    // 2️⃣ INISIALISASI
+    // 2️⃣ CEK DEPENDENSI
     // ================================================================
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    if (typeof window.supabase === 'undefined') {
+        console.warn('⚠️ Supabase SDK tidak ditemukan! Chat widget tidak berjalan.');
+        return;
+    }
 
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // ================================================================
+    // 3️⃣ ELEMEN CHAT
+    // ================================================================
     const chatBox = document.getElementById('chatBox');
     const chatToggle = document.getElementById('chatToggle');
     const closeChat = document.getElementById('closeChat');
@@ -29,22 +38,28 @@
     const typingIndicator = document.getElementById('chatTyping');
     const badge = document.getElementById('chatBadge');
 
+    // Jika elemen chat tidak ada, berhenti
+    if (!chatBox || !chatToggle) {
+        console.warn('⚠️ Elemen chat tidak ditemukan di HTML. Chat widget tidak berjalan.');
+        return;
+    }
+
     let myUsername = '';
     let typingTimeout = null;
-    let isTypingChannel = null;
     let unreadCount = 0;
     let isChatOpen = false;
     let messagesChannel = null;
     let presenceChannel = null;
+    let isTypingChannel = null;
+    let isInitialized = false;
 
     // ================================================================
-    // 3️⃣ USERNAME
+    // 4️⃣ USERNAME
     // ================================================================
     function getOrCreateUsername() {
         let username = localStorage.getItem('dukops_chat_username');
         if (!username) {
-            const names = ['Budi', 'Siti', 'Andi', 'Rina', 'Doni', 'Maya', 'Joko', 'Dewi', 'Agus', 'Nina', 'Rizki',
-                'Putri'];
+            const names = ['Budi', 'Siti', 'Andi', 'Rina', 'Doni', 'Maya', 'Joko', 'Dewi', 'Agus', 'Nina', 'Rizki', 'Putri'];
             const randomName = names[Math.floor(Math.random() * names.length)];
             const randomNum = Math.floor(Math.random() * 1000);
             username = `${randomName}_${randomNum}`;
@@ -57,7 +72,7 @@
     if (usernameEl) usernameEl.textContent = myUsername;
 
     // ================================================================
-    // 4️⃣ FORMAT WAKTU
+    // 5️⃣ FORMAT WAKTU
     // ================================================================
     function formatTime(timestamp) {
         const date = new Date(timestamp);
@@ -65,14 +80,12 @@
     }
 
     // ================================================================
-    // 5️⃣ TOGGLE CHAT
+    // 6️⃣ TOGGLE CHAT
     // ================================================================
     function openChat() {
         if (chatBox) chatBox.classList.add('open');
         isChatOpen = true;
-        if (badge) {
-            badge.classList.remove('show');
-        }
+        if (badge) badge.classList.remove('show');
         unreadCount = 0;
         setTimeout(() => {
             if (messageInput) messageInput.focus();
@@ -100,7 +113,7 @@
     }
 
     // ================================================================
-    // 6️⃣ TAMPILKAN PESAN
+    // 7️⃣ TAMPILKAN PESAN
     // ================================================================
     function appendMessage(msg, isOwn) {
         if (!messagesArea) return;
@@ -158,9 +171,11 @@
     }
 
     // ================================================================
-    // 7️⃣ LOAD PESAN LAMA
+    // 8️⃣ LOAD PESAN LAMA
     // ================================================================
     async function loadMessages() {
+        if (!supabase) return;
+
         try {
             const { data, error } = await supabase
                 .from('chat_messages')
@@ -171,13 +186,13 @@
             if (error) {
                 if (error.message && error.message.includes('relation "chat_messages" does not exist')) {
                     appendSystemMessage('⚠️ Tabel chat_messages belum dibuat!');
+                    console.log('📝 Jalankan SQL untuk membuat tabel chat_messages');
                     return;
                 }
                 throw error;
             }
 
             if (messagesArea) {
-                // Hapus semua kecuali pesan sistem
                 const systemMsg = messagesArea.querySelector('.chat-msg-system');
                 messagesArea.innerHTML = '';
                 if (systemMsg) messagesArea.appendChild(systemMsg);
@@ -190,7 +205,6 @@
                 return;
             }
 
-            // Hapus pesan sistem
             const systemMsg = messagesArea.querySelector('.chat-msg-system');
             if (systemMsg) systemMsg.remove();
 
@@ -207,10 +221,11 @@
     }
 
     // ================================================================
-    // 8️⃣ KIRIM PESAN
+    // 9️⃣ KIRIM PESAN
     // ================================================================
     async function sendMessage() {
-        if (!messageInput) return;
+        if (!messageInput || !supabase) return;
+        
         const content = messageInput.value.trim();
         if (!content) return;
 
@@ -252,9 +267,11 @@
     }
 
     // ================================================================
-    // 9️⃣ REAL-TIME SUBSCRIBE
+    // 🔟 REAL-TIME SUBSCRIBE
     // ================================================================
     function subscribeMessages() {
+        if (!supabase) return null;
+
         messagesChannel = supabase
             .channel('chat-db-changes')
             .on(
@@ -265,7 +282,6 @@
                 },
                 (payload) => {
                     const newMsg = payload.new;
-                    // Cegah duplikasi
                     if (messagesArea) {
                         const existing = messagesArea.querySelectorAll('.chat-msg .msg-content');
                         let isDuplicate = false;
@@ -288,9 +304,11 @@
     }
 
     // ================================================================
-    // 🔟 TYPING INDICATOR
+    // 1️⃣1️⃣ TYPING INDICATOR
     // ================================================================
     function setupTyping() {
+        if (!supabase) return;
+
         isTypingChannel = supabase.channel('chat-typing');
 
         isTypingChannel.on('broadcast', { event: 'typing' }, (payload) => {
@@ -329,9 +347,11 @@
     }
 
     // ================================================================
-    // 1️⃣1️⃣ ONLINE USERS (Presence)
+    // 1️⃣2️⃣ ONLINE USERS (Presence)
     // ================================================================
     function setupPresence() {
+        if (!supabase) return null;
+
         presenceChannel = supabase.channel('chat-online-users');
 
         presenceChannel.on('presence', { event: 'sync' }, () => {
@@ -355,19 +375,25 @@
     }
 
     // ================================================================
-    // 1️⃣2️⃣ INISIALISASI
+    // 1️⃣3️⃣ INISIALISASI
     // ================================================================
     async function initChat() {
+        if (isInitialized) return;
+        isInitialized = true;
+
         try {
             await loadMessages();
             messagesChannel = subscribeMessages();
             setupTyping();
             presenceChannel = setupPresence();
 
-            // Buka chat otomatis setelah 1 detik
+            // Buka chat otomatis setelah 2 detik
             setTimeout(() => {
                 openChat();
-            }, 1500);
+            }, 2000);
+
+            console.log('💬 Live Chat Widget DUKOPS siap!');
+            console.log('👤 Username:', myUsername);
 
         } catch (error) {
             console.error('Chat init error:', error);
@@ -375,7 +401,7 @@
     }
 
     // ================================================================
-    // 1️⃣3️⃣ EVENT LISTENERS
+    // 1️⃣4️⃣ EVENT LISTENERS
     // ================================================================
     if (sendButton) {
         sendButton.addEventListener('click', sendMessage);
@@ -391,24 +417,21 @@
     }
 
     // ================================================================
-    // 1️⃣4️⃣ CLEANUP
+    // 1️⃣5️⃣ CLEANUP
     // ================================================================
     window.addEventListener('beforeunload', () => {
-        if (messagesChannel) supabase.removeChannel(messagesChannel);
-        if (presenceChannel) supabase.removeChannel(presenceChannel);
-        if (isTypingChannel) supabase.removeChannel(isTypingChannel);
+        if (messagesChannel && supabase) supabase.removeChannel(messagesChannel);
+        if (presenceChannel && supabase) supabase.removeChannel(presenceChannel);
+        if (isTypingChannel && supabase) supabase.removeChannel(isTypingChannel);
     });
 
     // ================================================================
-    // 1️⃣5️⃣ JALANKAN!
+    // 1️⃣6️⃣ JALANKAN!
     // ================================================================
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initChat);
     } else {
         initChat();
     }
-
-    console.log('💬 Live Chat Widget DUKOPS siap!');
-    console.log('👤 Username:', myUsername);
 
 })();
