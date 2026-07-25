@@ -524,6 +524,67 @@
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.1) !important;
         }
 
+        /* ============================================================
+           NAV BUTTON PIKET
+           ============================================================ */
+        .nav-btn-piket {
+            background: rgba(0, 150, 255, 0.08) !important;
+            border: 1px solid rgba(0, 150, 255, 0.15) !important;
+            color: #66bfff !important;
+        }
+
+        .nav-btn-piket:hover {
+            background: rgba(0, 150, 255, 0.18) !important;
+            border-color: rgba(0, 150, 255, 0.35) !important;
+            color: #88ddff !important;
+        }
+
+        .nav-btn-piket.active {
+            background: rgba(0, 150, 255, 0.2) !important;
+            border-color: #00aaff !important;
+            color: #88ddff !important;
+            box-shadow: 0 0 24px rgba(0, 150, 255, 0.15) !important;
+        }
+
+        /* ============================================================
+           KONTEN PIKET - KOSONG
+           ============================================================ */
+        .piket-content {
+            display: none;
+            padding: 20px 0;
+            text-align: center;
+            color: #8899aa;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .piket-content .piket-placeholder {
+            font-size: 1.2rem;
+            opacity: 0.6;
+            padding: 30px 20px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 16px;
+            border: 1px dashed rgba(255,255,255,0.06);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .piket-content .piket-placeholder i {
+            font-size: 2.8rem;
+            color: #00aaff;
+            display: block;
+            margin-bottom: 12px;
+            opacity: 0.6;
+        }
+
+        .piket-content .piket-placeholder span {
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
         /* Hapus style yang tidak terpakai */
         #jadwalPiketContainerBaru, #hanpanganContent {
             display: none !important;
@@ -589,6 +650,9 @@
         <div class="nav-buttons">
             <button class="nav-btn nav-btn-dukops active" id="btnDukops" onclick="showDukops()">
                 DUKOPS
+            </button>
+            <button class="nav-btn nav-btn-piket" id="btnPiket" onclick="showPiket()">
+                PIKET
             </button>
             <button class="nav-btn nav-btn-absen" id="btnAbsen" onclick="showAbsenTab()">
                 ABSEN
@@ -662,6 +726,14 @@
                     </div>
                     <div id="attendanceList" style="max-height: 400px; overflow-y: auto;"></div>
                 </div>
+            </div>
+        </div>
+
+        <!-- ==================== TAB PIKET (KOSONG) ==================== -->
+        <div id="piketContent">
+            <div class="piket-placeholder">
+                <i class="fas fa-clock"></i>
+                <span>📋 Halaman Piket<br><small style="opacity:0.5;font-size:0.8rem;">Konten sedang dalam pengembangan</small></span>
             </div>
         </div>
 
@@ -1629,16 +1701,30 @@
         // Fungsi untuk menampilkan tab DUKOPS
         window.showDukops = function() {
             document.getElementById('dukopsContent').style.display = 'block';
+            document.getElementById('piketContent').style.display = 'none';
             document.getElementById('absenContent').style.display = 'none';
             document.getElementById('btnDukops').classList.add('active');
+            document.getElementById('btnPiket').classList.remove('active');
+            document.getElementById('btnAbsen').classList.remove('active');
+        };
+
+        // Fungsi untuk menampilkan tab PIKET (kosong)
+        window.showPiket = function() {
+            document.getElementById('dukopsContent').style.display = 'none';
+            document.getElementById('piketContent').style.display = 'flex';
+            document.getElementById('absenContent').style.display = 'none';
+            document.getElementById('btnDukops').classList.remove('active');
+            document.getElementById('btnPiket').classList.add('active');
             document.getElementById('btnAbsen').classList.remove('active');
         };
 
         // Fungsi untuk menampilkan tab ABSEN
         window.showAbsenTab = function() {
             document.getElementById('dukopsContent').style.display = 'none';
+            document.getElementById('piketContent').style.display = 'none';
             document.getElementById('absenContent').style.display = 'block';
             document.getElementById('btnDukops').classList.remove('active');
+            document.getElementById('btnPiket').classList.remove('active');
             document.getElementById('btnAbsen').classList.add('active');
             if (typeof loadAbsenTahun === 'function') loadAbsenTahun();
         };
