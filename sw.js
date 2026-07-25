@@ -1,5 +1,5 @@
 // sw.js - Service Worker untuk DUKOPS
-const CACHE_NAME = 'dukops-v3';
+const CACHE_NAME = 'dukops-v4';
 const BASE_PATH = '/dukops4/';
 
 const urlsToCache = [
@@ -15,22 +15,35 @@ const urlsToCache = [
     BASE_PATH + 'army.gif'
 ];
 
-// Install Service Worker
+// ============================================================
+// INSTALL - Caching assets
+// ============================================================
 self.addEventListener('install', event => {
+    console.log('🔧 SW Install event triggered');
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => {
                 console.log('📦 Caching DUKOPS assets...');
-                return cache.addAll(urlsToCache).catch(err => {
-                    console.warn('⚠️ Some assets failed to cache:', err);
-                });
+                return cache.addAll(urlsToCache)
+                    .then(() => {
+                        console.log('✅ All assets cached successfully!');
+                    })
+                    .catch(err => {
+                        console.error('❌ Failed to cache some assets:', err);
+                    });
             })
-            .then(() => self.skipWaiting())
+            .then(() => {
+                console.log('✅ SW Install complete, skipWaiting...');
+                return self.skipWaiting();
+            })
     );
 });
 
-// Activate Service Worker
+// ============================================================
+// ACTIVATE - Clean old caches
+// ============================================================
 self.addEventListener('activate', event => {
+    console.log('🔧 SW Activate event triggered');
     event.waitUntil(
         caches.keys().then(cacheNames => {
             return Promise.all(
@@ -41,25 +54,36 @@ self.addEventListener('activate', event => {
                     }
                 })
             );
-        }).then(() => self.clients.claim())
+        }).then(() => {
+            console.log('✅ SW Activated, claiming clients...');
+            return self.clients.claim();
+        })
     );
 });
 
-// Fetch dari cache jika offline
+// ============================================================
+// FETCH - Cache-first strategy
+// ============================================================
 self.addEventListener('fetch', event => {
+    const url = new URL(event.request.url);
+    
     // Skip cross-origin requests
-    if (!event.request.url.startsWith(self.location.origin)) {
+    if (url.origin !== self.location.origin) {
         return;
     }
+
+    console.log('🌐 Fetching:', url.pathname);
 
     event.respondWith(
         caches.match(event.request)
             .then(response => {
                 if (response) {
+                    console.log('✅ Cache hit:', url.pathname);
                     return response;
                 }
+                console.log('📡 Network fetch:', url.pathname);
                 return fetch(event.request).catch(() => {
-                    // Offline fallback
+                    console.log('⚠️ Offline fallback for:', url.pathname);
                     return new Response(`
                         <!DOCTYPE html>
                         <html lang="id">
@@ -124,5 +148,5 @@ self.addEventListener('fetch', event => {
     );
 });
 
-console.log('📱 DUKOPS Service Worker loaded');
+console.log('📱 DUKOPS Service Worker loaded (v4)');
 console.log('📦 Cache name:', CACHE_NAME);
