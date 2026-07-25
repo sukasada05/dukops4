@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="DUKOPS">
-    <title>SISTEM PELAPORAN DUKOPS BABINSA dan JADWAL PIKET KORAMIL</title>
+    <title>SISTEM PELAPORAN DUKOPS BABINSA</title>
     <meta name="theme-color" content="#0a1a3a">
 
     <link rel="icon" type="image/x-icon" href="icons/favicon.ico" />
@@ -506,39 +506,6 @@
             animation-play-state: paused !important;
         }
 
-        /* ============================================================
-           TAB HANPANGAN (IFRAME) - TAMBAHAN BARU
-           ============================================================ */
-        #hanpanganContent {
-            display: none;
-            width: 100%;
-            height: 600px;
-            border: none;
-            border-radius: 12px;
-            overflow: hidden;
-            margin-top: 15px;
-            background: #0a1a0a;
-        }
-
-        #hanpanganContent iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            border-radius: 12px;
-        }
-
-        @media (max-width: 768px) {
-            #hanpanganContent {
-                height: 500px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            #hanpanganContent {
-                height: 400px;
-            }
-        }
-
         .nav-btn-hanpangan {
             background: rgba(255, 215, 0, 0.08) !important;
             border: 1px solid rgba(255, 215, 0, 0.15) !important;
@@ -555,6 +522,11 @@
             border-color: #FFD700 !important;
             color: #FFD700 !important;
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.1) !important;
+        }
+
+        /* Hapus style yang tidak terpakai */
+        #jadwalPiketContainerBaru, #hanpanganContent {
+            display: none !important;
         }
     </style>
 
@@ -618,14 +590,8 @@
             <button class="nav-btn nav-btn-dukops active" id="btnDukops" onclick="showDukops()">
                 DUKOPS
             </button>
-            <button class="nav-btn nav-btn-piket" id="btnJadwal" onclick="showJadwalPiketBaru()">
-                PIKET
-            </button>
             <button class="nav-btn nav-btn-absen" id="btnAbsen" onclick="showAbsenTab()">
                 ABSEN
-            </button>
-            <button class="nav-btn nav-btn-hanpangan" id="btnHanpangan" onclick="showHanpangan()">
-                HANPANGAN
             </button>
         </div>
 
@@ -699,95 +665,6 @@
             </div>
         </div>
 
-        <!-- ==================== JADWAL PIKET ==================== -->
-        <div id="jadwalPiketContainerBaru" style="display: none;">
-            <div class="jadwal-header">
-                <h1 class="jadwal-title">JADWAL PIKET</h1>
-                <div class="app-logo-container">
-                    <img src="LOGO KOREM163 Wirasatya.png" alt="Logo Korem 163 Wirasatya" class="jadwal-logo">
-                </div>
-                <p>KORAMIL 1609-05/SUKASADA<br>Kodim 1609/Buleleng</p>
-            </div>
-
-            <div class="running-text-container">
-                <div class="running-text" id="runningTextJadwalBaru">🌾 Memuat jadwal hanpangan... 🌾</div>
-            </div>
-
-            <!-- TANGGAL INFO -->
-            <div class="tanggal-info" id="tanggalInfo">📅 Memuat tanggal...</div>
-
-            <div class="jadwal-section">
-                <div class="section-content">
-                    <div>
-                        <h3 class="section-title-koramil">Piket Koramil Hari Ini :</h3>
-                        <div class="row">
-                            <div class="col"><select id="j_nama1a_baru"><option value="">「 ✦ 𝐍𝐚𝐦a ✦ 」</option></select></div>
-                            <div class="col"><select id="j_nama1b_baru"><option value="">=✪=Nama=✪=</option></select></div>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="section-title-koramil">Piket Koramil Besok :</h3>
-                        <div class="row">
-                            <div class="col"><select id="j_nama2a_baru"><option value="">-- Pilih Nama --</option></select></div>
-                            <div class="col"><select id="j_nama2b_baru"><option value="">-- Pilih Nama --</option></select></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="jadwal-section">
-                <div class="section-content">
-                    <div>
-                        <h3 class="section-title-kediaman">Jaga Kediaman Hari Ini :</h3>
-                        <div class="row">
-                            <div class="col"><select id="j_nama3a_baru"><option value="">-- Pilih Nama --</option></select></div>
-                            <div class="col"><select id="j_nama3b_baru"><option value="">-- Pilih Nama --</option></select></div>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="section-title-kediaman">Jaga Kediaman Besok :</h3>
-                        <div class="row">
-                            <div class="col"><select id="j_nama3c_baru"><option value="">-- Pilih Nama --</option></select></div>
-                            <div class="col"><select id="j_nama3d_baru"><option value="">-- Pilih Nama --</option></select></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="jadwal-section">
-                <div class="section-content">
-                    <div>
-                        <h3 class="section-title-makodim">Piket Makodim Hari ini :</h3>
-                        <div class="row">
-                            <div class="col"><select id="j_nama4a_baru"><option value="">-- Pilih Nama --</option></select></div>
-                            <div class="col"><select id="j_nama4b_baru"><option value="">-- Pilih Nama --</option></select></div>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="section-title-makodim">Piket Makodim Besok :</h3>
-                        <div class="row">
-                            <div class="col"><select id="j_nama4c_baru"><option value="">-- Pilih Nama --</option></select></div>
-                            <div class="col"><select id="j_nama4d_baru"><option value="">-- Pilih Nama --</option></select></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <button id="whatsappBtnBaru" class="whatsapp-transparent-btn">
-                <i class="fab fa-whatsapp"></i>
-                <span>KIRIM KE WHATSAPP</span>
-            </button>
-
-            <div class="jadwal-section">
-                <textarea id="j_hasilPesanBaru" class="auto-height-textarea" readonly placeholder="Preview pesan akan muncul di sini setelah memilih nama..."></textarea>
-                <div class="preview-status" id="previewInfo">⏳ Memuat data dari GitHub...</div>
-            </div>
-
-            <div class="data-info" id="dataInfo">📌 Data otomatis tersimpan</div>
-
-            <div class="app-loading" id="j_loadingIndicatorBaru"><i class="fas fa-spinner fa-spin"></i> Memuat data...</div>
-        </div>
-
         <!-- ==================== TAB ABSENSI ==================== -->
         <div id="absenContent" style="display: none;">
             <div class="absen-card">
@@ -805,11 +682,6 @@
 
             <div id="absenResultContainer"></div>
             <div class="absen-info-text">✨ Mangsatria@2026</div>
-        </div>
-
-        <!-- ==================== TAB HANPANGAN (TAMBAHAN BARU) ==================== -->
-        <div id="hanpanganContent">
-            <iframe src="https://sukasada05.github.io/Hanpangan/" title="HANPANGAN"></iframe>
         </div>
 
         <div class="jadwal-toast" id="j_toastNotificationBaru"></div>
@@ -1413,330 +1285,6 @@
     <!-- ============ APPLICATION SCRIPTS ============ -->
     <script src="app.js"></script>
 
-    <!-- ============ JADWAL PIKET (TANPA SUPABASE) ============ -->
-    <script>
-        (function() {
-            const HANPANGAN_URL = "https://raw.githubusercontent.com/sukasada05/dukops4/main/data/hanpangan.txt";
-            const GITHUB_URLS = { HANPANGAN: HANPANGAN_URL, PIKET: "https://raw.githubusercontent.com/sukasada05/dukops4/main/data/piket.txt" };
-            const JadwalData = { daftarNama: [], daftarHanpangan: [], currentHanpangan: "" };
-            const JADWAL_DROPDOWN_IDS = ['j_nama1a_baru', 'j_nama1b_baru', 'j_nama2a_baru', 'j_nama2b_baru', 'j_nama3a_baru',
-                'j_nama3b_baru', 'j_nama3c_baru', 'j_nama3d_baru', 'j_nama4a_baru', 'j_nama4b_baru', 'j_nama4c_baru',
-                'j_nama4d_baru'
-            ];
-
-            function updateRunningText() { 
-                const el = document.getElementById('runningTextJadwalBaru'); 
-                if (el) {
-                    el.textContent = '🌾 JADWAL HANPANGAN HARI INI: ' + JadwalData.currentHanpangan + ' 🌾';
-                }
-            }
-
-            function fetchFromGitHub(url) { 
-                return new Promise(resolve => { 
-                    fetch(url + '?t=' + new Date().getTime())
-                        .then(res => res.ok ? res.text() : null)
-                        .then(data => resolve(data))
-                        .catch(() => resolve(null)); 
-                }); 
-            }
-
-            function loadPiketData() { 
-                return fetchFromGitHub(GITHUB_URLS.PIKET).then(data => { 
-                    if (data) { 
-                        JadwalData.daftarNama = data.trim().split('\n').filter(l => l.trim()).map(n => n.trim());
-                        
-                        JADWAL_DROPDOWN_IDS.forEach(id => { 
-                            const select = document.getElementById(id); 
-                            if (select) { 
-                                const currentValue = select.value;
-                                select.innerHTML = '<option value="">-- Pilih Nama --</option>';
-                                JadwalData.daftarNama.forEach(nama => { 
-                                    const opt = document.createElement('option');
-                                    opt.value = nama;
-                                    opt.textContent = nama;
-                                    select.appendChild(opt); 
-                                });
-                                if (currentValue) select.value = currentValue;
-                            } 
-                        }); 
-                        return true; 
-                    } 
-                    return false; 
-                }); 
-            }
-
-            function loadHanpanganData() { 
-                return fetchFromGitHub(GITHUB_URLS.HANPANGAN).then(data => { 
-                    if (data) { 
-                        const lines = data.trim().split('\n').filter(l => l.trim()); 
-                        if (lines.length) { 
-                            JadwalData.daftarHanpangan = lines; 
-                            const today = new Date(); 
-                            const epochDays = Math.floor(today.getTime() / (24 * 60 * 60 * 1000)); 
-                            const referenceDate = new Date(2024, 0, 1); 
-                            const epochDaysRef = Math.floor(referenceDate.getTime() / (24 * 60 * 60 * 1000)); 
-                            let offset = (0 - epochDaysRef) % lines.length; 
-                            if (offset < 0) offset += lines.length; 
-                            let index = (epochDays + offset) % lines.length; 
-                            if (index < 0) index += lines.length; 
-                            JadwalData.currentHanpangan = lines[index]; 
-                            updateRunningText(); 
-                            return true; 
-                        } 
-                    } 
-                    
-                    const defaultHanpangan = [
-                        "Serka Wahyu Hidayat", "Pelda I Komang Karia", "Serma Mujiburrahman",
-                        "Sertu Nyoman Warsa", "Serma I Kadek Teges Suardana", "Serda I Putu Suwidana Yasa",
-                        "Serka Satriyo", "Serka I Made Widiasa", "Serka Nyoman Join Amitaba",
-                        "Serka I Nyoman Arta"
-                    ]; 
-                    JadwalData.daftarHanpangan = defaultHanpangan; 
-                    const today = new Date(); 
-                    const epochDays = Math.floor(today.getTime() / (24 * 60 * 60 * 1000)); 
-                    const referenceDate = new Date(2024, 0, 1); 
-                    const epochDaysRef = Math.floor(referenceDate.getTime() / (24 * 60 * 60 * 1000)); 
-                    let offset = (0 - epochDaysRef) % defaultHanpangan.length; 
-                    if (offset < 0) offset += defaultHanpangan.length; 
-                    let index = (epochDays + offset) % defaultHanpangan.length; 
-                    if (index < 0) index += defaultHanpangan.length; 
-                    JadwalData.currentHanpangan = defaultHanpangan[index]; 
-                    updateRunningText(); 
-                    return false; 
-                }); 
-            }
-
-            function formatTanggal(date) { 
-                const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-                const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", 
-                               "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-                return days[date.getDay()] + ", " + date.getDate() + " " + months[date.getMonth()] + " " + date.getFullYear(); 
-            }
-
-            function formatTanggalShort(date) {
-                const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
-                return date.getDate() + " " + months[date.getMonth()] + " " + date.getFullYear();
-            }
-
-            function updateTanggalInfo() {
-                const now = new Date();
-                const tomorrow = new Date();
-                tomorrow.setDate(now.getDate() + 1);
-                
-                const hariIniFull = formatTanggal(now);
-                const besokFull = formatTanggal(tomorrow);
-                
-                const infoEl = document.getElementById('tanggalInfo');
-                if (infoEl) {
-                    infoEl.textContent = '📅 Hari Ini: ' + hariIniFull + ' | Besok: ' + besokFull;
-                }
-            }
-
-            function autoResizeTextarea() { 
-                const textarea = document.getElementById('j_hasilPesanBaru'); 
-                if (textarea) {
-                    textarea.style.height = 'auto';
-                    textarea.style.height = textarea.scrollHeight + 'px'; 
-                } 
-            }
-
-            function updatePreview() { 
-                const now = new Date();
-                const tomorrow = new Date();
-                tomorrow.setDate(now.getDate() + 1); 
-                
-                const getVal = (id) => document.getElementById(id)?.value || ""; 
-                
-                const sections = [
-                    { names: [getVal('j_nama1a_baru'), getVal('j_nama1b_baru')], title: formatTanggal(now), suffix: "" },
-                    { names: [getVal('j_nama2a_baru'), getVal('j_nama2b_baru')], title: formatTanggal(tomorrow), suffix: "" },
-                    { names: [getVal('j_nama3a_baru'), getVal('j_nama3b_baru')], title: formatTanggal(now), suffix: " (Kediaman)" },
-                    { names: [getVal('j_nama3c_baru'), getVal('j_nama3d_baru')], title: formatTanggal(tomorrow), suffix: " (Kediaman)" },
-                    { names: [getVal('j_nama4a_baru'), getVal('j_nama4b_baru')], title: formatTanggal(now), suffix: " (Makodim)" },
-                    { names: [getVal('j_nama4c_baru'), getVal('j_nama4d_baru')], title: formatTanggal(tomorrow), suffix: " (Makodim)" }
-                ]; 
-                
-                let result = "_____________________________\n*KORAMIL 1609-05/SUKASADA*\n    *JADWAL DINAS DALAM*\n_____________________________\n\n";                
-                let sectionCount = 0; 
-                
-                for (const s of sections) { 
-                    const valid = s.names.filter(n => n && n.trim()); 
-                    if (valid.length) { 
-                        result += String.fromCharCode(65 + sectionCount) + ". " + s.title + s.suffix + "\n"; 
-                        valid.forEach((n, i) => result += "   " + (i + 1) + ". " + n + "\n"); 
-                        result += "\n";
-                        sectionCount++; 
-                    } 
-                } 
-                
-                if (JadwalData.currentHanpangan) {
-                    result += "*🌾Jadwal Hanpangan hari ini :* " + JadwalData.currentHanpangan + "\n\n"; 
-                }
-                result += "*Demikian MMP.*"; 
-                
-                const preview = document.getElementById('j_hasilPesanBaru'); 
-                if (preview) { 
-                    preview.value = result; 
-                    setTimeout(autoResizeTextarea, 10); 
-                } 
-            }
-
-            // ============================================================
-            //  SEND TO WHATSAPP
-            // ============================================================
-            async function sendToWhatsApp() {
-                const preview = document.getElementById('j_hasilPesanBaru');
-                function extractPlainText(el) {
-                    if (!el) return '';
-                    if (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') {
-                        return el.value.trim();
-                    }
-                    let out = '';
-                    el.childNodes.forEach(node => {
-                        if (node.nodeType === Node.TEXT_NODE) {
-                            out += node.textContent;
-                        } else if (node.nodeType === Node.ELEMENT_NODE) {
-                            const ne = node;
-                            if (ne.tagName === 'IMG' && ne.alt) {
-                                out += ne.alt;
-                            } else {
-                                out += ne.textContent || '';
-                            }
-                        }
-                    });
-                    return out.trim();
-                }
-
-                const pesan = extractPlainText(preview || document.getElementById('j_hasilPesan'));
-                
-                if (!pesan) {
-                    console.log('❌ Tidak ada pesan untuk dikirim');
-                    return false;
-                }
-                
-                window.open("https://wa.me/?text=" + encodeURIComponent(pesan), "_blank");
-                return false;
-            }
-
-            // ============================================================
-            //  LOAD ALL DATA
-            // ============================================================
-            let isLoading = false;
-
-            function loadAllJadwalData() { 
-                if (isLoading) return;
-                isLoading = true; 
-                
-                Promise.all([loadPiketData(), loadHanpanganData()])
-                    .then(() => {
-                        updatePreview();
-                        document.getElementById('previewInfo').textContent = '✅ Data dimuat dari GitHub';
-                        document.getElementById('previewInfo').style.color = '#4caf50';
-                    })
-                    .catch(() => {
-                        document.getElementById('previewInfo').textContent = '⚠️ Gagal memuat data, gunakan default';
-                        document.getElementById('previewInfo').style.color = '#ff9800';
-                    })
-                    .finally(() => { 
-                        isLoading = false; 
-                    }); 
-            }
-
-            // ============================================================
-            //  INIT JADWAL
-            // ============================================================
-            function initJadwalBaru() { 
-                console.log('🔍 Inisialisasi Aplikasi...');
-                
-                updateTanggalInfo();
-                
-                JADWAL_DROPDOWN_IDS.forEach(id => { 
-                    const sel = document.getElementById(id); 
-                    if (sel) {
-                        sel.addEventListener('change', updatePreview);
-                    }
-                }); 
-                
-                const btn = document.getElementById('whatsappBtnBaru'); 
-                if (btn) { 
-                    const newBtn = btn.cloneNode(true); 
-                    btn.parentNode.replaceChild(newBtn, btn); 
-                    newBtn.addEventListener('click', (e) => { 
-                        e.preventDefault();
-                        sendToWhatsApp(); 
-                    }); 
-                } 
-                
-                loadAllJadwalData();
-                autoResizeTextarea();
-                
-                console.log('✅ Aplikasi siap!');
-            }
-
-            // ============================================================
-            //  EXPOSE
-            // ============================================================
-            window.showJadwalPiketBaru = function() { 
-                document.getElementById('dukopsContent').style.display = 'none';
-                document.getElementById('jadwalPiketContainerBaru').style.display = 'block'; 
-                document.getElementById('absenContent').style.display = 'none'; 
-                document.getElementById('hanpanganContent').style.display = 'none';
-                document.getElementById('btnDukops').classList.remove('active'); 
-                document.getElementById('btnJadwal').classList.add('active'); 
-                document.getElementById('btnAbsen').classList.remove('active');
-                document.getElementById('btnHanpangan').classList.remove('active');
-                
-                if (!window._jadwalInitialized) {
-                    window._jadwalInitialized = true;
-                    initJadwalBaru();
-                }
-            };
-
-            window.showDukops = function() { 
-                document.getElementById('dukopsContent').style.display = 'block';
-                document.getElementById('jadwalPiketContainerBaru').style.display = 'none'; 
-                document.getElementById('absenContent').style.display = 'none'; 
-                document.getElementById('hanpanganContent').style.display = 'none';
-                document.getElementById('btnDukops').classList.add('active'); 
-                document.getElementById('btnJadwal').classList.remove('active'); 
-                document.getElementById('btnAbsen').classList.remove('active');
-                document.getElementById('btnHanpangan').classList.remove('active');
-            };
-
-            window.showAbsenTab = function() { 
-                document.getElementById('dukopsContent').style.display = 'none';
-                document.getElementById('jadwalPiketContainerBaru').style.display = 'none'; 
-                document.getElementById('absenContent').style.display = 'block'; 
-                document.getElementById('hanpanganContent').style.display = 'none';
-                document.getElementById('btnDukops').classList.remove('active'); 
-                document.getElementById('btnJadwal').classList.remove('active'); 
-                document.getElementById('btnAbsen').classList.add('active');
-                document.getElementById('btnHanpangan').classList.remove('active');
-                if (typeof loadAbsenTahun === 'function') loadAbsenTahun(); 
-            };
-
-            window.showHanpangan = function() {
-                document.getElementById('dukopsContent').style.display = 'none';
-                document.getElementById('jadwalPiketContainerBaru').style.display = 'none';
-                document.getElementById('absenContent').style.display = 'none';
-                document.getElementById('hanpanganContent').style.display = 'block';
-                document.getElementById('btnDukops').classList.remove('active');
-                document.getElementById('btnJadwal').classList.remove('active');
-                document.getElementById('btnAbsen').classList.remove('active');
-                document.getElementById('btnHanpangan').classList.add('active');
-                if (typeof window.triggerPlayMusic === 'function') {
-                    window.triggerPlayMusic();
-                }
-            };
-
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', function() {
-                    console.log('📌 Klik tab PIKET untuk mengaktifkan');
-                });
-            }
-        })();
-    </script>
-
     <!-- ============ TAB ABSEN (DENGAN PERBAIKAN DOWNLOAD PNG) ============ -->
     <script>
         (function() {
@@ -2074,6 +1622,31 @@
                     });
             });
         }
+    </script>
+
+    <!-- ============ FUNGSI NAVIGASI ============ -->
+    <script>
+        // Fungsi untuk menampilkan tab DUKOPS
+        window.showDukops = function() {
+            document.getElementById('dukopsContent').style.display = 'block';
+            document.getElementById('absenContent').style.display = 'none';
+            document.getElementById('btnDukops').classList.add('active');
+            document.getElementById('btnAbsen').classList.remove('active');
+        };
+
+        // Fungsi untuk menampilkan tab ABSEN
+        window.showAbsenTab = function() {
+            document.getElementById('dukopsContent').style.display = 'none';
+            document.getElementById('absenContent').style.display = 'block';
+            document.getElementById('btnDukops').classList.remove('active');
+            document.getElementById('btnAbsen').classList.add('active');
+            if (typeof loadAbsenTahun === 'function') loadAbsenTahun();
+        };
+
+        // Pastikan tab DUKOPS aktif saat load
+        document.addEventListener('DOMContentLoaded', function() {
+            showDukops();
+        });
     </script>
 
 </body>
