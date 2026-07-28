@@ -104,25 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     loadNextStage();
 
-    const emergencyTimeout = isMobileDevice ? 3000 : 6000;
-    setTimeout(() => {
-        if (!isAppOpened) {
-            console.warn("⚠️ Emergency timeout triggered");
-            isAppOpened = true;
-            updateProgress(100, "Aplikasi Siap digunakan");
-            setTimeout(() => {
-                if (splashScreen) {
-                    splashScreen.style.display = 'none';
-                    splashScreen.style.opacity = 0;
-                }
-                if (appContainer) {
-                    appContainer.style.display = 'block';
-                    appContainer.style.opacity = 1;
-                }
-                loadDukopsApp();
-            }, 100);
-        }
-    }, emergencyTimeout);
+    // Hapus emergency timeout fallback
 });
 
 // ================= FUNGSI NAVIGASI =================
@@ -378,26 +360,28 @@ async function loadDesaList() {
     loading.style.display = 'block';
 
     try {
-        const fallbackDesas = [
-            "Gitgit", "Panji", "Panji Anom", "Sukasada", "Pancasari", "Wanagiri",
-            "Ambengan", "Kayu Putih", "Padang Bulia", "Pegadungan",
-            "Pegayaman", "Sambangan", "Selat", "Silangjana", "Tegallinggah"
-        ];
+        // Hapus fallback desa, fetch langsung dari JSON yang sebenarnya
+        const response = await fetch('data/desa-list.json?t=' + Date.now());
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        const desaList = data.desaList || [];
 
         select.innerHTML = '<option value="">-- Pilih Desa --</option>';
-        for (const desaName of fallbackDesas) {
+        desaList.forEach(desaName => {
             const option = document.createElement('option');
             const jsonPath = `data/coordinates/${desaName}.json`;
             option.value = jsonPath;
             option.textContent = normalizeDesaName(desaName).cleanName;
             option.setAttribute('data-raw-name', desaName);
             select.appendChild(option);
-        }
-        console.log(`✅ Loaded ${fallbackDesas.length} desas from lokal`);
+        });
+        console.log(`✅ Loaded ${desaList.length} desas from server`);
         showNotification('✅ Daftar desa berhasil dimuat', 'success');
     } catch (error) {
         console.error("❌ Error loading desa list:", error);
-        showNotification('⚠️ Gagal memuat daftar desa', 'warning');
+        select.innerHTML = '<option value="">-- Gagal memuat desa --</option>';
+        select.disabled = true;
+        showNotification('❌ Gagal memuat daftar desa. Periksa koneksi.', 'error');
     } finally {
         loading.style.display = 'none';
     }
@@ -999,11 +983,21 @@ async function loadAttendanceData() {
             showNotification(`✅ Data absensi dimuat (${attendanceData.length} file)`, "success");
         } else {
             showNotification("❌ Gagal memuat data absensi", "error");
-            loadAttendanceFromFallback();
+            // Hapus fallback: langsung tampilkan pesan error
+            list.innerHTML = `<div style="text-align: center; color: #f44336; padding: 20px;">
+                <i class="fas fa-exclamation-circle"></i><br>
+                Gagal memuat data absensi.<br>
+                <small>Pastikan koneksi internet aktif.</small>
+            </div>`;
         }
     } catch (error) {
         console.error('Error loading attendance:', error);
-        loadAttendanceFromFallback();
+        // Hapus fallback: tampilkan error
+        list.innerHTML = `<div style="text-align: center; color: #f44336; padding: 20px;">
+            <i class="fas fa-exclamation-circle"></i><br>
+            Gagal terhubung ke server.<br>
+            <small>Periksa koneksi internet.</small>
+        </div>`;
     } finally {
         loading.style.display = 'none';
     }
@@ -1017,48 +1011,6 @@ function extractMonthYearFromFileName(filename) {
         return `${year}-${month}`;
     }
     return '';
-}
-
-function loadAttendanceFromFallback() {
-    const list = document.getElementById('attendanceList');
-    const summary = document.getElementById('attendanceSummary');
-    if (!list) return;
-
-    const desaData = [];
-    for (const [desaName, data] of Object.entries(desaCounter)) {
-        if (data.files && data.files.length > 0) {
-            data.files.forEach(fileName => {
-                desaData.push({
-                    name: fileName,
-                    desa: desaName,
-                    count: data.count,
-                    month: data.month
-                });
-            });
-        }
-    }
-
-    if (desaData.length > 0) {
-        attendanceData = desaData.map(item => ({
-            name: item.name,
-            desa: item.desa,
-            size: 0,
-            createdTime: new Date().toISOString(),
-            webViewLink: '#',
-            zipContents: `Narasi.txt, Dukops.png`,
-            month: extractMonthYearFromFileName(item.name)
-        }));
-        displayAttendanceList(attendanceData);
-        displayAttendanceSummary(attendanceData);
-        showNotification("Menggunakan data lokal (offline mode)", "warning");
-    } else {
-        list.innerHTML = `<div style="text-align: center; color: #a5a5a5; padding: 20px;">
-            <i class="fas fa-folder-open"></i><br>
-            Tidak ada data laporan<br>
-            <small>Silakan kirim laporan terlebih dahulu</small>
-        </div>`;
-        if (summary) summary.style.display = 'none';
-    }
 }
 
 function displayAttendanceList(files) {
@@ -1380,6 +1332,8 @@ async function loadJadwalPiketFromGitHub() {
         return true;
     } catch (error) {
         console.error("Error loading piket data:", error);
+        // Tanpa fallback: hanya tampilkan error
+        showNotification('❌ Gagal memuat data piket', 'error');
         return false;
     }
 }
@@ -1400,6 +1354,7 @@ async function loadJadwalHanpanganFromGitHub() {
         return true;
     } catch (error) {
         console.error("Error loading hanpangan data:", error);
+        showNotification('❌ Gagal memuat data hanpangan', 'error');
         return false;
     }
 }
@@ -1535,9 +1490,7 @@ function updateDesaHeaderImage(desaName) {
     const imageName = desaInfo.normalized;
     const localUrl = `profile/${imageName}.png`;
 
+    // Hapus fallback onerror - jika gambar gagal, biarkan saja (tidak diganti otomatis)
     headerImage.src = localUrl;
-    headerImage.onerror = function() {
-        headerImage.onerror = null;
-        headerImage.src = localDefaultUrl;
-    };
+    // Tidak ada onerror fallback
 }
