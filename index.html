@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="DUKOPS">
-    <title>SISTEM PELAPORAN DUKOPS BABINSA dan JADWAL PIKET KORAMIL</title>
+    <title>SISTEM PELAPORAN DUKOPS BABINSA</title>
     <meta name="theme-color" content="#0a1a3a">
     
     <base href="/dukops4/">
@@ -27,7 +27,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
-    <!-- CSS MODULAR – SATU-SATUNYA CSS YANG DIGUNAKAN -->
+    <!-- CSS MODULAR -->
     <link rel="stylesheet" href="css/main.css">
 
 </head>
@@ -94,10 +94,9 @@
             </div>
         </div>
 
-        <!-- ===== NAVIGASI ===== -->
+        <!-- ===== NAVIGASI (tanpa PIKET) ===== -->
         <div class="nav-buttons">
             <button class="nav-btn nav-btn-dukops active" id="btnDukops" onclick="showDukops()">DUKOPS</button>
-            <button class="nav-btn nav-btn-piket" id="btnJadwal" onclick="showJadwalPiketBaru()">PIKET</button>
             <button class="nav-btn nav-btn-absen" id="btnAbsen" onclick="showAbsenTab()">ABSEN</button>
             <button class="nav-btn nav-btn-hanpangan" id="btnHanpangan" onclick="showHanpangan()">HANPANGAN</button>
         </div>
@@ -170,95 +169,6 @@
                 </div>
 
             </div>
-        </div>
-
-        <!-- ===== JADWAL PIKET ===== -->
-        <div id="jadwalPiketContainerBaru" style="display: none;">
-            <div class="jadwal-header">
-                <h1 class="jadwal-title">JADWAL PIKET</h1>
-                <div class="app-logo-container">
-                    <img src="LOGO KOREM163 Wirasatya.png" alt="Logo Korem 163 Wirasatya" class="jadwal-logo">
-                </div>
-                <p class="jadwal-subtitle">KORAMIL 1609-05/SUKASADA<br>Kodim 1609/Buleleng</p>
-            </div>
-
-            <div class="running-text-container">
-                <div class="running-text" id="runningTextJadwalBaru">🌾 Memuat jadwal hanpangan... 🌾</div>
-            </div>
-
-            <div class="tanggal-info" id="tanggalInfo">📅 Memuat tanggal...</div>
-
-            <!-- Piket Koramil -->
-            <div class="jadwal-section">
-                <div class="section-content">
-                    <div>
-                        <h3 class="section-title section-title-koramil">Piket Koramil Hari Ini <span class="section-title-date" id="labelHariIni">📅 Memuat...</span></h3>
-                        <div class="row-select">
-                            <div class="col-select"><select id="j_nama1a_baru"><option value="">- pilih nama -</option></select></div>
-                            <div class="col-select"><select id="j_nama1b_baru"><option value="">- pilih nama -</option></select></div>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="section-title section-title-koramil">Piket Koramil Besok <span class="section-title-date" id="labelBesok">📅 Memuat...</span></h3>
-                        <div class="row-select">
-                            <div class="col-select"><select id="j_nama2a_baru"><option value="">- pilih nama -</option></select></div>
-                            <div class="col-select"><select id="j_nama2b_baru"><option value="">- pilih nama -</option></select></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Jaga Kediaman -->
-            <div class="jadwal-section">
-                <div class="section-content">
-                    <div>
-                        <h3 class="section-title section-title-kediaman">Jaga Kediaman Hari Ini <span class="section-title-date" id="labelKediamanHariIni">📅 Memuat...</span></h3>
-                        <div class="row-select">
-                            <div class="col-select"><select id="j_nama3a_baru"><option value="">- pilih nama -</option></select></div>
-                            <div class="col-select"><select id="j_nama3b_baru"><option value="">- pilih nama -</option></select></div>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="section-title section-title-kediaman">Jaga Kediaman Besok <span class="section-title-date" id="labelKediamanBesok">📅 Memuat...</span></h3>
-                        <div class="row-select">
-                            <div class="col-select"><select id="j_nama3c_baru"><option value="">- pilih nama -</option></select></div>
-                            <div class="col-select"><select id="j_nama3d_baru"><option value="">- pilih nama -</option></select></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Piket Makodim -->
-            <div class="jadwal-section">
-                <div class="section-content">
-                    <div>
-                        <h3 class="section-title section-title-makodim">Piket Makodim Hari Ini <span class="section-title-date" id="labelMakodimHariIni">📅 Memuat...</span></h3>
-                        <div class="row-select">
-                            <div class="col-select"><select id="j_nama4a_baru"><option value="">- pilih nama -</option></select></div>
-                            <div class="col-select"><select id="j_nama4b_baru"><option value="">- pilih nama -</option></select></div>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="section-title section-title-makodim">Piket Makodim Besok <span class="section-title-date" id="labelMakodimBesok">📅 Memuat...</span></h3>
-                        <div class="row-select">
-                            <div class="col-select"><select id="j_nama4c_baru"><option value="">- pilih nama -</option></select></div>
-                            <div class="col-select"><select id="j_nama4d_baru"><option value="">- pilih nama -</option></select></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <button id="whatsappBtnBaru" class="whatsapp-transparent-btn">
-                <i class="fab fa-whatsapp"></i> <span>KIRIM KE WHATSAPP</span>
-            </button>
-
-            <div class="jadwal-section">
-                <textarea id="j_hasilPesanBaru" class="preview-textarea" readonly placeholder="Preview pesan akan muncul di sini setelah memilih nama..."></textarea>
-                <div class="preview-status" id="previewInfo">⏳ Memuat data dari Supabase...</div>
-                <div class="auto-save-status" id="autoSaveStatus"><span class="saved">✅ Tersimpan otomatis</span></div>
-            </div>
-            <div class="data-info" id="dataInfo">📌 Data otomatis tersimpan ke Supabase</div>
-            <div class="app-loading" id="j_loadingIndicatorBaru"><i class="fas fa-spinner fa-spin"></i> Memuat data...</div>
         </div>
 
         <!-- ===== ABSEN ===== -->
