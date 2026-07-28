@@ -1,6 +1,6 @@
 /* ================================================================
    MAIN.CSS - IMPORT SEMUA FILE CSS DUKOPS
-   VERSI FINAL - TANPA JADWAL PIKET
+   VERSI FINAL - TANPA AUDIO, TANPA TEMPLATE AI, TANPA JADWAL PIKET
    ================================================================ */
 
 /* ================================================================
@@ -47,12 +47,11 @@
    ================================================================ */
 @import url('popup.css');
 @import url('thankyou-popup.css');
-@import url('ai-template.css');
 
 /* ================================================================
-   9. SLIDER VOLUME
+   9. SLIDER VOLUME (DIHAPUS KARENA AUDIO DIHAPUS)
    ================================================================ */
-@import url('slider-volume.css');
+/* @import url('slider-volume.css'); */  /* ❌ DIHAPUS – tidak dipakai */
 
 /* ================================================================
    10. RESPONSIVE
@@ -60,7 +59,7 @@
 @import url('responsive.css');
 
 /* ================================================================
-   11. HANPANGAN FULLSCREEN (BARU)
+   11. HANPANGAN FULLSCREEN
    ================================================================ */
 @import url('hanpangan.css');
 
