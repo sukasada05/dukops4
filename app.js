@@ -72,49 +72,6 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(nextStage, delay);
     }
     nextStage();
-
-    // Audio interaksi
-    const audio = document.getElementById('backgroundMusic');
-    const volSlider = document.getElementById('audioVolumeSlider');
-    let isPlaying = false, hasUserInteracted = false;
-
-    function playMusic() {
-        if (audio && !isPlaying) {
-            audio.play().then(() => isPlaying = true).catch(() => {});
-        }
-    }
-    if (audio) {
-        audio.volume = 0.3;
-        if (volSlider) volSlider.value = Math.round(audio.volume * 100);
-        audio.loop = true;
-        audio.load();
-    }
-    if (volSlider) {
-        volSlider.oninput = function() {
-            if (!audio) return;
-            const val = parseInt(this.value, 10) / 100;
-            audio.volume = val;
-            if (val > 0 && !isPlaying && hasUserInteracted) playMusic();
-        };
-    }
-    window.triggerPlayMusic = function() {
-        if (!audio) return;
-        if (!hasUserInteracted) { hasUserInteracted = true; playMusic(); }
-        else if (!isPlaying) playMusic();
-    };
-
-    function firstInteraction() {
-        if (!hasUserInteracted) {
-            hasUserInteracted = true;
-            playMusic();
-            document.removeEventListener('click', firstInteraction);
-            document.removeEventListener('touchstart', firstInteraction);
-            document.removeEventListener('scroll', firstInteraction);
-        }
-    }
-    document.addEventListener('click', firstInteraction);
-    document.addEventListener('touchstart', firstInteraction);
-    document.addEventListener('scroll', firstInteraction);
 });
 
 // ================= LOAD APP =================
@@ -161,7 +118,6 @@ window.showDukops = function() {
     document.getElementById('btnAbsen').classList.remove('active');
     document.getElementById('btnHanpangan').classList.remove('active');
     currentApp = 'dukops';
-    if (typeof window.triggerPlayMusic === 'function') window.triggerPlayMusic();
 };
 
 window.showAbsenTab = function() {
@@ -173,7 +129,6 @@ window.showAbsenTab = function() {
     document.getElementById('btnAbsen').classList.add('active');
     document.getElementById('btnHanpangan').classList.remove('active');
     if (typeof loadAbsenTahun === 'function') loadAbsenTahun();
-    if (typeof window.triggerPlayMusic === 'function') window.triggerPlayMusic();
 };
 
 window.showHanpangan = function() {
@@ -184,7 +139,6 @@ window.showHanpangan = function() {
     document.getElementById('btnDukops').classList.remove('active');
     document.getElementById('btnAbsen').classList.remove('active');
     document.getElementById('btnHanpangan').classList.add('active');
-    if (typeof window.triggerPlayMusic === 'function') window.triggerPlayMusic();
 };
 
 // ================= BACKEND =================
@@ -405,8 +359,6 @@ async function loadSelectedDesa() {
 
     const fotoLabel = document.getElementById('labelFotoKegiatan');
     if (fotoLabel) fotoLabel.innerHTML = `<i class="fas fa-camera"></i> Foto Kegiatan: ${desaInfo.cleanName}`;
-
-    if (typeof window.triggerPlayMusic === 'function') window.triggerPlayMusic();
 
     loading.style.display = 'block';
     document.getElementById('previewKordinat').textContent = "Memuat koordinat...";
