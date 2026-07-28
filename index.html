@@ -30,13 +30,19 @@
     <!-- CSS MODULAR -->
     <link rel="stylesheet" href="css/main.css">
 
+    <!-- Sembunyikan tooltip indikator Supabase -->
+    <style>
+        .indicator-tooltip { display: none !important; }
+        .supabase-indicator { cursor: default; }
+    </style>
+
 </head>
 <body>
 
-    <!-- ====== INDIKATOR SUPABASE ====== -->
+    <!-- ====== INDIKATOR SUPABASE (tooltip disembunyikan) ====== -->
     <div id="supabaseIndicator" class="supabase-indicator indicator-checking" title="Status Koneksi Supabase">
         <div class="indicator-dot"></div>
-        <span class="indicator-tooltip">Menghubungkan...</span>
+        <span class="indicator-tooltip"></span>
     </div>
 
     <!-- ====== SPLASH SCREEN ====== -->
@@ -73,7 +79,7 @@
         <div class="dukops-header">
             <div class="dukops-header-row">
                 <div class="dukops-profile-area" id="desaProfileContainerHeader">
-                    <img id="desaProfileImgHeader" class="dukops-profile-img" src="icons/favicon-96x96.png" alt="Foto Profil">
+                    <img id="desaProfileImgHeader" class="dukops-profile-img" src="icons/favicon-96x96.png" alt="">
                     <div id="desaProfileNameHeader" class="dukops-profile-name" style="display:none;"></div>
                 </div>
                 <div class="dukops-title-area">
