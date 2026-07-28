@@ -609,7 +609,6 @@
             display: block;
         }
 
-        /* Preview textarea */
         .preview-textarea {
             width: 100%;
             padding: 12px;
@@ -628,9 +627,7 @@
             border-color: #FFD700;
         }
     </style>
-
 </head>
-
 <body>
 
     <div id="supabaseIndicator" class="supabase-indicator indicator-checking" title="Status Koneksi Supabase">
@@ -964,8 +961,6 @@
             document.addEventListener('click', firstInteraction);
             document.addEventListener('touchstart', firstInteraction);
             document.addEventListener('scroll', firstInteraction);
-
-            // Hapus fallback timeout untuk playMusic otomatis setelah 3 detik
         })();
     </script>
 
@@ -1137,7 +1132,6 @@
                 const url = PROFILE_BASE_URL + profileImagesGlobal[matched];
                 if (img) {
                     img.src = url + '?t=' + Date.now();
-                    // Fallback image onerror dihapus
                 }
                 if (name) { name.textContent = matched; name.style.display = 'block'; }
             } else {
@@ -1172,7 +1166,6 @@
                 const current = getNamaDesaTerpilih();
                 updateDesaProfile(current);
             } catch (e) {}
-            // Hapus panggilan twemoji.parse fallback
         });
     </script>
 
@@ -1656,31 +1649,23 @@
                 }
             }
 
-            async function loadDataFromSupabase() {
-                if (isLoadingData) return;
-                isLoadingData = true;
+            // ===== FUNGSI BARU: Load & Save ke Supabase =====
+            async function loadJadwalFromSupabase() {
+                if (!supabaseClient || !isSupabaseConnected) {
+                    console.warn('Supabase tidak terhubung, tidak bisa memuat data jadwal');
+                    document.getElementById('previewInfo').textContent = '⚠️ Supabase tidak terhubung';
+                    document.getElementById('previewInfo').style.color = '#ff9800';
+                    return false;
+                }
 
                 try {
-                    if (daftarNamaGlobal.length === 0) {
-                        await loadPiketDataFromGitHub();
-                        populateDropdowns();
-                    }
-
-                    if (!supabaseClient || !isSupabaseConnected) {
-                        document.getElementById('previewInfo').textContent = '⚠️ Supabase tidak terhubung - menggunakan data lokal';
-                        document.getElementById('previewInfo').style.color = '#ff9800';
-                        updatePreview();
-                        isLoadingData = false;
-                        return;
-                    }
-
                     const now = new Date();
                     const tomorrow = new Date();
                     tomorrow.setDate(now.getDate() + 1);
                     const todayStr = formatDateDB(now);
                     const tomorrowStr = formatDateDB(tomorrow);
 
-                    console.log('📡 Mencari data untuk tanggal:', todayStr, 'dan', tomorrowStr);
+                    console.log(`📡 Mencari data jadwal untuk: ${todayStr} dan ${tomorrowStr}`);
 
                     const { data, error } = await supabaseClient
                         .from('jadwal_piket')
@@ -1690,6 +1675,7 @@
 
                     if (error) throw error;
 
+                    // Reset semua dropdown ke kosong terlebih dahulu
                     JADWAL_DROPDOWN_IDS.forEach(id => {
                         const select = document.getElementById(id);
                         if (select) select.value = '';
@@ -1705,58 +1691,49 @@
                             'makodim_besok': ['j_nama4c_baru', 'j_nama4d_baru']
                         };
 
-                        let loadedCount = 0;
                         data.forEach(item => {
                             const ids = mapping[item.jenis];
                             if (ids) {
                                 if (item.nama1 && daftarNamaGlobal.includes(item.nama1)) {
                                     const select1 = document.getElementById(ids[0]);
-                                    if (select1) {
-                                        select1.value = item.nama1;
-                                        loadedCount++;
-                                    }
+                                    if (select1) select1.value = item.nama1;
                                 }
                                 if (item.nama2 && daftarNamaGlobal.includes(item.nama2)) {
                                     const select2 = document.getElementById(ids[1]);
-                                    if (select2) {
-                                        select2.value = item.nama2;
-                                        loadedCount++;
-                                    }
+                                    if (select2) select2.value = item.nama2;
                                 }
                             }
                         });
 
-                        document.getElementById('previewInfo').textContent = '✅ Data dari Supabase (' + data.length + ' item, ' + loadedCount + ' nama terisi)';
+                        document.getElementById('previewInfo').textContent = '✅ Data jadwal dimuat dari Supabase';
                         document.getElementById('previewInfo').style.color = '#4caf50';
                         updateAutoSaveStatus('saved', 'Data dimuat dari Supabase');
                         showToast('✅ Data jadwal dimuat dari Supabase', 'success');
-                        console.log('✅ Data loaded:', data.length, 'items,', loadedCount, 'names filled');
+                        console.log('✅ Data jadwal dari Supabase berhasil dimuat');
+                        return true;
                     } else {
-                        document.getElementById('previewInfo').textContent = '📭 Belum ada data - silakan pilih nama';
+                        document.getElementById('previewInfo').textContent = '📭 Tidak ada data di Supabase, silakan pilih nama';
                         document.getElementById('previewInfo').style.color = '#ff9800';
                         updateAutoSaveStatus('saved', 'Belum ada data tersimpan');
-                        showToast('📭 Belum ada data jadwal, silakan pilih nama', 'info');
+                        showToast('📭 Belum ada data jadwal di Supabase', 'info');
+                        console.log('📭 Tidak ada data jadwal di Supabase');
+                        return false;
                     }
-
-                    updatePreview();
-                    updateDateLabels();
-
                 } catch (error) {
-                    console.error('❌ Error load data:', error);
-                    document.getElementById('previewInfo').textContent = '❌ Gagal memuat data';
+                    console.error('❌ Gagal memuat data jadwal dari Supabase:', error);
+                    document.getElementById('previewInfo').textContent = '❌ Gagal memuat data dari Supabase';
                     document.getElementById('previewInfo').style.color = '#f44336';
                     updateAutoSaveStatus('error', 'Gagal memuat data');
-                    showToast('❌ Gagal memuat data dari Supabase', 'error');
-                } finally {
-                    isLoadingData = false;
+                    showToast('❌ Gagal memuat data jadwal', 'error');
+                    return false;
                 }
             }
 
-            async function autoSaveToSupabase() {
+            async function saveJadwalToSupabase() {
                 if (!supabaseClient || !isSupabaseConnected) {
                     updateAutoSaveStatus('error', 'Supabase tidak terhubung');
                     showToast('❌ Supabase tidak terhubung', 'error');
-                    return;
+                    return false;
                 }
 
                 try {
@@ -1766,7 +1743,7 @@
                         const el = document.getElementById(id);
                         return el ? el.value.trim() : '';
                     };
-                    
+
                     const now = new Date();
                     const tomorrow = new Date();
                     tomorrow.setDate(now.getDate() + 1);
@@ -1782,8 +1759,10 @@
                         { tanggal: tomorrowStr, jenis: 'makodim_besok', nama1: getVal('j_nama4c_baru'), nama2: getVal('j_nama4d_baru') }
                     ];
 
+                    // Hanya simpan yang memiliki nama (tidak kosong)
                     const valid = jadwalList.filter(j => j.nama1 || j.nama2);
 
+                    // Hapus data lama untuk kedua tanggal
                     await supabaseClient
                         .from('jadwal_piket')
                         .delete()
@@ -1802,23 +1781,27 @@
                         updateAutoSaveStatus('saved', 'Data tersimpan (' + valid.length + ' item)');
                         document.getElementById('previewInfo').textContent = '✅ Data tersimpan ke Supabase';
                         document.getElementById('previewInfo').style.color = '#4caf50';
-                        showToast('✅ Data jadwal tersimpan ke Supabase', 'success');
+                        showToast('✅ Data jadwal tersimpan', 'success');
+                        console.log(`✅ Data jadwal tersimpan (${valid.length} item)`);
                     } else {
                         updateAutoSaveStatus('saved', 'Tidak ada data untuk disimpan');
+                        console.log('ℹ️ Tidak ada data yang disimpan (semua kosong)');
                     }
+                    return true;
                 } catch (error) {
-                    console.error('❌ Auto-save error:', error);
+                    console.error('❌ Gagal menyimpan jadwal:', error);
                     updateAutoSaveStatus('error', 'Gagal menyimpan: ' + error.message);
-                    showToast('❌ Gagal menyimpan: ' + error.message, 'error');
+                    showToast('❌ Gagal menyimpan jadwal', 'error');
+                    return false;
                 }
             }
 
-            function triggerAutoSave() {
-                updatePreview();
+            function triggerAutoSaveJadwal() {
+                updatePreview(); // update preview dulu
                 if (autoSaveTimer) clearTimeout(autoSaveTimer);
                 autoSaveTimer = setTimeout(() => {
                     if (isSupabaseConnected) {
-                        autoSaveToSupabase();
+                        saveJadwalToSupabase();
                     } else {
                         updateAutoSaveStatus('error', 'Supabase tidak terhubung');
                     }
@@ -1828,8 +1811,9 @@
             // ===== INISIALISASI =====
             async function initJadwalBaru() {
                 if (isInitialized) {
+                    // Jika sudah diinisialisasi, tetap refresh data dari Supabase
                     if (isSupabaseConnected) {
-                        await loadDataFromSupabase();
+                        await loadJadwalFromSupabase();
                     }
                     return;
                 }
@@ -1837,31 +1821,37 @@
 
                 console.log('🔍 Inisialisasi Aplikasi Piket...');
 
+                // 1. Muat daftar nama dari GitHub
                 await loadPiketDataFromGitHub();
+                // 2. Muat hanpangan
                 await loadHanpanganData();
-
+                // 3. Isi dropdown dengan daftar nama
                 populateDropdowns();
+                // 4. Perbarui label tanggal
                 updateDateLabels();
 
+                // 5. Inisialisasi Supabase
                 await initSupabase();
 
+                // 6. Muat data jadwal dari Supabase (jika terhubung)
                 if (isSupabaseConnected) {
-                    await loadDataFromSupabase();
+                    await loadJadwalFromSupabase();
                 } else {
                     document.getElementById('previewInfo').textContent = '⚠️ Supabase tidak terhubung - menggunakan data lokal';
                     document.getElementById('previewInfo').style.color = '#ff9800';
-                    updatePreview();
                     showToast('⚠️ Supabase tidak terhubung', 'error');
                 }
 
+                // 7. Pasang event listener untuk auto-save
                 JADWAL_DROPDOWN_IDS.forEach(id => {
                     const sel = document.getElementById(id);
                     if (sel) {
-                        sel.removeEventListener('change', triggerAutoSave);
-                        sel.addEventListener('change', triggerAutoSave);
+                        sel.removeEventListener('change', triggerAutoSaveJadwal);
+                        sel.addEventListener('change', triggerAutoSaveJadwal);
                     }
                 });
 
+                // 8. Tombol WhatsApp
                 const btn = document.getElementById('whatsappBtnBaru');
                 if (btn) {
                     const newBtn = btn.cloneNode(true);
@@ -1869,7 +1859,7 @@
                     newBtn.addEventListener('click', (e) => {
                         e.preventDefault();
                         if (isSupabaseConnected) {
-                            autoSaveToSupabase();
+                            saveJadwalToSupabase();
                         }
                         const preview = document.getElementById('j_hasilPesanBaru');
                         const pesan = preview ? preview.value.trim() : '';
@@ -1879,8 +1869,12 @@
                     });
                 }
 
+                // 9. Sembunyikan loading
                 const loading = document.getElementById('j_loadingIndicatorBaru');
                 if (loading) loading.style.display = 'none';
+
+                // 10. Update preview awal
+                updatePreview();
 
                 console.log('✅ Inisialisasi selesai. Supabase:', isSupabaseConnected ? 'Terhubung' : 'Tidak terhubung');
                 console.log('📋 Total nama:', daftarNamaGlobal.length);
