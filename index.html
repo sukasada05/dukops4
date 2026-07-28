@@ -61,11 +61,6 @@
         </div>
     </div>
 
-    <!-- ====== AUDIO ====== -->
-    <audio id="backgroundMusic" loop preload="auto">
-        <source src="assets/audio/background.mp3" type="audio/mpeg">
-    </audio>
-
     <!-- ====== APP CONTAINER ====== -->
     <div id="appContainer" class="container" style="display: none; opacity: 0;">
 
@@ -85,9 +80,6 @@
                     <div class="dukops-header-title">KORAMIL 1609-05/SUKASADA</div>
                     <div class="dukops-header-address">
                         <i class="fas fa-map-marker-alt"></i> Jl. Jelantik Gingsir No. 32 Sukasada Singaraja-Bali 81161
-                    </div>
-                    <div class="audio-control-wrapper">
-                        <input id="audioVolumeSlider" class="audio-volume-slider" type="range" min="0" max="100" value="30" aria-label="Volume audio">
                     </div>
                     <div><span class="counter-value" id="submissionCounter" data-count="0">0</span></div>
                 </div>
@@ -126,11 +118,6 @@
                 <label><i class="fas fa-file-alt"></i> Narasi Kegiatan:</label>
                 <div class="narasi-wrapper">
                     <textarea id="narasi" class="auto-height-textarea" rows="6" placeholder="Masukkan narasi kegiatan...✍️" oninput="checkInputCompletion(); autoResizeNarasi()"></textarea>
-                    <div class="ai-template-container">
-                        <button class="ai-template-btn" id="aiTemplateBtn">
-                            <i class="fas fa-robot"></i> Template AI
-                        </button>
-                    </div>
                 </div>
 
                 <canvas id="canvas"></canvas>
@@ -202,17 +189,8 @@
         <div class="jadwal-toast" id="j_toastNotificationBaru"></div>
     </div>
 
-    <!-- ===== MODAL TEMPLATE AI ===== -->
-    <div id="templateModal" class="modal-ai">
-        <div class="modal-ai-content">
-            <div class="modal-ai-header">
-                <h3><i class="fas fa-robot"></i> Template Narasi AI</h3>
-                <button class="modal-close" id="closeModalBtn">&times;</button>
-            </div>
-            <div class="modal-ai-tabs" id="modalTabs"></div>
-            <div class="modal-ai-body" id="modalBody"></div>
-        </div>
-    </div>
+    <!-- ===== MODAL TEMPLATE AI (DIHAPUS) ===== -->
+    <!-- Tidak ada lagi modal AI -->
 
     <div id="absenScreenshotArea" style="position: fixed; left: -9999px; top: 0; width: 500px; background: white;"></div>
 
