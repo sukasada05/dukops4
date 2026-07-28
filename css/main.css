@@ -1,6 +1,6 @@
 /* ================================================================
    MAIN.CSS - IMPORT SEMUA FILE CSS DUKOPS
-   VERSI FINAL - TANPA AUDIO, TANPA TEMPLATE AI, TANPA JADWAL PIKET
+   VERSI FINAL - TANPA JADWAL PIKET, TANPA EFEK LED, TANPA CHAT
    ================================================================ */
 
 /* ================================================================
@@ -43,23 +43,18 @@
 @import url('tab-absen.css');
 
 /* ================================================================
-   8. POPUP & MODAL
+   8. POPUP
    ================================================================ */
 @import url('popup.css');
 @import url('thankyou-popup.css');
 
 /* ================================================================
-   9. SLIDER VOLUME (DIHAPUS KARENA AUDIO DIHAPUS)
-   ================================================================ */
-/* @import url('slider-volume.css'); */  /* ❌ DIHAPUS – tidak dipakai */
-
-/* ================================================================
-   10. RESPONSIVE
+   9. RESPONSIVE
    ================================================================ */
 @import url('responsive.css');
 
 /* ================================================================
-   11. HANPANGAN FULLSCREEN
+   10. HANPANGAN FULLSCREEN
    ================================================================ */
 @import url('hanpangan.css');
 
