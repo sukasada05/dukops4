@@ -26,8 +26,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
-
     <link rel="stylesheet" href="css/main.css">
 
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
@@ -967,7 +965,7 @@
             document.addEventListener('touchstart', firstInteraction);
             document.addEventListener('scroll', firstInteraction);
 
-            setTimeout(() => { if (!hasUserInteracted) playMusic(); }, 3000);
+            // Hapus fallback timeout untuk playMusic otomatis setelah 3 detik
         })();
     </script>
 
@@ -1139,7 +1137,7 @@
                 const url = PROFILE_BASE_URL + profileImagesGlobal[matched];
                 if (img) {
                     img.src = url + '?t=' + Date.now();
-                    img.onerror = function() { this.src = DEFAULT_FAVICON_URL; };
+                    // Fallback image onerror dihapus
                 }
                 if (name) { name.textContent = matched; name.style.display = 'block'; }
             } else {
@@ -1174,15 +1172,7 @@
                 const current = getNamaDesaTerpilih();
                 updateDesaProfile(current);
             } catch (e) {}
-            try {
-                if (window.twemoji && typeof twemoji.parse === 'function') {
-                    twemoji.parse(document.body, {
-                        folder: 'svg',
-                        ext: '.svg',
-                        attributes: function () { return { class: 'emoji', draggable: 'false' }; }
-                    });
-                }
-            } catch (e) {}
+            // Hapus panggilan twemoji.parse fallback
         });
     </script>
 
