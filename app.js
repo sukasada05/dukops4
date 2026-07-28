@@ -139,11 +139,13 @@ function showApp() {
                 document.getElementById('dukopsContent').style.display = 'block';
                 document.getElementById('absenContent').style.display = 'none';
                 document.getElementById('hanpanganContent').style.display = 'none';
+                document.getElementById('hanpanganContent').classList.remove('active');
             } else {
                 document.getElementById('btnDukops').classList.remove('active');
                 document.getElementById('dukopsContent').style.display = 'none';
                 document.getElementById('absenContent').style.display = 'block';
                 document.getElementById('hanpanganContent').style.display = 'none';
+                document.getElementById('hanpanganContent').classList.remove('active');
             }
         }, 100);
     }, 800);
@@ -154,6 +156,7 @@ window.showDukops = function() {
     document.getElementById('dukopsContent').style.display = 'block';
     document.getElementById('absenContent').style.display = 'none';
     document.getElementById('hanpanganContent').style.display = 'none';
+    document.getElementById('hanpanganContent').classList.remove('active');
     document.getElementById('btnDukops').classList.add('active');
     document.getElementById('btnAbsen').classList.remove('active');
     document.getElementById('btnHanpangan').classList.remove('active');
@@ -165,6 +168,7 @@ window.showAbsenTab = function() {
     document.getElementById('dukopsContent').style.display = 'none';
     document.getElementById('absenContent').style.display = 'block';
     document.getElementById('hanpanganContent').style.display = 'none';
+    document.getElementById('hanpanganContent').classList.remove('active');
     document.getElementById('btnDukops').classList.remove('active');
     document.getElementById('btnAbsen').classList.add('active');
     document.getElementById('btnHanpangan').classList.remove('active');
@@ -176,6 +180,7 @@ window.showHanpangan = function() {
     document.getElementById('dukopsContent').style.display = 'none';
     document.getElementById('absenContent').style.display = 'none';
     document.getElementById('hanpanganContent').style.display = 'block';
+    document.getElementById('hanpanganContent').classList.add('active');
     document.getElementById('btnDukops').classList.remove('active');
     document.getElementById('btnAbsen').classList.remove('active');
     document.getElementById('btnHanpangan').classList.add('active');
