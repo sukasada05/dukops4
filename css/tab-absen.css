@@ -117,60 +117,6 @@
 }
 
 /* ================================================================
-   PROGRESS BAR
-   ================================================================ */
-.absen-progress-container {
-    margin: 12px 0;
-    padding: 12px 0;
-    border-top: 2px solid var(--absen-border);
-    border-bottom: 2px solid var(--absen-border);
-}
-
-.absen-progress-label {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 15px !important;
-    font-weight: 800 !important;
-    color: var(--absen-text-dark) !important;
-    margin-bottom: 6px;
-    letter-spacing: 0.3px;
-}
-
-.absen-progress-label .progress-icon {
-    font-size: 18px;
-    margin-right: 4px;
-}
-
-.absen-progress-label .progress-value {
-    font-size: 18px !important;
-    font-weight: 900 !important;
-    color: var(--absen-text-dark) !important;
-    padding: 2px 12px;
-    border-radius: 20px;
-}
-
-/* WARNA PROGRESS VALUE */
-.progress-value.color-green { color: #2e7d32 !important; background: #e8f5e9 !important; }
-.progress-value.color-yellow { color: #f57f17 !important; background: #fff8e1 !important; }
-.progress-value.color-orange { color: #e65100 !important; background: #fff3e0 !important; }
-.progress-value.color-red { color: #c62828 !important; background: #ffebee !important; }
-
-.absen-progress-bar {
-    background: #e9ecef !important;
-    border-radius: 8px;
-    height: 10px !important;
-    overflow: hidden;
-}
-
-.absen-progress-fill {
-    height: 100%;
-    width: 0%;
-    border-radius: 8px;
-    background: #2d6a2d !important;
-}
-
-/* ================================================================
    DAFTAR DESA
    ================================================================ */
 .absen-desa-title {
