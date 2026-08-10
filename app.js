@@ -2,8 +2,6 @@
 const GOOGLE_APPS_SCRIPT_WEBHOOK = "https://script.google.com/macros/s/AKfycbz3sB1d0PRRzlvAJwdr8nl5dQa6qpyfHQCJbYxBMz0Jpj2o-i1_WnwMzJEy3Z4GA9uh/exec";
 const TARGET_LAPORAN = 9;
 
-// runtime debug removed for production
-
 // ================= VARIABEL GLOBAL =================
 let img = new Image();
 let selectedDesa = "";
@@ -179,12 +177,24 @@ window.showHanpangan = function() {
 // ================= BACKEND =================
 async function sendToBackend(action, data = {}) {
     try {
-        if (action === 'listFiles' || action === 'getConfig' || action === 'test' || action === 'telegramTest') {
+        // Daftar action yang diizinkan (sesuai backend)
+        const allowedActions = [
+            'listFiles', 'getConfig', 'test', 'uploadDrive',
+            'getJadwalData', 'getDesaList', 'getPetugas', 
+            'getPetugasByDate', 'getJadwalEpoch', 'cekGiliran',
+            'getPersonelList', 'status', 'saveFile', 'getFile'
+        ];
+        
+        if (!allowedActions.includes(action)) {
+            console.warn(`⚠️ Action "${action}" tidak tersedia di backend`);
+            return { success: false, error: `Action "${action}" tidak tersedia` };
+        }
+        
+        if (action === 'listFiles' || action === 'getConfig' || action === 'test') {
             let url = `${GOOGLE_APPS_SCRIPT_WEBHOOK}?action=${action}`;
             if (action === 'listFiles') {
                 if (data.desaFilter) url += `&desaFilter=${encodeURIComponent(data.desaFilter)}`;
                 if (data.monthFilter) url += `&monthFilter=${encodeURIComponent(data.monthFilter)}`;
-                if (data.readZips) url += `&readZips=true`;
             }
             const response = await fetch(url);
             return await response.json();
@@ -228,23 +238,6 @@ async function uploadToGoogleDrive(zipBlob, zipFileName, desaName, date) {
         return result.success === true;
     } catch (error) {
         console.error('Error upload ke Drive:', error);
-        return false;
-    }
-}
-
-async function sendZipToTelegram(zipBlob, filename, desaName) {
-    try {
-        const base64Data = await blobToBase64(zipBlob);
-        const desaInfo = normalizeDesaName(desaName);
-        const result = await sendToBackend('sendTelegram', {
-            fileName: filename,
-            desaName: desaInfo.cleanName,
-            fileData: base64Data,
-            mimeType: 'application/zip'
-        });
-        return result.success === true;
-    } catch (error) {
-        console.error('Error send to Telegram:', error);
         return false;
     }
 }
@@ -327,7 +320,6 @@ async function initializeApp() {
         }
 
         setupInstallPrompt();
-        // defensive: native select only
         resetCanvas();
 
         setTimeout(() => {
@@ -362,7 +354,6 @@ async function loadDesaList() {
             option.setAttribute('data-raw-name', desaName);
             select.appendChild(option);
         });
-        // Native select is used; no custom list population here.
         console.log(`✅ Loaded ${desaList.length} desas from server`);
         showNotification('✅ Daftar desa berhasil dimuat', 'success');
     } catch (error) {
@@ -375,9 +366,6 @@ async function loadDesaList() {
     }
 }
 
-// populateCustomDesaList removed: using native select only
-
-// When DOM is ready, ensure select change handlers run if options are present
 document.addEventListener('DOMContentLoaded', function () {
     try {
         const select = document.getElementById('selectDesa');
@@ -388,8 +376,6 @@ document.addEventListener('DOMContentLoaded', function () {
     } catch (e) {}
 });
 
-// Also attempt to load desa list as early as possible so the UI is usable.
-// If DOM is already ready, run immediately; otherwise bind to DOMContentLoaded.
 (function tryEarlyLoadDesa(){
     const run = () => {
         try {
@@ -405,7 +391,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 })();
 
-// Ensure desa list is loaded: retry a few times if initial attempts fail.
 function ensureDesaListLoaded(maxAttempts = 6, delayMs = 500) {
     let attempts = 0;
     const tryLoad = () => {
@@ -414,7 +399,7 @@ function ensureDesaListLoaded(maxAttempts = 6, delayMs = 500) {
             if (typeof loadDesaList === 'function') {
                 loadDesaList().then(() => {
                     const select = document.getElementById('selectDesa');
-                    if (select && select.options && select.options.length > 1) return; // done
+                    if (select && select.options && select.options.length > 1) return;
                     if (attempts < maxAttempts) setTimeout(tryLoad, delayMs);
                 }).catch(() => {
                     if (attempts < maxAttempts) setTimeout(tryLoad, delayMs);
@@ -429,10 +414,8 @@ function ensureDesaListLoaded(maxAttempts = 6, delayMs = 500) {
     tryLoad();
 }
 
-// Start ensuring the list is loaded as soon as possible
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => ensureDesaListLoaded()); else ensureDesaListLoaded();
 
-// Quick fallback: try once shortly after load to populate the select
 setTimeout(() => { try { if (typeof loadDesaList === 'function') loadDesaList().catch(()=>{}); } catch (e) {} }, 120);
 
 function normalizeDesaName(desaName) {
@@ -573,10 +556,8 @@ function updateDatePreview() {
         const displayText = date.toLocaleString('id-ID', options).replace(/:/g, '.');
         if (label) label.textContent = displayText;
     } else {
-        // preserve existing tanggalWaktu if present, otherwise clear
         if (!tglEl) {
             if (tanggalWaktu) {
-                // keep label in sync if possible
                 try {
                     const date = new Date(tanggalWaktu);
                     const options = { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
@@ -703,10 +684,7 @@ async function processSubmission() {
         a.click();
         document.body.removeChild(a);
 
-        // Kirim Telegram
-        await sendZipToTelegram(content, zipFileNameForBackend, selectedDesa);
-
-        // Upload Drive
+        // Upload Drive (Telegram sudah dihapus)
         const driveUploaded = await uploadToGoogleDrive(content, zipFileNameForBackend, selectedDesa, date);
 
         // Update counter
@@ -724,7 +702,6 @@ async function processSubmission() {
 
         if (desaData.count >= 9) {
             showThankYouPopup(desaInfo.cleanName, desaData.count);
-            await sendThankYouTelegram(desaInfo.cleanName, desaData.count);
         }
 
         saveSubmittedDate(tanggalWaktu);
@@ -758,7 +735,7 @@ function validateSubmission() {
     confirmMsg += `1. Didownload: ${desaInfo.cleanName} ${day} ${monthNum} ${year}.zip\n`;
     confirmMsg += `2. Berisi file:\n   - ${desaInfo.cleanName} ${day} ${monthName} ${year} Dukops.png\n`;
     confirmMsg += `   - ${desaInfo.cleanName} ${day} ${monthName} ${year} Narasi.txt\n`;
-    confirmMsg += `3. Dikirim ke Telegram & Drive: ${desaInfo.cleanName} ${day} ${monthNum} ${year}.zip`;
+    confirmMsg += `3. Dikirim ke Drive: ${desaInfo.cleanName} ${day} ${monthNum} ${year}.zip`;
 
     return confirm(confirmMsg);
 }
@@ -822,7 +799,6 @@ function loadDesaCounter() {
     const saved = localStorage.getItem('dukopsDesaCounter');
     desaCounter = saved ? JSON.parse(saved) : {};
 }
-
 
 function updateDesaCounter(desaName, fileName) {
     const date = new Date(tanggalWaktu);
@@ -891,7 +867,6 @@ function updateDesaHeaderImage(desaName) {
     const headerImage = document.getElementById('desaProfileImgHeader');
     if (!headerImage) return;
     const defaultUrl = 'icons/favicon-96x96.png';
-    // Use default icon only; profile images removed to avoid broken references.
     headerImage.src = defaultUrl;
 }
 
@@ -933,8 +908,7 @@ async function loadAttendanceData() {
     try {
         const result = await sendToBackend('listFiles', {
             desaFilter: selectedDesa ? normalizeDesaName(selectedDesa).cleanName : '',
-            monthFilter: document.getElementById('attendanceMonthFilter').value,
-            readZips: 'true'
+            monthFilter: document.getElementById('attendanceMonthFilter').value
         });
 
         if (result.success) {
@@ -1037,11 +1011,10 @@ function displayAttendanceList(files) {
                 const date = new Date(file.createdTime);
                 const dateStr = date.toLocaleDateString('id-ID', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
                 const size = file.size ? formatFileSize(file.size) : '?';
-                const zipContents = file.zipContents ? `** Isi ZIP: ${file.zipContents}` : '';
                 const displayIdx = desaFiles.length - idx;
                 html += `<div style="padding: 4px 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:13px;">
                     <div>${displayIdx}. ${file.name}</div>
-                    <div style="font-size:11px; color:#8899aa;">${dateStr} • ${size} ${zipContents ? '• '+zipContents : ''}</div>
+                    <div style="font-size:11px; color:#8899aa;">${dateStr} • ${size}</div>
                 </div>`;
             });
             html += `</div></div>`;
@@ -1152,27 +1125,6 @@ function showThankYouPopup(desaName, count) {
     `;
     document.body.appendChild(modal);
     setTimeout(() => { if (modal.parentNode) modal.remove(); }, 10000);
-}
-
-async function sendThankYouTelegram(desaName, count) {
-    try {
-        const message = `🎉 *SELAMAT!* 🎉
-
-*Babinsa ${desaName}* telah menyelesaikan *${count} laporan DUKOPS* untuk bulan ini!
-
-✅ *Target 9 laporan per bulan TERCAPAI!*
-
-Terima kasih atas dedikasi dan kerja keras dalam melaksanakan tugas DUKOPS.
-
-*Kodim 1609/Buleleng*`;
-
-        await sendToBackend('sendTelegramText', {
-            message: message,
-            chatId: '-1003020813628'
-        });
-    } catch (error) {
-        console.error('Gagal mengirim ucapan terima kasih ke Telegram:', error);
-    }
 }
 
 function showNotification(message, type) {
