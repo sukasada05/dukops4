@@ -15,47 +15,28 @@
     <link rel="icon" type="image/x-icon" href="icons/favicon.ico" />
     <link rel="icon" type="image/png" href="icons/favicon-96x96.png" sizes="96x96" />
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
-    <script>
-        (function () {
-            if (window.location.protocol !== 'file:') {
-                const link = document.createElement('link');
-                link.rel = 'manifest';
-                link.href = 'site.webmanifest';
-                document.head.appendChild(link);
-            }
-        })();
-    </script>
-
+    
     <!-- Library eksternal -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" onerror="this.onerror=null;this.src='html2canvas.min.js'"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
     <!-- CSS MODULAR -->
     <link rel="stylesheet" href="css/main.css">
 
-    <!-- ============================================ -->
-    <!-- CURSOR DUKOPS - TANPA FILE EKSTERNAL         -->
-    <!-- ============================================ -->
     <style>
         /* ============================================
            CURSOR DUKOPS - TANPA FILE EKSTERNAL
-           Menggunakan system cursor + efek CSS
            ============================================ */
-
-        /* Sembunyikan tooltip indikator Supabase */
+        
         .indicator-tooltip { display: none !important; }
         .supabase-indicator { cursor: default; }
 
-        /* ========== DESKTOP CURSOR ========== */
+        /* ========== DESKTOP ========== */
         @media (hover: hover) and (pointer: fine) {
-            /* Default cursor */
-            * {
-                cursor: default;
-            }
+            * { cursor: default; }
             
-            /* Link & Button dengan efek */
             a, a *, button, input[type="submit"], input[type="button"],
             input[type="reset"], select, [role="button"], [role="link"],
             [onclick], .nav-btn, .clickable, .tab {
@@ -63,63 +44,24 @@
                 transition: transform 0.2s, box-shadow 0.2s;
             }
             
-            /* Hover efek untuk button */
             button:hover, .btn:hover, [onclick]:hover,
             .nav-btn:hover, .tab:hover {
                 transform: scale(1.02);
                 box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
             }
             
-            /* Text Input */
             input[type="text"], input[type="password"], input[type="email"],
             input[type="number"], input[type="tel"], input[type="url"],
             input[type="search"], textarea, [contenteditable="true"] {
                 cursor: text;
             }
             
-            /* Loading */
-            .loading, .processing, .waiting, [data-loading="true"],
-            .splash-progress-center {
+            .loading, .processing, .waiting, [data-loading="true"] {
                 cursor: wait;
             }
             
-            /* Progress */
-            .progress, [data-progress="true"] {
-                cursor: progress;
-            }
-            
-            /* Help */
-            [title], [data-tooltip], .help, .tooltip-trigger {
-                cursor: help;
-            }
-            
-            /* Disabled */
-            .disabled, [disabled], :disabled, [aria-disabled="true"],
-            .not-allowed {
+            .disabled, [disabled], :disabled, .not-allowed {
                 cursor: not-allowed;
-            }
-            
-            /* Custom Glow Effect untuk Desktop */
-            .cursor-glow {
-                position: relative;
-            }
-            
-            .cursor-glow:hover::after {
-                content: '';
-                position: fixed;
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                background: radial-gradient(circle, rgba(255, 215, 0, 0.3), transparent);
-                pointer-events: none;
-                z-index: 9999;
-                transform: translate(-50%, -50%);
-                animation: glowPulse 1.5s ease-in-out infinite;
-            }
-            
-            @keyframes glowPulse {
-                0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
-                50% { transform: translate(-50%, -50%) scale(1.8); opacity: 0.2; }
             }
         }
 
@@ -174,15 +116,6 @@
             .loading, .waiting { cursor: wait; }
             .disabled, [disabled] { cursor: not-allowed; }
         }
-
-        /* ========== GLOW CURSOR ========== */
-        .glow-cursor {
-            cursor: pointer;
-        }
-
-        .glow-cursor:active {
-            transform: scale(0.95);
-        }
     </style>
 
 </head>
@@ -201,27 +134,22 @@
                 <img src="icons/favicon-96x96.png" alt="Lambang Kodam Udayana">
             </div>
             <div class="splash-title-center">KORAMIL 1609-05/SUKASADA</div>
-            <div class="splash-title-center"></div>
             <div class="splash-divider-center"></div>
-            <div class="splash-subtitle-center"></div>
-            <div class="splash-kodim-center"></div>
             <div class="splash-progress-center">
                 <div class="splash-progress-bar-center" id="splashProgressBar"></div>
             </div>
             <div class="splash-percentage-center" id="progressPercentage">10%</div>
-            <div class="splash-army"></div>
         </div>
     </div>
 
     <!-- ====== APP CONTAINER ====== -->
     <div id="appContainer" class="container" style="display: none; opacity: 0;">
 
-        <!-- Install Button -->
         <button id="installButton" style="display:none;">
             <i class="fas fa-download"></i> Install App
         </button>
 
-        <!-- ===== HEADER ===== -->
+        <!-- HEADER -->
         <div class="dukops-header">
             <div class="dukops-header-row">
                 <div class="dukops-title-area">
@@ -230,14 +158,14 @@
             </div>
         </div>
 
-        <!-- ===== NAVIGASI ===== -->
+        <!-- NAVIGASI -->
         <div class="nav-buttons">
             <button class="nav-btn nav-btn-dukops active" id="btnDukops" onclick="showDukops()">DUKOPS</button>
             <button class="nav-btn nav-btn-absen" id="btnAbsen" onclick="showAbsenTab()">ABSEN</button>
             <button class="nav-btn nav-btn-hanpangan" id="btnHanpangan" onclick="showHanpangan()">PIKET</button>
         </div>
 
-        <!-- ===== CONTENT DUKOPS ===== -->
+        <!-- CONTENT DUKOPS -->
         <div id="dukopsContent">
             <div style="width:100%; margin:0 auto;">
 
@@ -303,7 +231,7 @@
             </div>
         </div>
 
-        <!-- ===== ABSEN ===== -->
+        <!-- ABSEN -->
         <div id="absenContent" style="display: none;">
             <div class="absen-card">
                 <div class="absen-filter-row">
@@ -321,7 +249,7 @@
             <div class="absen-info-text">✨ Mangsatria@2026</div>
         </div>
 
-        <!-- ===== PIKET ===== -->
+        <!-- PIKET -->
         <div id="hanpanganContent">
             <iframe src="https://sukasada05.github.io/Hanpangan/" title="PIKET"></iframe>
         </div>
@@ -332,28 +260,18 @@
 
     <!-- ====== JAVASCRIPT CURSOR ====== -->
     <script>
-    /**
-     * CURSOR DUKOPS - TANPA FILE EKSTERNAL
-     * Auto Detect Desktop & Android
-     */
     (function() {
         'use strict';
         
-        // ========== DETEKSI ==========
         const isTouch = 'ontouchstart' in window || 
                         navigator.maxTouchPoints > 0 ||
                         window.matchMedia('(hover: none)').matches;
         
         const isAndroid = /Android/i.test(navigator.userAgent);
-        const isDesktop = !isTouch && !isAndroid;
         
-        // ========== TOUCH FEEDBACK (ANDROID) ==========
-        function enableTouchFeedback() {
-            if (!isTouch && !isAndroid) return;
-            
+        if (isTouch || isAndroid) {
             document.documentElement.classList.add('touch-device');
             
-            // Haptic vibrate untuk Android
             if (isAndroid && navigator.vibrate) {
                 document.addEventListener('touchstart', function(e) {
                     const target = e.target.closest('button, .btn, [onclick], a');
@@ -364,17 +282,6 @@
             }
         }
         
-        // ========== FUNGSI GLOBAL ==========
-        window.setCursor = function(element, type) {
-            // Tidak perlu set cursor karena pakai system cursor
-            return;
-        };
-        
-        window.resetCursor = function(element) {
-            // Tidak perlu reset cursor
-            return;
-        };
-        
         window.showLoading = function() {
             document.body.classList.add('loading');
         };
@@ -383,24 +290,8 @@
             document.body.classList.remove('loading');
         };
         
-        // ========== INISIALISASI ==========
-        function init() {
-            enableTouchFeedback();
-            
-            // Export status
-            window.isTouchDevice = isTouch;
-            window.isAndroidDevice = isAndroid;
-            window.isDesktopDevice = isDesktop;
-            
-            console.log('🎯 Cursor System Ready');
-            console.log('📱 Device:', isAndroid ? 'Android' : isTouch ? 'Touch' : 'Desktop');
-        }
-        
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
-        } else {
-            init();
-        }
+        console.log('🎯 Cursor System Ready');
+        console.log('📱 Device:', isAndroid ? 'Android' : isTouch ? 'Touch' : 'Desktop');
         
     })();
     </script>
@@ -409,7 +300,7 @@
     <script src="app.js"></script>
     
     <script>
-        // Ensure desa list loads after app.js is available
+        // Load desa list
         (function(){
             try {
                 const run = () => { try { if (typeof loadDesaList === 'function') loadDesaList().catch(()=>{}); } catch(e){} };
