@@ -11,12 +11,16 @@
     <meta name="apple-mobile-web-app-title" content="DUKOPS">
     <title>SISTEM PELAPORAN DUKOPS BABINSA</title>
     <meta name="theme-color" content="#0a1a3a">
+    
+    <base href="/dukops4/">
 
     <link rel="icon" type="image/x-icon" href="icons/favicon.ico" />
     <link rel="icon" type="image/png" href="icons/favicon-96x96.png" sizes="96x96" />
     <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
-    
+    <link rel="manifest" href="site.webmanifest" />
+
     <!-- Library eksternal -->
+    <script src="https://cdn.polyfill.io/v3/polyfill.min.js?features=default,es6,Promise,fetch,Array.prototype.includes"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -25,103 +29,16 @@
     <!-- CSS MODULAR -->
     <link rel="stylesheet" href="css/main.css">
 
+    <!-- Sembunyikan tooltip indikator Supabase -->
     <style>
-        /* ============================================
-           CURSOR DUKOPS - TANPA FILE EKSTERNAL
-           ============================================ */
-        
         .indicator-tooltip { display: none !important; }
         .supabase-indicator { cursor: default; }
-
-        /* ========== DESKTOP ========== */
-        @media (hover: hover) and (pointer: fine) {
-            * { cursor: default; }
-            
-            a, a *, button, input[type="submit"], input[type="button"],
-            input[type="reset"], select, [role="button"], [role="link"],
-            [onclick], .nav-btn, .clickable, .tab {
-                cursor: pointer;
-                transition: transform 0.2s, box-shadow 0.2s;
-            }
-            
-            button:hover, .btn:hover, [onclick]:hover,
-            .nav-btn:hover, .tab:hover {
-                transform: scale(1.02);
-                box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
-            }
-            
-            input[type="text"], input[type="password"], input[type="email"],
-            input[type="number"], input[type="tel"], input[type="url"],
-            input[type="search"], textarea, [contenteditable="true"] {
-                cursor: text;
-            }
-            
-            .loading, .processing, .waiting, [data-loading="true"] {
-                cursor: wait;
-            }
-            
-            .disabled, [disabled], :disabled, .not-allowed {
-                cursor: not-allowed;
-            }
-        }
-
-        /* ========== ANDROID / TOUCH ========== */
-        @media (hover: none) and (pointer: coarse) {
-            * { cursor: default !important; }
-            
-            button, .btn, [onclick], .nav-btn, .tab {
-                transition: transform 0.15s, opacity 0.15s;
-                -webkit-tap-highlight-color: transparent;
-                position: relative;
-                overflow: hidden;
-            }
-            
-            button:active, .btn:active, [onclick]:active,
-            .nav-btn:active, .tab:active {
-                transform: scale(0.93);
-                opacity: 0.7;
-            }
-            
-            button:active::after, .btn:active::after, [onclick]:active::after,
-            .nav-btn:active::after, .tab:active::after {
-                content: '';
-                position: absolute;
-                inset: 0;
-                background: radial-gradient(circle at center, rgba(255,255,255,0.2), transparent 70%);
-                animation: touchRipple 0.6s ease-out;
-                pointer-events: none;
-            }
-            
-            @keyframes touchRipple {
-                0% { transform: scale(0); opacity: 1; }
-                100% { transform: scale(2.5); opacity: 0; }
-            }
-            
-            a:active {
-                opacity: 0.6;
-                background: rgba(255, 255, 255, 0.1);
-            }
-            
-            *:hover {
-                transform: none !important;
-                background: none !important;
-            }
-        }
-
-        /* ========== FALLBACK ========== */
-        @supports not (cursor: pointer) {
-            * { cursor: auto; }
-            a, button, [onclick] { cursor: hand; }
-            input, textarea { cursor: text; }
-            .loading, .waiting { cursor: wait; }
-            .disabled, [disabled] { cursor: not-allowed; }
-        }
     </style>
 
 </head>
 <body>
 
-    <!-- ====== INDIKATOR SUPABASE ====== -->
+    <!-- ====== INDIKATOR SUPABASE (tooltip disembunyikan) ====== -->
     <div id="supabaseIndicator" class="supabase-indicator indicator-checking" title="Status Koneksi Supabase">
         <div class="indicator-dot"></div>
         <span class="indicator-tooltip"></span>
@@ -133,48 +50,62 @@
             <div class="splash-logo-center">
                 <img src="icons/favicon-96x96.png" alt="Lambang Kodam Udayana">
             </div>
-            <div class="splash-title-center">KORAMIL 1609-05/SUKASADA</div>
+            <div class="splash-title-center">DUKOPS</div>
+            <div class="splash-title-center">BABINSA SUKASADA</div>
             <div class="splash-divider-center"></div>
+            <div class="splash-subtitle-center">KODIM 1609/BULELENG</div>
+            <div class="splash-unit-center">KORAMIL 1609-05/SUKASADA</div>
+            <div class="splash-kodim-center">Sistem Pelaporan Digitalisasi Babinsa</div>
             <div class="splash-progress-center">
                 <div class="splash-progress-bar-center" id="splashProgressBar"></div>
             </div>
-            <div class="splash-percentage-center" id="progressPercentage">10%</div>
+            <div class="splash-percentage-center" id="progressPercentage">20%</div>
+            <div class="splash-army">
+                <img id="splashArmyGif" src="army.gif" alt="army" style="max-width:240px; width:100%; height:auto; display:block; margin:0 auto;">
+            </div>
         </div>
     </div>
 
     <!-- ====== APP CONTAINER ====== -->
     <div id="appContainer" class="container" style="display: none; opacity: 0;">
 
+        <!-- Install Button -->
         <button id="installButton" style="display:none;">
             <i class="fas fa-download"></i> Install App
         </button>
 
-        <!-- HEADER -->
+        <!-- ===== HEADER ===== -->
         <div class="dukops-header">
             <div class="dukops-header-row">
+                <div class="dukops-profile-area" id="desaProfileContainerHeader">
+                    <img id="desaProfileImgHeader" class="dukops-profile-img" src="icons/favicon-96x96.png" alt="">
+                    <div id="desaProfileNameHeader" class="dukops-profile-name" style="display:none;"></div>
+                </div>
                 <div class="dukops-title-area">
-                    <div class="dukops-header-title"></div>
+                    <div class="dukops-header-title">KORAMIL 1609-05/SUKASADA</div>
+                    <div class="dukops-header-address">
+                        <i class="fas fa-map-marker-alt"></i> Jl. Jelantik Gingsir No. 32 Sukasada Singaraja-Bali 81161
+                    </div>
+                    <div><span class="counter-value" id="submissionCounter" data-count="0">0</span></div>
                 </div>
             </div>
         </div>
 
-        <!-- NAVIGASI -->
+        <!-- ===== NAVIGASI ===== -->
         <div class="nav-buttons">
             <button class="nav-btn nav-btn-dukops active" id="btnDukops" onclick="showDukops()">DUKOPS</button>
             <button class="nav-btn nav-btn-absen" id="btnAbsen" onclick="showAbsenTab()">ABSEN</button>
             <button class="nav-btn nav-btn-hanpangan" id="btnHanpangan" onclick="showHanpangan()">PIKET</button>
         </div>
 
-        <!-- CONTENT DUKOPS -->
+        <!-- ===== CONTENT DUKOPS ===== -->
         <div id="dukopsContent">
             <div style="width:100%; margin:0 auto;">
 
                 <label id="labelPilihDesa"><i class="fas fa-city"></i> Pilih Desa/Kelurahan:</label>
-                <div class="select-wrapper" style="position:relative;">
-                    <select id="selectDesa" onchange="loadSelectedDesa()">
-                        <option value="">--Pilih desa/Kelurahan--</option>
-                    </select>
-                </div>
+                <select id="selectDesa" onchange="loadSelectedDesa()">
+                    <option value="">--Pilih desa/Kelurahan--</option>
+                </select>
                 <div id="loadingDesa" style="display:none;"><i class="fas fa-spinner fa-spin"></i> Memuat...</div>
                 <div class="previewBox" id="previewDesa" style="display:none;"></div>
 
@@ -184,6 +115,7 @@
 
                 <label id="labelFotoKegiatan"><i class="fas fa-camera"></i> Foto Kegiatan:</label>
                 <input type="file" id="gambar" accept="image/*" onchange="previewImage()">
+                <div class="previewBox" id="previewGambar"></div>
 
                 <label id="labelTanggalWaktu"><i class="fas fa-calendar-alt"></i> Tanggal & Waktu: <span id="tanggalWaktuLabelText">Pilih tanggal & waktu</span></label>
                 <input type="datetime-local" id="tanggalWaktu" onchange="updateDatePreview()">
@@ -231,7 +163,7 @@
             </div>
         </div>
 
-        <!-- ABSEN -->
+        <!-- ===== ABSEN ===== -->
         <div id="absenContent" style="display: none;">
             <div class="absen-card">
                 <div class="absen-filter-row">
@@ -244,12 +176,17 @@
                         <select id="absenBulanSelect" disabled><option>Pilih tahun</option></select>
                     </div>
                 </div>
+                <div class="absen-btn-download-container">
+                    <button onclick="shareAsPNGAbsen()" class="absen-btn-download" id="downloadAbsenBtn">
+                        <i class="fas fa-download"></i> DOWNLOAD ABSEN PNG
+                    </button>
+                </div>
             </div>
             <div id="absenResultContainer"></div>
             <div class="absen-info-text">✨ Mangsatria@2026</div>
         </div>
 
-        <!-- PIKET -->
+        <!-- ===== PIKET (FULLSCREEN) ===== -->
         <div id="hanpanganContent">
             <iframe src="https://sukasada05.github.io/Hanpangan/" title="PIKET"></iframe>
         </div>
@@ -258,57 +195,8 @@
 
     <div id="absenScreenshotArea" style="position: fixed; left: -9999px; top: 0; width: 500px; background: white;"></div>
 
-    <!-- ====== JAVASCRIPT CURSOR ====== -->
-    <script>
-    (function() {
-        'use strict';
-        
-        const isTouch = 'ontouchstart' in window || 
-                        navigator.maxTouchPoints > 0 ||
-                        window.matchMedia('(hover: none)').matches;
-        
-        const isAndroid = /Android/i.test(navigator.userAgent);
-        
-        if (isTouch || isAndroid) {
-            document.documentElement.classList.add('touch-device');
-            
-            if (isAndroid && navigator.vibrate) {
-                document.addEventListener('touchstart', function(e) {
-                    const target = e.target.closest('button, .btn, [onclick], a');
-                    if (target) {
-                        navigator.vibrate(10);
-                    }
-                }, { passive: true });
-            }
-        }
-        
-        window.showLoading = function() {
-            document.body.classList.add('loading');
-        };
-        
-        window.hideLoading = function() {
-            document.body.classList.remove('loading');
-        };
-        
-        console.log('🎯 Cursor System Ready');
-        console.log('📱 Device:', isAndroid ? 'Android' : isTouch ? 'Touch' : 'Desktop');
-        
-    })();
-    </script>
-
-    <!-- ====== APP JS ====== -->
+    <!-- ====== SATU SCRIPT EKSTERNAL ====== -->
     <script src="app.js"></script>
-    
-    <script>
-        // Load desa list
-        (function(){
-            try {
-                const run = () => { try { if (typeof loadDesaList === 'function') loadDesaList().catch(()=>{}); } catch(e){} };
-                if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else setTimeout(run, 50);
-                try { window.addEventListener('focus', run); document.addEventListener('visibilitychange', function(){ if (document.visibilityState === 'visible') run(); }); } catch(e) {}
-            } catch (e) {}
-        })();
-    </script>
 
 </body>
 </html>
