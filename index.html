@@ -26,72 +26,100 @@
         })();
     </script>
 
-    <!-- ====== CSS CURSOR ====== -->
+    <!-- Library eksternal -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" onerror="this.onerror=null;this.src='html2canvas.min.js'"></script>
+
+    <!-- CSS MODULAR -->
+    <link rel="stylesheet" href="css/main.css">
+
+    <!-- ============================================ -->
+    <!-- CURSOR DUKOPS - TANPA FILE EKSTERNAL         -->
+    <!-- ============================================ -->
     <style>
         /* ============================================
-           CURSOR DUKOPS - SIAP PAKAI
-           Auto Detect Desktop & Android
+           CURSOR DUKOPS - TANPA FILE EKSTERNAL
+           Menggunakan system cursor + efek CSS
            ============================================ */
 
-        /* ---------- ROOT VARIABLES ---------- */
-        :root {
-            --cursor-path: 'cursors/';
-            --cursor-default: var(--cursor-path) 'cursor1.cur', auto;
-            --cursor-pointer: var(--cursor-path) 'cursor2.cur', pointer;
-            --cursor-text: var(--cursor-path) 'cursor7.cur', text;
-            --cursor-wait: var(--cursor-path) 'cursor3.ani', wait;
-            --cursor-progress: var(--cursor-path) 'cursor4.ani', progress;
-            --cursor-help: var(--cursor-path) 'cursor8.cur', help;
-            --cursor-grab: var(--cursor-path) 'cursor5.ani', grab;
-            --cursor-grabbing: var(--cursor-path) 'cursor6.ani', grabbing;
-            --cursor-not-allowed: var(--cursor-path) 'cursor10.cur', not-allowed;
-            --cursor-zoom-in: var(--cursor-path) 'cursor9.ani', zoom-in;
-        }
+        /* Sembunyikan tooltip indikator Supabase */
+        .indicator-tooltip { display: none !important; }
+        .supabase-indicator { cursor: default; }
 
         /* ========== DESKTOP CURSOR ========== */
         @media (hover: hover) and (pointer: fine) {
-            * { cursor: var(--cursor-default); }
+            /* Default cursor */
+            * {
+                cursor: default;
+            }
             
+            /* Link & Button dengan efek */
             a, a *, button, input[type="submit"], input[type="button"],
             input[type="reset"], select, [role="button"], [role="link"],
             [onclick], .nav-btn, .clickable, .tab {
-                cursor: var(--cursor-pointer);
+                cursor: pointer;
+                transition: transform 0.2s, box-shadow 0.2s;
             }
             
+            /* Hover efek untuk button */
+            button:hover, .btn:hover, [onclick]:hover,
+            .nav-btn:hover, .tab:hover {
+                transform: scale(1.02);
+                box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+            }
+            
+            /* Text Input */
             input[type="text"], input[type="password"], input[type="email"],
             input[type="number"], input[type="tel"], input[type="url"],
             input[type="search"], textarea, [contenteditable="true"] {
-                cursor: var(--cursor-text);
+                cursor: text;
             }
             
+            /* Loading */
             .loading, .processing, .waiting, [data-loading="true"],
             .splash-progress-center {
-                cursor: var(--cursor-wait);
+                cursor: wait;
             }
             
+            /* Progress */
             .progress, [data-progress="true"] {
-                cursor: var(--cursor-progress);
+                cursor: progress;
             }
             
+            /* Help */
             [title], [data-tooltip], .help, .tooltip-trigger {
-                cursor: var(--cursor-help);
+                cursor: help;
             }
             
-            .draggable, .drag-handle, [data-drag="true"] {
-                cursor: var(--cursor-grab);
-            }
-            
-            .draggable:active, .drag-handle:active, [data-drag="true"]:active {
-                cursor: var(--cursor-grabbing);
-            }
-            
+            /* Disabled */
             .disabled, [disabled], :disabled, [aria-disabled="true"],
             .not-allowed {
-                cursor: var(--cursor-not-allowed);
+                cursor: not-allowed;
             }
             
-            .zoom-in, [data-zoom="in"] {
-                cursor: var(--cursor-zoom-in);
+            /* Custom Glow Effect untuk Desktop */
+            .cursor-glow {
+                position: relative;
+            }
+            
+            .cursor-glow:hover::after {
+                content: '';
+                position: fixed;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                background: radial-gradient(circle, rgba(255, 215, 0, 0.3), transparent);
+                pointer-events: none;
+                z-index: 9999;
+                transform: translate(-50%, -50%);
+                animation: glowPulse 1.5s ease-in-out infinite;
+            }
+            
+            @keyframes glowPulse {
+                0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+                50% { transform: translate(-50%, -50%) scale(1.8); opacity: 0.2; }
             }
         }
 
@@ -139,27 +167,23 @@
         }
 
         /* ========== FALLBACK ========== */
-        @supports not (cursor: var(--cursor-default)) {
+        @supports not (cursor: pointer) {
             * { cursor: auto; }
-            a, button, [onclick] { cursor: pointer; }
+            a, button, [onclick] { cursor: hand; }
             input, textarea { cursor: text; }
             .loading, .waiting { cursor: wait; }
             .disabled, [disabled] { cursor: not-allowed; }
         }
 
-        /* ========== SEMBUNYIKAN TOOLTIP ========== */
-        .indicator-tooltip { display: none !important; }
-        .supabase-indicator { cursor: default; }
+        /* ========== GLOW CURSOR ========== */
+        .glow-cursor {
+            cursor: pointer;
+        }
+
+        .glow-cursor:active {
+            transform: scale(0.95);
+        }
     </style>
-
-    <!-- Library eksternal -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js" onerror="this.onerror=null;this.src='html2canvas.min.js'"></script>
-
-    <!-- CSS MODULAR -->
-    <link rel="stylesheet" href="css/main.css">
 
 </head>
 <body>
@@ -309,7 +333,7 @@
     <!-- ====== JAVASCRIPT CURSOR ====== -->
     <script>
     /**
-     * CURSOR DUKOPS - SIAP PAKAI
+     * CURSOR DUKOPS - TANPA FILE EKSTERNAL
      * Auto Detect Desktop & Android
      */
     (function() {
@@ -322,30 +346,6 @@
         
         const isAndroid = /Android/i.test(navigator.userAgent);
         const isDesktop = !isTouch && !isAndroid;
-        
-        // ========== LOAD CURSOR (DESKTOP) ==========
-        function loadCursors() {
-            if (!isDesktop) return;
-            
-            const style = document.createElement('style');
-            style.id = 'cursor-style';
-            style.textContent = `
-                :root {
-                    --cursor-path: 'cursors/';
-                    --cursor-default: url('cursors/cursor1.cur'), auto;
-                    --cursor-pointer: url('cursors/cursor2.cur'), pointer;
-                    --cursor-text: url('cursors/cursor7.cur'), text;
-                    --cursor-wait: url('cursors/cursor3.ani'), wait;
-                    --cursor-progress: url('cursors/cursor4.ani'), progress;
-                    --cursor-help: url('cursors/cursor8.cur'), help;
-                    --cursor-grab: url('cursors/cursor5.ani'), grab;
-                    --cursor-grabbing: url('cursors/cursor6.ani'), grabbing;
-                    --cursor-not-allowed: url('cursors/cursor10.cur'), not-allowed;
-                    --cursor-zoom-in: url('cursors/cursor9.ani'), zoom-in;
-                }
-            `;
-            document.head.appendChild(style);
-        }
         
         // ========== TOUCH FEEDBACK (ANDROID) ==========
         function enableTouchFeedback() {
@@ -366,54 +366,34 @@
         
         // ========== FUNGSI GLOBAL ==========
         window.setCursor = function(element, type) {
-            if (!isDesktop) return;
-            
-            const cursors = {
-                'default': 'cursor1.cur',
-                'pointer': 'cursor2.cur',
-                'text': 'cursor7.cur',
-                'wait': 'cursor3.ani',
-                'progress': 'cursor4.ani',
-                'help': 'cursor8.cur',
-                'grab': 'cursor5.ani',
-                'grabbing': 'cursor6.ani',
-                'not-allowed': 'cursor10.cur',
-                'zoom-in': 'cursor9.ani'
-            };
-            
-            const el = typeof element === 'string' ? document.querySelector(element) : element;
-            if (el && cursors[type]) {
-                el.style.cursor = `url('cursors/${cursors[type]}'), ${type}`;
-            }
+            // Tidak perlu set cursor karena pakai system cursor
+            return;
         };
         
         window.resetCursor = function(element) {
-            if (!isDesktop) return;
-            const el = typeof element === 'string' ? document.querySelector(element) : element;
-            if (el) {
-                el.style.cursor = '';
-            }
+            // Tidak perlu reset cursor
+            return;
         };
         
         window.showLoading = function() {
-            if (isDesktop) document.body.style.cursor = 'wait';
             document.body.classList.add('loading');
         };
         
         window.hideLoading = function() {
-            if (isDesktop) document.body.style.cursor = '';
             document.body.classList.remove('loading');
         };
         
         // ========== INISIALISASI ==========
         function init() {
-            loadCursors();
             enableTouchFeedback();
             
             // Export status
             window.isTouchDevice = isTouch;
             window.isAndroidDevice = isAndroid;
             window.isDesktopDevice = isDesktop;
+            
+            console.log('🎯 Cursor System Ready');
+            console.log('📱 Device:', isAndroid ? 'Android' : isTouch ? 'Touch' : 'Desktop');
         }
         
         if (document.readyState === 'loading') {
