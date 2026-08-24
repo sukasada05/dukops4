@@ -10,7 +10,6 @@ let currentKoordinat = "";
 let tanggalWaktu = "";
 let submittedDates = [];
 let desaCounter = {};
-let attendanceData = [];
 let deferredPrompt = null;
 let swWaiting = null;
 
@@ -177,7 +176,6 @@ window.showHanpangan = function() {
 // ================= BACKEND =================
 async function sendToBackend(action, data = {}) {
     try {
-        // Daftar action yang diizinkan (sesuai backend)
         const allowedActions = [
             'listFiles', 'getConfig', 'test', 'uploadDrive',
             'getJadwalData', 'getDesaList', 'getPetugas', 
@@ -441,12 +439,6 @@ async function loadSelectedDesa() {
     selectedDesa = selectedOption.getAttribute('data-raw-name') || selectedOption.text;
 
     updateDesaHeaderImage(selectedDesa);
-    updateAttendanceButtonState();
-    updateAttendanceSelectedDesaLabel();
-
-    if (document.getElementById('attendancePanel')?.style.display === 'block') {
-        loadAttendanceData();
-    }
 
     const desaInfo = normalizeDesaName(selectedDesa);
     const previewDesaEl = document.getElementById('previewDesa');
@@ -601,32 +593,87 @@ function updatePreview() {
 
     if (selectedDesa || currentKoordinat || tanggalWaktu) {
         ctx.textAlign = "right";
-        ctx.font = "36px Arial";
+        ctx.font = "bold 36px Arial";
         const bottomMargin = 20;
-        const lineHeight = 40;
+        const lineHeight = 44;
         const rightMargin = 10;
 
+        // Fungsi untuk menggambar teks dengan shadow dan outline
+        function drawTextWithShadow(text, x, y, color = "#FFFFFF") {
+            // Simpan state ctx
+            ctx.save();
+            
+            // Shadow untuk efek bayangan
+            ctx.shadowColor = "rgba(0, 0, 0, 0.85)";
+            ctx.shadowBlur = 10;
+            ctx.shadowOffsetX = 3;
+            ctx.shadowOffsetY = 3;
+            
+            // Gambar teks dengan shadow
+            ctx.fillStyle = color;
+            ctx.fillText(text, x, y);
+            
+            // Reset shadow
+            ctx.shadowColor = "transparent";
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+            
+            // Gambar outline hitam di sekeliling teks
+            ctx.strokeStyle = "rgba(0, 0, 0, 0.8)";
+            ctx.lineWidth = 3;
+            ctx.strokeText(text, x, y);
+            
+            // Gambar ulang teks di atas outline
+            ctx.fillStyle = color;
+            ctx.fillText(text, x, y);
+            
+            // Tambahkan shadow tipis di sisi lain untuk efek 3D
+            ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
+            ctx.shadowBlur = 4;
+            ctx.shadowOffsetX = -1;
+            ctx.shadowOffsetY = -1;
+            ctx.fillText(text, x, y);
+            
+            // Restore state ctx
+            ctx.restore();
+        }
+
+        // Teks desa
         if (selectedDesa) {
             const desaInfo = normalizeDesaName(selectedDesa);
             const displayDesaName = desaInfo.cleanName;
             const watermarkText = (displayDesaName === "Sukasada" || displayDesaName === "SUKASADA")
                 ? "Babinsa Kelurahan Sukasada"
                 : "Babinsa " + displayDesaName;
-            ctx.fillStyle = "white";
-            ctx.fillText(watermarkText, canvas.width - rightMargin, canvas.height - bottomMargin - (lineHeight * 2));
+            
+            drawTextWithShadow(
+                watermarkText, 
+                canvas.width - rightMargin, 
+                canvas.height - bottomMargin - (lineHeight * 2)
+            );
         }
 
+        // Teks koordinat
         if (currentKoordinat) {
-            ctx.fillStyle = "white";
-            ctx.fillText(currentKoordinat, canvas.width - rightMargin, canvas.height - bottomMargin - lineHeight);
+            drawTextWithShadow(
+                currentKoordinat, 
+                canvas.width - rightMargin, 
+                canvas.height - bottomMargin - lineHeight
+            );
         }
 
+        // Teks tanggal
         if (tanggalWaktu) {
             const date = new Date(tanggalWaktu);
             let dateText = date.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" }) +
                 ", " + date.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
-            ctx.fillStyle = "white";
-            ctx.fillText(dateText, canvas.width - rightMargin, canvas.height - bottomMargin);
+            
+            drawTextWithShadow(
+                dateText, 
+                canvas.width - rightMargin, 
+                canvas.height - bottomMargin
+            );
         }
     }
 }
@@ -689,10 +736,6 @@ async function processSubmission() {
 
         // Update counter
         const desaData = updateDesaCounter(selectedDesa, zipFileNameForBackend);
-
-        if (document.getElementById('attendancePanel').style.display === 'block') {
-            setTimeout(() => loadAttendanceData(), 2000);
-        }
 
         if (driveUploaded) {
             showNotification(`✔ Laporan berhasil disimpan (${desaData.count}/${TARGET_LAPORAN} laporan)`, "success");
@@ -840,17 +883,6 @@ function checkInputCompletion() {
 
     const submitBtn = document.getElementById("submitBtn");
     if (submitBtn) submitBtn.disabled = !isComplete;
-    updateAttendanceButtonState();
-}
-
-function updateAttendanceButtonState() {
-    const btn = document.getElementById('showAttendanceBtn');
-    if (btn) btn.disabled = !selectedDesa;
-}
-
-function updateAttendanceSelectedDesaLabel() {
-    const label = document.getElementById('attendanceSelectedDesaName');
-    if (label) label.textContent = selectedDesa ? normalizeDesaName(selectedDesa).cleanName : 'Silahkan Pilih Desa';
 }
 
 function autoResizeNarasi(target) {
@@ -870,227 +902,8 @@ function updateDesaHeaderImage(desaName) {
     headerImage.src = defaultUrl;
 }
 
-// ================= FUNGSI ABSENSI =================
-function showAttendance() {
-    const panel = document.getElementById('attendancePanel');
-    const button = document.getElementById('showAttendanceBtn');
-    if (panel && button) {
-        panel.style.display = 'block';
-        button.style.display = 'none';
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        document.getElementById('attendanceMonthFilter').value = `${year}-${month}`;
-        updateAttendanceSelectedDesaLabel();
-        loadAttendanceData();
-    }
-}
-
-function hideAttendance() {
-    const panel = document.getElementById('attendancePanel');
-    const button = document.getElementById('showAttendanceBtn');
-    if (panel && button) {
-        panel.style.display = 'none';
-        button.style.display = 'block';
-    }
-}
-
-async function loadAttendanceData() {
-    const loading = document.getElementById('attendanceLoading');
-    const list = document.getElementById('attendanceList');
-    const summary = document.getElementById('attendanceSummary');
-    if (!loading || !list) return;
-
-    loading.style.display = 'block';
-    list.innerHTML = '';
-    if (summary) summary.style.display = 'none';
-
-    try {
-        const result = await sendToBackend('listFiles', {
-            desaFilter: selectedDesa ? normalizeDesaName(selectedDesa).cleanName : '',
-            monthFilter: document.getElementById('attendanceMonthFilter').value
-        });
-
-        if (result.success) {
-            attendanceData = result.files || [];
-            const selectedMonth = document.getElementById('attendanceMonthFilter').value;
-            if (selectedMonth) {
-                const [year, month] = selectedMonth.split('-');
-                attendanceData = attendanceData.filter(file => {
-                    const fileMonth = file.month || extractMonthYearFromFileName(file.name);
-                    return fileMonth === `${year}-${month}`;
-                });
-            }
-            displayAttendanceList(attendanceData);
-            displayAttendanceSummary(attendanceData);
-            showNotification(`✅ Data absensi dimuat (${attendanceData.length} file)`, "success");
-        } else {
-            showNotification("❌ Gagal memuat data absensi", "error");
-            list.innerHTML = `<div style="text-align: center; color: #f44336; padding: 20px;">
-                <i class="fas fa-exclamation-circle"></i><br>
-                Gagal memuat data absensi.<br>
-                <small>Pastikan koneksi internet aktif.</small>
-            </div>`;
-        }
-    } catch (error) {
-        console.error('Error loading attendance:', error);
-        list.innerHTML = `<div style="text-align: center; color: #f44336; padding: 20px;">
-            <i class="fas fa-exclamation-circle"></i><br>
-            Gagal terhubung ke server.<br>
-            <small>Periksa koneksi internet.</small>
-        </div>`;
-    } finally {
-        loading.style.display = 'none';
-    }
-}
-
-function extractMonthYearFromFileName(filename) {
-    const match = filename.match(/(\d{1,2})\s+(\d{4})\.zip$/);
-    if (match) {
-        const month = match[1].padStart(2, '0');
-        const year = match[2];
-        return `${year}-${month}`;
-    }
-    return '';
-}
-
-function displayAttendanceList(files) {
-    const list = document.getElementById('attendanceList');
-    if (!list) return;
-
-    if (!files || files.length === 0) {
-        list.innerHTML = `<div style="text-align: center; color: #a5a5a5; padding: 20px;">
-            <i class="fas fa-folder-open"></i><br>
-            Tidak ada data laporan
-        </div>`;
-        return;
-    }
-
-    const grouped = {};
-    files.forEach(file => {
-        const monthYear = file.month || extractMonthYearFromFileName(file.name);
-        if (!grouped[monthYear]) grouped[monthYear] = { month: monthYear, files: [], desas: new Set() };
-        grouped[monthYear].files.push(file);
-        const desaName = file.desa || extractDesaFromFileName(file.name);
-        grouped[monthYear].desas.add(desaName);
-    });
-
-    const sorted = Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a));
-    let html = '';
-    sorted.forEach(monthYear => {
-        const g = grouped[monthYear];
-        const [year, month] = monthYear.split('-');
-        const monthNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-        const monthName = monthNames[parseInt(month) - 1];
-
-        html += `<div class="desa-card" style="margin-bottom: 20px;">
-            <div class="desa-header" style="background: #cc5500; padding: 8px 12px; border-radius: 8px 8px 0 0; display:flex; justify-content:space-between; color:white;">
-                <div class="desa-name"><i class="fas fa-folder"></i> ${monthName} ${year}</div>
-                <div class="desa-count">${g.files.length} laporan | ${g.desas.size} desa</div>
-            </div>
-            <div class="desa-files" style="padding: 0 4px;">`;
-
-        const byDesa = {};
-        g.files.forEach(file => {
-            const d = file.desa || extractDesaFromFileName(file.name);
-            if (!byDesa[d]) byDesa[d] = [];
-            byDesa[d].push(file);
-        });
-
-        Object.entries(byDesa).forEach(([desaName, desaFiles]) => {
-            const count = desaFiles.length;
-            const complete = count >= TARGET_LAPORAN;
-            html += `<div class="desa-card" style="margin: 10px 0; border-left: 4px solid ${complete ? '#4CAF50' : '#FF9800'}; background: rgba(255,255,255,0.02); border-radius:4px;">
-                <div class="desa-header" style="padding: 6px 10px; display:flex; justify-content:space-between; font-size:14px;">
-                    <div class="desa-name"><strong>${desaName}</strong></div>
-                    <div class="desa-count" style="color:${complete ? '#4CAF50' : '#FF9800'}">${count}/${TARGET_LAPORAN}</div>
-                </div>
-                <div class="desa-files" style="padding: 2px 10px 6px;">`;
-            desaFiles.sort((a,b) => new Date(b.createdTime) - new Date(a.createdTime));
-            desaFiles.forEach((file, idx) => {
-                const date = new Date(file.createdTime);
-                const dateStr = date.toLocaleDateString('id-ID', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
-                const size = file.size ? formatFileSize(file.size) : '?';
-                const displayIdx = desaFiles.length - idx;
-                html += `<div style="padding: 4px 0; border-bottom:1px solid rgba(255,255,255,0.04); font-size:13px;">
-                    <div>${displayIdx}. ${file.name}</div>
-                    <div style="font-size:11px; color:#8899aa;">${dateStr} • ${size}</div>
-                </div>`;
-            });
-            html += `</div></div>`;
-        });
-
-        html += `</div></div>`;
-    });
-    list.innerHTML = html;
-}
-
-function displayAttendanceSummary(files) {
-    const summary = document.getElementById('attendanceSummary');
-    const totalReports = document.getElementById('totalReports');
-    const totalDesa = document.getElementById('totalDesa');
-    const targetStatus = document.getElementById('targetStatus');
-
-    if (!summary || !files || files.length === 0) {
-        if (summary) summary.style.display = 'none';
-        return;
-    }
-
-    summary.style.display = 'block';
-    if (totalReports) totalReports.textContent = files.length;
-
-    const uniqueDesas = new Set();
-    files.forEach(file => {
-        const d = file.desa || extractDesaFromFileName(file.name);
-        uniqueDesas.add(d);
-    });
-    if (totalDesa) totalDesa.textContent = uniqueDesas.size;
-
-    const counts = {};
-    files.forEach(file => {
-        const d = file.desa || extractDesaFromFileName(file.name);
-        counts[d] = (counts[d] || 0) + 1;
-    });
-
-    let achieved = 0;
-    const possible = uniqueDesas.size * TARGET_LAPORAN;
-    Object.values(counts).forEach(c => { achieved += Math.min(c, TARGET_LAPORAN); });
-    const percent = possible > 0 ? (achieved / possible * 100) : 0;
-
-    if (targetStatus) {
-        targetStatus.textContent = `${percent.toFixed(1)}%`;
-        targetStatus.style.color = percent >= 100 ? '#4CAF50' : percent >= 70 ? '#FF9800' : '#f44336';
-    }
-}
-
-function extractDesaFromFileName(filename) {
-    const clean = filename.replace(/_/g, ' ').replace(/\.zip$/, '').replace(/\s+\d{1,2}\s+\d{4}$/, '').trim();
-    const select = document.getElementById('selectDesa');
-    if (!select) return clean;
-    for (let i = 1; i < select.options.length; i++) {
-        const opt = select.options[i];
-        const info = normalizeDesaName(opt.getAttribute('data-raw-name') || opt.text);
-        if (clean.toLowerCase().includes(info.cleanName.toLowerCase()) ||
-            info.cleanName.toLowerCase().includes(clean.toLowerCase())) {
-            return info.cleanName;
-        }
-    }
-    return clean;
-}
-
-function formatFileSize(bytes) {
-    if (!bytes || bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes','KB','MB','GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-}
-
-function refreshAttendanceData() { loadAttendanceData(); }
-
-// ================= POPUP UCAPAN TERIMA KASIH (DIPERBAIKI) =================
+// ================= POPUP UCAPAN TERIMA KASIH =================
 function showThankYouPopup(desaName, count) {
-    // Ambil bulan dan tahun dari tanggal yang dipilih user
     const date = new Date(tanggalWaktu);
     const monthYear = date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
     
