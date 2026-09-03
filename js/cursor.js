@@ -22,17 +22,16 @@
         style.id = 'cursor-style';
         style.textContent = `
             :root {
-                --cursor-path: '../cursors/';
-                --cursor-default: url('../cursors/cursor1.cur'), auto;
-                --cursor-pointer: url('../cursors/cursor2.cur'), pointer;
-                --cursor-text: url('../cursors/cursor7.cur'), text;
-                --cursor-wait: url('../cursors/cursor3.ani'), wait;
-                --cursor-progress: url('../cursors/cursor4.ani'), progress;
-                --cursor-help: url('../cursors/cursor8.cur'), help;
-                --cursor-grab: url('../cursors/cursor5.ani'), grab;
-                --cursor-grabbing: url('../cursors/cursor6.ani'), grabbing;
-                --cursor-not-allowed: url('../cursors/cursor10.cur'), not-allowed;
-                --cursor-zoom-in: url('../cursors/cursor9.ani'), zoom-in;
+                --cursor-default: url('../cursor/1.cur'), auto;
+                --cursor-pointer: url('../cursor/2.cur'), pointer;
+                --cursor-text: url('../cursor/7.cur'), text;
+                --cursor-wait: wait;
+                --cursor-progress: progress;
+                --cursor-help: url('../cursor/8.cur'), help;
+                --cursor-grab: grab;
+                --cursor-grabbing: grabbing;
+                --cursor-not-allowed: url('../cursor/10.cur'), not-allowed;
+                --cursor-zoom-in: zoom-in;
             }
         `;
         document.head.appendChild(style);
@@ -65,21 +64,24 @@
         if (!isDesktop) return;
         
         const cursors = {
-            'default': 'cursor1.cur',
-            'pointer': 'cursor2.cur',
-            'text': 'cursor7.cur',
-            'wait': 'cursor3.ani',
-            'progress': 'cursor4.ani',
-            'help': 'cursor8.cur',
-            'grab': 'cursor5.ani',
-            'grabbing': 'cursor6.ani',
-            'not-allowed': 'cursor10.cur',
-            'zoom-in': 'cursor9.ani'
+            'default': '1.cur',
+            'pointer': '2.cur',
+            'text': '7.cur',
+            'wait': null,
+            'progress': null,
+            'help': '8.cur',
+            'grab': null,
+            'grabbing': null,
+            'not-allowed': '10.cur',
+            'zoom-in': null
         };
+        const fallbackCursors = ['wait', 'progress', 'grab', 'grabbing', 'zoom-in'];
         
         const el = typeof element === 'string' ? document.querySelector(element) : element;
         if (el && cursors[type]) {
-            el.style.cursor = `url('../cursors/${cursors[type]}'), ${type}`;
+            el.style.cursor = `url('cursor/${cursors[type]}'), ${type}`;
+        } else if (el && fallbackCursors.includes(type)) {
+            el.style.cursor = type;
         }
     };
     

@@ -12,6 +12,13 @@ let submittedDates = [];
 let desaCounter = {};
 let deferredPrompt = null;
 let swWaiting = null;
+const canvasPlaceholderImage = new Image();
+canvasPlaceholderImage.src = 'icons/favicon-96x96.png';
+
+canvasPlaceholderImage.onload = function() {
+    const canvas = document.getElementById('canvas');
+    if (canvas && (!img || !img.src)) updatePreview();
+};
 
 function getInstallButton() {
     return document.getElementById('installButton');
@@ -341,18 +348,21 @@ async function loadDesaList() {
         const response = await fetch('data/desa-list.json?t=' + Date.now());
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
-        const desaList = data.desaList || [];
+        const desaList = (data.desaList || []).map(name => ({ name, type: 'Desa' }));
+        const kelurahanList = (data.kelurahanList || []).map(name => ({ name, type: 'Kelurahan' }));
+        const wilayahList = [...desaList, ...kelurahanList];
 
-        select.innerHTML = '<option value="">-- Pilih Desa --</option>';
-        desaList.forEach(desaName => {
+        select.innerHTML = '<option value="">-- Pilih Desa/Kelurahan --</option>';
+        wilayahList.forEach(wilayah => {
+            const desaName = wilayah.name;
             const option = document.createElement('option');
             const jsonPath = `data/coordinates/${desaName}.json`;
             option.value = jsonPath;
-            option.textContent = normalizeDesaName(desaName).cleanName;
-            option.setAttribute('data-raw-name', desaName);
+            option.textContent = `${wilayah.type} ${desaName}`;
+            option.setAttribute('data-raw-name', `${wilayah.type} ${desaName}`);
             select.appendChild(option);
         });
-        console.log(`✅ Loaded ${desaList.length} desas from server`);
+        console.log(`✅ Loaded ${wilayahList.length} wilayah (${desaList.length} desa, ${kelurahanList.length} kelurahan)`);
         showNotification('✅ Daftar desa berhasil dimuat', 'success');
     } catch (error) {
         console.error("❌ Error loading desa list:", error);
@@ -544,7 +554,7 @@ function updateDatePreview() {
         let date = new Date(tglInput);
         date.setSeconds(Math.floor(Math.random() * 60));
         tanggalWaktu = date.toISOString();
-        const options = { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        const options = { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
         const displayText = date.toLocaleString('id-ID', options).replace(/:/g, '.');
         if (label) label.textContent = displayText;
     } else {
@@ -552,7 +562,7 @@ function updateDatePreview() {
             if (tanggalWaktu) {
                 try {
                     const date = new Date(tanggalWaktu);
-                    const options = { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+                    const options = { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
                     const displayText = date.toLocaleString('id-ID', options).replace(/:/g, '.');
                     if (label) label.textContent = displayText;
                 } catch (e) {}
@@ -587,8 +597,14 @@ function updatePreview() {
     if (img && img.src && img.complete) {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     } else {
-        ctx.fillStyle = "#000";
+        ctx.fillStyle = "#0a120a";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+        if (canvasPlaceholderImage.complete && canvasPlaceholderImage.naturalWidth > 0) {
+            const iconSize = Math.min(160, canvas.width * 0.3);
+            const iconX = (canvas.width - iconSize) / 2;
+            const iconY = (canvas.height - iconSize) / 2;
+            ctx.drawImage(canvasPlaceholderImage, iconX, iconY, iconSize, iconSize);
+        }
     }
 
     if (selectedDesa || currentKoordinat || tanggalWaktu) {
@@ -699,6 +715,7 @@ async function processSubmission() {
         const day = String(date.getDate()).padStart(2, '0');
         const monthNum = String(date.getMonth() + 1);
         const monthName = date.toLocaleDateString('id-ID', { month: 'long' });
+        const monthYear = date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
         const year = date.getFullYear();
 
         const desaInfo = normalizeDesaName(selectedDesa);
@@ -743,7 +760,8 @@ async function processSubmission() {
             showNotification(`⚠ Laporan hanya didownload, gagal simpan ke Drive`, "warning");
         }
 
-        if (desaData.count >= 9) {
+        if (desaData.count === TARGET_LAPORAN) {
+            speakTargetReached(selectedDesa, monthYear);
             showThankYouPopup(desaInfo.cleanName, desaData.count);
         }
 
@@ -799,8 +817,13 @@ function resetCanvas() {
     const ctx = canvas.getContext("2d");
     canvas.width = 800;
     canvas.height = Math.round(canvas.width / (16 / 9));
-    ctx.fillStyle = "#000";
+    ctx.fillStyle = "#0a120a";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+    if (canvasPlaceholderImage.complete && canvasPlaceholderImage.naturalWidth > 0) {
+        const iconSize = Math.min(160, canvas.width * 0.3);
+        ctx.drawImage(canvasPlaceholderImage, (canvas.width - iconSize) / 2,
+            (canvas.height - iconSize) / 2, iconSize, iconSize);
+    }
 }
 
 function resetAll() {
@@ -900,6 +923,20 @@ function updateDesaHeaderImage(desaName) {
     if (!headerImage) return;
     const defaultUrl = 'icons/favicon-96x96.png';
     headerImage.src = defaultUrl;
+}
+
+function speakTargetReached(wilayahName, monthYear) {
+    if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') return;
+
+    const wilayahInfo = normalizeDesaName(wilayahName);
+    const speech = new SpeechSynthesisUtterance(
+        `Babinsa ${wilayahInfo.original}, target laporan bulan ${monthYear}, tercapai.`
+    );
+    speech.lang = 'id-ID';
+    speech.rate = 0.9;
+    speech.pitch = 1;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(speech);
 }
 
 // ================= POPUP UCAPAN TERIMA KASIH =================

@@ -1,10 +1,17 @@
 // sw.js - Service Worker untuk DUKOPS
-const CACHE_NAME = 'dukops-v4';
+const CACHE_NAME = 'dukops-v5';
 
 const urlsToCache = [
     'index.html',
     'app.js',
+    'js/cursor.js',
     'css/main.css',
+    'css/cursor.css',
+    'cursor/1.cur',
+    'cursor/2.cur',
+    'cursor/7.cur',
+    'cursor/8.cur',
+    'cursor/10.cur',
     'icons/favicon-96x96.png',
     'icons/favicon.svg',
     'site.webmanifest',
