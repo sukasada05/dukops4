@@ -41,6 +41,9 @@
     min-width: 80px;
     position: relative;
     transition: background 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-appearance: none;
+    appearance: none;
     visibility: visible !important;
     opacity: 1 !important;
 }
@@ -65,18 +68,21 @@
     color: #ffffff;
 }
 
-.nav-btn-dukops:hover {
-    background: #e87a10;
+@media (hover: hover) and (pointer: fine) {
+    .nav-btn-dukops:hover {
+        background: #e87a10;
+    }
 }
 
 /* PIKET - Hijau */
-.nav-btn-piket {
+.nav-btn-hanpangan {
     background: #0f8a3a;
     color: #ffffff;
 }
 
-.nav-btn-piket:hover {
-    background: #12a64e;
+.nav-btn-canvaspro {
+    background: #1a4a1a;
+    color: #ffffff;
 }
 
 /* ABSEN - Biru */
@@ -85,30 +91,64 @@
     color: #ffffff;
 }
 
-.nav-btn-absen:hover {
-    background: #0080e6;
-}
+@media (hover: hover) and (pointer: fine) {
+    .nav-btn-hanpangan {
+        background: #2d6a2d;
+    }
+
 
 /* ================================================================
    ACTIVE STATE - FLAT
    ================================================================ */
-.nav-btn.active {
-    transform: none;
+    .nav-btn-canvaspro {
+        background: #123b1b;
     box-shadow: none;
-}
 
-/* DUKOPS Active */
+    @media (hover: hover) and (pointer: fine) {
+        .nav-btn-dukops:hover {
+            background: #c87010;
+        }
+
+        .nav-btn-hanpangan:hover {
+            background: #0f6b2d;
+        }
+
+        .nav-btn-canvaspro:hover {
+            background: #205c2a;
+        }
+
+        .nav-btn-absen:hover {
+            background: #0066cc;
+        }
 .nav-btn-dukops.active {
-    background: #f7971e;
+
+    .nav-btn-dukops.active {
+        background: #f7971e;
+    }
+
+    .nav-btn-hanpangan.active {
+        background: #1db954;
+    }
+
+    .nav-btn-canvaspro.active {
+        background: #2d6a2d;
+    }
+
     color: #ffffff;
     box-shadow: 0 0 0 2px rgba(247, 151, 30, 0.2);
 }
 
 /* PIKET Active */
-.nav-btn-piket.active {
+.nav-btn-hanpangan.active {
     background: #1db954;
     color: #ffffff;
     box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.2);
+}
+
+.nav-btn-canvaspro.active {
+    background: #2d6a2d;
+    color: #ffffff;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
 }
 
 /* ABSEN Active */
@@ -230,36 +270,69 @@
         background: #a85f00;
     }
     
-    .nav-btn-dukops:hover {
-        background: #c87010;
-    }
-    
-    .nav-btn-piket {
+    .nav-btn-hanpangan {
         background: #0c5523;
     }
-    
-    .nav-btn-piket:hover {
-        background: #0f6b2d;
-    }
-    
+
     .nav-btn-absen {
         background: #004d99;
     }
     
-    .nav-btn-absen:hover {
-        background: #0066cc;
+    .nav-btn-canvaspro {
+        background: #123b1b;
     }
-    
+
+    @media (hover: hover) and (pointer: fine) {
+        .nav-btn-dukops:hover {
+            background: #c87010;
+        }
+
+        .nav-btn-hanpangan:hover {
+            background: #0f6b2d;
+        }
+
+        .nav-btn-canvaspro:hover {
+            background: #205c2a;
+        }
+
+        .nav-btn-absen:hover {
+            background: #0066cc;
+        }
+    }
+
     .nav-btn-dukops.active {
         background: #f7971e;
     }
     
-    .nav-btn-piket.active {
+    .nav-btn-hanpangan.active {
         background: #1db954;
+    }
+
+    .nav-btn-canvaspro.active {
+        background: #2d6a2d;
     }
     
     .nav-btn-absen.active {
         background: #4facfe;
+    }
+}
+
+/* Android/touch devices keep the same tab background when switching tabs. */
+@media (hover: none) and (pointer: coarse) {
+    .nav-btn,
+    .nav-btn:hover,
+    .nav-btn:active,
+    .nav-btn.active,
+    .nav-btn-dukops,
+    .nav-btn-dukops.active,
+    .nav-btn-absen,
+    .nav-btn-absen.active,
+    .nav-btn-hanpangan,
+    .nav-btn-hanpangan.active,
+    .nav-btn-canvaspro,
+    .nav-btn-canvaspro.active {
+        background: #1a4a1a !important;
+        box-shadow: none !important;
     }
 }
 
