@@ -82,6 +82,10 @@ body {
     background-repeat: no-repeat;
 }
 
+.container {
+    background: #ffffff;
+}
+
 /* ================================================================
    4. ANIMATIONS - TETAP AKTIF
    ================================================================ */

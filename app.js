@@ -511,7 +511,11 @@ function pickRandomKoordinat() {
 }
 
 function previewImage() {
-    const file = document.getElementById("gambar").files[0];
+    const gambarInput = document.getElementById("gambar");
+    const file = gambarInput.files[0];
+    const gambarNama = document.getElementById("gambarNama");
+
+    if (gambarNama) gambarNama.textContent = file ? file.name : "Belum ada foto dipilih";
 
     if (file) {
         const reader = new FileReader();
@@ -521,7 +525,8 @@ function previewImage() {
             img.onload = function() {
                 try {
                     if (img.height > img.width) {
-                        document.getElementById("gambar").value = "";
+                        gambarInput.value = "";
+                        if (gambarNama) gambarNama.textContent = "Belum ada foto dipilih";
                         img = new Image();
                         showNotification("Foto portrait tidak diperbolehkan. Gunakan foto landscape.", "warning");
                         checkInputCompletion();
@@ -533,7 +538,8 @@ function previewImage() {
             };
             img.onerror = function() {
                 showNotification("Gagal memuat gambar", "error");
-                document.getElementById("gambar").value = "";
+                gambarInput.value = "";
+                if (gambarNama) gambarNama.textContent = "Belum ada foto dipilih";
             };
         };
         reader.onerror = function() { showNotification("Gagal membaca file", "error"); };
@@ -705,6 +711,7 @@ async function processSubmission() {
     const originalText = button.innerHTML;
     button.disabled = true;
     button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+    showLoading();
 
     try {
         const canvas = document.getElementById("canvas");
@@ -771,6 +778,7 @@ async function processSubmission() {
         console.error("Error:", error);
         showNotification("❌ Gagal mengirim laporan", "error");
     } finally {
+        hideLoading();
         button.disabled = false;
         button.innerHTML = originalText;
     }

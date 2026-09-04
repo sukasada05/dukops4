@@ -13,6 +13,8 @@
     
     const isAndroid = /Android/i.test(navigator.userAgent);
     const isDesktop = !isTouch && !isAndroid;
+    let downloadCursor = null;
+    let lastTouchPosition = { x: 0, y: 0 };
     
     // ========== LOAD CURSOR (DESKTOP) ==========
     function loadCursors() {
@@ -42,6 +44,19 @@
         if (!isTouch && !isAndroid) return;
         
         document.documentElement.classList.add('touch-device');
+
+        downloadCursor = document.createElement('div');
+        downloadCursor.className = 'download-cursor';
+        downloadCursor.setAttribute('aria-hidden', 'true');
+        downloadCursor.innerHTML = '<span class="download-cursor-ring"></span><img src="icons/favicon-96x96.png" alt="">';
+        document.body.appendChild(downloadCursor);
+
+        document.addEventListener('touchstart', function(e) {
+            const touch = e.touches[0];
+            if (touch) {
+                lastTouchPosition = { x: touch.clientX, y: touch.clientY };
+            }
+        }, { passive: true });
         
         // Ripple effect
         document.querySelectorAll('button, .btn, [onclick], .nav-btn, .tab').forEach(el => {
@@ -96,11 +111,17 @@
     window.showLoading = function() {
         if (isDesktop) document.body.style.cursor = 'wait';
         document.body.classList.add('loading');
+        if (downloadCursor && (isAndroid || isTouch)) {
+            downloadCursor.style.left = `${lastTouchPosition.x}px`;
+            downloadCursor.style.top = `${lastTouchPosition.y}px`;
+            downloadCursor.classList.add('is-visible');
+        }
     };
     
     window.hideLoading = function() {
         if (isDesktop) document.body.style.cursor = '';
         document.body.classList.remove('loading');
+        if (downloadCursor) downloadCursor.classList.remove('is-visible');
     };
     
     // ========== INISIALISASI ==========
