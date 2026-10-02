@@ -146,7 +146,7 @@
 
                 <canvas id="canvas"></canvas>
 
-                <label><i class="fas fa-file-alt"></i> Narasi Kegiatan:</label>
+                <label><i class="fas fa-file-alt"></i> Narasi Kegiatan: <span id="narasiWilayahLabel"></span></label>
                 <div class="narasi-wrapper">
                     <textarea id="narasi" class="auto-height-textarea" rows="6" placeholder="Masukkan narasi kegiatan...✍️" oninput="checkInputCompletion(); autoResizeNarasi()"></textarea>
                 </div>
@@ -189,6 +189,7 @@
 
         <!-- ===== ABSEN ===== -->
         <div id="absenContent" style="display: none;">
+            <div class="absen-selected-wilayah" id="absenSelectedWilayah" aria-live="polite"></div>
             <div class="absen-card">
                 <div class="absen-filter-row">
                     <div class="form-group">
@@ -212,7 +213,7 @@
 
         <!-- ===== CANVASPRO (iframe) ===== -->
         <div id="canvasproContent">
-            <iframe src="https://canvas-pro.dukopbabinsa05.workers.dev/" title="CanvasPRO 2.1" allow="clipboard-read; clipboard-write"></iframe>
+            <iframe src="https://sukasada05.github.io/CanvaPro/" title="CanvasPRO 2.1" allow="clipboard-read; clipboard-write"></iframe>
         </div>
 
     </div>

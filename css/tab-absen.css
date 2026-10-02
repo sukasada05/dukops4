@@ -26,6 +26,13 @@
     box-shadow: none !important;
 }
 
+.absen-selected-wilayah {
+    margin-bottom: 10px;
+    color: var(--absen-text-dark);
+    font-size: 14px;
+    font-weight: 700;
+}
+
 /* ================================================================
    FILTER ROW - TAHUN & BULAN
    ================================================================ */

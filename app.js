@@ -213,6 +213,8 @@ window.showAbsenTab = function() {
     document.getElementById('btnDukops').classList.remove('active');
     document.getElementById('btnAbsen').classList.add('active');
     document.getElementById('btnHanpangan').classList.remove('active');
+    const selectedWilayah = document.getElementById('absenSelectedWilayah');
+    if (selectedWilayah) selectedWilayah.textContent = selectedDesa ? `Absensi wilayah: ${selectedDesa}` : 'Desa/kelurahan belum dipilih.';
     if (typeof loadAbsenTahun === 'function') loadAbsenTahun();
 };
 
@@ -455,6 +457,8 @@ async function loadSelectedDesa() {
 
     const selectedOption = select.options[select.selectedIndex];
     selectedDesa = selectedOption.getAttribute('data-raw-name') || selectedOption.text;
+    const narasiWilayahLabel = document.getElementById('narasiWilayahLabel');
+    if (narasiWilayahLabel) narasiWilayahLabel.textContent = selectedDesa;
 
     updateDesaHeaderImage(selectedDesa);
 
@@ -466,7 +470,7 @@ async function loadSelectedDesa() {
     }
 
     const fotoLabel = document.getElementById('labelFotoKegiatan');
-    if (fotoLabel) fotoLabel.innerHTML = `<i class="fas fa-camera"></i> Foto Kegiatan: ${desaInfo.cleanName}`;
+    if (fotoLabel) fotoLabel.innerHTML = `<i class="fas fa-camera"></i> Foto Kegiatan: ${selectedDesa}`;
 
     if (loading) loading.style.display = 'block';
     const previewKordinatEl = document.getElementById('previewKordinat');
@@ -873,6 +877,8 @@ function resetForm() {
     if (previewKordinatEl) previewKordinatEl.textContent = "";
     const narasiEl = document.getElementById('narasi');
     if (narasiEl) narasiEl.value = "";
+    const narasiWilayahLabel = document.getElementById('narasiWilayahLabel');
+    if (narasiWilayahLabel) narasiWilayahLabel.textContent = "";
     const gambarEl = document.getElementById('gambar');
     if (gambarEl) gambarEl.value = "";
     const tanggalWaktuEl = document.getElementById('tanggalWaktu');
@@ -1037,13 +1043,20 @@ function showNotification(message, type) {
 
     function loadAbsenTahun() {
         if (!tahunSelect) return;
-        tahunSelect.disabled = true;
-        tahunSelect.innerHTML = '<option>⏳ Mohon tunggu....</option>';
         var cached = getCacheAbsen();
+        var hasCachedYears = cached && cached.years && cached.years.length > 0;
+        var yearsCacheFresh = hasCachedYears && cached.yearsUpdatedAt &&
+            Date.now() - cached.yearsUpdatedAt < CACHE_EXPIRY;
+
+        if (!hasCachedYears) {
+            tahunSelect.disabled = true;
+            tahunSelect.innerHTML = '<option>⏳ Mohon tunggu....</option>';
+        }
         if (cached && cached.years && cached.years.length > 0) {
             populateTahunSelect(cached.years);
             tahunSelect.disabled = false;
         }
+        if (yearsCacheFresh) return;
         if (!isOnlineAbsen) {
             if (!cached || !cached.years) tahunSelect.innerHTML = '<option>❌ Offline - no data</option>';
             return;
@@ -1054,7 +1067,10 @@ function showNotification(message, type) {
         }).then(function(y) {
             if (y && y.length > 0) {
                 populateTahunSelect(y);
-                saveToCacheAbsen({ years: y, months: null, data: null });
+                var updatedCache = getCacheAbsen() || {};
+                updatedCache.years = y;
+                updatedCache.yearsUpdatedAt = Date.now();
+                saveToCacheAbsen(updatedCache);
             } else throw new Error('Tidak ada data');
         }).catch(function() {
             if (!cached || !cached.years) tahunSelect.innerHTML = '<option>❌ Gagal memuat</option>';
@@ -1065,6 +1081,7 @@ function showNotification(message, type) {
 
     function populateTahunSelect(y) {
         if (!tahunSelect) return;
+        var previousYear = tahunSelect.value;
         tahunSelect.innerHTML = '<option value="">-- Pilih Tahun --</option>';
         for (var i = 0; i < y.length; i++) {
             var o = document.createElement('option');
@@ -1072,7 +1089,10 @@ function showNotification(message, type) {
             o.textContent = y[i];
             tahunSelect.appendChild(o);
         }
-        if (y.length > 0) { tahunSelect.value = y[0]; onTahunChange(); }
+        if (y.length > 0) {
+            tahunSelect.value = y.indexOf(previousYear) !== -1 ? previousYear : y[0];
+            if (tahunSelect.value !== previousYear) onTahunChange();
+        }
     }
 
     function onTahunChange() {
@@ -1129,17 +1149,19 @@ function showNotification(message, type) {
         if (!tahunSelect || !bulanSelect) return;
         var t = tahunSelect.value, b = bulanSelect.value;
         if (!t || !b) { if (resultContainer) resultContainer.innerHTML = '<div class="absen-card">Pilih tahun dan bulan</div>'; return; }
-        showLoadingAbsen();
         var c = getCacheAbsen(), ck = t + '_' + b;
+        var cachedData = null;
         if (c && c.data && c.data[ck]) {
-            var cd = c.data[ck];
-            if (Date.now() - cd.timestamp < CACHE_EXPIRY) {
-                displayDataAbsen(cd.data);
-                currentDataAbsen = cd.data;
-                return;
-            }
+            cachedData = c.data[ck];
+            displayDataAbsen(cachedData.data);
+            currentDataAbsen = cachedData.data;
+            if (Date.now() - cachedData.timestamp < CACHE_EXPIRY) return;
         }
-        if (!isOnlineAbsen) { showErrorAbsen('Tidak ada koneksi'); return; }
+        if (!isOnlineAbsen) {
+            if (!cachedData) showErrorAbsen('Tidak ada koneksi');
+            return;
+        }
+        if (!cachedData) showLoadingAbsen();
         fetch(SCRIPT_URL + '?action=getData&tahun=' + encodeURIComponent(t) + '&bulan=' + encodeURIComponent(b))
             .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
             .then(function(d) {
@@ -1149,18 +1171,46 @@ function showNotification(message, type) {
                 uc.data = uc.data || {};
                 uc.data[ck] = { data: d, timestamp: Date.now() };
                 saveToCacheAbsen(uc);
-            }).catch(function(e) { showErrorAbsen('Gagal: ' + e.message); });
+            }).catch(function(e) {
+                if (cachedData) {
+                    console.error('Gagal memperbarui data absensi; data tersimpan tetap ditampilkan:', e);
+                    showNotification('Data absensi tersimpan ditampilkan; pembaruan gagal.', 'warning');
+                } else {
+                    showErrorAbsen('Gagal: ' + e.message);
+                }
+            });
     }
 
     function displayDataAbsen(d) {
         if (!resultContainer) return;
         if (d.error) { showErrorAbsen(d.error); return; }
-        var td = d.total_desa || 0, p = td > 0 ? Math.round((d.desa_lengkap / td) * 100) : 0, dh = '';
-        for (var i = 0; i < d.details.length; i++) {
-            var de = d.details[i], cls = '', txt = '', icon = '';
+        var selectedName = normalizeDesaName(selectedDesa).cleanName.replace(/_/g, ' ').trim();
+        if (!selectedName) {
+            showErrorAbsen('Desa/kelurahan belum dipilih.');
+            return;
+        }
+
+        var normalizedSelectedName = selectedName.toLocaleLowerCase('id-ID');
+        var villageDetails = Array.isArray(d.details) ? d.details.filter(function(detail) {
+            var detailName = normalizeDesaName(detail.nama || '').cleanName.replace(/_/g, ' ').trim();
+            return detailName.toLocaleLowerCase('id-ID') === normalizedSelectedName;
+        }) : [];
+        var noAttendanceRecord = villageDetails.length === 0;
+        if (noAttendanceRecord) {
+            villageDetails = [{
+                nama: selectedDesa,
+                jumlah_file: 0,
+                persentase: 0,
+                status: 'BELUM'
+            }];
+        }
+
+        var dh = '';
+        for (var i = 0; i < villageDetails.length; i++) {
+            var de = villageDetails[i], cls = '', txt = '', icon = '';
             if (de.status === 'LENGKAP') { cls = 'absen-status-lengkap'; icon = '✅'; txt = 'LENGKAP'; }
             else if (de.status === 'BELUM_LENGKAP') { cls = 'absen-status-belum-lengkap'; icon = '⚠️'; txt = 'BL'; }
-            else { cls = 'absen-status-belum'; icon = '❌'; txt = 'BELUM'; }
+            else { cls = 'absen-status-belum'; icon = '❌'; txt = noAttendanceRecord ? 'BELUM KIRIM' : 'BELUM'; }
             var w = (de.status === 'LENGKAP') ? '#4caf50' : ((de.status === 'BELUM_LENGKAP') ? '#ff9800' : '#f44336');
             dh += '<div class="absen-desa-item" onclick="window.showDetailAbsen(\'' + escapeHtml(de.nama) +
                 '\',' + de.jumlah_file + ',' + de.persentase + ',\'' + de.status +
@@ -1170,18 +1220,10 @@ function showNotification(message, type) {
                 de.persentase + '%;background:' + w +
                 '"></div></div></div><div class="absen-status-badge ' + cls + '">' + txt + '</div></div>';
         }
+        var selectedWilayah = document.getElementById('absenSelectedWilayah');
+        if (selectedWilayah) selectedWilayah.textContent = 'Absensi wilayah: ' + selectedDesa;
         resultContainer.innerHTML =
-            '<div class="absen-card"><div class="absen-stats-grid"><div class="absen-stat-card"><div class="absen-stat-value" style="color:#1a73e8;">' +
-            d.total_desa +
-            '</div><div class="absen-stat-label">DESA</div></div><div class="absen-stat-card"><div class="absen-stat-value" style="color:#4caf50;">' +
-            d.desa_lengkap +
-            '</div><div class="absen-stat-label">LENGKAP</div></div><div class="absen-stat-card"><div class="absen-stat-value" style="color:#ff9800;">' +
-            d.desa_belum_lengkap +
-            '</div><div class="absen-stat-label">BL</div></div><div class="absen-stat-card"><div class="absen-stat-value" style="color:#f44336;">' +
-            d.desa_belum +
-            '</div><div class="absen-stat-label">BELUM</div></div></div><div style="font-size:0.7rem;font-weight:600;margin:10px 0 5px;">📋 DAFTAR DESA (' +
-            d.total_desa +
-            ')</div><div class="absen-desa-list">' + dh +
+            '<div class="absen-card"><div class="absen-desa-list">' + dh +
             '</div></div>';
     }
 
