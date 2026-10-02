@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        currentApp = 'dukops';
+        currentApp = 'absen';
         showApp();
     });
 
@@ -184,10 +184,18 @@ function showApp() {
                 document.getElementById('hanpanganContent').classList.remove('active');
             } else {
                 document.getElementById('btnDukops').classList.remove('active');
+                document.getElementById('btnAbsen').classList.add('active');
+                document.getElementById('btnHanpangan').classList.remove('active');
+                document.getElementById('btnCanvaspro').classList.remove('active');
                 document.getElementById('dukopsContent').style.display = 'none';
                 document.getElementById('absenContent').style.display = 'block';
                 document.getElementById('hanpanganContent').style.display = 'none';
                 document.getElementById('hanpanganContent').classList.remove('active');
+                const selectedWilayah = document.getElementById('absenSelectedWilayah');
+                if (selectedWilayah) selectedWilayah.textContent = selectedDesa
+                    ? `Absensi wilayah: ${selectedDesa}`
+                    : 'Desa/kelurahan belum dipilih.';
+                if (typeof loadAbsenTahun === 'function') loadAbsenTahun();
             }
         }, 100);
     }, 800);

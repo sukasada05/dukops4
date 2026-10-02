@@ -127,9 +127,15 @@
     padding: 10px 14px;
     border: 2px solid #2a5a8a;
     border-radius: 10px;
-    background: #ffffff;
-    color: #0a1a2e;
+    color-scheme: light;
+    background: #ffffff !important;
+    color: #000000 !important;
     font: inherit;
+}
+
+.splash-village-picker select option {
+    background: #ffffff !important;
+    color: #000000 !important;
 }
 
 .splash-village-picker button {

@@ -1,5 +1,5 @@
 // sw.js - Service Worker untuk DUKOPS
-const CACHE_NAME = 'dukops-v10';
+const CACHE_NAME = 'dukops-v12';
 
 const urlsToCache = [
     'index.html',
