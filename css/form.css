@@ -27,6 +27,10 @@ label {
     letter-spacing: 0.3px;
 }
 
+#labelTanggalWaktu {
+    cursor: pointer;
+}
+
 label i {
     color: #000000;
     margin-right: 6px;
@@ -35,6 +39,7 @@ label i {
 }
 
 .file-input-wrapper {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -46,14 +51,25 @@ label i {
     background: #ffffff;
     color: #0a1a2e;
     overflow: hidden;
+    cursor: pointer;
+}
+
+.file-input-wrapper:focus-within {
+    outline: 3px solid rgba(26, 90, 154, 0.35);
+    outline-offset: 2px;
 }
 
 .file-input-wrapper input[type="file"] {
     position: absolute;
-    width: 1px;
-    height: 1px;
+    inset: 0;
+    z-index: 2;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
     opacity: 0;
-    pointer-events: none;
+    cursor: pointer;
 }
 
 .file-input-button {

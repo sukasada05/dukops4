@@ -82,17 +82,21 @@
     <div id="splashScreen" class="splash-container-modern">
         <div class="splash-content">
             <div class="splash-logo-center">
-                <img src="icons/favicon-96x96.png" alt="Lambang Kodam Udayana">
+                <img src="icons/tni-ad-insignia.svg" alt="Lambang TNI Angkatan Darat">
             </div>
-            <div class="splash-title-center">DUKOPS</div>
-            <div class="splash-title-center">BABINSA SUKASADA</div>
-            <div class="splash-divider-center"></div>
+            <div class="splash-title-center">KORAMIL 05/SUKASADA</div>
             <div class="splash-subtitle-center">KODIM 1609/BULELENG</div>
             <div class="splash-kodim-center">Sistem Pelaporan Digitalisasi Babinsa</div>
-            <div class="splash-progress-center">
-                <div class="splash-progress-bar-center" id="splashProgressBar"></div>
+            <div class="splash-village-picker">
+                <label for="startupDesa">Pilih Desa/Kelurahan</label>
+                <select id="startupDesa" disabled>
+                    <option value="">Memuat daftar desa...</option>
+                </select>
+                <button id="startupContinue" type="button" disabled>
+                    <i class="fas fa-arrow-right"></i> LANJUTKAN
+                </button>
+                <div id="startupStatus" role="status" aria-live="polite">Menyiapkan aplikasi...</div>
             </div>
-            <div class="splash-percentage-center" id="progressPercentage">20%</div>
             <div class="splash-army">
                 <!-- Gambar army.gif dihapus untuk kompatibilitas lokal -->
             </div>
@@ -120,12 +124,9 @@
         <div id="dukopsContent">
             <div style="width:100%; margin:0 auto;">
 
-                <label id="labelPilihDesa"><i class="fas fa-city"></i> Pilih Desa/Kelurahan:</label>
-                <div class="select-wrapper" style="position:relative;">
-                    <select id="selectDesa" onchange="loadSelectedDesa()">
-                        <option value="">--Pilih desa/Kelurahan--</option>
-                    </select>
-                </div>
+                <select id="selectDesa" onchange="loadSelectedDesa()" hidden aria-hidden="true" tabindex="-1">
+                    <option value="">--Pilih desa/Kelurahan--</option>
+                </select>
                 <div id="loadingDesa" style="display:none;"><i class="fas fa-spinner fa-spin"></i> Memuat...</div>
                 <div class="previewBox" id="previewDesa" style="display:none;"></div>
 
@@ -135,24 +136,27 @@
 
                 <label id="labelFotoKegiatan"><i class="fas fa-camera"></i> Foto Kegiatan:</label>
                 <div class="file-input-wrapper">
-                    <input type="file" id="gambar" accept="image/*" onchange="previewImage()">
+                    <input type="file" id="gambar" accept="image/*" aria-label="Pilih foto kegiatan" onchange="previewImage()">
                     <label class="file-input-button" for="gambar"><i class="fas fa-folder-open"></i> Pilih Foto</label>
                     <span id="gambarNama">Belum ada foto dipilih</span>
                 </div>
 
-                <label id="labelTanggalWaktu"><i class="fas fa-calendar-alt"></i> Tanggal & Waktu: <span id="tanggalWaktuLabelText">Pilih tanggal & waktu</span></label>
+                <label id="labelTanggalWaktu" for="tanggalWaktu"><i class="fas fa-calendar-alt"></i> Tanggal & Waktu: <span id="tanggalWaktuLabelText">Pilih tanggal & waktu</span></label>
                 <input type="datetime-local" id="tanggalWaktu" onchange="updateDatePreview()">
+
+                <canvas id="canvas"></canvas>
 
                 <label><i class="fas fa-file-alt"></i> Narasi Kegiatan:</label>
                 <div class="narasi-wrapper">
                     <textarea id="narasi" class="auto-height-textarea" rows="6" placeholder="Masukkan narasi kegiatan...✍️" oninput="checkInputCompletion(); autoResizeNarasi()"></textarea>
                 </div>
 
-                <canvas id="canvas"></canvas>
-
                 <div class="action-buttons">
                     <button id="submitBtn" onclick="processSubmission()" disabled>
                         <i class="fas fa-download"></i> KIRIM dan DOWNLOAD
+                    </button>
+                    <button id="exitBtn" type="button" onclick="exitApplication()">
+                        <i class="fas fa-sign-out-alt"></i> KELUAR
                     </button>
                     <!-- Tombol LAPORAN telah dihapus -->
                 </div>

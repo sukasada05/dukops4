@@ -1,5 +1,5 @@
 // sw.js - Service Worker untuk DUKOPS
-const CACHE_NAME = 'dukops-v5';
+const CACHE_NAME = 'dukops-v7';
 
 const urlsToCache = [
     'index.html',
@@ -14,6 +14,8 @@ const urlsToCache = [
     'cursor/10.cur',
     'icons/favicon-96x96.png',
     'icons/favicon.svg',
+    'icons/tni-ad-insignia.svg',
+    'fonts/SpecialElite-Regular.ttf',
     'site.webmanifest',
     'LOGO KOREM163 Wirasatya.png'
 ];

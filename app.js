@@ -54,63 +54,62 @@ function setWaitingServiceWorker(worker) {
 }
 
 let currentApp = null;
-let isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-// ================= SPLASH SCREEN =================
+// ================= LAYAR PILIH DESA =================
 document.addEventListener('DOMContentLoaded', function () {
     console.log("🚀 DOM Content Loaded");
-    const splashScreen = document.getElementById('splashScreen');
-    const appContainer = document.getElementById('appContainer');
-    const progressBar = document.getElementById('splashProgressBar');
-    const progressText = document.getElementById('progressPercentage');
+    const startupSelect = document.getElementById('startupDesa');
+    const continueButton = document.getElementById('startupContinue');
+    const status = document.getElementById('startupStatus');
+    if (!startupSelect || !continueButton) return;
 
-    if (!splashScreen) return;
-
-    let progress = 0;
-    let isAppOpened = false;
-
-    function updateProgress(value, message) {
-        progress = Math.min(value, 100);
-        if (progressBar) progressBar.style.width = progress + '%';
-        if (progressText) progressText.textContent = Math.round(progress) + '%';
-        console.log(`Progress: ${progress}% - ${message}`);
-
-        if (progress >= 75 && progress < 98) {
-            const tp = (progress - 75) / (98 - 75);
-            splashScreen.style.opacity = 1 - tp;
-            appContainer.style.opacity = tp;
-            appContainer.style.display = 'block';
+    continueButton.addEventListener('click', async function () {
+        const mainSelect = document.getElementById('selectDesa');
+        if (!startupSelect.value || !mainSelect) {
+            if (status) status.textContent = 'Pilih desa/kelurahan terlebih dahulu.';
+            return;
         }
-        if (progress >= 98) {
-            splashScreen.style.opacity = 0;
-            splashScreen.style.pointerEvents = 'none';
-            appContainer.style.opacity = 1;
-            appContainer.style.display = 'block';
-        }
-        if (progress >= 100 && !isAppOpened) {
-            isAppOpened = true;
-            setTimeout(() => {
-                splashScreen.style.display = 'none';
-                loadDukopsApp();
-            }, 200);
-        }
-    }
 
-    const stages = [
-        { percent: 33, message: "Memuat sistem..." },
-        { percent: 66, message: "Menyiapkan aplikasi..." },
-        { percent: 100, message: "Aplikasi Siap digunakan" }
-    ];
-    let idx = 0;
-    const delay = isMobileDevice ? 400 : 800;
-    function nextStage() {
-        if (idx >= stages.length) return;
-        const s = stages[idx];
-        updateProgress(s.percent, s.message);
-        idx++;
-        setTimeout(nextStage, delay);
-    }
-    nextStage();
+        startupSelect.disabled = true;
+        continueButton.disabled = true;
+        if (status) status.textContent = 'Memuat koordinat desa...';
+        mainSelect.value = startupSelect.value;
+
+        const loaded = await loadSelectedDesa();
+        if (!loaded) {
+            startupSelect.disabled = false;
+            continueButton.disabled = false;
+            if (status) status.textContent = 'Koordinat gagal dimuat. Silakan coba lagi.';
+            return;
+        }
+
+        currentApp = 'dukops';
+        showApp();
+    });
+
+    (async function prepareStartup() {
+        try {
+            if (window.location.protocol === 'file:') await loadLocalDataBundle();
+            await initializeApp();
+
+            const mainSelect = document.getElementById('selectDesa');
+            if (!mainSelect || mainSelect.options.length <= 1 || mainSelect.disabled) {
+                throw new Error('Daftar desa/kelurahan gagal dimuat.');
+            }
+
+            startupSelect.replaceChildren(...Array.from(mainSelect.options, option => option.cloneNode(true)));
+            startupSelect.value = '';
+            startupSelect.disabled = false;
+            continueButton.disabled = false;
+            if (status) status.textContent = 'Silakan pilih desa/kelurahan untuk melanjutkan.';
+        } catch (error) {
+            console.error('❌ Error preparing village selection screen:', error);
+            startupSelect.innerHTML = '<option value="">-- Gagal memuat desa --</option>';
+            startupSelect.disabled = true;
+            continueButton.disabled = true;
+            if (status) status.textContent = error.message;
+        }
+    })();
 });
 
 // ================= LOAD APP =================
@@ -129,19 +128,42 @@ function loadLocalDataBundle() {
     });
 }
 
-function loadDukopsApp() {
-    currentApp = 'dukops';
-    showApp();
-    if (window.location.protocol === 'file:') {
-        loadLocalDataBundle()
-            .then(initializeApp)
-            .catch(error => {
-                console.error('❌ Error loading local data bundle:', error);
-                initializeApp();
-            });
-        return;
-    }
-    initializeApp();
+function exitApplication() {
+    window.close();
+
+    setTimeout(() => {
+        if (window.closed) return;
+
+        const message = document.createElement('main');
+        message.style.cssText = [
+            'position:fixed',
+            'inset:0',
+            'z-index:1000000',
+            'display:flex',
+            'flex-direction:column',
+            'align-items:center',
+            'justify-content:center',
+            'gap:16px',
+            'padding:24px',
+            'background:#081008',
+            'color:#e6ffe6',
+            'font:16px/1.5 sans-serif',
+            'text-align:center'
+        ].join(';');
+
+        const heading = document.createElement('h1');
+        heading.textContent = 'Aplikasi siap ditutup';
+        const instructions = document.createElement('p');
+        instructions.textContent = 'Browser tidak mengizinkan aplikasi menutup tab ini. Silakan tutup tab browser atau jendela aplikasi secara manual.';
+        const closeButton = document.createElement('button');
+        closeButton.type = 'button';
+        closeButton.textContent = 'Coba tutup lagi';
+        closeButton.style.cssText = 'padding:12px 20px;border:0;border-radius:8px;background:#8a3030;color:#fff;font-weight:700;';
+        closeButton.addEventListener('click', () => window.close());
+
+        message.append(heading, instructions, closeButton);
+        document.body.replaceChildren(message);
+    }, 250);
 }
 
 function showApp() {
@@ -429,7 +451,7 @@ async function loadSelectedDesa() {
     const jsonPath = select.value;
     const loading = document.getElementById('loadingKoordinat');
 
-    if (!jsonPath) { resetForm(); return; }
+    if (!jsonPath) { resetForm(); return false; }
 
     const selectedOption = select.options[select.selectedIndex];
     selectedDesa = selectedOption.getAttribute('data-raw-name') || selectedOption.text;
@@ -469,10 +491,12 @@ async function loadSelectedDesa() {
         if (kordinatList.length === 0) throw new Error("File koordinat kosong");
         pickRandomKoordinat();
         showNotification(`Koordinat ${desaInfo.cleanName} dimuat (${kordinatList.length} titik)`, "success");
+        return true;
     } catch (error) {
         console.error("❌ Error loading coordinates:", error);
         if (previewKordinatEl) previewKordinatEl.textContent = "Gagal memuat koordinat";
         showNotification("Gagal memuat koordinat: " + error.message, "error");
+        return false;
     } finally {
         if (loading) loading.style.display = 'none';
         updatePreview();

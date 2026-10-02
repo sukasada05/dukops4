@@ -293,7 +293,9 @@
     }
     
     .splash-logo-center img {
-        width: 50px;
+        width: auto;
+        height: 68px;
+        max-width: 60px;
     }
     
     .splash-progress-center {
