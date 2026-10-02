@@ -10,6 +10,7 @@ let currentKoordinat = "";
 let tanggalWaktu = "";
 let submittedDates = [];
 let desaCounter = {};
+let driveUploadCounterRequest = 0;
 let deferredPrompt = null;
 let swWaiting = null;
 const canvasPlaceholderImage = new Image();
@@ -465,6 +466,7 @@ async function loadSelectedDesa() {
 
     const selectedOption = select.options[select.selectedIndex];
     selectedDesa = selectedOption.getAttribute('data-raw-name') || selectedOption.text;
+    updateDriveUploadCounter();
     const narasiWilayahLabel = document.getElementById('narasiWilayahLabel');
     if (narasiWilayahLabel) narasiWilayahLabel.textContent = selectedDesa;
 
@@ -608,6 +610,7 @@ function updateDatePreview() {
             if (label) label.textContent = 'Pilih tanggal & waktu';
         }
     }
+    updateDriveUploadCounter();
     updatePreview();
     checkInputCompletion();
 }
@@ -786,21 +789,18 @@ async function processSubmission() {
         // Upload Drive
         const driveUploaded = await uploadToGoogleDrive(content, zipFileNameForBackend, selectedDesa, date);
 
-        // Update counter
-        const desaData = updateDesaCounter(selectedDesa, zipFileNameForBackend);
-
         if (driveUploaded) {
+            const desaData = updateDesaCounter(selectedDesa, zipFileNameForBackend);
+            saveSubmittedDate(tanggalWaktu);
             showNotification(`✔ Laporan berhasil disimpan (${desaData.count}/${TARGET_LAPORAN} laporan)`, "success");
+
+            if (desaData.count === TARGET_LAPORAN) {
+                speakTargetReached(selectedDesa, monthYear);
+                showThankYouPopup(desaInfo.cleanName, desaData.count);
+            }
         } else {
             showNotification(`⚠ Laporan hanya didownload, gagal simpan ke Drive`, "warning");
         }
-
-        if (desaData.count === TARGET_LAPORAN) {
-            speakTargetReached(selectedDesa, monthYear);
-            showThankYouPopup(desaInfo.cleanName, desaData.count);
-        }
-
-        saveSubmittedDate(tanggalWaktu);
 
     } catch (error) {
         console.error("Error:", error);
@@ -902,6 +902,7 @@ function resetForm() {
 function loadDesaCounter() {
     const saved = localStorage.getItem('dukopsDesaCounter');
     desaCounter = saved ? JSON.parse(saved) : {};
+    updateDriveUploadCounter();
 }
 
 function updateDesaCounter(desaName, fileName) {
@@ -923,7 +924,41 @@ function updateDesaCounter(desaName, fileName) {
     }
 
     localStorage.setItem('dukopsDesaCounter', JSON.stringify(desaCounter));
+    updateDriveUploadCounter();
     return desaCounter[desaName];
+}
+
+function updateDriveUploadCounter() {
+    const counter = document.getElementById('driveUploadCounter');
+    if (!counter) return;
+    const requestId = ++driveUploadCounterRequest;
+    if (!selectedDesa || !tanggalWaktu) {
+        counter.textContent = 'Laporan bulan yang dipilih: pilih desa dan tanggal';
+        return;
+    }
+
+    const date = new Date(tanggalWaktu);
+    const monthYear = date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+    const data = desaCounter[selectedDesa];
+    const dukopsCount = data && data.month === monthYear ? data.count : 0;
+    const villageName = normalizeDesaName(selectedDesa).cleanName;
+    counter.textContent = `Laporan bulan ${monthYear} (${villageName}): menghitung total...`;
+
+    if (typeof window.getAbsenCountForVillageMonth !== 'function') {
+        counter.textContent = `Laporan bulan ${monthYear} (${villageName}): data ABSEN tidak tersedia`;
+        return;
+    }
+
+    window.getAbsenCountForVillageMonth(date.getFullYear(), date.getMonth() + 1, selectedDesa)
+        .then(function(absenCount) {
+            if (requestId !== driveUploadCounterRequest) return;
+            counter.textContent = `Laporan bulan ${monthYear} (${villageName}) - DUKOPS + ABSEN: ${dukopsCount + absenCount} total`;
+        })
+        .catch(function(error) {
+            console.error('Gagal mengambil jumlah laporan ABSEN untuk counter:', error);
+            if (requestId !== driveUploadCounterRequest) return;
+            counter.textContent = `Laporan bulan ${monthYear} (${villageName}): DUKOPS ${dukopsCount} + ABSEN tidak tersedia`;
+        });
 }
 
 function saveSubmittedDate(dateStr) {
@@ -1039,6 +1074,7 @@ function showNotification(message, type) {
     var CACHE_EXPIRY = 30 * 60 * 1000;
     var isOnlineAbsen = navigator.onLine;
     var currentDataAbsen = null;
+    var monthlyAbsenRequests = {};
     var tahunSelect = document.getElementById('absenTahunSelect');
     var bulanSelect = document.getElementById('absenBulanSelect');
     var resultContainer = document.getElementById('absenResultContainer');
@@ -1110,13 +1146,16 @@ function showNotification(message, type) {
         bulanSelect.disabled = true;
         bulanSelect.innerHTML = '<option>⏳ Memuat...</option>';
         var c = getCacheAbsen();
-        if (c && c.months && c.months[t]) {
-            populateBulanSelect(c.months[t]);
+        var cachedMonths = c && c.months && c.months[t] ? c.months[t] : null;
+        if (cachedMonths && cachedMonths.length > 0) {
+            populateBulanSelect(cachedMonths);
             bulanSelect.disabled = false;
-            return;
         }
+        var monthsCacheFresh = cachedMonths && c.monthsUpdatedAt && c.monthsUpdatedAt[t] &&
+            Date.now() - c.monthsUpdatedAt[t] < CACHE_EXPIRY;
+        if (monthsCacheFresh) return;
         if (!isOnlineAbsen) {
-            bulanSelect.innerHTML = '<option>❌ Offline</option>';
+            if (!cachedMonths) bulanSelect.innerHTML = '<option>❌ Offline</option>';
             bulanSelect.disabled = false;
             return;
         }
@@ -1129,11 +1168,16 @@ function showNotification(message, type) {
                 var uc = getCacheAbsen() || {};
                 uc.months = uc.months || {};
                 uc.months[t] = m;
+                uc.monthsUpdatedAt = uc.monthsUpdatedAt || {};
+                uc.monthsUpdatedAt[t] = Date.now();
                 saveToCacheAbsen(uc);
-            } else bulanSelect.innerHTML = '<option>Tidak ada data</option>';
+            } else if (!cachedMonths) {
+                bulanSelect.innerHTML = '<option>Tidak ada data</option>';
+            }
             bulanSelect.disabled = false;
-        }).catch(function() {
-            bulanSelect.innerHTML = '<option>❌ Gagal memuat</option>';
+        }).catch(function(error) {
+            console.error('Gagal memuat daftar bulan ABSEN:', error);
+            if (!cachedMonths) bulanSelect.innerHTML = '<option>❌ Gagal memuat</option>';
             bulanSelect.disabled = false;
         });
     }
@@ -1141,7 +1185,11 @@ function showNotification(message, type) {
     function populateBulanSelect(m) {
         if (!bulanSelect) return;
         bulanSelect.innerHTML = '<option value="">-- Pilih Bulan --</option>';
+        var addedMonthNumbers = {};
         for (var i = 0; i < m.length; i++) {
+            var monthValue = String(m[i].num || m[i]).padStart(2, '0');
+            if (addedMonthNumbers[monthValue]) continue;
+            addedMonthNumbers[monthValue] = true;
             var o = document.createElement('option');
             o.value = m[i].num || m[i];
             o.textContent = m[i].name || m[i];
@@ -1150,7 +1198,7 @@ function showNotification(message, type) {
         bulanSelect.onchange = function() {
             if (this.value) { loadDataAbsen(); } else { if (resultContainer) resultContainer.innerHTML = ''; }
         };
-        if (bulanSelect.value) { loadDataAbsen(); }
+        if (bulanSelect.value) loadDataAbsen();
     }
 
     function loadDataAbsen() {
@@ -1158,27 +1206,17 @@ function showNotification(message, type) {
         var t = tahunSelect.value, b = bulanSelect.value;
         if (!t || !b) { if (resultContainer) resultContainer.innerHTML = '<div class="absen-card">Pilih tahun dan bulan</div>'; return; }
         var c = getCacheAbsen(), ck = t + '_' + b;
-        var cachedData = null;
-        if (c && c.data && c.data[ck]) {
-            cachedData = c.data[ck];
+        var cachedData = c && c.data && c.data[ck] ? c.data[ck] : null;
+        if (cachedData && (!cachedData.data || cachedData.data.error)) cachedData = null;
+        if (cachedData) {
             displayDataAbsen(cachedData.data);
             currentDataAbsen = cachedData.data;
-            if (Date.now() - cachedData.timestamp < CACHE_EXPIRY) return;
+        } else {
+            showLoadingAbsen();
         }
-        if (!isOnlineAbsen) {
-            if (!cachedData) showErrorAbsen('Tidak ada koneksi');
-            return;
-        }
-        if (!cachedData) showLoadingAbsen();
-        fetch(SCRIPT_URL + '?action=getData&tahun=' + encodeURIComponent(t) + '&bulan=' + encodeURIComponent(b))
-            .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-            .then(function(d) {
+        fetchMonthlyAbsenData(t, b).then(function(d) {
                 currentDataAbsen = d;
                 displayDataAbsen(d);
-                var uc = getCacheAbsen() || {};
-                uc.data = uc.data || {};
-                uc.data[ck] = { data: d, timestamp: Date.now() };
-                saveToCacheAbsen(uc);
             }).catch(function(e) {
                 if (cachedData) {
                     console.error('Gagal memperbarui data absensi; data tersimpan tetap ditampilkan:', e);
@@ -1188,6 +1226,63 @@ function showNotification(message, type) {
                 }
             });
     }
+
+    function fetchMonthlyAbsenData(t, b) {
+        b = String(b).padStart(2, '0');
+        var c = getCacheAbsen();
+        var ck = t + '_' + b;
+        var cachedData = c && c.data && c.data[ck] ? c.data[ck] : null;
+        if (cachedData && (!cachedData.data || cachedData.data.error)) cachedData = null;
+        if (cachedData && Date.now() - cachedData.timestamp < CACHE_EXPIRY) {
+            return Promise.resolve(cachedData.data);
+        }
+        if (!isOnlineAbsen) {
+            return cachedData
+                ? Promise.resolve(cachedData.data)
+                : Promise.reject(new Error('Tidak ada koneksi dan cache ABSEN tidak tersedia.'));
+        }
+        if (monthlyAbsenRequests[ck]) return monthlyAbsenRequests[ck];
+
+        monthlyAbsenRequests[ck] = fetch(SCRIPT_URL + '?action=getData&tahun=' + encodeURIComponent(t) + '&bulan=' + encodeURIComponent(b))
+            .then(function(r) {
+                if (!r.ok) throw new Error('HTTP ' + r.status);
+                return r.json();
+            })
+            .then(function(d) {
+                if (d && d.error) throw new Error(d.error);
+                var uc = getCacheAbsen() || {};
+                uc.data = uc.data || {};
+                uc.data[ck] = { data: d, timestamp: Date.now() };
+                saveToCacheAbsen(uc);
+                return d;
+            })
+            .catch(function(error) {
+                if (cachedData) {
+                    console.error('Gagal memperbarui data absensi; menggunakan cache:', error);
+                    return cachedData.data;
+                }
+                throw error;
+            })
+            .finally(function() {
+                delete monthlyAbsenRequests[ck];
+            });
+        return monthlyAbsenRequests[ck];
+    }
+
+    window.getAbsenCountForVillageMonth = function(year, month, villageName) {
+        return fetchMonthlyAbsenData(String(year), String(month).padStart(2, '0')).then(function(d) {
+            if (!d || d.error) throw new Error(d && d.error ? d.error : 'Format data ABSEN tidak valid.');
+            var selectedName = normalizeDesaName(villageName).cleanName.replace(/_/g, ' ').trim().toLocaleLowerCase('id-ID');
+            if (!selectedName) throw new Error('Desa/kelurahan belum dipilih.');
+            var details = Array.isArray(d.details) ? d.details : [];
+            return details.reduce(function(total, detail) {
+                var detailName = normalizeDesaName(detail.nama || '').cleanName.replace(/_/g, ' ').trim().toLocaleLowerCase('id-ID');
+                if (detailName !== selectedName) return total;
+                var fileCount = Number(detail.jumlah_file);
+                return total + (Number.isFinite(fileCount) ? fileCount : 0);
+            }, 0);
+        });
+    };
 
     function displayDataAbsen(d) {
         if (!resultContainer) return;
