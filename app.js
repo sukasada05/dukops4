@@ -114,9 +114,33 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // ================= LOAD APP =================
+function loadLocalDataBundle() {
+    return new Promise((resolve, reject) => {
+        if (window.DUKOPS_LOCAL_DATA) {
+            resolve();
+            return;
+        }
+
+        const script = document.createElement('script');
+        script.src = 'data/local-data.js';
+        script.onload = resolve;
+        script.onerror = () => reject(new Error('Gagal memuat data lokal aplikasi.'));
+        document.head.appendChild(script);
+    });
+}
+
 function loadDukopsApp() {
     currentApp = 'dukops';
     showApp();
+    if (window.location.protocol === 'file:') {
+        loadLocalDataBundle()
+            .then(initializeApp)
+            .catch(error => {
+                console.error('❌ Error loading local data bundle:', error);
+                initializeApp();
+            });
+        return;
+    }
     initializeApp();
 }
 
@@ -305,7 +329,13 @@ async function initializeApp() {
     console.log("🔄 Initializing DUKOPS app...");
     try {
         console.log('initializeApp: before loadDesaList');
-        try { await loadDesaList(); console.log('initializeApp: loadDesaList OK'); } catch(e){ console.error('initializeApp: loadDesaList error', e); }
+        try {
+            const desaListLoaded = await loadDesaList();
+            if (desaListLoaded) console.log('initializeApp: loadDesaList OK');
+            else console.warn('initializeApp: loadDesaList failed; see the error above');
+        } catch (e) {
+            console.error('initializeApp: loadDesaList error', e);
+        }
         try { loadLastSubmittedDates(); } catch(e){ console.error('initializeApp: loadLastSubmittedDates error', e); }
         try { loadDesaCounter(); } catch(e){ console.error('initializeApp: loadDesaCounter error', e); }
 
@@ -341,13 +371,19 @@ async function initializeApp() {
 async function loadDesaList() {
     const select = document.getElementById('selectDesa');
     const loading = document.getElementById('loadingDesa');
-    if (!select) return;
+    if (!select) return false;
     if (loading) loading.style.display = 'block';
 
     try {
-        const response = await fetch('data/desa-list.json?t=' + Date.now());
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        const data = await response.json();
+        let data;
+        if (isFileProtocol) {
+            data = window.DUKOPS_LOCAL_DATA;
+            if (!data) throw new Error('Data lokal belum tersedia. Muat ulang aplikasi.');
+        } else {
+            const response = await fetch('data/desa-list.json?t=' + Date.now());
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            data = await response.json();
+        }
         const desaList = (data.desaList || []).map(name => ({ name, type: 'Desa' }));
         const kelurahanList = (data.kelurahanList || []).map(name => ({ name, type: 'Kelurahan' }));
         const wilayahList = [...desaList, ...kelurahanList];
@@ -364,67 +400,17 @@ async function loadDesaList() {
         });
         console.log(`✅ Loaded ${wilayahList.length} wilayah (${desaList.length} desa, ${kelurahanList.length} kelurahan)`);
         showNotification('✅ Daftar desa berhasil dimuat', 'success');
+        return true;
     } catch (error) {
         console.error("❌ Error loading desa list:", error);
         select.innerHTML = '<option value="">-- Gagal memuat desa --</option>';
         select.disabled = true;
-        showNotification('❌ Gagal memuat daftar desa. Periksa koneksi.', 'error');
+        showNotification(`❌ ${error.message}`, 'error');
+        return false;
     } finally {
         if (loading) loading.style.display = 'none';
     }
 }
-
-document.addEventListener('DOMContentLoaded', function () {
-    try {
-        const select = document.getElementById('selectDesa');
-        if (select && select.options && select.options.length > 1) {
-            const evt = new Event('change');
-            select.dispatchEvent(evt);
-        }
-    } catch (e) {}
-});
-
-(function tryEarlyLoadDesa(){
-    const run = () => {
-        try {
-            if (typeof loadDesaList === 'function') {
-                loadDesaList().catch(()=>{});
-            }
-        } catch (e) {}
-    };
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', run);
-    } else {
-        setTimeout(run, 0);
-    }
-})();
-
-function ensureDesaListLoaded(maxAttempts = 6, delayMs = 500) {
-    let attempts = 0;
-    const tryLoad = () => {
-        attempts++;
-        try {
-            if (typeof loadDesaList === 'function') {
-                loadDesaList().then(() => {
-                    const select = document.getElementById('selectDesa');
-                    if (select && select.options && select.options.length > 1) return;
-                    if (attempts < maxAttempts) setTimeout(tryLoad, delayMs);
-                }).catch(() => {
-                    if (attempts < maxAttempts) setTimeout(tryLoad, delayMs);
-                });
-            } else {
-                if (attempts < maxAttempts) setTimeout(tryLoad, delayMs);
-            }
-        } catch (e) {
-            if (attempts < maxAttempts) setTimeout(tryLoad, delayMs);
-        }
-    };
-    tryLoad();
-}
-
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => ensureDesaListLoaded()); else ensureDesaListLoaded();
-
-setTimeout(() => { try { if (typeof loadDesaList === 'function') loadDesaList().catch(()=>{}); } catch (e) {} }, 120);
 
 function normalizeDesaName(desaName) {
     if (!desaName) return { original: "", normalized: "", forTelegram: "", cleanName: "" };
@@ -466,9 +452,15 @@ async function loadSelectedDesa() {
 
     try {
         console.log(`📂 Fetching coordinates from: ${jsonPath}`);
-        const response = await fetch(jsonPath);
-        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        const jsonData = await response.json();
+        let jsonData;
+        if (isFileProtocol) {
+            jsonData = window.DUKOPS_LOCAL_DATA?.coordinates?.[desaInfo.cleanName];
+            if (!jsonData) throw new Error(`Data koordinat ${desaInfo.cleanName} tidak tersedia di data lokal`);
+        } else {
+            const response = await fetch(jsonPath);
+            if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            jsonData = await response.json();
+        }
         if (!jsonData.coordinates || !Array.isArray(jsonData.coordinates)) {
             throw new Error("Format JSON koordinat tidak valid");
         }

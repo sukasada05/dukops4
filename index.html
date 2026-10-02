@@ -154,7 +154,6 @@
                     <button id="submitBtn" onclick="processSubmission()" disabled>
                         <i class="fas fa-download"></i> KIRIM dan DOWNLOAD
                     </button>
-                    <button id="resetBtn" onclick="resetAll()"><i class="fas fa-redo"></i> RESET</button>
                     <!-- Tombol LAPORAN telah dihapus -->
                 </div>
 
@@ -219,15 +218,6 @@
     <!-- ====== SATU SCRIPT EKSTERNAL ====== -->
     <script src="app.js"></script>
     <script>
-        // Ensure desa list loads after app.js is available
-        (function(){
-            try {
-                const run = () => { try { if (typeof loadDesaList === 'function') loadDesaList().catch(()=>{}); } catch(e){} };
-                if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else setTimeout(run, 50);
-                try { window.addEventListener('focus', run); document.addEventListener('visibilitychange', function(){ if (document.visibilityState === 'visible') run(); }); } catch(e) {}
-            } catch (e) {}
-        })();
-
         // ===== FUNGSI NAVIGASI UNTUK TAB CanvasPRO =====
         function showCanvaspro() {
             document.getElementById('dukopsContent').style.display = 'none';
