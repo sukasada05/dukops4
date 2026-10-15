@@ -134,19 +134,21 @@
                 <div id="loadingKoordinat" style="display:none;"><i class="fas fa-spinner fa-spin"></i> Memuat koordinat...</div>
                 <div class="previewBox" id="previewKordinat"><span style="color:#6a7a8a;">Pilih desa/Kelurahan untuk melihat koordinat</span></div>
 
-                <label id="labelFotoKegiatan"><i class="fas fa-camera"></i> Foto Kegiatan:</label>
+                <label id="labelFotoKegiatan">Foto Kegiatan:</label>
                 <div class="file-input-wrapper">
                     <input type="file" id="gambar" accept="image/*" aria-label="Pilih foto kegiatan" onchange="previewImage()">
                     <label class="file-input-button" for="gambar"><i class="fas fa-folder-open"></i> Pilih Foto</label>
                     <span id="gambarNama">Belum ada foto dipilih</span>
                 </div>
 
-                <label id="labelTanggalWaktu" for="tanggalWaktu"><i class="fas fa-calendar-alt"></i> Tanggal & Waktu: <span id="tanggalWaktuLabelText">Pilih tanggal & waktu</span></label>
-                <input type="datetime-local" id="tanggalWaktu" onchange="updateDatePreview()">
+                <div class="tanggal-waktu-input" onclick="openDatePicker(event)">
+                    <input type="datetime-local" id="tanggalWaktu" aria-label="Tanggal dan waktu" onchange="updateDatePreview()">
+                    <span id="tanggalWaktuLabelText" aria-hidden="true">Pilih tanggal & waktu</span>
+                </div>
 
                 <canvas id="canvas"></canvas>
 
-                <label><i class="fas fa-file-alt"></i> Narasi Kegiatan: <span id="narasiWilayahLabel"></span></label>
+                <label>Narasi Kegiatan: <span id="narasiWilayahLabel"></span></label>
                 <div class="narasi-wrapper">
                     <textarea id="narasi" class="auto-height-textarea" rows="6" placeholder="Masukkan narasi kegiatan...✍️" oninput="checkInputCompletion(); autoResizeNarasi()"></textarea>
                 </div>

@@ -8,6 +8,7 @@ let selectedDesa = "";
 let kordinatList = [];
 let currentKoordinat = "";
 let tanggalWaktu = "";
+let datePreviewInterval = null;
 let submittedDates = [];
 let desaCounter = {};
 let driveUploadCounterRequest = 0;
@@ -480,7 +481,7 @@ async function loadSelectedDesa() {
     }
 
     const fotoLabel = document.getElementById('labelFotoKegiatan');
-    if (fotoLabel) fotoLabel.innerHTML = `<i class="fas fa-camera"></i> Foto Kegiatan: ${selectedDesa}`;
+    if (fotoLabel) fotoLabel.textContent = `Foto Kegiatan: ${selectedDesa}`;
 
     if (loading) loading.style.display = 'block';
     const previewKordinatEl = document.getElementById('previewKordinat');
@@ -583,31 +584,42 @@ function previewImage() {
 
 function updateDatePreview() {
     const tglEl = document.getElementById("tanggalWaktu");
-    const label = document.getElementById('tanggalWaktuLabelText');
+    const display = document.getElementById('tanggalWaktuLabelText');
     const tglInput = tglEl ? tglEl.value : '';
 
     if (tglInput) {
-        let date = new Date(tglInput);
-        date.setSeconds(Math.floor(Math.random() * 60));
+        clearInterval(datePreviewInterval);
+        const date = new Date(tglInput);
+        date.setSeconds(new Date().getSeconds(), 0);
+        const baseTime = date.getTime();
+        const startedAt = Date.now();
         tanggalWaktu = date.toISOString();
         const options = { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-        const displayText = date.toLocaleString('id-ID', options).replace(/:/g, '.');
-        if (label) label.textContent = displayText;
+        const updateLiveDate = () => {
+            const liveDate = new Date(baseTime + Date.now() - startedAt);
+            tanggalWaktu = liveDate.toISOString();
+            if (display) display.textContent = liveDate.toLocaleString('id-ID', options).replace(/:/g, '.');
+            updatePreview();
+        };
+        if (display) display.textContent = date.toLocaleString('id-ID', options).replace(/:/g, '.');
+        datePreviewInterval = setInterval(updateLiveDate, 1000);
     } else {
+        clearInterval(datePreviewInterval);
+        datePreviewInterval = null;
         if (!tglEl) {
             if (tanggalWaktu) {
                 try {
                     const date = new Date(tanggalWaktu);
                     const options = { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
                     const displayText = date.toLocaleString('id-ID', options).replace(/:/g, '.');
-                    if (label) label.textContent = displayText;
+                    if (display) display.textContent = displayText;
                 } catch (e) {}
             } else {
-                if (label) label.textContent = 'Pilih tanggal & waktu';
+                if (display) display.textContent = 'Pilih tanggal & waktu';
             }
         } else {
             tanggalWaktu = "";
-            if (label) label.textContent = 'Pilih tanggal & waktu';
+            if (display) display.textContent = 'Pilih tanggal & waktu';
         }
     }
     updateDriveUploadCounter();
@@ -873,6 +885,18 @@ function resetAll() {
     }
 }
 
+function openDatePicker(event) {
+    const input = document.getElementById('tanggalWaktu');
+    if (!input) return;
+
+    if (typeof input.showPicker === 'function') {
+        event.preventDefault();
+        input.showPicker();
+    } else {
+        input.focus();
+    }
+}
+
 function resetForm() {
     selectedDesa = "";
     kordinatList = [];
@@ -891,8 +915,10 @@ function resetForm() {
     if (gambarEl) gambarEl.value = "";
     const tanggalWaktuEl = document.getElementById('tanggalWaktu');
     if (tanggalWaktuEl) tanggalWaktuEl.value = "";
-    const label = document.getElementById('tanggalWaktuLabelText');
-    if (label) label.textContent = 'Pilih tanggal & waktu';
+    clearInterval(datePreviewInterval);
+    datePreviewInterval = null;
+    const display = document.getElementById('tanggalWaktuLabelText');
+    if (display) display.textContent = 'Pilih tanggal & waktu';
     updateDesaHeaderImage("");
     checkInputCompletion();
     updatePreview();
