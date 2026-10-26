@@ -197,6 +197,7 @@
     height: 10px;
     border-radius: 50%;
     background: var(--gold-color);
+    cursor: pointer;
 }
 
 /* ================================================================

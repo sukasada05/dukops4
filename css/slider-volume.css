@@ -23,6 +23,7 @@
     background: var(--slider-bg) !important;
     border-radius: var(--slider-height) !important;
     outline: none !important;
+    cursor: pointer !important;
     border: none !important;
     padding: 0 !important;
     margin: 0 !important;
@@ -40,6 +41,7 @@
     height: var(--slider-thumb-size) !important;
     border-radius: 50% !important;
     background: var(--slider-thumb-color) !important;
+    cursor: pointer !important;
     margin-top: -3.5px !important;
     border: none !important;
 }
@@ -52,6 +54,7 @@
     height: var(--slider-thumb-size) !important;
     border-radius: 50% !important;
     background: var(--slider-thumb-color) !important;
+    cursor: pointer !important;
     border: none !important;
 }
 

@@ -14,18 +14,9 @@
     padding: 0;
     background: transparent;
     width: 100%;
-    max-width: none;
-    margin-left: 0;
-    margin-right: 0;
+    max-width: 900px;
     visibility: visible !important;
     opacity: 1 !important;
-    background-color: #163b2a !important;
-    background-image: none !important;
-    border: none !important;
-    box-shadow: none !important;
-    min-height: 56px;
-    margin-top: -10px;
-    align-items: center;
 }
 
 /* ================================================================
@@ -36,6 +27,7 @@
     padding: 12px 20px;
     border: none;
     border-radius: 30px;
+    cursor: pointer;
     font-weight: 700;
     font-size: 14px;
     text-align: center;
@@ -74,7 +66,6 @@
 .nav-btn-dukops {
     background: #d96b00;
     color: #ffffff;
-    font-family: var(--sys-font);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -87,38 +78,17 @@
 .nav-btn-hanpangan {
     background: #0f8a3a;
     color: #ffffff;
-    font-family: var(--sys-font);
 }
 
 .nav-btn-canvaspro {
     background: #1a4a1a;
     color: #ffffff;
-    font-family: var(--sys-font);
 }
 
 /* ABSEN - Biru */
 .nav-btn-absen {
     background: #0066cc;
     color: #ffffff;
-    font-family: var(--sys-font);
-}
-
-.nav-btn {
-    background: #2d6a2d;
-    color: #ffffff;
-}
-
-.nav-btn:hover,
-.nav-btn:focus-visible {
-    background: #4caf50;
-    color: #ffffff;
-}
-
-.nav-btn.active {
-    background: #173d25 !important;
-    color: #d9f2dc !important;
-    font-weight: 800;
-    box-shadow: inset 0 0 0 2px #6fba78, 0 0 10px rgba(111, 186, 120, 0.35);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -126,30 +96,66 @@
         background: #2d6a2d;
     }
 
-    .nav-btn-dukops:hover {
-        background: #c87010;
-    }
-
-    .nav-btn-hanpangan:hover {
-        background: #0f6b2d;
-    }
-
-    .nav-btn-canvaspro:hover {
-        background: #205c2a;
-    }
-
-    .nav-btn-absen:hover {
-        background: #0066cc;
-    }
-
-}
 
 /* ================================================================
    ACTIVE STATE - FLAT
    ================================================================ */
+    .nav-btn-canvaspro {
+        background: #123b1b;
+    box-shadow: none;
+
+    @media (hover: hover) and (pointer: fine) {
+        .nav-btn-dukops:hover {
+            background: #c87010;
+        }
+
+        .nav-btn-hanpangan:hover {
+            background: #0f6b2d;
+        }
+
+        .nav-btn-canvaspro:hover {
+            background: #205c2a;
+        }
+
+        .nav-btn-absen:hover {
+            background: #0066cc;
+        }
 .nav-btn-dukops.active {
-    background: #173d25 !important;
-    color: #d9f2dc !important;
+
+    .nav-btn-dukops.active {
+        background: #f7971e;
+    }
+
+    .nav-btn-hanpangan.active {
+        background: #1db954;
+    }
+
+    .nav-btn-canvaspro.active {
+        background: #2d6a2d;
+    }
+
+    color: #ffffff;
+    box-shadow: 0 0 0 2px rgba(247, 151, 30, 0.2);
+}
+
+/* PIKET Active */
+.nav-btn-hanpangan.active {
+    background: #1db954;
+    color: #ffffff;
+    box-shadow: 0 0 0 2px rgba(29, 185, 84, 0.2);
+}
+
+.nav-btn-canvaspro.active {
+    background: #2d6a2d;
+    color: #ffffff;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+/* ABSEN Active */
+.nav-btn-absen.active {
+    background: #4facfe;
+    color: #ffffff;
+    box-shadow: 0 0 0 2px rgba(79, 172, 254, 0.2);
 }
 
 /* ================================================================
@@ -336,25 +342,6 @@
         background: #1a4a1a !important;
         box-shadow: none !important;
     }
-}
-
-/* Warna seragam untuk semua tab */
-.nav-buttons .nav-btn {
-    background: #2d6a2d !important;
-    color: #ffffff !important;
-    box-shadow: none !important;
-}
-
-.nav-buttons .nav-btn:hover,
-.nav-buttons .nav-btn:focus-visible {
-    background: #4caf50 !important;
-    color: #ffffff !important;
-}
-
-.nav-buttons .nav-btn.active,
-.nav-buttons .nav-btn:active {
-    background: #5b1018 !important;
-    color: #ffffff !important;
 }
 
 /* ===== End of navigation.css ===== */

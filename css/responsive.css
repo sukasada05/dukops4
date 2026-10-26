@@ -9,12 +9,10 @@
 @media (max-width: 768px) {
     
     /* ----- CONTAINER ----- */
-    #appContainer.container {
+    .container {
         padding: 14px;
-        width: 100%;
-        min-height: 100vh;
-        border-radius: 0;
-        margin: 0;
+        border-radius: 12px;
+        margin: 10px;
     }
     
     /* ----- HEADER ----- */
@@ -295,7 +293,9 @@
     }
     
     .splash-logo-center img {
-        width: 50px;
+        width: auto;
+        height: 68px;
+        max-width: 60px;
     }
     
     .splash-progress-center {
@@ -382,14 +382,6 @@
         padding: 6px;
         border-radius: 8px;
         margin: 4px;
-    }
-
-    /* App container mengikuti ukuran halaman penuh */
-    .container {
-        width: 100%;
-        min-height: 100vh;
-        margin: 0;
-        border-radius: 0;
     }
     
     /* ----- HEADER ----- */
@@ -539,21 +531,6 @@
     .counter-value {
         color: #000 !important;
         border: 1px solid #ccc !important;
-    }
-}
-
-/* ================================================================
-   6. ANDROID - SKALA TEKS UNTUK LAYAR MOBILE/FULLSCREEN
-   ================================================================ */
-@media (max-width: 768px) {
-    /*
-     * Android browsers render the fixed-size mobile labels smaller than
-     * their desktop equivalents. A small layout scale keeps all text,
-     * controls, and fullscreen content readable without changing widths
-     * or typography on other platforms.
-     */
-    html.android-device body {
-        zoom: 1.16;
     }
 }
 

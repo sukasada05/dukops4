@@ -4,10 +4,13 @@
    ================================================================ */
 
 :root {
-    --btn-download-bg: linear-gradient(135deg, #14532d 0%, #1f8f4d 52%, #4caf50 100%);
-    --btn-download-hover: linear-gradient(135deg, #1b6b3b 0%, #2aa85b 52%, #66bb6a 100%);
+    --btn-download-bg: #1a6a3a;
+    --btn-download-hover: #2a8a4a;
     --btn-download-color: #ffffff;
     
+    --btn-reset-bg: #e8ecf0;
+    --btn-reset-hover: #d5d9e0;
+    --btn-reset-color: #1a2a3a;
     
     --btn-attendance-bg: #2a5a8a;
     --btn-attendance-hover: #3a7aaa;
@@ -35,13 +38,13 @@
     min-width: 80px;
     padding: var(--btn-padding);
     font-size: var(--btn-font-size);
-    font-weight: 800;
-    color: #ffffff;
+    font-weight: 700;
     text-align: center;
     border: none;
     border-radius: var(--btn-radius);
+    cursor: pointer;
     transition: all 0.2s ease;
-    font-family: var(--sys-font, Roboto, "Droid Sans", "Noto Sans", Arial, sans-serif);
+    font-family: var(--sys-font, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -57,6 +60,22 @@
 
 .action-buttons button:disabled {
     opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.drive-upload-counter {
+    margin-top: 8px;
+    padding: 8px 12px;
+    border: 1px solid #2e7d32;
+    border-radius: 8px;
+    background: #e8f5e9;
+    color: #14532d;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.4;
+    text-align: center;
 }
 
 /* ===== TOMBOL DOWNLOAD (KIRIM) - HIJAU ===== */
@@ -67,15 +86,45 @@
 
 #submitBtn:hover:not(:disabled) {
     background: var(--btn-download-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(26, 106, 58, 0.35);
 }
 
-.action-exit-btn {
-    background: #b71c1c;
+#submitBtn:active:not(:disabled) {
+    transform: translateY(0px);
+    box-shadow: 0 2px 8px rgba(26, 106, 58, 0.2);
+}
+
+/* ===== TOMBOL KELUAR ===== */
+#exitBtn {
+    background: #8a3030;
     color: #ffffff;
 }
 
-.action-exit-btn:hover {
-    background: #d32f2f;
+#exitBtn:hover {
+    background: #a83b3b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(138, 48, 48, 0.3);
+}
+
+#exitBtn:active {
+    transform: translateY(0);
+}
+
+/* ===== TOMBOL RESET - ABU-ABU ===== */
+#resetBtn {
+    background: var(--btn-reset-bg);
+    color: var(--btn-reset-color);
+}
+
+#resetBtn:hover {
+    background: var(--btn-reset-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+#resetBtn:active {
+    transform: translateY(0px);
 }
 
 /* ===== TOMBOL LAPORAN - BIRU ===== */
@@ -86,78 +135,19 @@
 
 #showAttendanceBtn:hover:not(:disabled) {
     background: var(--btn-attendance-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(42, 90, 138, 0.35);
+}
+
+#showAttendanceBtn:active:not(:disabled) {
+    transform: translateY(0px);
+    box-shadow: 0 2px 8px rgba(42, 90, 138, 0.2);
 }
 
 #showAttendanceBtn:disabled {
     opacity: 0.4;
-}
-
-.drive-report-panel {
-    margin-top: 12px;
-    padding: 14px;
-    border: 1px solid rgba(76, 175, 80, 0.35);
-    border-radius: 10px;
-    background: rgba(10, 26, 10, 0.88);
-    color: #e6ffe6;
-}
-
-.drive-report-counter {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-    font-weight: 700;
-}
-
-.drive-report-counter span,
-.drive-report-log h3 {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.drive-report-counter strong {
-    min-width: 38px;
-    padding: 4px 10px;
-    border-radius: 20px;
-    background: #ffffff;
-    color: #000000;
-    text-align: center;
-    font-size: 18px;
-}
-
-.drive-report-log h3 {
-    margin: 12px 0 8px;
-    color: #b7e8bb;
-    font-size: 14px;
-}
-
-.drive-report-log ul {
-    display: grid;
-    gap: 6px;
-    max-height: 220px;
-    overflow-y: auto;
-    padding: 0;
-    list-style: none;
-}
-
-.drive-report-log li {
-    overflow-wrap: anywhere;
-    padding: 8px 10px;
-    border-radius: 6px;
-    background: rgba(255, 255, 255, 0.06);
-    font-size: 13px;
-}
-
-.drive-report-log .drive-report-empty,
-.drive-report-log .drive-report-error {
-    color: #bdc9bd;
-}
-
-.drive-report-log .drive-report-error {
-    color: #ffb3a9;
+    cursor: not-allowed;
+    transform: none !important;
 }
 
 /* ===== TOMBOL LIHAT SUPABASE (opsional) ===== */
@@ -168,6 +158,8 @@
 
 #btnLihatLaporanSupabase:hover {
     background: #3a8aaa !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(42, 106, 138, 0.35) !important;
 }
 
 /* ================================================================
@@ -221,6 +213,31 @@
     
     .action-buttons button i {
         font-size: 11px;
+    }
+}
+
+/* ================================================================
+   MODE TOUCH - HILANGKAN HOVER DI HP
+   ================================================================ */
+@media (hover: none) {
+    .action-buttons button:hover {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+    
+    #submitBtn:hover:not(:disabled) {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+    
+    #showAttendanceBtn:hover:not(:disabled) {
+        transform: none !important;
+        box-shadow: none !important;
+    }
+    
+    #resetBtn:hover {
+        transform: none !important;
+        box-shadow: none !important;
     }
 }
 
