@@ -34,12 +34,9 @@
 
     <!-- CSS MODULAR -->
     <link rel="stylesheet" href="css/main.css">
-    <script src="js/cursor.js"></script>
-
     <!-- Sembunyikan tooltip indikator Supabase -->
     <style>
         .indicator-tooltip { display: none !important; }
-        .supabase-indicator { cursor: default; }
 
         /* Gaya untuk tab CanvasPRO dengan iframe */
         #canvasproContent {
@@ -67,6 +64,227 @@
                 height: 70vh;
             }
         }
+
+        .app-banner {
+            width: 100%;
+            margin: 0 0 8px;
+            overflow: hidden;
+            border-radius: 6px;
+        }
+        .app-banner img {
+            display: block;
+            width: 100%;
+            height: 52px;
+            object-fit: fill;
+        }
+        .app-banner + .nav-buttons {
+            margin-top: 0 !important;
+        }
+
+        .village-start-screen .splash-content {
+            width: 92vw;
+            max-width: 430px;
+            width: min(92vw, 430px);
+            padding: 34px 20px 24px;
+            box-sizing: border-box;
+            background-image:
+                linear-gradient(rgba(11, 22, 10, 0.78), rgba(11, 22, 10, 0.88)),
+                url('kamuflase.png');
+            background-size: cover;
+            background-position: center;
+            border: 1px solid rgba(135, 187, 255, 0.7);
+            border-radius: 22px;
+            box-shadow: 0 20px 55px rgba(0, 0, 0, 0.55);
+        }
+
+        .village-start-screen {
+            background: rgba(5, 15, 30, 0.68);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+        }
+
+        .village-start-screen .startup-logo {
+            display: block;
+            width: 72vw;
+            max-width: 220px;
+            width: min(220px, 72vw);
+            height: auto;
+            max-height: 150px;
+            object-fit: contain;
+            margin: 0 auto 28px;
+        }
+
+        .village-start-screen .startup-title {
+            margin: 0 0 6px;
+            color: #f4d878;
+            font-size: 8vw;
+            font-size: clamp(32px, 8vw, 46px);
+            font-weight: 800;
+            letter-spacing: 4px;
+            line-height: 1.2;
+            text-shadow:
+                1px 1px 0 #b18428,
+                2px 2px 0 #8a651e,
+                3px 3px 0 #634714,
+                4px 5px 0 rgba(28, 24, 10, 0.8),
+                0 8px 14px rgba(0, 0, 0, 0.65);
+        }
+
+        .village-start-screen .startup-branch {
+            display: table;
+            margin: 0 auto 18px;
+            padding: 3px 12px;
+            border-top: 1px solid rgba(244, 216, 120, 0.8);
+            border-bottom: 1px solid rgba(244, 216, 120, 0.8);
+            color: #f2f4ed;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 5px;
+            line-height: 1.3;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .village-start-screen select {
+            width: 100% !important;
+            min-height: 54px;
+            padding: 10px 42px 10px 16px !important;
+            border-radius: 40px !important;
+            border: 1px solid rgba(191, 220, 255, 0.8) !important;
+            background: linear-gradient(110deg, #4d96ff, #21469d) !important;
+            color: #ffffff !important;
+            font-size: 16px !important;
+            font-size: clamp(15px, 2.8vw, 20px) !important;
+            font-weight: 500 !important;
+            line-height: 1.2;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            box-shadow: 0 12px 22px rgba(32, 102, 224, 0.3);
+            text-align: left;
+        }
+
+        .village-start-screen .splash-kodim-center {
+            margin-top: 30px;
+            color: #d9e6f5;
+            font-size: 12px;
+            font-weight: 600;
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            line-height: 20px;
+            height: 20px;
+        }
+
+        .datetime-picker-area input[type="datetime-local"] {
+            color: transparent !important;
+            color-scheme: dark;
+            background: #183b24 !important;
+            border: 2px solid #4caf50 !important;
+            box-shadow: none !important;
+        }
+
+        .datetime-picker-area input[type="datetime-local"]:focus {
+            border-color: #81c784 !important;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2) !important;
+        }
+
+        .datetime-picker-area .datetime-input-display {
+            color: #e6ffe6;
+        }
+
+        .running-text span {
+            display: inline-block;
+            padding-left: 100%;
+            white-space: nowrap !important;
+            animation-name: runningText !important;
+            animation-duration: 12s !important;
+            animation-timing-function: linear !important;
+            animation-iteration-count: infinite !important;
+            animation-fill-mode: both !important;
+        }
+
+        @keyframes runningText {
+            from { transform: translateX(0); }
+            to { transform: translateX(-100%); }
+        }
+
+        .startup-dashboard {
+            filter: blur(7px);
+            transform: scale(1.015);
+            pointer-events: none;
+        }
+
+        .datetime-picker-area {
+            position: relative;
+        }
+
+        .datetime-input-shell {
+            position: relative;
+            margin-top: 4px;
+        }
+
+        .datetime-picker-area input[type="datetime-local"] {
+            color: transparent !important;
+            caret-color: transparent;
+            margin-top: 0;
+        }
+
+        .datetime-picker-area input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+            display: none;
+        }
+
+        .datetime-input-display {
+            position: absolute;
+            top: 0;
+            right: 10px;
+            bottom: 0;
+            left: 10px;
+            inset: 0 10px;
+            display: flex;
+            align-items: center;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+            line-height: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            pointer-events: none;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+        }
+
+        @media (max-width: 480px) {
+            .village-start-screen .splash-content {
+                width: 92vw;
+                max-height: calc(100vh - 16px);
+                padding: 28px 18px 20px;
+                overflow-y: auto;
+            }
+
+            .datetime-input-display {
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .village-start-screen .splash-content {
+                padding: 24px 16px 18px;
+            }
+
+            .datetime-input-display {
+                font-size: 10px;
+            }
+        }
+
+        @supports (font-size: 3.6cqw) {
+            .datetime-input-shell {
+                container-type: inline-size;
+            }
+
+            .datetime-input-display {
+                font-size: clamp(10px, 3.6cqw, 14px);
+            }
+        }
+
     </style>
 
 </head>
@@ -78,38 +296,34 @@
         <span class="indicator-tooltip"></span>
     </div>
 
-    <!-- ====== SPLASH SCREEN ====== -->
-    <div id="splashScreen" class="splash-container-modern">
+    <!-- ====== PEMILIHAN DESA AWAL ====== -->
+    <div id="splashScreen" class="splash-container-modern village-start-screen">
         <div class="splash-content">
-            <div class="splash-logo-center">
-                <img src="icons/tni-ad-insignia.svg" alt="Lambang TNI Angkatan Darat">
-            </div>
-            <div class="splash-title-center">KORAMIL 05/SUKASADA</div>
-            <div class="splash-subtitle-center">KODIM 1609/BULELENG</div>
-            <div class="splash-kodim-center">Sistem Pelaporan Digitalisasi Babinsa</div>
-            <div class="splash-village-picker">
-                <label for="startupDesa">Pilih Desa/Kelurahan</label>
-                <select id="startupDesa" disabled>
-                    <option value="">Memuat daftar desa...</option>
-                </select>
-                <button id="startupContinue" type="button" disabled>
-                    <i class="fas fa-arrow-right"></i> LANJUTKAN
-                </button>
-                <div id="startupStatus" role="status" aria-live="polite">Menyiapkan aplikasi...</div>
+            <h1 class="startup-title">DUKOPS 05</h1>
+            <div class="startup-branch" aria-label="TNI-AD">TNI-AD</div>
+            <img class="startup-logo" src="logo/logo-1.png" alt="Logo DUKOPS BABINSA">
+            <select id="startupDesa">
+                <option value="">Memuat daftar wilayah...</option>
+            </select>
+            <div class="splash-kodim-center running-text" aria-label="Informasi aplikasi">
+                <span id="runningTextContent">Sistem Pelaporan Digitalisasi Babinsa</span>
             </div>
             <div class="splash-army">
-                <!-- Gambar army.gif dihapus untuk kompatibilitas lokal -->
             </div>
         </div>
     </div>
 
     <!-- ====== APP CONTAINER ====== -->
-    <div id="appContainer" class="container" style="display: none; opacity: 0;">
+    <div id="appContainer" class="container startup-dashboard" style="display: block; opacity: 1;">
 
         <!-- Install Button -->
         <button id="installButton" style="display:none;">
             <i class="fas fa-download"></i> Install App
         </button>
+
+        <div class="app-banner">
+            <img src="header/header-background.png" alt="Koramil 1609-05/Sukasada">
+        </div>
 
         <!-- ===== NAVIGASI ===== -->
         <div class="nav-buttons">
@@ -124,9 +338,14 @@
         <div id="dukopsContent">
             <div style="width:100%; margin:0 auto;">
 
-                <select id="selectDesa" onchange="loadSelectedDesa()" hidden aria-hidden="true" tabindex="-1">
-                    <option value="">--Pilih desa/Kelurahan--</option>
-                </select>
+                <div id="dashboardDesaSelection" style="display:none;">
+                    <label id="labelPilihDesa"><i class="fas fa-city"></i> Pilih Desa/Kelurahan:</label>
+                    <div class="select-wrapper" style="position:relative;">
+                    <select id="selectDesa" onchange="loadSelectedDesa()">
+                        <option value="">--Pilih desa/Kelurahan--</option>
+                    </select>
+                    </div>
+                </div>
                 <div id="loadingDesa" style="display:none;"><i class="fas fa-spinner fa-spin"></i> Memuat...</div>
                 <div class="previewBox" id="previewDesa" style="display:none;"></div>
 
@@ -134,37 +353,45 @@
                 <div id="loadingKoordinat" style="display:none;"><i class="fas fa-spinner fa-spin"></i> Memuat koordinat...</div>
                 <div class="previewBox" id="previewKordinat"><span style="color:#6a7a8a;">Pilih desa/Kelurahan untuk melihat koordinat</span></div>
 
-                <label id="labelFotoKegiatan">Foto Kegiatan:</label>
+                <div class="datetime-picker-area" role="button" tabindex="0" onclick="openDatePicker(event)" onkeydown="if (event.key === 'Enter' || event.key === ' ') openDatePicker(event)">
+                    <div class="datetime-input-shell">
+                        <input type="datetime-local" id="tanggalWaktu" onchange="updateDatePreview()">
+                        <span id="tanggalWaktuDisplay" class="datetime-input-display">INPUT TANGGAL</span>
+                    </div>
+                </div>
+
                 <div class="file-input-wrapper">
-                    <input type="file" id="gambar" accept="image/*" aria-label="Pilih foto kegiatan" onchange="previewImage()">
+                    <input type="file" id="gambar" accept="image/*" onchange="previewImage()">
                     <label class="file-input-button" for="gambar"><i class="fas fa-folder-open"></i> Pilih Foto</label>
-                    <span id="gambarNama">Belum ada foto dipilih</span>
                 </div>
 
-                <div class="tanggal-waktu-input" onclick="openDatePicker(event)">
-                    <input type="datetime-local" id="tanggalWaktu" aria-label="Tanggal dan waktu" onchange="updateDatePreview()">
-                    <span id="tanggalWaktuLabelText" aria-hidden="true">Pilih tanggal & waktu</span>
-                </div>
+                <canvas id="canvas" style="display:none;" aria-label="Preview foto kegiatan"></canvas>
 
-                <canvas id="canvas"></canvas>
-
-                <label>Narasi Kegiatan: <span id="narasiWilayahLabel"></span></label>
+                <label id="labelNarasiKegiatan">Kegiatan: Babinsa</label>
                 <div class="narasi-wrapper">
                     <textarea id="narasi" class="auto-height-textarea" rows="6" placeholder="Masukkan narasi kegiatan...✍️" oninput="checkInputCompletion(); autoResizeNarasi()"></textarea>
                 </div>
 
                 <div class="action-buttons">
                     <button id="submitBtn" onclick="processSubmission()" disabled>
-                        <i class="fas fa-download"></i> KIRIM dan DOWNLOAD
+                        <i class="fas fa-download"></i> KIRIM
                     </button>
-                    <button id="exitBtn" type="button" onclick="exitApplication()">
-                        <i class="fas fa-sign-out-alt"></i> KELUAR
-                    </button>
+                    <button id="btnExit" class="action-exit-btn" onclick="exitApp()"><i class="fas fa-right-from-bracket"></i> KELUAR</button>
                     <!-- Tombol LAPORAN telah dihapus -->
                 </div>
-                <div id="driveUploadCounter" class="drive-upload-counter" role="status" aria-live="polite">
-                    Terkirim ke Drive bulan ini: pilih desa
-                </div>
+
+                <section id="driveReportPanel" class="drive-report-panel" aria-live="polite">
+                    <div class="drive-report-counter">
+                        <span><i class="fas fa-cloud-arrow-up" aria-hidden="true"></i> Jumlah terkirim</span>
+                        <strong id="driveReportCount">0</strong>
+                    </div>
+                    <div class="drive-report-log">
+                        <h3><i class="fas fa-file-zipper" aria-hidden="true"></i> File Terkirim :</h3>
+                        <ul id="driveReportLog">
+                            <li class="drive-report-empty">Pilih desa/kelurahan dan tanggal untuk melihat file terkirim.</li>
+                        </ul>
+                    </div>
+                </section>
 
                 <div id="attendancePanel" style="display: none;">
                     <div class="attendance-header">
@@ -194,7 +421,6 @@
 
         <!-- ===== ABSEN ===== -->
         <div id="absenContent" style="display: none;">
-            <div class="absen-selected-wilayah" id="absenSelectedWilayah" aria-live="polite"></div>
             <div class="absen-card">
                 <div class="absen-filter-row">
                     <div class="form-group">
@@ -211,14 +437,14 @@
             <div class="absen-info-text">✨ Mangsatria@2026</div>
         </div>
 
-        <!-- ===== PIKET (FULLSCREEN) ===== -->
-        <div id="hanpanganContent">
-            <iframe src="https://sukasada05.github.io/Hanpangan/" title="PIKET"></iframe>
+        <!-- ===== PIKET (FULLSCREEN) - SUDAH DIPERBAIKI ===== -->
+        <div id="hanpanganContent" style="display: none; background-color: #263a24; min-height: 100vh; width: 100%;">
+            <iframe src="https://sukasada05.github.io/Hanpangan/" title="PIKET" style="width:100%; height:100vh; border:none; display:block;"></iframe>
         </div>
 
         <!-- ===== CANVASPRO (iframe) ===== -->
         <div id="canvasproContent">
-            <iframe src="https://sukasada05.github.io/CanvaPro/" title="CanvasPRO 2.1" allow="clipboard-read; clipboard-write"></iframe>
+            <iframe src="https://canvaspro.sukasada1609-05.workers.dev/" title="CanvasPRO 2.1" allow="clipboard-read; clipboard-write"></iframe>
         </div>
 
     </div>
@@ -226,8 +452,18 @@
     <div id="absenScreenshotArea" style="position: fixed; left: -9999px; top: 0; width: 500px; background: white;"></div>
 
     <!-- ====== SATU SCRIPT EKSTERNAL ====== -->
+    <script src="js/indonesian-voice.js"></script>
     <script src="app.js"></script>
     <script>
+        // Ensure desa list loads after app.js is available
+        (function(){
+            try {
+                const run = () => { try { if (typeof loadDesaList === 'function') loadDesaList().catch(()=>{}); } catch(e){} };
+                if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run); else setTimeout(run, 50);
+                try { window.addEventListener('focus', run); document.addEventListener('visibilitychange', function(){ if (document.visibilityState === 'visible') run(); }); } catch(e) {}
+            } catch (e) {}
+        })();
+
         // ===== FUNGSI NAVIGASI UNTUK TAB CanvasPRO =====
         function showCanvaspro() {
             document.getElementById('dukopsContent').style.display = 'none';

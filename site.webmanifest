@@ -1,0 +1,79 @@
+{
+  "name": "DUKOPS BABINSA",
+  "short_name": "DUKOPS",
+  "description": "Sistem Pelaporan Digitalisasi Babinsa",
+  "start_url": "./",
+  "display": "standalone",
+  "theme_color": "#0a1a3a",
+  "background_color": "#0a1a0a",
+  "orientation": "portrait",
+  "lang": "id",
+  "scope": "./",
+  "icons": [
+    {
+      "src": "icons/favicon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/favicon-96x96.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/favicon-96x96.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "display_override": ["standalone", "fullscreen"],
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "📋 DUKOPS",
+      "url": "./",
+      "description": "Buka halaman utama DUKOPS",
+      "icons": [
+        {
+          "src": "icons/favicon-96x96.png",
+          "type": "image/png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "📅 PIKET",
+      "url": "./#piket",
+      "description": "Lihat jadwal piket",
+      "icons": [
+        {
+          "src": "icons/favicon-96x96.png",
+          "type": "image/png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "📊 ABSEN",
+      "url": "./#absen",
+      "description": "Lihat laporan absensi",
+      "icons": [
+        {
+          "src": "icons/favicon-96x96.png",
+          "type": "image/png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "categories": ["social", "productivity", "business"]
+}
