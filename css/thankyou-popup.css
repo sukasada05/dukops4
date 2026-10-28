@@ -53,6 +53,7 @@
 /* ================================================================
    TITLE
    ================================================================ */
+.thankyou-content h1,
 .thankyou-content h2 {
     color: #FFD700;
     font-size: 22px;
@@ -90,7 +91,8 @@
 /* ================================================================
    BUTTON
    ================================================================ */
-.thankyou-content button {
+.thankyou-content button,
+.thankyou-content .thankyou-button {
     background: #2d6a2d;
     color: #ffffff;
     border: none;
@@ -98,16 +100,20 @@
     padding: 10px 20px;
     font-size: 14px;
     font-weight: 700;
-    cursor: pointer;
     width: 100%;
     font-family: var(--sys-font);
+    display: inline-block;
+    box-sizing: border-box;
+    text-decoration: none;
 }
 
-.thankyou-content button:hover {
+.thankyou-content button:hover,
+.thankyou-content .thankyou-button:hover {
     background: #3d8a3d;
 }
 
-.thankyou-content button:active {
+.thankyou-content button:active,
+.thankyou-content .thankyou-button:active {
     background: #1d4a1d;
 }
 
@@ -131,6 +137,7 @@
         font-size: 44px;
     }
     
+    .thankyou-content h1,
     .thankyou-content h2 {
         font-size: 18px;
     }
@@ -144,7 +151,8 @@
         padding: 8px;
     }
     
-    .thankyou-content button {
+    .thankyou-content button,
+    .thankyou-content .thankyou-button {
         font-size: 13px;
         padding: 8px 16px;
     }
@@ -164,6 +172,7 @@
         font-size: 36px;
     }
     
+    .thankyou-content h1,
     .thankyou-content h2 {
         font-size: 16px;
     }
@@ -177,7 +186,8 @@
         padding: 6px;
     }
     
-    .thankyou-content button {
+    .thankyou-content button,
+    .thankyou-content .thankyou-button {
         font-size: 12px;
         padding: 6px 14px;
     }
@@ -214,11 +224,13 @@
         color: #889988;
     }
     
-    .thankyou-content button {
+    .thankyou-content button,
+    .thankyou-content .thankyou-button {
         background: #1a3a1a;
     }
     
-    .thankyou-content button:hover {
+    .thankyou-content button:hover,
+    .thankyou-content .thankyou-button:hover {
         background: #2a4a2a;
     }
 }

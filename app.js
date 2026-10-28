@@ -7,11 +7,14 @@ let img = new Image();
 let selectedDesa = "";
 let kordinatList = [];
 let currentKoordinat = "";
+let desaCoordinatesRequestId = 0;
+let driveReportRequestId = 0;
+let activeDriveReportKey = "";
+let loadedDriveReportKey = "";
 let tanggalWaktu = "";
-let datePreviewInterval = null;
+let narrativeDatePrefix = "";
 let submittedDates = [];
 let desaCounter = {};
-let driveUploadCounterRequest = 0;
 let deferredPrompt = null;
 let swWaiting = null;
 const canvasPlaceholderImage = new Image();
@@ -56,152 +59,107 @@ function setWaitingServiceWorker(worker) {
 }
 
 let currentApp = null;
+let isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+const isAndroidDevice = /Android/i.test(navigator.userAgent);
 
-// ================= LAYAR PILIH DESA =================
+if (isAndroidDevice) {
+    document.documentElement.classList.add('android-device');
+}
+
+// ================= PEMILIHAN WILAYAH AWAL =================
 document.addEventListener('DOMContentLoaded', function () {
-    console.log("🚀 DOM Content Loaded");
-    const startupSelect = document.getElementById('startupDesa');
-    const continueButton = document.getElementById('startupContinue');
-    const status = document.getElementById('startupStatus');
-    if (!startupSelect || !continueButton) return;
-
-    continueButton.addEventListener('click', async function () {
-        const mainSelect = document.getElementById('selectDesa');
-        if (!startupSelect.value || !mainSelect) {
-            if (status) status.textContent = 'Pilih desa/kelurahan terlebih dahulu.';
-            return;
-        }
-
-        startupSelect.disabled = true;
-        continueButton.disabled = true;
-        if (status) status.textContent = 'Memuat koordinat desa...';
-        mainSelect.value = startupSelect.value;
-
-        const loaded = await loadSelectedDesa();
-        if (!loaded) {
-            startupSelect.disabled = false;
-            continueButton.disabled = false;
-            if (status) status.textContent = 'Koordinat gagal dimuat. Silakan coba lagi.';
-            return;
-        }
-
-        currentApp = 'absen';
-        showApp();
-    });
-
-    (async function prepareStartup() {
-        try {
-            if (window.location.protocol === 'file:') await loadLocalDataBundle();
-            await initializeApp();
-
-            const mainSelect = document.getElementById('selectDesa');
-            if (!mainSelect || mainSelect.options.length <= 1 || mainSelect.disabled) {
-                throw new Error('Daftar desa/kelurahan gagal dimuat.');
-            }
-
-            startupSelect.replaceChildren(...Array.from(mainSelect.options, option => option.cloneNode(true)));
-            startupSelect.value = '';
-            startupSelect.disabled = false;
-            continueButton.disabled = false;
-            if (status) status.textContent = 'Silakan pilih desa/kelurahan untuk melanjutkan.';
-        } catch (error) {
-            console.error('❌ Error preparing village selection screen:', error);
-            startupSelect.innerHTML = '<option value="">-- Gagal memuat desa --</option>';
-            startupSelect.disabled = true;
-            continueButton.disabled = true;
-            if (status) status.textContent = error.message;
-        }
-    })();
+    const splashScreen = document.getElementById('splashScreen');
+    if (!splashScreen) return;
+    const startupDesa = document.getElementById('startupDesa');
+    if (!startupDesa) return;
+    loadDesaList();
+    loadRunningText();
 });
 
+setInterval(() => {
+    const tanggalEl = document.getElementById('tanggalWaktu');
+    if (tanggalEl && tanggalEl.value) updateDatePreview();
+}, 1000);
+
+async function loadRunningText() {
+    const target = document.getElementById('runningTextContent');
+    if (!target) return;
+    try {
+        const response = await fetch('running-txt/running.txt?t=' + Date.now());
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const text = (await response.text()).trim();
+        if (text) target.textContent = text;
+    } catch (error) {
+        console.warn('Running text menggunakan teks bawaan:', error);
+    }
+}
+
 // ================= LOAD APP =================
-function loadLocalDataBundle() {
-    return new Promise((resolve, reject) => {
-        if (window.DUKOPS_LOCAL_DATA) {
-            resolve();
-            return;
-        }
-
-        const script = document.createElement('script');
-        script.src = 'data/local-data.js';
-        script.onload = resolve;
-        script.onerror = () => reject(new Error('Gagal memuat data lokal aplikasi.'));
-        document.head.appendChild(script);
-    });
+async function loadDukopsApp() {
+    currentApp = 'dukops';
+    showApp();
+    await initializeApp();
+    const desaSelect = document.getElementById('selectDesa');
+    if (desaSelect && window.startupDesaValue) {
+        desaSelect.value = window.startupDesaValue;
+        await loadSelectedDesa();
+        window.startupDesaValue = '';
+    }
 }
 
-function exitApplication() {
-    window.close();
+window.continueToDashboard = async function() {
+    const startupDesa = document.getElementById('startupDesa');
+    const startupContinue = document.getElementById('startupContinue');
+    if (!startupDesa || !startupContinue) return;
 
-    setTimeout(() => {
-        if (window.closed) return;
+    if (!startupDesa.value) {
+        showNotification('Pilih desa/kelurahan terlebih dahulu.', 'error');
+        startupDesa.focus();
+        return;
+    }
 
-        const message = document.createElement('main');
-        message.style.cssText = [
-            'position:fixed',
-            'inset:0',
-            'z-index:1000000',
-            'display:flex',
-            'flex-direction:column',
-            'align-items:center',
-            'justify-content:center',
-            'gap:16px',
-            'padding:24px',
-            'background:#081008',
-            'color:#e6ffe6',
-            'font:16px/1.5 sans-serif',
-            'text-align:center'
-        ].join(';');
-
-        const heading = document.createElement('h1');
-        heading.textContent = 'Aplikasi siap ditutup';
-        const instructions = document.createElement('p');
-        instructions.textContent = 'Browser tidak mengizinkan aplikasi menutup tab ini. Silakan tutup tab browser atau jendela aplikasi secara manual.';
-        const closeButton = document.createElement('button');
-        closeButton.type = 'button';
-        closeButton.textContent = 'Coba tutup lagi';
-        closeButton.style.cssText = 'padding:12px 20px;border:0;border-radius:8px;background:#8a3030;color:#fff;font-weight:700;';
-        closeButton.addEventListener('click', () => window.close());
-
-        message.append(heading, instructions, closeButton);
-        document.body.replaceChildren(message);
-    }, 250);
-}
+    window.startupDesaValue = startupDesa.value;
+    startupContinue.disabled = true;
+    try {
+        await loadDukopsApp();
+    } finally {
+        startupContinue.disabled = false;
+    }
+};
 
 function showApp() {
     const splash = document.getElementById('splashScreen');
     const app = document.getElementById('appContainer');
-    splash.style.opacity = '0';
-    splash.style.transition = 'opacity 0.8s ease';
-    setTimeout(() => {
-        splash.style.display = 'none';
-        app.style.display = 'block';
-        setTimeout(() => {
-            app.style.opacity = '1';
-            if (currentApp === 'dukops') {
-                document.getElementById('btnDukops').classList.add('active');
-                document.getElementById('dukopsContent').style.display = 'block';
-                document.getElementById('absenContent').style.display = 'none';
-                document.getElementById('hanpanganContent').style.display = 'none';
-                document.getElementById('hanpanganContent').classList.remove('active');
-            } else {
-                document.getElementById('btnDukops').classList.remove('active');
-                document.getElementById('btnAbsen').classList.add('active');
-                document.getElementById('btnHanpangan').classList.remove('active');
-                document.getElementById('btnCanvaspro').classList.remove('active');
-                document.getElementById('dukopsContent').style.display = 'none';
-                document.getElementById('absenContent').style.display = 'block';
-                document.getElementById('hanpanganContent').style.display = 'none';
-                document.getElementById('hanpanganContent').classList.remove('active');
-                const selectedWilayah = document.getElementById('absenSelectedWilayah');
-                if (selectedWilayah) selectedWilayah.textContent = selectedDesa
-                    ? `Absensi wilayah: ${selectedDesa}`
-                    : 'Desa/kelurahan belum dipilih.';
-                if (typeof loadAbsenTahun === 'function') loadAbsenTahun();
-            }
-        }, 100);
-    }, 800);
+    splash.style.display = 'none';
+    app.classList.remove('startup-dashboard');
+    app.style.display = 'block';
+    app.style.opacity = '1';
+    document.getElementById('btnDukops').classList.add('active');
+    document.getElementById('dukopsContent').style.display = 'block';
+    document.getElementById('absenContent').style.display = 'none';
+    document.getElementById('hanpanganContent').style.display = 'none';
+    document.getElementById('hanpanganContent').classList.remove('active');
 }
+
+window.exitApp = function() {
+    window.close();
+    setTimeout(() => {
+        if (!document.hidden) {
+            const splash = document.getElementById('splashScreen');
+            const app = document.getElementById('appContainer');
+            const startupDesa = document.getElementById('startupDesa');
+
+            resetForm();
+            currentApp = null;
+            if (startupDesa) startupDesa.value = '';
+            if (app) {
+                app.style.display = 'none';
+                app.style.opacity = '0';
+            }
+            if (splash) splash.style.display = 'flex';
+        }
+    }, 100);
+};
 
 // ================= NAVIGASI TAB =================
 window.showDukops = function() {
@@ -223,8 +181,6 @@ window.showAbsenTab = function() {
     document.getElementById('btnDukops').classList.remove('active');
     document.getElementById('btnAbsen').classList.add('active');
     document.getElementById('btnHanpangan').classList.remove('active');
-    const selectedWilayah = document.getElementById('absenSelectedWilayah');
-    if (selectedWilayah) selectedWilayah.textContent = selectedDesa ? `Absensi wilayah: ${selectedDesa}` : 'Desa/kelurahan belum dipilih.';
     if (typeof loadAbsenTahun === 'function') loadAbsenTahun();
 };
 
@@ -260,6 +216,7 @@ async function sendToBackend(action, data = {}) {
                 if (data.monthFilter) url += `&monthFilter=${encodeURIComponent(data.monthFilter)}`;
             }
             const response = await fetch(url);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
             return await response.json();
         } else {
             const formData = new FormData();
@@ -283,6 +240,124 @@ async function sendToBackend(action, data = {}) {
         console.error(`Error in ${action}:`, error);
         return { success: false, error: error.message };
     }
+}
+
+async function updateDriveReportLog(force = false) {
+    const countElement = document.getElementById('driveReportCount');
+    const logElement = document.getElementById('driveReportLog');
+    if (!countElement || !logElement) return;
+
+    const dateInput = document.getElementById('tanggalWaktu');
+    const selectedDate = dateInput && dateInput.value ? new Date(dateInput.value) : null;
+    const desaInfo = normalizeDesaName(selectedDesa);
+    if (!desaInfo.cleanName || !selectedDate || Number.isNaN(selectedDate.getTime())) {
+        driveReportRequestId++;
+        activeDriveReportKey = "";
+        loadedDriveReportKey = "";
+        countElement.textContent = "0";
+        logElement.innerHTML = '<li class="drive-report-empty">Pilih desa/kelurahan dan tanggal untuk melihat file terkirim.</li>';
+        return null;
+    }
+
+    const monthName = selectedDate.toLocaleDateString('id-ID', { month: 'long' });
+    const monthYear = selectedDate.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+    const reportKey = `${desaInfo.cleanName.toLowerCase()}|${monthName.toLowerCase()}`;
+    if (!force && (activeDriveReportKey === reportKey || loadedDriveReportKey === reportKey)) return null;
+
+    const requestId = ++driveReportRequestId;
+    activeDriveReportKey = reportKey;
+    countElement.textContent = "…";
+    logElement.innerHTML = '<li class="drive-report-empty">Memuat daftar file terkirim dari Google Drive...</li>';
+
+    try {
+        const result = await sendToBackend('listFiles', {
+            desaFilter: desaInfo.cleanName,
+            monthFilter: monthName
+        });
+        if (requestId !== driveReportRequestId) return null;
+        if (!result || result.success === false) {
+            throw new Error(result && result.error ? result.error : "Daftar file tidak dapat dimuat.");
+        }
+
+        let files = null;
+        if (Array.isArray(result)) files = result;
+        else if (Array.isArray(result.files)) files = result.files;
+        else if (Array.isArray(result.data)) files = result.data;
+        else if (Array.isArray(result.items)) files = result.items;
+        else if (result.data && Array.isArray(result.data.files)) files = result.data.files;
+        else if (result.result && Array.isArray(result.result.files)) files = result.result.files;
+        if (!files) throw new Error("Format daftar file dari Google Drive tidak dikenali.");
+
+        const zipFiles = files.map(file => {
+            const name = typeof file === 'string'
+                ? file
+                : file && (file.name || file.fileName || file.filename || file.title);
+            if (!name) return null;
+            const cleanName = String(name).trim();
+            const dateMatch = cleanName.match(
+                /^(?:\d+\.\s*)?.+?\s+(\d{1,2})\s+(\d{1,2})\s+(\d{4})\.zip$/i
+            );
+            const dateValue = dateMatch
+                ? new Date(Number(dateMatch[3]), Number(dateMatch[2]) - 1, Number(dateMatch[1])).getTime()
+                : Number.POSITIVE_INFINITY;
+            return { file, name: cleanName, dateValue };
+        }).filter(item =>
+            item &&
+            /\.zip$/i.test(item.name) &&
+            item.name.toLowerCase().startsWith(`${desaInfo.cleanName.toLowerCase()} `)
+        );
+        zipFiles.sort((a, b) => a.dateValue - b.dateValue || a.name.localeCompare(b.name, 'id'));
+
+        countElement.textContent = String(zipFiles.length);
+        while (logElement.firstChild) logElement.removeChild(logElement.firstChild);
+        if (zipFiles.length === 0) {
+            logElement.innerHTML = '<li class="drive-report-empty">Belum ada file terkirim untuk desa/kelurahan dan bulan ini.</li>';
+        } else {
+            zipFiles.forEach(({ name }, index) => {
+                const item = document.createElement('li');
+                item.textContent = `${index + 1}. ${name.replace(/\.zip$/i, '')}`;
+                logElement.appendChild(item);
+            });
+        }
+
+        desaCounter[selectedDesa] = {
+            count: zipFiles.length,
+            files: zipFiles.map(item => item.name).slice(-TARGET_LAPORAN),
+            month: monthYear
+        };
+        try {
+            localStorage.setItem('dukopsDesaCounter', JSON.stringify(desaCounter));
+        } catch (error) {
+            console.warn("Counter laporan Google Drive tidak dapat disimpan secara lokal:", error);
+        }
+        loadedDriveReportKey = reportKey;
+        if (zipFiles.length >= TARGET_LAPORAN) {
+            redirectToThankYou(desaInfo.original, zipFiles.length, monthYear);
+        }
+        return zipFiles.length;
+    } catch (error) {
+        if (requestId !== driveReportRequestId) return null;
+        loadedDriveReportKey = "";
+        console.error("Gagal memuat log file Google Drive:", error);
+        countElement.textContent = "—";
+        logElement.innerHTML = '<li class="drive-report-error">Gagal memuat log Google Drive. Periksa koneksi lalu pilih kembali desa atau bulan.</li>';
+        return null;
+    } finally {
+        if (requestId === driveReportRequestId) activeDriveReportKey = "";
+    }
+}
+
+function redirectToThankYou(desaName, count, monthYear) {
+    if (!Number.isInteger(count) || count < TARGET_LAPORAN) return false;
+
+    saveLastSuccessfulReport(desaName, count, monthYear);
+    const thankYouParams = new URLSearchParams({
+        desa: desaName,
+        count: String(count),
+        month: monthYear
+    });
+    window.location.href = `thankyou.html?${thankYouParams.toString()}`;
+    return true;
 }
 
 async function uploadToGoogleDrive(zipBlob, zipFileName, desaName, date) {
@@ -363,27 +438,15 @@ async function initializeApp() {
     console.log("🔄 Initializing DUKOPS app...");
     try {
         console.log('initializeApp: before loadDesaList');
-        try {
-            const desaListLoaded = await loadDesaList();
-            if (desaListLoaded) console.log('initializeApp: loadDesaList OK');
-            else console.warn('initializeApp: loadDesaList failed; see the error above');
-        } catch (e) {
-            console.error('initializeApp: loadDesaList error', e);
-        }
+        try { await loadDesaList(); console.log('initializeApp: loadDesaList OK'); } catch(e){ console.error('initializeApp: loadDesaList error', e); }
         try { loadLastSubmittedDates(); } catch(e){ console.error('initializeApp: loadLastSubmittedDates error', e); }
         try { loadDesaCounter(); } catch(e){ console.error('initializeApp: loadDesaCounter error', e); }
 
-        const now = new Date();
-        const year = now.getFullYear();
-        const month = String(now.getMonth() + 1).padStart(2, '0');
-        const day = String(now.getDate()).padStart(2, '0');
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
         try {
             const tanggalEl = document.getElementById('tanggalWaktu');
-            if (tanggalEl) tanggalEl.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+            if (tanggalEl) tanggalEl.value = '';
             updateDatePreview();
-            console.log('initializeApp: set tanggalWaktu and updated preview');
+            console.log('initializeApp: waiting for date input');
         } catch (e) {
             console.error('initializeApp: error setting tanggalWaktu/updateDatePreview', e);
         }
@@ -404,20 +467,15 @@ async function initializeApp() {
 
 async function loadDesaList() {
     const select = document.getElementById('selectDesa');
+    const startupSelect = document.getElementById('startupDesa');
     const loading = document.getElementById('loadingDesa');
-    if (!select) return false;
+    if (!select) return;
     if (loading) loading.style.display = 'block';
 
     try {
-        let data;
-        if (isFileProtocol) {
-            data = window.DUKOPS_LOCAL_DATA;
-            if (!data) throw new Error('Data lokal belum tersedia. Muat ulang aplikasi.');
-        } else {
-            const response = await fetch('data/desa-list.json?t=' + Date.now());
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            data = await response.json();
-        }
+        const response = await fetch('data/desa-list.json?t=' + Date.now());
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
         const desaList = (data.desaList || []).map(name => ({ name, type: 'Desa' }));
         const kelurahanList = (data.kelurahanList || []).map(name => ({ name, type: 'Kelurahan' }));
         const wilayahList = [...desaList, ...kelurahanList];
@@ -432,19 +490,77 @@ async function loadDesaList() {
             option.setAttribute('data-raw-name', `${wilayah.type} ${desaName}`);
             select.appendChild(option);
         });
+        if (startupSelect) {
+            startupSelect.innerHTML = '<option value="">-- Pilih Desa/Kelurahan --</option>';
+            Array.from(select.options).slice(1).forEach((option, index) => {
+                const startupOption = option.cloneNode(true);
+                startupOption.textContent = `${index + 1}. ${option.textContent}`;
+                startupSelect.appendChild(startupOption);
+            });
+        }
         console.log(`✅ Loaded ${wilayahList.length} wilayah (${desaList.length} desa, ${kelurahanList.length} kelurahan)`);
         showNotification('✅ Daftar desa berhasil dimuat', 'success');
-        return true;
     } catch (error) {
         console.error("❌ Error loading desa list:", error);
         select.innerHTML = '<option value="">-- Gagal memuat desa --</option>';
         select.disabled = true;
-        showNotification(`❌ ${error.message}`, 'error');
-        return false;
+        showNotification('❌ Gagal memuat daftar desa. Periksa koneksi.', 'error');
     } finally {
         if (loading) loading.style.display = 'none';
     }
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    try {
+        const select = document.getElementById('selectDesa');
+        if (select && select.options && select.options.length > 1) {
+            const evt = new Event('change');
+            select.dispatchEvent(evt);
+        }
+    } catch (e) {}
+});
+
+(function tryEarlyLoadDesa(){
+    const run = () => {
+        try {
+            if (typeof loadDesaList === 'function') {
+                loadDesaList().catch(()=>{});
+            }
+        } catch (e) {}
+    };
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', run);
+    } else {
+        setTimeout(run, 0);
+    }
+})();
+
+function ensureDesaListLoaded(maxAttempts = 6, delayMs = 500) {
+    let attempts = 0;
+    const tryLoad = () => {
+        attempts++;
+        try {
+            if (typeof loadDesaList === 'function') {
+                loadDesaList().then(() => {
+                    const select = document.getElementById('selectDesa');
+                    if (select && select.options && select.options.length > 1) return;
+                    if (attempts < maxAttempts) setTimeout(tryLoad, delayMs);
+                }).catch(() => {
+                    if (attempts < maxAttempts) setTimeout(tryLoad, delayMs);
+                });
+            } else {
+                if (attempts < maxAttempts) setTimeout(tryLoad, delayMs);
+            }
+        } catch (e) {
+            if (attempts < maxAttempts) setTimeout(tryLoad, delayMs);
+        }
+    };
+    tryLoad();
+}
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => ensureDesaListLoaded()); else ensureDesaListLoaded();
+
+setTimeout(() => { try { if (typeof loadDesaList === 'function') loadDesaList().catch(()=>{}); } catch (e) {} }, 120);
 
 function normalizeDesaName(desaName) {
     if (!desaName) return { original: "", normalized: "", forTelegram: "", cleanName: "" };
@@ -458,18 +574,33 @@ function normalizeDesaName(desaName) {
     };
 }
 
+function updateKegiatanLabel() {
+    const label = document.getElementById('labelNarasiKegiatan');
+    if (!label) return;
+    label.textContent = selectedDesa
+        ? `Kegiatan: Babinsa  ${normalizeDesaName(selectedDesa).cleanName}.`
+        : 'Kegiatan: Babinsa';
+}
+
+function showDesaActivationPopup(previewElement) {
+    if (previewElement) previewElement.textContent = "Koordinat belum tersedia";
+    window.alert("Hubungi admin untuk aktivasi desa/kelurahan.");
+}
+
 async function loadSelectedDesa() {
+    const requestId = ++desaCoordinatesRequestId;
     const select = document.getElementById('selectDesa');
     const jsonPath = select.value;
     const loading = document.getElementById('loadingKoordinat');
 
-    if (!jsonPath) { resetForm(); return false; }
+    if (!jsonPath) { resetForm(); return; }
 
     const selectedOption = select.options[select.selectedIndex];
     selectedDesa = selectedOption.getAttribute('data-raw-name') || selectedOption.text;
-    updateDriveUploadCounter();
-    const narasiWilayahLabel = document.getElementById('narasiWilayahLabel');
-    if (narasiWilayahLabel) narasiWilayahLabel.textContent = selectedDesa;
+    kordinatList = [];
+    currentKoordinat = "";
+    updateKegiatanLabel();
+    updateNarrativePrefix();
 
     updateDesaHeaderImage(selectedDesa);
 
@@ -479,9 +610,10 @@ async function loadSelectedDesa() {
         previewDesaEl.textContent = desaInfo.cleanName;
         previewDesaEl.style.display = 'block';
     }
+    updateDriveReportLog();
 
     const fotoLabel = document.getElementById('labelFotoKegiatan');
-    if (fotoLabel) fotoLabel.textContent = `Foto Kegiatan: ${selectedDesa}`;
+    if (fotoLabel) fotoLabel.innerHTML = `<i class="fas fa-camera"></i> Foto Kegiatan: ${desaInfo.cleanName}`;
 
     if (loading) loading.style.display = 'block';
     const previewKordinatEl = document.getElementById('previewKordinat');
@@ -489,33 +621,51 @@ async function loadSelectedDesa() {
 
     try {
         console.log(`📂 Fetching coordinates from: ${jsonPath}`);
+        const response = await fetch(jsonPath);
+        if (requestId !== desaCoordinatesRequestId) return;
+        if (response.status === 404) {
+            showDesaActivationPopup(previewKordinatEl);
+            return;
+        }
+        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         let jsonData;
-        if (isFileProtocol) {
-            jsonData = window.DUKOPS_LOCAL_DATA?.coordinates?.[desaInfo.cleanName];
-            if (!jsonData) throw new Error(`Data koordinat ${desaInfo.cleanName} tidak tersedia di data lokal`);
-        } else {
-            const response = await fetch(jsonPath);
-            if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        try {
             jsonData = await response.json();
+        } catch (error) {
+            if (!(error instanceof SyntaxError)) throw error;
+            if (requestId !== desaCoordinatesRequestId) return;
+            showDesaActivationPopup(previewKordinatEl);
+            return;
         }
-        if (!jsonData.coordinates || !Array.isArray(jsonData.coordinates)) {
-            throw new Error("Format JSON koordinat tidak valid");
+        if (requestId !== desaCoordinatesRequestId) return;
+        const coordinates = Array.isArray(jsonData.coordinates)
+            ? jsonData.coordinates.filter(coord =>
+                coord &&
+                coord.lat !== null && coord.lat !== undefined && String(coord.lat).trim() !== '' &&
+                coord.lon !== null && coord.lon !== undefined && String(coord.lon).trim() !== '' &&
+                Number.isFinite(Number(coord.lat)) &&
+                Number.isFinite(Number(coord.lon)))
+            : [];
+        if (coordinates.length === 0) {
+            showDesaActivationPopup(previewKordinatEl);
+            return;
         }
-        kordinatList = jsonData.coordinates.map(coord => `${coord.lat},${coord.lon},${coord.elevation}`);
+        kordinatList = coordinates.map(coord => `${coord.lat},${coord.lon},${coord.elevation || ''}`);
         console.log(`📌 Loaded ${kordinatList.length} coordinates`);
-        if (kordinatList.length === 0) throw new Error("File koordinat kosong");
         pickRandomKoordinat();
         showNotification(`Koordinat ${desaInfo.cleanName} dimuat (${kordinatList.length} titik)`, "success");
-        return true;
     } catch (error) {
+        if (requestId !== desaCoordinatesRequestId) return;
         console.error("❌ Error loading coordinates:", error);
         if (previewKordinatEl) previewKordinatEl.textContent = "Gagal memuat koordinat";
         showNotification("Gagal memuat koordinat: " + error.message, "error");
-        return false;
     } finally {
-        if (loading) loading.style.display = 'none';
-        updatePreview();
-        checkInputCompletion();
+        if (requestId === desaCoordinatesRequestId) {
+            if (loading) loading.style.display = 'none';
+            updatePreview();
+            updateNarrativePrefix();
+            checkInputCompletion();
+        }
     }
 }
 
@@ -566,6 +716,7 @@ function previewImage() {
                 } catch (e) {}
                 if (kordinatList.length > 0) pickRandomKoordinat();
                 updatePreview();
+                updateNarrativePrefix();
             };
             img.onerror = function() {
                 showNotification("Gagal memuat gambar", "error");
@@ -584,47 +735,99 @@ function previewImage() {
 
 function updateDatePreview() {
     const tglEl = document.getElementById("tanggalWaktu");
-    const display = document.getElementById('tanggalWaktuLabelText');
+    const label = document.getElementById('tanggalWaktuLabelText');
+    const display = document.getElementById('tanggalWaktuDisplay');
     const tglInput = tglEl ? tglEl.value : '';
 
     if (tglInput) {
-        clearInterval(datePreviewInterval);
-        const date = new Date(tglInput);
-        date.setSeconds(new Date().getSeconds(), 0);
-        const baseTime = date.getTime();
-        const startedAt = Date.now();
+        let date = new Date(tglInput);
+        date.setSeconds(new Date().getSeconds());
         tanggalWaktu = date.toISOString();
-        const options = { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-        const updateLiveDate = () => {
-            const liveDate = new Date(baseTime + Date.now() - startedAt);
-            tanggalWaktu = liveDate.toISOString();
-            if (display) display.textContent = liveDate.toLocaleString('id-ID', options).replace(/:/g, '.');
-            updatePreview();
-        };
-        if (display) display.textContent = date.toLocaleString('id-ID', options).replace(/:/g, '.');
-        datePreviewInterval = setInterval(updateLiveDate, 1000);
+        const displayText = formatNarrativeDateTime(date);
+        if (label) label.textContent = displayText;
+        if (display) display.textContent = displayText;
+        updateNarrativePrefix();
     } else {
-        clearInterval(datePreviewInterval);
-        datePreviewInterval = null;
+        if (display) display.textContent = 'INPUT TANGGAL';
         if (!tglEl) {
             if (tanggalWaktu) {
                 try {
                     const date = new Date(tanggalWaktu);
-                    const options = { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
-                    const displayText = date.toLocaleString('id-ID', options).replace(/:/g, '.');
+                    const displayText = formatNarrativeDateTime(date);
+                    if (label) label.textContent = displayText;
                     if (display) display.textContent = displayText;
                 } catch (e) {}
             } else {
-                if (display) display.textContent = 'Pilih tanggal & waktu';
+                if (label) label.textContent = 'Pilih tanggal & waktu';
             }
+
         } else {
             tanggalWaktu = "";
-            if (display) display.textContent = 'Pilih tanggal & waktu';
+            if (label) label.textContent = 'Pilih tanggal & waktu';
+            if (display) display.textContent = 'TANGGAL & WAKTU';
         }
     }
-    updateDriveUploadCounter();
+    updateDriveReportLog();
     updatePreview();
     checkInputCompletion();
+}
+
+function updateNarrativeDatePrefix(date) {
+    updateNarrativePrefix();
+}
+
+function formatNarrativeDateTime(date) {
+    const dateText = date.toLocaleDateString('id-ID', {
+        weekday: 'long',
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+    });
+    const timeText = date.toLocaleTimeString('id-ID', {
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+    }).replace(/:/g, '.');
+    return `${dateText}, ${timeText} Wita`;
+}
+
+function updateNarrativePrefix() {
+    const narasiEl = document.getElementById('narasi');
+    if (!narasiEl) return;
+    if (!selectedDesa || !tanggalWaktu || !img || !img.src || !img.complete || !img.naturalWidth) return;
+
+    const date = new Date(tanggalWaktu);
+    const dateText = date.toLocaleDateString('id-ID', {
+        weekday: 'long',
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+    });
+    const desaInfo = normalizeDesaName(selectedDesa);
+    const nextPrefix = `${dateText}    Babinsa ${desaInfo.cleanName} `;
+    const currentText = narasiEl.value || '';
+
+    if (!currentText || currentText === narrativeDatePrefix) {
+        narasiEl.value = nextPrefix;
+    } else if (narrativeDatePrefix && currentText.startsWith(narrativeDatePrefix)) {
+        narasiEl.value = nextPrefix + currentText.slice(narrativeDatePrefix.length);
+    } else {
+        return;
+    }
+
+    narrativeDatePrefix = nextPrefix;
+    narasiEl.setSelectionRange(narasiEl.value.length, narasiEl.value.length);
+    autoResizeNarasi(narasiEl);
+    checkInputCompletion();
+}
+
+function openDatePicker(event) {
+    const input = document.getElementById('tanggalWaktu');
+    if (!input) return;
+    if (event && event.target !== input) event.preventDefault();
+    input.focus();
+    if (typeof input.showPicker === 'function') input.showPicker();
 }
 
 function updatePreview() {
@@ -633,27 +836,19 @@ function updatePreview() {
     const ctx = canvas.getContext && canvas.getContext("2d");
     if (!ctx) return;
 
-    if (img && img.src && img.complete) {
+    const hasImage = Boolean(img && img.src && img.complete && img.naturalWidth > 0);
+    canvas.style.display = hasImage ? "block" : "none";
+    if (!hasImage) return;
+
+    if (hasImage) {
         canvas.width = 800;
         canvas.height = Math.round(canvas.width * (img.height / img.width));
-    } else {
-        canvas.width = 800;
-        canvas.height = Math.round(canvas.width * (9 / 16));
     }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    if (img && img.src && img.complete) {
+    if (hasImage) {
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    } else {
-        ctx.fillStyle = "#0a120a";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        if (canvasPlaceholderImage.complete && canvasPlaceholderImage.naturalWidth > 0) {
-            const iconSize = Math.min(160, canvas.width * 0.3);
-            const iconX = (canvas.width - iconSize) / 2;
-            const iconY = (canvas.height - iconSize) / 2;
-            ctx.drawImage(canvasPlaceholderImage, iconX, iconY, iconSize, iconSize);
-        }
     }
 
     if (selectedDesa || currentKoordinat || tanggalWaktu) {
@@ -732,7 +927,12 @@ function updatePreview() {
         if (tanggalWaktu) {
             const date = new Date(tanggalWaktu);
             let dateText = date.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" }) +
-                ", " + date.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+                ", " + date.toLocaleTimeString("id-ID", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                    hour12: false
+                });
             
             drawTextWithShadow(
                 dateText, 
@@ -741,6 +941,14 @@ function updatePreview() {
             );
         }
     }
+}
+
+function showLoading() {
+    document.body.classList.add('loading');
+}
+
+function hideLoading() {
+    document.body.classList.remove('loading');
 }
 
 async function processSubmission() {
@@ -782,7 +990,10 @@ async function processSubmission() {
             year: 'numeric'
         });
 
-        const narasiContent = `${formattedDate}\tBabinsa ${desaInfo.cleanName} ${narasi}`;
+        const narasiWithoutDate = narrativeDatePrefix && narasi.startsWith(narrativeDatePrefix)
+            ? narasi.slice(narrativeDatePrefix.length)
+            : narasi;
+        const narasiContent = `${formattedDate}\tBabinsa ${desaInfo.cleanName} ${narasiWithoutDate.trimStart()}`;
 
         const zip = new JSZip();
         zip.file(fileNameInsideZipNarasi, narasiContent);
@@ -802,16 +1013,23 @@ async function processSubmission() {
         const driveUploaded = await uploadToGoogleDrive(content, zipFileNameForBackend, selectedDesa, date);
 
         if (driveUploaded) {
-            const desaData = updateDesaCounter(selectedDesa, zipFileNameForBackend);
+            let desaData = updateDesaCounter(selectedDesa, zipFileNameForBackend);
+            const driveCount = await updateDriveReportLog(true);
+            if (Number.isInteger(driveCount)) {
+                desaData = desaCounter[selectedDesa];
+            }
+            saveLastSuccessfulReport(desaInfo.original, desaData.count, monthYear);
             saveSubmittedDate(tanggalWaktu);
-            showNotification(`✔ Laporan berhasil disimpan (${desaData.count}/${TARGET_LAPORAN} laporan)`, "success");
-
-            if (desaData.count === TARGET_LAPORAN) {
-                speakTargetReached(selectedDesa, monthYear);
-                showThankYouPopup(desaInfo.cleanName, desaData.count);
+            if (!redirectToThankYou(desaInfo.original, desaData.count, monthYear)) {
+                showNotification(
+                    `✅ Laporan berhasil dikirim (${desaData.count}/${TARGET_LAPORAN}). Silakan kirim laporan berikutnya.`,
+                    "success"
+                );
+                clearInputsAfterSuccessfulSend();
             }
         } else {
             showNotification(`⚠ Laporan hanya didownload, gagal simpan ke Drive`, "warning");
+            saveSubmittedDate(tanggalWaktu);
         }
 
     } catch (error) {
@@ -822,6 +1040,20 @@ async function processSubmission() {
         button.disabled = false;
         button.innerHTML = originalText;
     }
+}
+
+function clearInputsAfterSuccessfulSend() {
+    img = new Image();
+    const narasiEl = document.getElementById('narasi');
+    if (narasiEl) narasiEl.value = "";
+    narrativeDatePrefix = "";
+    const gambarEl = document.getElementById('gambar');
+    if (gambarEl) gambarEl.value = "";
+    const gambarNama = document.getElementById('gambarNama');
+    if (gambarNama) gambarNama.textContent = "Belum ada foto dipilih";
+    updatePreview();
+    resetCanvas();
+    checkInputCompletion();
 }
 
 function validateSubmission() {
@@ -862,6 +1094,8 @@ function isSameDateMonthSubmission() {
 
 function resetCanvas() {
     const canvas = document.getElementById("canvas");
+    if (!canvas) return;
+    canvas.style.display = "none";
     const ctx = canvas.getContext("2d");
     canvas.width = 800;
     canvas.height = Math.round(canvas.width / (16 / 9));
@@ -874,30 +1108,8 @@ function resetCanvas() {
     }
 }
 
-function resetAll() {
-    if (confirm("Apakah Anda yakin ingin mereset SEMUA data?\n\n• Log pengiriman\n• Tanggal terakhir\n• Counter per desa\n• Form input\n\nAksi ini tidak dapat dibatalkan!")) {
-        submittedDates = [];
-        localStorage.removeItem('dukopsSubmittedDates');
-        desaCounter = {};
-        localStorage.removeItem('dukopsDesaCounter');
-        resetForm();
-        showNotification("Semua data telah direset", "success");
-    }
-}
-
-function openDatePicker(event) {
-    const input = document.getElementById('tanggalWaktu');
-    if (!input) return;
-
-    if (typeof input.showPicker === 'function') {
-        event.preventDefault();
-        input.showPicker();
-    } else {
-        input.focus();
-    }
-}
-
 function resetForm() {
+    desaCoordinatesRequestId++;
     selectedDesa = "";
     kordinatList = [];
     currentKoordinat = "";
@@ -909,16 +1121,14 @@ function resetForm() {
     if (previewKordinatEl) previewKordinatEl.textContent = "";
     const narasiEl = document.getElementById('narasi');
     if (narasiEl) narasiEl.value = "";
-    const narasiWilayahLabel = document.getElementById('narasiWilayahLabel');
-    if (narasiWilayahLabel) narasiWilayahLabel.textContent = "";
+    narrativeDatePrefix = "";
+    updateKegiatanLabel();
     const gambarEl = document.getElementById('gambar');
     if (gambarEl) gambarEl.value = "";
     const tanggalWaktuEl = document.getElementById('tanggalWaktu');
     if (tanggalWaktuEl) tanggalWaktuEl.value = "";
-    clearInterval(datePreviewInterval);
-    datePreviewInterval = null;
-    const display = document.getElementById('tanggalWaktuLabelText');
-    if (display) display.textContent = 'Pilih tanggal & waktu';
+    const label = document.getElementById('tanggalWaktuLabelText');
+    if (label) label.textContent = 'Pilih tanggal & waktu';
     updateDesaHeaderImage("");
     checkInputCompletion();
     updatePreview();
@@ -928,7 +1138,6 @@ function resetForm() {
 function loadDesaCounter() {
     const saved = localStorage.getItem('dukopsDesaCounter');
     desaCounter = saved ? JSON.parse(saved) : {};
-    updateDriveUploadCounter();
 }
 
 function updateDesaCounter(desaName, fileName) {
@@ -950,41 +1159,15 @@ function updateDesaCounter(desaName, fileName) {
     }
 
     localStorage.setItem('dukopsDesaCounter', JSON.stringify(desaCounter));
-    updateDriveUploadCounter();
     return desaCounter[desaName];
 }
 
-function updateDriveUploadCounter() {
-    const counter = document.getElementById('driveUploadCounter');
-    if (!counter) return;
-    const requestId = ++driveUploadCounterRequest;
-    if (!selectedDesa || !tanggalWaktu) {
-        counter.textContent = 'Laporan bulan yang dipilih: pilih desa dan tanggal';
-        return;
-    }
-
-    const date = new Date(tanggalWaktu);
-    const monthYear = date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
-    const data = desaCounter[selectedDesa];
-    const dukopsCount = data && data.month === monthYear ? data.count : 0;
-    const villageName = normalizeDesaName(selectedDesa).cleanName;
-    counter.textContent = `Laporan bulan ${monthYear} (${villageName}): menghitung total...`;
-
-    if (typeof window.getAbsenCountForVillageMonth !== 'function') {
-        counter.textContent = `Laporan bulan ${monthYear} (${villageName}): data ABSEN tidak tersedia`;
-        return;
-    }
-
-    window.getAbsenCountForVillageMonth(date.getFullYear(), date.getMonth() + 1, selectedDesa)
-        .then(function(absenCount) {
-            if (requestId !== driveUploadCounterRequest) return;
-            counter.textContent = `Laporan bulan ${monthYear} (${villageName}) - DUKOPS + ABSEN: ${dukopsCount + absenCount} total`;
-        })
-        .catch(function(error) {
-            console.error('Gagal mengambil jumlah laporan ABSEN untuk counter:', error);
-            if (requestId !== driveUploadCounterRequest) return;
-            counter.textContent = `Laporan bulan ${monthYear} (${villageName}): DUKOPS ${dukopsCount} + ABSEN tidak tersedia`;
-        });
+function saveLastSuccessfulReport(desaName, count, monthYear) {
+    localStorage.setItem('dukopsLastSuccessfulReport', JSON.stringify({
+        desaName,
+        count,
+        monthYear
+    }));
 }
 
 function saveSubmittedDate(dateStr) {
@@ -1024,24 +1207,22 @@ function updateDesaHeaderImage(desaName) {
     headerImage.src = defaultUrl;
 }
 
-function speakTargetReached(wilayahName, monthYear) {
-    if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') return;
-
+function speakTargetReached(wilayahName, count, monthYear) {
     const wilayahInfo = normalizeDesaName(wilayahName);
-    const speech = new SpeechSynthesisUtterance(
-        `Babinsa ${wilayahInfo.original}, target laporan bulan ${monthYear}, tercapai.`
-    );
-    speech.lang = 'id-ID';
-    speech.rate = 0.9;
-    speech.pitch = 1;
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(speech);
+    const message =
+        `Terima kasih Babinsa ${wilayahInfo.original} telah mengirim ${count} laporan untuk ${monthYear}. ` +
+        (count >= TARGET_LAPORAN
+            ? `Target ${TARGET_LAPORAN} laporan bulan ini tercapai.`
+            : `Jumlah laporan terkirim bulan ini ${count} dari ${TARGET_LAPORAN}.`);
+    if (typeof window.speakIndonesian === 'function') window.speakIndonesian(message);
 }
 
 // ================= POPUP UCAPAN TERIMA KASIH =================
 function showThankYouPopup(desaName, count) {
     const date = new Date(tanggalWaktu);
     const monthYear = date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+    const desaInfo = normalizeDesaName(desaName);
+    const targetReached = count >= TARGET_LAPORAN;
     
     const modal = document.createElement('div');
     modal.className = 'thankyou-popup';
@@ -1059,24 +1240,28 @@ function showThankYouPopup(desaName, count) {
             <div style="font-size: 80px; color: #4CAF50; margin-bottom: 20px;">
                 <i class="fas fa-trophy"></i>
             </div>
-            <h2 style="color: #9fd49f; margin-bottom: 15px; font-size: 28px;">🎉 SELAMAT! 🎉</h2>
+            <h2 style="color: #9fd49f; margin-bottom: 15px; font-size: 28px;">Terima Kasih</h2>
             <p style="color: #f5f5f5; font-size: 18px; line-height: 1.5; margin-bottom: 20px;">
-                <strong>Babinsa ${desaName}</strong><br>
-                Telah menyelesaikan <strong>${count} laporan</strong> untuk <strong>${monthYear}</strong>!
+                Terima kasih <strong>Babinsa ${desaInfo.original}</strong> telah mengirim
+                <strong>${count} laporan</strong> untuk <strong>${monthYear}</strong>.
             </p>
             <div style="background: rgba(76, 175, 80, 0.2); border: 2px solid #4CAF50;
                 border-radius: 10px; padding: 15px; margin: 20px 0; font-size: 16px; color: #b2d8b2;">
-                <i class="fas fa-check-circle"></i> Target 9 laporan per bulan TERCAPAI!
+                <i class="fas fa-check-circle"></i>
+                ${targetReached
+                    ? `Target ${TARGET_LAPORAN} laporan bulan ini tercapai!`
+                    : `Jumlah laporan terkirim bulan ${monthYear}: ${count}/${TARGET_LAPORAN}.`}
             </div>
             <button onclick="this.closest('.thankyou-popup').remove()"
                 style="background: linear-gradient(135deg, #4CAF50, #2b4d2b); color: white;
                 border: none; padding: 12px 25px; border-radius: 8px; font-size: 16px;
-                font-weight: bold; cursor: pointer; width: 100%;">
+                font-weight: bold; width: 100%;">
                 <i class="fas fa-thumbs-up"></i> TERIMA KASIH
             </button>
         </div>
     `;
     document.body.appendChild(modal);
+    speakTargetReached(desaInfo.original, count, monthYear);
     setTimeout(() => { if (modal.parentNode) modal.remove(); }, 10000);
 }
 
@@ -1100,7 +1285,6 @@ function showNotification(message, type) {
     var CACHE_EXPIRY = 30 * 60 * 1000;
     var isOnlineAbsen = navigator.onLine;
     var currentDataAbsen = null;
-    var monthlyAbsenRequests = {};
     var tahunSelect = document.getElementById('absenTahunSelect');
     var bulanSelect = document.getElementById('absenBulanSelect');
     var resultContainer = document.getElementById('absenResultContainer');
@@ -1113,20 +1297,13 @@ function showNotification(message, type) {
 
     function loadAbsenTahun() {
         if (!tahunSelect) return;
+        tahunSelect.disabled = true;
+        tahunSelect.innerHTML = '<option>⏳ Mohon tunggu....</option>';
         var cached = getCacheAbsen();
-        var hasCachedYears = cached && cached.years && cached.years.length > 0;
-        var yearsCacheFresh = hasCachedYears && cached.yearsUpdatedAt &&
-            Date.now() - cached.yearsUpdatedAt < CACHE_EXPIRY;
-
-        if (!hasCachedYears) {
-            tahunSelect.disabled = true;
-            tahunSelect.innerHTML = '<option>⏳ Mohon tunggu....</option>';
-        }
         if (cached && cached.years && cached.years.length > 0) {
             populateTahunSelect(cached.years);
             tahunSelect.disabled = false;
         }
-        if (yearsCacheFresh) return;
         if (!isOnlineAbsen) {
             if (!cached || !cached.years) tahunSelect.innerHTML = '<option>❌ Offline - no data</option>';
             return;
@@ -1137,10 +1314,7 @@ function showNotification(message, type) {
         }).then(function(y) {
             if (y && y.length > 0) {
                 populateTahunSelect(y);
-                var updatedCache = getCacheAbsen() || {};
-                updatedCache.years = y;
-                updatedCache.yearsUpdatedAt = Date.now();
-                saveToCacheAbsen(updatedCache);
+                saveToCacheAbsen({ years: y, months: null, data: null });
             } else throw new Error('Tidak ada data');
         }).catch(function() {
             if (!cached || !cached.years) tahunSelect.innerHTML = '<option>❌ Gagal memuat</option>';
@@ -1151,7 +1325,6 @@ function showNotification(message, type) {
 
     function populateTahunSelect(y) {
         if (!tahunSelect) return;
-        var previousYear = tahunSelect.value;
         tahunSelect.innerHTML = '<option value="">-- Pilih Tahun --</option>';
         for (var i = 0; i < y.length; i++) {
             var o = document.createElement('option');
@@ -1159,10 +1332,7 @@ function showNotification(message, type) {
             o.textContent = y[i];
             tahunSelect.appendChild(o);
         }
-        if (y.length > 0) {
-            tahunSelect.value = y.indexOf(previousYear) !== -1 ? previousYear : y[0];
-            if (tahunSelect.value !== previousYear) onTahunChange();
-        }
+        if (y.length > 0) { tahunSelect.value = y[0]; onTahunChange(); }
     }
 
     function onTahunChange() {
@@ -1172,16 +1342,13 @@ function showNotification(message, type) {
         bulanSelect.disabled = true;
         bulanSelect.innerHTML = '<option>⏳ Memuat...</option>';
         var c = getCacheAbsen();
-        var cachedMonths = c && c.months && c.months[t] ? c.months[t] : null;
-        if (cachedMonths && cachedMonths.length > 0) {
-            populateBulanSelect(cachedMonths);
+        if (c && c.months && c.months[t]) {
+            populateBulanSelect(c.months[t]);
             bulanSelect.disabled = false;
+            return;
         }
-        var monthsCacheFresh = cachedMonths && c.monthsUpdatedAt && c.monthsUpdatedAt[t] &&
-            Date.now() - c.monthsUpdatedAt[t] < CACHE_EXPIRY;
-        if (monthsCacheFresh) return;
         if (!isOnlineAbsen) {
-            if (!cachedMonths) bulanSelect.innerHTML = '<option>❌ Offline</option>';
+            bulanSelect.innerHTML = '<option>❌ Offline</option>';
             bulanSelect.disabled = false;
             return;
         }
@@ -1194,16 +1361,11 @@ function showNotification(message, type) {
                 var uc = getCacheAbsen() || {};
                 uc.months = uc.months || {};
                 uc.months[t] = m;
-                uc.monthsUpdatedAt = uc.monthsUpdatedAt || {};
-                uc.monthsUpdatedAt[t] = Date.now();
                 saveToCacheAbsen(uc);
-            } else if (!cachedMonths) {
-                bulanSelect.innerHTML = '<option>Tidak ada data</option>';
-            }
+            } else bulanSelect.innerHTML = '<option>Tidak ada data</option>';
             bulanSelect.disabled = false;
-        }).catch(function(error) {
-            console.error('Gagal memuat daftar bulan ABSEN:', error);
-            if (!cachedMonths) bulanSelect.innerHTML = '<option>❌ Gagal memuat</option>';
+        }).catch(function() {
+            bulanSelect.innerHTML = '<option>❌ Gagal memuat</option>';
             bulanSelect.disabled = false;
         });
     }
@@ -1211,11 +1373,7 @@ function showNotification(message, type) {
     function populateBulanSelect(m) {
         if (!bulanSelect) return;
         bulanSelect.innerHTML = '<option value="">-- Pilih Bulan --</option>';
-        var addedMonthNumbers = {};
         for (var i = 0; i < m.length; i++) {
-            var monthValue = String(m[i].num || m[i]).padStart(2, '0');
-            if (addedMonthNumbers[monthValue]) continue;
-            addedMonthNumbers[monthValue] = true;
             var o = document.createElement('option');
             o.value = m[i].num || m[i];
             o.textContent = m[i].name || m[i];
@@ -1224,122 +1382,45 @@ function showNotification(message, type) {
         bulanSelect.onchange = function() {
             if (this.value) { loadDataAbsen(); } else { if (resultContainer) resultContainer.innerHTML = ''; }
         };
-        if (bulanSelect.value) loadDataAbsen();
+        if (bulanSelect.value) { loadDataAbsen(); }
     }
 
     function loadDataAbsen() {
         if (!tahunSelect || !bulanSelect) return;
         var t = tahunSelect.value, b = bulanSelect.value;
         if (!t || !b) { if (resultContainer) resultContainer.innerHTML = '<div class="absen-card">Pilih tahun dan bulan</div>'; return; }
+        showLoadingAbsen();
         var c = getCacheAbsen(), ck = t + '_' + b;
-        var cachedData = c && c.data && c.data[ck] ? c.data[ck] : null;
-        if (cachedData && (!cachedData.data || cachedData.data.error)) cachedData = null;
-        if (cachedData) {
-            displayDataAbsen(cachedData.data);
-            currentDataAbsen = cachedData.data;
-        } else {
-            showLoadingAbsen();
+        if (c && c.data && c.data[ck]) {
+            var cd = c.data[ck];
+            if (Date.now() - cd.timestamp < CACHE_EXPIRY) {
+                displayDataAbsen(cd.data);
+                currentDataAbsen = cd.data;
+                return;
+            }
         }
-        fetchMonthlyAbsenData(t, b).then(function(d) {
+        if (!isOnlineAbsen) { showErrorAbsen('Tidak ada koneksi'); return; }
+        fetch(SCRIPT_URL + '?action=getData&tahun=' + encodeURIComponent(t) + '&bulan=' + encodeURIComponent(b))
+            .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+            .then(function(d) {
                 currentDataAbsen = d;
                 displayDataAbsen(d);
-            }).catch(function(e) {
-                if (cachedData) {
-                    console.error('Gagal memperbarui data absensi; data tersimpan tetap ditampilkan:', e);
-                    showNotification('Data absensi tersimpan ditampilkan; pembaruan gagal.', 'warning');
-                } else {
-                    showErrorAbsen('Gagal: ' + e.message);
-                }
-            });
-    }
-
-    function fetchMonthlyAbsenData(t, b) {
-        b = String(b).padStart(2, '0');
-        var c = getCacheAbsen();
-        var ck = t + '_' + b;
-        var cachedData = c && c.data && c.data[ck] ? c.data[ck] : null;
-        if (cachedData && (!cachedData.data || cachedData.data.error)) cachedData = null;
-        if (cachedData && Date.now() - cachedData.timestamp < CACHE_EXPIRY) {
-            return Promise.resolve(cachedData.data);
-        }
-        if (!isOnlineAbsen) {
-            return cachedData
-                ? Promise.resolve(cachedData.data)
-                : Promise.reject(new Error('Tidak ada koneksi dan cache ABSEN tidak tersedia.'));
-        }
-        if (monthlyAbsenRequests[ck]) return monthlyAbsenRequests[ck];
-
-        monthlyAbsenRequests[ck] = fetch(SCRIPT_URL + '?action=getData&tahun=' + encodeURIComponent(t) + '&bulan=' + encodeURIComponent(b))
-            .then(function(r) {
-                if (!r.ok) throw new Error('HTTP ' + r.status);
-                return r.json();
-            })
-            .then(function(d) {
-                if (d && d.error) throw new Error(d.error);
                 var uc = getCacheAbsen() || {};
                 uc.data = uc.data || {};
                 uc.data[ck] = { data: d, timestamp: Date.now() };
                 saveToCacheAbsen(uc);
-                return d;
-            })
-            .catch(function(error) {
-                if (cachedData) {
-                    console.error('Gagal memperbarui data absensi; menggunakan cache:', error);
-                    return cachedData.data;
-                }
-                throw error;
-            })
-            .finally(function() {
-                delete monthlyAbsenRequests[ck];
-            });
-        return monthlyAbsenRequests[ck];
+            }).catch(function(e) { showErrorAbsen('Gagal: ' + e.message); });
     }
-
-    window.getAbsenCountForVillageMonth = function(year, month, villageName) {
-        return fetchMonthlyAbsenData(String(year), String(month).padStart(2, '0')).then(function(d) {
-            if (!d || d.error) throw new Error(d && d.error ? d.error : 'Format data ABSEN tidak valid.');
-            var selectedName = normalizeDesaName(villageName).cleanName.replace(/_/g, ' ').trim().toLocaleLowerCase('id-ID');
-            if (!selectedName) throw new Error('Desa/kelurahan belum dipilih.');
-            var details = Array.isArray(d.details) ? d.details : [];
-            return details.reduce(function(total, detail) {
-                var detailName = normalizeDesaName(detail.nama || '').cleanName.replace(/_/g, ' ').trim().toLocaleLowerCase('id-ID');
-                if (detailName !== selectedName) return total;
-                var fileCount = Number(detail.jumlah_file);
-                return total + (Number.isFinite(fileCount) ? fileCount : 0);
-            }, 0);
-        });
-    };
 
     function displayDataAbsen(d) {
         if (!resultContainer) return;
         if (d.error) { showErrorAbsen(d.error); return; }
-        var selectedName = normalizeDesaName(selectedDesa).cleanName.replace(/_/g, ' ').trim();
-        if (!selectedName) {
-            showErrorAbsen('Desa/kelurahan belum dipilih.');
-            return;
-        }
-
-        var normalizedSelectedName = selectedName.toLocaleLowerCase('id-ID');
-        var villageDetails = Array.isArray(d.details) ? d.details.filter(function(detail) {
-            var detailName = normalizeDesaName(detail.nama || '').cleanName.replace(/_/g, ' ').trim();
-            return detailName.toLocaleLowerCase('id-ID') === normalizedSelectedName;
-        }) : [];
-        var noAttendanceRecord = villageDetails.length === 0;
-        if (noAttendanceRecord) {
-            villageDetails = [{
-                nama: selectedDesa,
-                jumlah_file: 0,
-                persentase: 0,
-                status: 'BELUM'
-            }];
-        }
-
-        var dh = '';
-        for (var i = 0; i < villageDetails.length; i++) {
-            var de = villageDetails[i], cls = '', txt = '', icon = '';
+        var td = d.total_desa || 0, p = td > 0 ? Math.round((d.desa_lengkap / td) * 100) : 0, dh = '';
+        for (var i = 0; i < d.details.length; i++) {
+            var de = d.details[i], cls = '', txt = '', icon = '';
             if (de.status === 'LENGKAP') { cls = 'absen-status-lengkap'; icon = '✅'; txt = 'LENGKAP'; }
             else if (de.status === 'BELUM_LENGKAP') { cls = 'absen-status-belum-lengkap'; icon = '⚠️'; txt = 'BL'; }
-            else { cls = 'absen-status-belum'; icon = '❌'; txt = noAttendanceRecord ? 'BELUM KIRIM' : 'BELUM'; }
+            else { cls = 'absen-status-belum'; icon = '❌'; txt = 'BELUM'; }
             var w = (de.status === 'LENGKAP') ? '#4caf50' : ((de.status === 'BELUM_LENGKAP') ? '#ff9800' : '#f44336');
             dh += '<div class="absen-desa-item" onclick="window.showDetailAbsen(\'' + escapeHtml(de.nama) +
                 '\',' + de.jumlah_file + ',' + de.persentase + ',\'' + de.status +
@@ -1349,10 +1430,18 @@ function showNotification(message, type) {
                 de.persentase + '%;background:' + w +
                 '"></div></div></div><div class="absen-status-badge ' + cls + '">' + txt + '</div></div>';
         }
-        var selectedWilayah = document.getElementById('absenSelectedWilayah');
-        if (selectedWilayah) selectedWilayah.textContent = 'Absensi wilayah: ' + selectedDesa;
         resultContainer.innerHTML =
-            '<div class="absen-card"><div class="absen-desa-list">' + dh +
+            '<div class="absen-card"><div class="absen-stats-grid"><div class="absen-stat-card"><div class="absen-stat-value" style="color:#1a73e8;">' +
+            d.total_desa +
+            '</div><div class="absen-stat-label">DESA</div></div><div class="absen-stat-card"><div class="absen-stat-value" style="color:#4caf50;">' +
+            d.desa_lengkap +
+            '</div><div class="absen-stat-label">LENGKAP</div></div><div class="absen-stat-card"><div class="absen-stat-value" style="color:#ff9800;">' +
+            d.desa_belum_lengkap +
+            '</div><div class="absen-stat-label">BL</div></div><div class="absen-stat-card"><div class="absen-stat-value" style="color:#f44336;">' +
+            d.desa_belum +
+            '</div><div class="absen-stat-label">BELUM</div></div></div><div style="font-size:0.7rem;font-weight:600;margin:10px 0 5px;">📋 DAFTAR DESA (' +
+            d.total_desa +
+            ')</div><div class="absen-desa-list">' + dh +
             '</div></div>';
     }
 

@@ -1,23 +1,17 @@
 // sw.js - Service Worker untuk DUKOPS
-const CACHE_NAME = 'dukops-v12';
+const CACHE_NAME = 'dukops-v29';
 
 const urlsToCache = [
     'index.html',
     'app.js',
-    'js/cursor.js',
+    'thankyou.html',
+    'js/indonesian-voice.js',
+    'header/header-background.png',
+    'kamuflase.png',
     'css/main.css',
-    'css/cursor.css',
-    'cursor/1.cur',
-    'cursor/2.cur',
-    'cursor/7.cur',
-    'cursor/8.cur',
-    'cursor/10.cur',
     'icons/favicon-96x96.png',
     'icons/favicon.svg',
-    'icons/tni-ad-insignia.svg',
-    'fonts/SpecialElite-Regular.ttf',
-    'site.webmanifest',
-    'LOGO KOREM163 Wirasatya.png'
+    'site.webmanifest'
 ];
 
 // ============================================================
@@ -108,7 +102,7 @@ self.addEventListener('fetch', event => {
                                 <style>
                                     * { margin:0; padding:0; box-sizing:border-box; }
                                     body {
-                                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+                                        font-family: Roboto, 'Droid Sans', 'Noto Sans', Arial, sans-serif;
                                         background: #0a1a0a;
                                         color: #e0e8e0;
                                         display: flex;
@@ -137,7 +131,6 @@ self.addEventListener('fetch', event => {
                                         border-radius: 8px;
                                         font-size: 16px;
                                         font-weight: bold;
-                                        cursor: pointer;
                                     }
                                     .btn-retry:hover { background: #66bb6a; }
                                     .status { font-size: 12px; color: #556655; margin-top: 15px; }

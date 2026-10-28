@@ -11,14 +11,6 @@
     --splash-progress-fill: #FFD700;
 }
 
-@font-face {
-    font-family: 'Special Elite';
-    src: url('../fonts/SpecialElite-Regular.ttf') format('truetype');
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-}
-
 /* ================================================================
    SPLASH CONTAINER
    ================================================================ */
@@ -50,10 +42,8 @@
    LOGO
    ================================================================ */
 .splash-logo-center img {
-    width: auto;
-    height: 96px;
-    max-width: 80px;
-    object-fit: contain;
+    width: 80px;
+    height: auto;
     display: block;
     margin: 0 auto 8px;
 }
@@ -62,13 +52,17 @@
    TITLE
    ================================================================ */
 .splash-title-center {
-    font-family: 'Special Elite', serif;
     font-size: 30px;
-    font-weight: 400;
+    font-weight: 800;
     color: var(--splash-title-color);
     letter-spacing: 3px;
     margin: 4px 0;
-    white-space: nowrap;
+}
+
+.splash-title-center:last-of-type {
+    font-size: 18px;
+    color: #FFC107;
+    letter-spacing: 2px;
 }
 
 /* ================================================================
@@ -107,63 +101,56 @@
     margin-top: 2px;
 }
 
-.splash-village-picker {
-    width: min(100%, 360px);
-    margin: 24px auto 0;
-    text-align: left;
+.startup-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 14px;
 }
 
-.splash-village-picker label {
-    display: block;
-    margin-bottom: 6px;
-    color: #e6ffe6;
-    font-size: 13px;
-    font-weight: 600;
-}
-
-.splash-village-picker select {
+.startup-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
     width: 100%;
+    min-width: 0;
     min-height: 46px;
-    padding: 10px 14px;
-    border: 2px solid #2a5a8a;
-    border-radius: 10px;
-    color-scheme: light;
-    background: #ffffff !important;
-    color: #000000 !important;
-    font: inherit;
-}
-
-.splash-village-picker select option {
-    background: #ffffff !important;
-    color: #000000 !important;
-}
-
-.splash-village-picker button {
-    width: 100%;
-    min-height: 44px;
-    margin-top: 12px;
-    padding: 10px 14px;
-    border: 0;
-    border-radius: 10px;
-    background: #1a6b35;
+    padding: 8px 5px;
+    margin: 0;
+    border: 1px solid transparent;
+    border-radius: 40px;
     color: #ffffff;
-    font: inherit;
+    font-size: clamp(11px, 3vw, 15px);
     font-weight: 700;
-    cursor: pointer;
+    line-height: 1.15;
 }
 
-.splash-village-picker button:disabled,
-.splash-village-picker select:disabled {
-    cursor: not-allowed;
-    opacity: 0.65;
+.startup-button i {
+    flex-shrink: 0;
 }
 
-#startupStatus {
-    min-height: 20px;
-    margin-top: 8px;
-    color: #aaccee;
-    font-size: 12px;
-    text-align: center;
+.startup-button-continue {
+    background: linear-gradient(110deg, #27864b, #14532d);
+    border-color: rgba(165, 230, 177, 0.8);
+}
+
+.startup-button-continue:hover:not(:disabled) {
+    background: linear-gradient(110deg, #32a45c, #1b6b3b);
+}
+
+.startup-button-exit {
+    background: linear-gradient(110deg, #c62828, #8e1717);
+    border-color: rgba(255, 190, 190, 0.75);
+}
+
+.startup-button-exit:hover:not(:disabled) {
+    background: linear-gradient(110deg, #e53935, #a91e1e);
+}
+
+.startup-button:focus-visible {
+    outline: 3px solid #f4d878;
+    outline-offset: 3px;
 }
 
 /* ================================================================
@@ -205,9 +192,12 @@
         font-size: 26px;
     }
     
+    .splash-title-center:last-of-type {
+        font-size: 16px;
+    }
+    
     .splash-logo-center img {
-        height: 80px;
-        max-width: 70px;
+        width: 65px;
     }
     
     .splash-progress-center {
@@ -222,9 +212,12 @@
         letter-spacing: 2px;
     }
     
+    .splash-title-center:last-of-type {
+        font-size: 14px;
+    }
+    
     .splash-logo-center img {
-        height: 68px;
-        max-width: 60px;
+        width: 50px;
     }
     
     .splash-progress-center {
@@ -243,11 +236,7 @@
     .splash-kodim-center {
         font-size: 9px;
     }
-
-    .splash-village-picker {
-        margin-top: 18px;
-    }
-
+    
     .splash-percentage-center {
         font-size: 10px;
     }
@@ -259,9 +248,12 @@
         font-size: 18px;
     }
     
+    .splash-title-center:last-of-type {
+        font-size: 12px;
+    }
+    
     .splash-logo-center img {
-        height: 58px;
-        max-width: 50px;
+        width: 40px;
     }
     
     .splash-progress-center {
@@ -294,6 +286,15 @@
     .splash-progress-bar-center::after {
         animation: none !important;
         display: none !important;
+    }
+}
+
+/* ================================================================
+   DARK MODE - SUPPORT
+   ================================================================ */
+@media (prefers-color-scheme: dark) {
+    .splash-container-modern {
+        background: #050d0d;
     }
 }
 
