@@ -1,108 +1,11 @@
-/**
- * CURSOR DUKOPS - SIAP PAKAI
- * Auto Detect Desktop & Android
- */
-
 (function() {
     'use strict';
-    
-    // ========== DETEKSI ==========
-    const isTouch = 'ontouchstart' in window || 
-                    navigator.maxTouchPoints > 0 ||
-                    window.matchMedia('(hover: none)').matches;
-    
-    const isAndroid = /Android/i.test(navigator.userAgent);
-    const isDesktop = !isTouch && !isAndroid;
-    let downloadCursor = null;
-    let lastTouchPosition = { x: 0, y: 0 };
-    
-    // ========== TOUCH FEEDBACK (ANDROID) ==========
-    function enableTouchFeedback() {
-        if (!isTouch && !isAndroid) return;
-        
-        document.documentElement.classList.add('touch-device');
 
-        downloadCursor = document.createElement('div');
-        downloadCursor.className = 'download-cursor';
-        downloadCursor.setAttribute('aria-hidden', 'true');
-        downloadCursor.innerHTML = '<span class="download-cursor-ring"></span><img src="icons/favicon-96x96.png" alt="">';
-        document.body.appendChild(downloadCursor);
-
-        document.addEventListener('touchstart', function(e) {
-            const touch = e.touches[0];
-            if (touch) {
-                lastTouchPosition = { x: touch.clientX, y: touch.clientY };
-            }
-        }, { passive: true });
-        
-        // Ripple effect
-        document.querySelectorAll('button, .btn, [onclick], .nav-btn, .tab').forEach(el => {
-            el.classList.add('ripple');
-        });
-        
-        // Haptic vibrate untuk Android
-        if (isAndroid && navigator.vibrate) {
-            document.addEventListener('touchstart', function(e) {
-                const target = e.target.closest('button, .btn, [onclick], a');
-                if (target) {
-                    navigator.vibrate(10);
-                }
-            }, { passive: true });
-        }
-    }
-    
-    // ========== FUNGSI GLOBAL ==========
-    window.setCursor = function(element, type) {
-        if (!isDesktop) return;
-        
-        const cursorTypes = new Set([
-            'default', 'pointer', 'text', 'wait', 'progress',
-            'help', 'grab', 'grabbing', 'not-allowed', 'zoom-in'
-        ]);
-        const el = typeof element === 'string' ? document.querySelector(element) : element;
-        if (el && cursorTypes.has(type)) {
-            el.style.cursor = type;
-        }
-    };
-    
-    window.resetCursor = function(element) {
-        if (!isDesktop) return;
-        const el = typeof element === 'string' ? document.querySelector(element) : element;
-        if (el) {
-            el.style.cursor = '';
-        }
-    };
-    
-    window.showLoading = function() {
-        if (isDesktop) document.body.style.cursor = 'wait';
-        document.body.classList.add('loading');
-        if (downloadCursor && (isAndroid || isTouch)) {
-            downloadCursor.style.left = `${lastTouchPosition.x}px`;
-            downloadCursor.style.top = `${lastTouchPosition.y}px`;
-            downloadCursor.classList.add('is-visible');
-        }
-    };
-    
-    window.hideLoading = function() {
-        if (isDesktop) document.body.style.cursor = '';
-        document.body.classList.remove('loading');
-        if (downloadCursor) downloadCursor.classList.remove('is-visible');
-    };
-    
-    // ========== INISIALISASI ==========
-    function init() {
-        enableTouchFeedback();
-        
-        // Export status
-        window.isTouchDevice = isTouch;
-        window.isAndroidDevice = isAndroid;
-        window.isDesktopDevice = isDesktop;
-    }
-    
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else {
-        init();
-    }
-    
+    window.setCursor = function() {};
+    window.resetCursor = function() {};
+    window.showLoading = function() {};
+    window.hideLoading = function() {};
+    window.isTouchDevice = false;
+    window.isAndroidDevice = false;
+    window.isDesktopDevice = false;
 })();
