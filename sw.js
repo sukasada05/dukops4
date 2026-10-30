@@ -1,5 +1,5 @@
 // sw.js - Service Worker untuk DUKOPS
-const CACHE_NAME = 'dukops-v30';
+const CACHE_NAME = 'dukops-v29';
 
 const urlsToCache = [
     'index.html',
@@ -13,21 +13,6 @@ const urlsToCache = [
     'icons/favicon.svg',
     'site.webmanifest'
 ];
-
-function isNavigationRequest(request) {
-    return request.mode === 'navigate' || request.headers.get('accept')?.includes('text/html');
-}
-
-function isStaticAssetRequest(url) {
-    const pathname = url.pathname.toLowerCase();
-    return pathname.endsWith('.js') ||
-        pathname.endsWith('.css') ||
-        pathname.endsWith('.png') ||
-        pathname.endsWith('.svg') ||
-        pathname.endsWith('.webp') ||
-        pathname.endsWith('.manifest') ||
-        pathname.endsWith('.html');
-}
 
 // ============================================================
 // INSTALL - Caching assets
@@ -66,7 +51,6 @@ self.addEventListener('activate', event => {
                         console.log('🗑️ Deleting old cache:', cacheName);
                         return caches.delete(cacheName);
                     }
-                    return null;
                 })
             );
         }).then(() => {
@@ -83,69 +67,98 @@ self.addEventListener('message', event => {
 });
 
 // ============================================================
-// FETCH - Stale-safe caching strategy
+// FETCH - Cache-first strategy
 // ============================================================
 self.addEventListener('fetch', event => {
-    const request = event.request;
-    const url = new URL(request.url);
-
-    if (request.method !== 'GET') return;
-    if (url.origin !== self.location.origin) return;
-
-    if (isNavigationRequest(request)) {
-        event.respondWith(
-            fetch(request)
-                .then(response => {
-                    if (response && response.ok) {
-                        const copy = response.clone();
-                        caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
-                    }
-                    return response;
-                })
-                .catch(() => caches.match(request).then(cached => {
-                    if (cached) return cached;
-                    return new Response(`<!DOCTYPE html><html><body><h1>DUKOPS Offline</h1><p>Anda sedang offline.</p></body></html>`, {
-                        status: 200,
-                        headers: { 'Content-Type': 'text/html; charset=utf-8' }
-                    });
-                }))
-        );
+    const url = new URL(event.request.url);
+    
+    // Skip cross-origin requests
+    if (url.origin !== self.location.origin) {
         return;
     }
 
-    if (isStaticAssetRequest(url) || request.destination === 'script' || request.destination === 'style' || request.destination === 'image') {
-        event.respondWith(
-            caches.match(request)
-                .then(cached => {
-                    const fetchPromise = fetch(request)
-                        .then(response => {
-                            if (response && response.ok) {
-                                const copy = response.clone();
-                                caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
-                            }
-                            return response;
-                        })
-                        .catch(() => cached);
+    console.log('🌐 Fetching:', url.pathname);
 
-                    return cached || fetchPromise;
-                })
-        );
-        return;
-    }
-
-    // fallback default: network-first for data / runtime content
     event.respondWith(
-        fetch(request)
+        caches.match(event.request)
             .then(response => {
-                if (response && response.ok) {
-                    const copy = response.clone();
-                    caches.open(CACHE_NAME).then(cache => cache.put(request, copy));
+                if (response) {
+                    console.log('✅ Cache hit:', url.pathname);
+                    return response;
                 }
-                return response;
+                console.log('📡 Network fetch:', url.pathname);
+                return fetch(event.request).catch(() => {
+                    console.log('⚠️ Offline fallback for:', url.pathname);
+                    const acceptsHtml = event.request.headers.get('accept')?.includes('text/html');
+                    const isNavigation = event.request.mode === 'navigate';
+                    if (isNavigation || acceptsHtml) {
+                        return new Response(`
+                            <!DOCTYPE html>
+                            <html lang="id">
+                            <head>
+                                <meta charset="UTF-8">
+                                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                <title>DUKOPS - Offline</title>
+                                <style>
+                                    * { margin:0; padding:0; box-sizing:border-box; }
+                                    body {
+                                        font-family: Roboto, 'Droid Sans', 'Noto Sans', Arial, sans-serif;
+                                        background: #0a1a0a;
+                                        color: #e0e8e0;
+                                        display: flex;
+                                        align-items: center;
+                                        justify-content: center;
+                                        min-height: 100vh;
+                                        padding: 20px;
+                                        text-align: center;
+                                    }
+                                    .offline-box {
+                                        background: #1a2a1a;
+                                        border: 2px solid #4CAF50;
+                                        border-radius: 16px;
+                                        padding: 40px;
+                                        max-width: 400px;
+                                        width: 100%;
+                                    }
+                                    .offline-icon { font-size: 64px; margin-bottom: 20px; }
+                                    h1 { color: #4CAF50; font-size: 24px; margin-bottom: 10px; }
+                                    p { color: #889988; font-size: 14px; line-height: 1.6; margin-bottom: 20px; }
+                                    .btn-retry {
+                                        background: #4CAF50;
+                                        color: #0a1a0a;
+                                        border: none;
+                                        padding: 12px 30px;
+                                        border-radius: 8px;
+                                        font-size: 16px;
+                                        font-weight: bold;
+                                    }
+                                    .btn-retry:hover { background: #66bb6a; }
+                                    .status { font-size: 12px; color: #556655; margin-top: 15px; }
+                                </style>
+                            </head>
+                            <body>
+                                <div class="offline-box">
+                                    <div class="offline-icon">📡</div>
+                                    <h1>DUKOPS BABINSA</h1>
+                                    <p>Anda sedang <strong>offline</strong>.<br>Silakan periksa koneksi internet Anda.</p>
+                                    <button class="btn-retry" onclick="location.reload()">🔄 COBA LAGI</button>
+                                    <div class="status">DUKOPS BABINSA</div>
+                                </div>
+                            </body>
+                            </html>
+                        `, {
+                            status: 200,
+                            headers: { 'Content-Type': 'text/html' }
+                        });
+                    }
+                    return new Response('', {
+                        status: 503,
+                        statusText: 'Service Unavailable'
+                    });
+                });
             })
-            .catch(() => caches.match(request))
     );
 });
 
-console.log('📱 DUKOPS Service Worker loaded (v30)');
+console.log('📱 DUKOPS Service Worker loaded (v4)');
 console.log('📦 Cache name:', CACHE_NAME);
