@@ -1,5 +1,11 @@
 // ================= KONFIGURASI AMAN =================
-const GOOGLE_APPS_SCRIPT_WEBHOOK = "https://script.google.com/macros/s/AKfycbyiJ0uO36CdtGUiy8m03jzwMAUWWMwIILpdBLt5J41ne6aQWHYIp_Cr_Ke6K8iqn4gZ/exec";
+const APP_CONFIG = {
+    googleAppsScriptWebhook: "https://script.google.com/macros/s/AKfycbyiJ0uO36CdtGUiy8m03jzwMAUWWMwIILpdBLt5J41ne6aQWHYIp_Cr_Ke6K8iqn4gZ/exec",
+    absenScriptUrl: "https://script.google.com/macros/s/AKfycbxcKBFM8Mm0A8e_hWfl48uEUuDhlmxK8okgXF4M-102HLEuROZPN9YZlpmKnkRo8b_SKA/exec",
+    allowedImageTypes: ['image/png', 'image/jpeg', 'image/webp'],
+    maxImageSize: 10 * 1024 * 1024
+};
+
 const TARGET_LAPORAN = 9;
 
 // ================= VARIABEL GLOBAL =================
@@ -19,6 +25,59 @@ let deferredPrompt = null;
 let swWaiting = null;
 const canvasPlaceholderImage = new Image();
 canvasPlaceholderImage.src = 'icons/favicon-96x96.png';
+
+function safeLocalStorageGet(key, fallback = null) {
+    try {
+        const raw = localStorage.getItem(key);
+        return raw === null ? fallback : JSON.parse(raw);
+    } catch (error) {
+        console.warn(`localStorage unavailable for ${key}:`, error);
+        return fallback;
+    }
+}
+
+function safeLocalStorageSet(key, value) {
+    try {
+        localStorage.setItem(key, JSON.stringify(value));
+        return true;
+    } catch (error) {
+        console.warn(`Failed to save ${key} to localStorage:`, error);
+        return false;
+    }
+}
+
+function showNotification(message, type = 'info') {
+    const toast = document.getElementById('win98Toast');
+    if (toast) {
+        toast.textContent = message;
+        toast.className = 'win98-toast show';
+        if (type === 'success') toast.className += ' success';
+        else if (type === 'error') toast.className += ' error';
+        else if (type === 'warning') toast.className += ' warning';
+        clearTimeout(toast._timer);
+        toast._timer = setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+        return;
+    }
+
+    // fallback message if toast element doesn't exist
+    const fallback = document.createElement('div');
+    fallback.style.position = 'fixed';
+    fallback.style.bottom = '20px';
+    fallback.style.right = '20px';
+    fallback.style.zIndex = '999999';
+    fallback.style.borderRadius = '8px';
+    fallback.style.background = type === 'error' ? '#c62828' : type === 'warning' ? '#ef6c00' : '#2e7d32';
+    fallback.style.color = '#fff';
+    fallback.style.padding = '12px 16px';
+    fallback.style.boxShadow = '0 10px 30px rgba(0,0,0,0.35)';
+    fallback.style.fontSize = '14px';
+    fallback.style.fontWeight = '600';
+    fallback.textContent = message;
+    document.body.appendChild(fallback);
+    setTimeout(() => fallback.remove(), 3000);
+}
 
 canvasPlaceholderImage.onload = function() {
     const canvas = document.getElementById('canvas');
@@ -66,6 +125,53 @@ if (isAndroidDevice) {
     document.documentElement.classList.add('android-device');
 }
 
+function isValidImageFile(file) {
+    if (!file) return false;
+
+    const type = (file.type || '').toLowerCase();
+    const fileName = (file.name || '').toLowerCase();
+    const extension = fileName.includes('.') ? fileName.split('.').pop() : '';
+    const validExtensions = ['png', 'jpg', 'jpeg', 'webp'];
+
+    const hasValidType = APP_CONFIG.allowedImageTypes.includes(type);
+    const hasValidExtension = validExtensions.includes(extension);
+
+    if (!hasValidType && !hasValidExtension) {
+        return false;
+    }
+
+    if (typeof file.size === 'number' && file.size > APP_CONFIG.maxImageSize) {
+        return false;
+    }
+
+    return true;
+}
+
+function parseLocalDateTime(value) {
+    if (!value) return null;
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function getIsFileProtocol() {
+    return window.location.protocol === 'file:';
+}
+
+function hasValidDataUrl(value) {
+    return typeof value === 'string' && /^data:image\//i.test(value);
+}
+
+function createAbortSignal(timeoutMs = 15000) {
+    if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
+        return AbortSignal.timeout(timeoutMs);
+    }
+
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    controller.signal.addEventListener('abort', () => clearTimeout(timer), { once: true });
+    return controller.signal;
+}
+
 // ================= PEMILIHAN WILAYAH AWAL =================
 document.addEventListener('DOMContentLoaded', function () {
     const splashScreen = document.getElementById('splashScreen');
@@ -85,7 +191,7 @@ async function loadRunningText() {
     const target = document.getElementById('runningTextContent');
     if (!target) return;
     try {
-        const response = await fetch('running-txt/running.txt?t=' + Date.now());
+        const response = await fetch('running-txt/running.txt?t=' + Date.now(), { signal: createAbortSignal(15000) });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const text = (await response.text()).trim();
         if (text) target.textContent = text;
@@ -130,68 +236,90 @@ window.continueToDashboard = async function() {
 function showApp() {
     const splash = document.getElementById('splashScreen');
     const app = document.getElementById('appContainer');
-    splash.style.display = 'none';
-    app.classList.remove('startup-dashboard');
-    app.style.display = 'block';
-    app.style.opacity = '1';
-    document.getElementById('btnDukops').classList.add('active');
-    document.getElementById('dukopsContent').style.display = 'block';
-    document.getElementById('absenContent').style.display = 'none';
-    document.getElementById('hanpanganContent').style.display = 'none';
-    document.getElementById('hanpanganContent').classList.remove('active');
+    if (splash) splash.style.display = 'none';
+    if (app) {
+        app.classList.remove('startup-dashboard');
+        app.style.display = 'block';
+        app.style.opacity = '1';
+    }
+    const dukopsBtn = document.getElementById('btnDukops');
+    if (dukopsBtn) dukopsBtn.classList.add('active');
+    const dukopsContent = document.getElementById('dukopsContent');
+    const absenContent = document.getElementById('absenContent');
+    const hanpanganContent = document.getElementById('hanpanganContent');
+    if (dukopsContent) dukopsContent.style.display = 'block';
+    if (absenContent) absenContent.style.display = 'none';
+    if (hanpanganContent) hanpanganContent.style.display = 'none';
+    if (hanpanganContent) hanpanganContent.classList.remove('active');
 }
 
 window.exitApp = function() {
-    window.close();
-    setTimeout(() => {
-        if (!document.hidden) {
-            const splash = document.getElementById('splashScreen');
-            const app = document.getElementById('appContainer');
-            const startupDesa = document.getElementById('startupDesa');
+    resetForm();
+    currentApp = null;
 
-            resetForm();
-            currentApp = null;
-            if (startupDesa) startupDesa.value = '';
-            if (app) {
-                app.style.display = 'none';
-                app.style.opacity = '0';
-            }
-            if (splash) splash.style.display = 'flex';
-        }
-    }, 100);
+    const splash = document.getElementById('splashScreen');
+    const app = document.getElementById('appContainer');
+    const startupDesa = document.getElementById('startupDesa');
+    if (startupDesa) startupDesa.value = '';
+
+    if (app) {
+        app.style.display = 'none';
+        app.style.opacity = '0';
+        app.classList.add('startup-dashboard');
+    }
+
+    if (splash) splash.style.display = 'flex';
 };
 
 // ================= NAVIGASI TAB =================
 window.showDukops = function() {
-    document.getElementById('dukopsContent').style.display = 'block';
-    document.getElementById('absenContent').style.display = 'none';
-    document.getElementById('hanpanganContent').style.display = 'none';
-    document.getElementById('hanpanganContent').classList.remove('active');
-    document.getElementById('btnDukops').classList.add('active');
-    document.getElementById('btnAbsen').classList.remove('active');
-    document.getElementById('btnHanpangan').classList.remove('active');
+    const dukopsContent = document.getElementById('dukopsContent');
+    const absenContent = document.getElementById('absenContent');
+    const hanpanganContent = document.getElementById('hanpanganContent');
+    if (dukopsContent) dukopsContent.style.display = 'block';
+    if (absenContent) absenContent.style.display = 'none';
+    if (hanpanganContent) hanpanganContent.style.display = 'none';
+    if (hanpanganContent) hanpanganContent.classList.remove('active');
+    const btnDukops = document.getElementById('btnDukops');
+    const btnAbsen = document.getElementById('btnAbsen');
+    const btnHanpangan = document.getElementById('btnHanpangan');
+    if (btnDukops) btnDukops.classList.add('active');
+    if (btnAbsen) btnAbsen.classList.remove('active');
+    if (btnHanpangan) btnHanpangan.classList.remove('active');
     currentApp = 'dukops';
 };
 
 window.showAbsenTab = function() {
-    document.getElementById('dukopsContent').style.display = 'none';
-    document.getElementById('absenContent').style.display = 'block';
-    document.getElementById('hanpanganContent').style.display = 'none';
-    document.getElementById('hanpanganContent').classList.remove('active');
-    document.getElementById('btnDukops').classList.remove('active');
-    document.getElementById('btnAbsen').classList.add('active');
-    document.getElementById('btnHanpangan').classList.remove('active');
+    const dukopsContent = document.getElementById('dukopsContent');
+    const absenContent = document.getElementById('absenContent');
+    const hanpanganContent = document.getElementById('hanpanganContent');
+    if (dukopsContent) dukopsContent.style.display = 'none';
+    if (absenContent) absenContent.style.display = 'block';
+    if (hanpanganContent) hanpanganContent.style.display = 'none';
+    if (hanpanganContent) hanpanganContent.classList.remove('active');
+    const btnDukops = document.getElementById('btnDukops');
+    const btnAbsen = document.getElementById('btnAbsen');
+    const btnHanpangan = document.getElementById('btnHanpangan');
+    if (btnDukops) btnDukops.classList.remove('active');
+    if (btnAbsen) btnAbsen.classList.add('active');
+    if (btnHanpangan) btnHanpangan.classList.remove('active');
     if (typeof loadAbsenTahun === 'function') loadAbsenTahun();
 };
 
 window.showHanpangan = function() {
-    document.getElementById('dukopsContent').style.display = 'none';
-    document.getElementById('absenContent').style.display = 'none';
-    document.getElementById('hanpanganContent').style.display = 'block';
-    document.getElementById('hanpanganContent').classList.add('active');
-    document.getElementById('btnDukops').classList.remove('active');
-    document.getElementById('btnAbsen').classList.remove('active');
-    document.getElementById('btnHanpangan').classList.add('active');
+    const dukopsContent = document.getElementById('dukopsContent');
+    const absenContent = document.getElementById('absenContent');
+    const hanpanganContent = document.getElementById('hanpanganContent');
+    if (dukopsContent) dukopsContent.style.display = 'none';
+    if (absenContent) absenContent.style.display = 'none';
+    if (hanpanganContent) hanpanganContent.style.display = 'block';
+    if (hanpanganContent) hanpanganContent.classList.add('active');
+    const btnDukops = document.getElementById('btnDukops');
+    const btnAbsen = document.getElementById('btnAbsen');
+    const btnHanpangan = document.getElementById('btnHanpangan');
+    if (btnDukops) btnDukops.classList.remove('active');
+    if (btnAbsen) btnAbsen.classList.remove('active');
+    if (btnHanpangan) btnHanpangan.classList.add('active');
 };
 
 // ================= BACKEND =================
@@ -210,12 +338,12 @@ async function sendToBackend(action, data = {}) {
         }
         
         if (action === 'listFiles' || action === 'getConfig' || action === 'test') {
-            let url = `${GOOGLE_APPS_SCRIPT_WEBHOOK}?action=${action}`;
+            let url = `${APP_CONFIG.googleAppsScriptWebhook}?action=${action}`;
             if (action === 'listFiles') {
                 if (data.desaFilter) url += `&desaFilter=${encodeURIComponent(data.desaFilter)}`;
                 if (data.monthFilter) url += `&monthFilter=${encodeURIComponent(data.monthFilter)}`;
             }
-            const response = await fetch(url);
+            const response = await fetch(url, { signal: createAbortSignal(15000) });
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             return await response.json();
         } else {
@@ -230,9 +358,10 @@ async function sendToBackend(action, data = {}) {
                     }
                 }
             });
-            const response = await fetch(GOOGLE_APPS_SCRIPT_WEBHOOK, {
+            const response = await fetch(APP_CONFIG.googleAppsScriptWebhook, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                signal: createAbortSignal(15000)
             });
             return await response.json();
         }
@@ -325,11 +454,7 @@ async function updateDriveReportLog(force = false) {
             files: zipFiles.map(item => item.name).slice(-TARGET_LAPORAN),
             month: monthYear
         };
-        try {
-            localStorage.setItem('dukopsDesaCounter', JSON.stringify(desaCounter));
-        } catch (error) {
-            console.warn("Counter laporan Google Drive tidak dapat disimpan secara lokal:", error);
-        }
+        safeLocalStorageSet('dukopsDesaCounter', desaCounter);
         loadedDriveReportKey = reportKey;
         if (zipFiles.length >= TARGET_LAPORAN) {
             redirectToThankYou(desaInfo.original, zipFiles.length, monthYear);
@@ -465,6 +590,13 @@ async function initializeApp() {
     }
 }
 
+function buildCoordinateJsonPath(desaName) {
+    const cleanName = String(desaName || '').trim();
+    if (!cleanName) return 'data/coordinates/.json';
+    const encoded = encodeURIComponent(cleanName).replace(/%20/g, ' ');
+    return `data/coordinates/${encoded}.json`;
+}
+
 async function loadDesaList() {
     const select = document.getElementById('selectDesa');
     const startupSelect = document.getElementById('startupDesa');
@@ -473,7 +605,7 @@ async function loadDesaList() {
     if (loading) loading.style.display = 'block';
 
     try {
-        const response = await fetch('data/desa-list.json?t=' + Date.now());
+        const response = await fetch('data/desa-list.json?t=' + Date.now(), { signal: createAbortSignal(15000) });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const data = await response.json();
         const desaList = (data.desaList || []).map(name => ({ name, type: 'Desa' }));
@@ -484,7 +616,7 @@ async function loadDesaList() {
         wilayahList.forEach(wilayah => {
             const desaName = wilayah.name;
             const option = document.createElement('option');
-            const jsonPath = `data/coordinates/${desaName}.json`;
+            const jsonPath = buildCoordinateJsonPath(desaName);
             option.value = jsonPath;
             option.textContent = `${wilayah.type} ${desaName}`;
             option.setAttribute('data-raw-name', `${wilayah.type} ${desaName}`);
@@ -584,19 +716,29 @@ function updateKegiatanLabel() {
 
 function showDesaActivationPopup(previewElement) {
     if (previewElement) previewElement.textContent = "Koordinat belum tersedia";
-    window.alert("Hubungi admin untuk aktivasi desa/kelurahan.");
+    showNotification('Aktivasi desa/kelurahan belum tersedia. Hubungi admin untuk konfigurasi.', 'warning');
 }
 
 async function loadSelectedDesa() {
-    const requestId = ++desaCoordinatesRequestId;
     const select = document.getElementById('selectDesa');
+    const requestId = ++desaCoordinatesRequestId;
+
+    if (!select) return;
+    if (!select.value) {
+        resetForm();
+        return;
+    }
+
+    const selectedOption = select.options[select.selectedIndex];
+    if (!selectedOption) {
+        resetForm();
+        return;
+    }
+
     const jsonPath = select.value;
     const loading = document.getElementById('loadingKoordinat');
 
-    if (!jsonPath) { resetForm(); return; }
-
-    const selectedOption = select.options[select.selectedIndex];
-    selectedDesa = selectedOption.getAttribute('data-raw-name') || selectedOption.text;
+    selectedDesa = selectedOption.getAttribute('data-raw-name') || selectedOption.textContent || '';
     kordinatList = [];
     currentKoordinat = "";
     updateKegiatanLabel();
@@ -621,7 +763,7 @@ async function loadSelectedDesa() {
 
     try {
         console.log(`📂 Fetching coordinates from: ${jsonPath}`);
-        const response = await fetch(jsonPath);
+        const response = await fetch(jsonPath, { signal: createAbortSignal(15000) });
         if (requestId !== desaCoordinatesRequestId) return;
         if (response.status === 404) {
             showDesaActivationPopup(previewKordinatEl);
@@ -679,6 +821,7 @@ function pickRandomKoordinat() {
         return;
     }
     const coordElement = document.getElementById('previewKordinat');
+    if (!coordElement) return;
     coordElement.style.transition = "opacity 0.3s";
     coordElement.style.opacity = "0";
     setTimeout(() => {
@@ -693,12 +836,22 @@ function pickRandomKoordinat() {
 
 function previewImage() {
     const gambarInput = document.getElementById("gambar");
-    const file = gambarInput.files[0];
+    const file = gambarInput && gambarInput.files ? gambarInput.files[0] : null;
     const gambarNama = document.getElementById("gambarNama");
 
     if (gambarNama) gambarNama.textContent = file ? file.name : "Belum ada foto dipilih";
 
     if (file) {
+        if (!isValidImageFile(file)) {
+            gambarInput.value = "";
+            if (gambarNama) gambarNama.textContent = "Belum ada foto dipilih";
+            showNotification('Format gambar tidak valid. Gunakan JPG, PNG, atau WebP dengan ukuran maksimal 10MB.', 'warning');
+            img = new Image();
+            updatePreview();
+            checkInputCompletion();
+            return;
+        }
+
         const reader = new FileReader();
         reader.onload = function(e) {
             img = new Image();
@@ -740,9 +893,17 @@ function updateDatePreview() {
     const tglInput = tglEl ? tglEl.value : '';
 
     if (tglInput) {
-        let date = new Date(tglInput);
-        date.setSeconds(new Date().getSeconds());
-        tanggalWaktu = date.toISOString();
+        const date = parseLocalDateTime(tglInput);
+        if (!date) {
+            tanggalWaktu = "";
+            if (display) display.textContent = 'INPUT TANGGAL';
+            if (label) label.textContent = 'Pilih tanggal & waktu';
+            updatePreview();
+            checkInputCompletion();
+            return;
+        }
+
+        tanggalWaktu = tglInput;
         const displayText = formatNarrativeDateTime(date);
         if (label) label.textContent = displayText;
         if (display) display.textContent = displayText;
@@ -752,8 +913,8 @@ function updateDatePreview() {
         if (!tglEl) {
             if (tanggalWaktu) {
                 try {
-                    const date = new Date(tanggalWaktu);
-                    const displayText = formatNarrativeDateTime(date);
+                    const date = parseLocalDateTime(tanggalWaktu);
+                    const displayText = date ? formatNarrativeDateTime(date) : 'Pilih tanggal & waktu';
                     if (label) label.textContent = displayText;
                     if (display) display.textContent = displayText;
                 } catch (e) {}
@@ -770,10 +931,6 @@ function updateDatePreview() {
     updateDriveReportLog();
     updatePreview();
     checkInputCompletion();
-}
-
-function updateNarrativeDatePrefix(date) {
-    updateNarrativePrefix();
 }
 
 function formatNarrativeDateTime(date) {
@@ -858,48 +1015,31 @@ function updatePreview() {
         const lineHeight = 44;
         const rightMargin = 10;
 
-        // Fungsi untuk menggambar teks dengan shadow dan outline
         function drawTextWithShadow(text, x, y, color = "#FFFFFF") {
-            // Simpan state ctx
             ctx.save();
-            
-            // Shadow untuk efek bayangan
             ctx.shadowColor = "rgba(0, 0, 0, 0.85)";
             ctx.shadowBlur = 10;
             ctx.shadowOffsetX = 3;
             ctx.shadowOffsetY = 3;
-            
-            // Gambar teks dengan shadow
             ctx.fillStyle = color;
             ctx.fillText(text, x, y);
-            
-            // Reset shadow
             ctx.shadowColor = "transparent";
             ctx.shadowBlur = 0;
             ctx.shadowOffsetX = 0;
             ctx.shadowOffsetY = 0;
-            
-            // Gambar outline hitam di sekeliling teks
             ctx.strokeStyle = "rgba(0, 0, 0, 0.8)";
             ctx.lineWidth = 3;
             ctx.strokeText(text, x, y);
-            
-            // Gambar ulang teks di atas outline
             ctx.fillStyle = color;
             ctx.fillText(text, x, y);
-            
-            // Tambahkan shadow tipis di sisi lain untuk efek 3D
             ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
             ctx.shadowBlur = 4;
             ctx.shadowOffsetX = -1;
             ctx.shadowOffsetY = -1;
             ctx.fillText(text, x, y);
-            
-            // Restore state ctx
             ctx.restore();
         }
 
-        // Teks desa
         if (selectedDesa) {
             const desaInfo = normalizeDesaName(selectedDesa);
             const displayDesaName = desaInfo.cleanName;
@@ -914,7 +1054,6 @@ function updatePreview() {
             );
         }
 
-        // Teks koordinat
         if (currentKoordinat) {
             drawTextWithShadow(
                 currentKoordinat, 
@@ -923,9 +1062,8 @@ function updatePreview() {
             );
         }
 
-        // Teks tanggal
         if (tanggalWaktu) {
-            const date = new Date(tanggalWaktu);
+            const date = parseLocalDateTime(tanggalWaktu) || new Date(tanggalWaktu);
             let dateText = date.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" }) +
                 ", " + date.toLocaleTimeString("id-ID", {
                     hour: "2-digit",
@@ -951,12 +1089,47 @@ function hideLoading() {
     document.body.classList.remove('loading');
 }
 
+function confirmSubmissionDialog() {
+    return new Promise((resolve) => {
+        const confirmText = `Anda yakin ingin mengirim laporan untuk ${normalizeDesaName(selectedDesa).cleanName}?\n\nFile ZIP akan didownload dan dikirim ke Drive.`;
+        const modal = document.createElement('div');
+        modal.style.position = 'fixed';
+        modal.style.top = '0';
+        modal.style.left = '0';
+        modal.style.right = '0';
+        modal.style.bottom = '0';
+        modal.style.background = 'rgba(0,0,0,0.72)';
+        modal.style.display = 'flex';
+        modal.style.alignItems = 'center';
+        modal.style.justifyContent = 'center';
+        modal.style.zIndex = '999999';
+        modal.innerHTML = `
+            <div style="background:#0c1a24;border:2px solid #5bb9ff;border-radius:14px;padding:24px;width:min(440px,90vw);color:#fff;box-shadow:0 24px 60px rgba(0,0,0,0.6);">
+                <div style="font-size:22px;font-weight:700;margin-bottom:12px;">Konfirmasi Laporan</div>
+                <div style="font-size:15px;line-height:1.5;color:#d9ebff;white-space:pre-line;">${confirmText}</div>
+                <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:20px;">
+                    <button id="cancelSubmit" style="padding:10px 16px;border:none;border-radius:10px;background:#4a5568;color:#fff;font-weight:700;cursor:pointer;">Batal</button>
+                    <button id="confirmSubmit" style="padding:10px 16px;border:none;border-radius:10px;background:#2e7d32;color:#fff;font-weight:700;cursor:pointer;">Kirim</button>
+                </div>
+            </div>
+        `;
+        const cancel = modal.querySelector('#cancelSubmit');
+        const confirm = modal.querySelector('#confirmSubmit');
+        cancel.addEventListener('click', () => { modal.remove(); resolve(false); });
+        confirm.addEventListener('click', () => { modal.remove(); resolve(true); });
+        document.body.appendChild(modal);
+    });
+}
+
 async function processSubmission() {
     if (!validateSubmission()) return;
     if (isSameDateMonthSubmission()) {
         showNotification("⚠ Sudah ada laporan di tanggal dan bulan yang sama!", "warning");
         return;
     }
+
+    const confirmed = await confirmSubmissionDialog();
+    if (!confirmed) return;
 
     const button = document.getElementById("submitBtn");
     const originalText = button.innerHTML;
@@ -968,10 +1141,10 @@ async function processSubmission() {
         const canvas = document.getElementById("canvas");
         const imgData = canvas.toDataURL("image/png");
         const narasi = document.getElementById("narasi").value;
-        const date = new Date(tanggalWaktu);
+        const date = parseLocalDateTime(tanggalWaktu) || new Date(tanggalWaktu);
 
         const day = String(date.getDate()).padStart(2, '0');
-        const monthNum = String(date.getMonth() + 1);
+        const monthNum = String(date.getMonth() + 1).padStart(2, '0');
         const monthName = date.toLocaleDateString('id-ID', { month: 'long' });
         const monthYear = date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
         const year = date.getFullYear();
@@ -1001,15 +1174,15 @@ async function processSubmission() {
 
         const content = await zip.generateAsync({ type: "blob" });
 
-        // Download
         const a = document.createElement("a");
-        a.href = URL.createObjectURL(content);
+        const objectUrl = URL.createObjectURL(content);
+        a.href = objectUrl;
         a.download = zipFileNameForDownload;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
 
-        // Upload Drive
         const driveUploaded = await uploadToGoogleDrive(content, zipFileNameForBackend, selectedDesa, date);
 
         if (driveUploaded) {
@@ -1044,6 +1217,9 @@ async function processSubmission() {
 
 function clearInputsAfterSuccessfulSend() {
     img = new Image();
+    tanggalWaktu = "";
+    const tanggalWaktuEl = document.getElementById('tanggalWaktu');
+    if (tanggalWaktuEl) tanggalWaktuEl.value = "";
     const narasiEl = document.getElementById('narasi');
     if (narasiEl) narasiEl.value = "";
     narrativeDatePrefix = "";
@@ -1063,32 +1239,19 @@ function validateSubmission() {
     if (!img.src || !img.complete) { showNotification("Upload foto kegiatan", "warning"); return false; }
     const narasi = document.getElementById("narasi").value.trim();
     if (!narasi) { showNotification("Isi narasi kegiatan", "warning"); return false; }
-
-    const desaInfo = normalizeDesaName(selectedDesa);
-    const date = new Date(tanggalWaktu);
-    const day = String(date.getDate()).padStart(2, '0');
-    const monthName = date.toLocaleDateString('id-ID', { month: 'long' });
-    const monthNum = String(date.getMonth() + 1);
-    const year = date.getFullYear();
-
-    let confirmMsg = `Anda yakin ingin mengirim laporan untuk ${desaInfo.cleanName}?\n\n`;
-    confirmMsg += `File ZIP akan:\n`;
-    confirmMsg += `1. Didownload: ${desaInfo.cleanName} ${day} ${monthNum} ${year}.zip\n`;
-    confirmMsg += `2. Berisi file:\n   - ${desaInfo.cleanName} ${day} ${monthName} ${year} Dukops.png\n`;
-    confirmMsg += `   - ${desaInfo.cleanName} ${day} ${monthName} ${year} Narasi.txt\n`;
-    confirmMsg += `3. Dikirim ke Drive: ${desaInfo.cleanName} ${day} ${monthNum} ${year}.zip`;
-
-    return confirm(confirmMsg);
+    return true;
 }
 
 function isSameDateMonthSubmission() {
     if (!tanggalWaktu) return false;
     const currentDate = new Date(tanggalWaktu);
-    const currentDay = currentDate.getDate();
-    const currentMonth = currentDate.getMonth();
+    if (Number.isNaN(currentDate.getTime())) return false;
     return submittedDates.some(dateStr => {
-        const date = new Date(dateStr);
-        return date.getDate() === currentDay && date.getMonth() === currentMonth;
+        const prevDate = new Date(dateStr);
+        if (Number.isNaN(prevDate.getTime())) return false;
+        return prevDate.getFullYear() === currentDate.getFullYear() &&
+               prevDate.getMonth() === currentDate.getMonth() &&
+               prevDate.getDate() === currentDate.getDate();
     });
 }
 
@@ -1113,6 +1276,7 @@ function resetForm() {
     selectedDesa = "";
     kordinatList = [];
     currentKoordinat = "";
+    tanggalWaktu = "";
     const selectEl = document.getElementById('selectDesa');
     if (selectEl) selectEl.value = "";
     const previewDesaEl = document.getElementById('previewDesa');
@@ -1136,12 +1300,12 @@ function resetForm() {
 }
 
 function loadDesaCounter() {
-    const saved = localStorage.getItem('dukopsDesaCounter');
-    desaCounter = saved ? JSON.parse(saved) : {};
+    const saved = safeLocalStorageGet('dukopsDesaCounter', {});
+    desaCounter = saved || {};
 }
 
 function updateDesaCounter(desaName, fileName) {
-    const date = new Date(tanggalWaktu);
+    const date = parseLocalDateTime(tanggalWaktu) || new Date(tanggalWaktu);
     const monthYear = date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
 
     if (!desaCounter[desaName]) {
@@ -1158,26 +1322,23 @@ function updateDesaCounter(desaName, fileName) {
         }
     }
 
-    localStorage.setItem('dukopsDesaCounter', JSON.stringify(desaCounter));
+    safeLocalStorageSet('dukopsDesaCounter', desaCounter);
     return desaCounter[desaName];
 }
 
 function saveLastSuccessfulReport(desaName, count, monthYear) {
-    localStorage.setItem('dukopsLastSuccessfulReport', JSON.stringify({
-        desaName,
-        count,
-        monthYear
-    }));
+    safeLocalStorageSet('dukopsLastSuccessfulReport', { desaName, count, monthYear });
 }
 
 function saveSubmittedDate(dateStr) {
+    if (!dateStr) return;
     submittedDates.push(dateStr);
-    localStorage.setItem('dukopsSubmittedDates', JSON.stringify(submittedDates));
+    safeLocalStorageSet('dukopsSubmittedDates', submittedDates);
 }
 
 function loadLastSubmittedDates() {
-    const saved = localStorage.getItem('dukopsSubmittedDates');
-    submittedDates = saved ? JSON.parse(saved) : [];
+    const saved = safeLocalStorageGet('dukopsSubmittedDates', []);
+    submittedDates = Array.isArray(saved) ? saved : [];
 }
 
 function checkInputCompletion() {
@@ -1203,8 +1364,7 @@ function autoResizeNarasi(target) {
 function updateDesaHeaderImage(desaName) {
     const headerImage = document.getElementById('desaProfileImgHeader');
     if (!headerImage) return;
-    const defaultUrl = 'icons/favicon-96x96.png';
-    headerImage.src = defaultUrl;
+    headerImage.src = 'icons/favicon-96x96.png';
 }
 
 function speakTargetReached(wilayahName, count, monthYear) {
@@ -1219,7 +1379,7 @@ function speakTargetReached(wilayahName, count, monthYear) {
 
 // ================= POPUP UCAPAN TERIMA KASIH =================
 function showThankYouPopup(desaName, count) {
-    const date = new Date(tanggalWaktu);
+    const date = parseLocalDateTime(tanggalWaktu) || new Date(tanggalWaktu);
     const monthYear = date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
     const desaInfo = normalizeDesaName(desaName);
     const targetReached = count >= TARGET_LAPORAN;
@@ -1265,22 +1425,9 @@ function showThankYouPopup(desaName, count) {
     setTimeout(() => { if (modal.parentNode) modal.remove(); }, 10000);
 }
 
-function showNotification(message, type) {
-    const toast = document.getElementById('win98Toast');
-    if (!toast) return;
-    toast.textContent = message;
-    toast.className = 'win98-toast show';
-    if (type === 'success') toast.className += ' success';
-    else if (type === 'error') toast.className += ' error';
-    clearTimeout(toast._timer);
-    toast._timer = setTimeout(() => {
-        toast.classList.remove('show');
-    }, 3000);
-}
-
 // ================= TAB ABSEN (Google Apps Script) =================
 (function() {
-    var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxcKBFM8Mm0A8e_hWfl48uEUuDhlmxK8okgXF4M-102HLEuROZPN9YZlpmKnkRo8b_SKA/exec';
+    var SCRIPT_URL = APP_CONFIG.absenScriptUrl;
     var CACHE_KEY_ABSEN = 'absensi_dukops_data';
     var CACHE_EXPIRY = 30 * 60 * 1000;
     var isOnlineAbsen = navigator.onLine;
@@ -1308,7 +1455,7 @@ function showNotification(message, type) {
             if (!cached || !cached.years) tahunSelect.innerHTML = '<option>❌ Offline - no data</option>';
             return;
         }
-        fetch(SCRIPT_URL + '?action=getYears').then(function(r) {
+        fetch(SCRIPT_URL + '?action=getYears', { signal: createAbortSignal(15000) }).then(function(r) {
             if (!r.ok) throw new Error('HTTP ' + r.status);
             return r.json();
         }).then(function(y) {
@@ -1352,7 +1499,7 @@ function showNotification(message, type) {
             bulanSelect.disabled = false;
             return;
         }
-        fetch(SCRIPT_URL + '?action=getMonths&tahun=' + encodeURIComponent(t)).then(function(r) {
+        fetch(SCRIPT_URL + '?action=getMonths&tahun=' + encodeURIComponent(t), { signal: createAbortSignal(15000) }).then(function(r) {
             if (!r.ok) throw new Error('HTTP ' + r.status);
             return r.json();
         }).then(function(m) {
@@ -1400,7 +1547,7 @@ function showNotification(message, type) {
             }
         }
         if (!isOnlineAbsen) { showErrorAbsen('Tidak ada koneksi'); return; }
-        fetch(SCRIPT_URL + '?action=getData&tahun=' + encodeURIComponent(t) + '&bulan=' + encodeURIComponent(b))
+        fetch(SCRIPT_URL + '?action=getData&tahun=' + encodeURIComponent(t) + '&bulan=' + encodeURIComponent(b), { signal: createAbortSignal(15000) })
             .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
             .then(function(d) {
                 currentDataAbsen = d;
@@ -1441,7 +1588,7 @@ function showNotification(message, type) {
             d.desa_belum +
             '</div><div class="absen-stat-label">BELUM</div></div></div><div style="font-size:0.7rem;font-weight:600;margin:10px 0 5px;">📋 DAFTAR DESA (' +
             d.total_desa +
-            ')</div><div class="absen-desa-list">' + dh +
+            ') </div><div class="absen-desa-list">' + dh +
             '</div></div>';
     }
 
@@ -1482,9 +1629,9 @@ function showNotification(message, type) {
 })();
 
 // ================= SERVICE WORKER =================
-const isFileProtocol = window.location.protocol === 'file:';
+const isFileProtocol = getIsFileProtocol();
 
-if ('serviceWorker' in navigator && !isFileProtocol) {
+if (!isFileProtocol && 'serviceWorker' in navigator) {
     window.addEventListener('load', function() {
         console.log('🔧 Registering Service Worker...');
         navigator.serviceWorker.register('sw.js')
@@ -1513,7 +1660,347 @@ if ('serviceWorker' in navigator && !isFileProtocol) {
             });
     });
 } else if (isFileProtocol) {
-    console.log('⚠️ Service Worker skipped on file:// origin.');
+    console.log('⚠️ Service Worker skipped on file:// origin. PWA mode requires local HTTP server.');
 } else {
     console.log('⚠️ Service Worker not supported in this browser.');
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
