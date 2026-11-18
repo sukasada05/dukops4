@@ -1,7 +1,11 @@
 // ================= KONFIGURASI AMAN =================
 const APP_CONFIG = {
-    googleAppsScriptWebhook: "https://script.google.com/macros/s/AKfycbyiJ0uO36CdtGUiy8m03jzwMAUWWMwIILpdBLt5J41ne6aQWHYIp_Cr_Ke6K8iqn4gZ/exec",
-    absenScriptUrl: "https://script.google.com/macros/s/AKfycbxcKBFM8Mm0A8e_hWfl48uEUuDhlmxK8okgXF4M-102HLEuROZPN9YZlpmKnkRo8b_SKA/exec",
+    // URL Main Webhook DUKOPS Anda
+    googleAppsScriptWebhook: "https://script.google.com/macros/s/AKfycbxM7DR46y0mn56NDbt9l06Upmjx6_GJtpdNtt3Wk50fUSoJQEong80Ec1WM3xRulWOVlA/exec",
+    
+    // URL Absensi DUKOPS Anda
+    absenScriptUrl: "https://script.google.com/macros/s/AKfycbw-bVL8qeDkDGY7HgJcSXbGYqrkRWuc2m01sSu6BsNPk3a1JNiwt7FKjEtxyg36ino3Yg/exec",
+    
     allowedImageTypes: ['image/png', 'image/jpeg', 'image/webp'],
     maxImageSize: 10 * 1024 * 1024
 };
@@ -358,10 +362,11 @@ async function sendToBackend(action, data = {}) {
                     }
                 }
             });
+            // TIMEOUT DINAIKKAN JADI 60 DETIK UNTUK UPLOAD
             const response = await fetch(APP_CONFIG.googleAppsScriptWebhook, {
                 method: 'POST',
                 body: formData,
-                signal: createAbortSignal(15000)
+                signal: createAbortSignal(60000)
             });
             return await response.json();
         }
@@ -1138,8 +1143,6 @@ async function processSubmission() {
     showLoading();
 
     try {
-        const canvas = document.getElementById("canvas");
-        const imgData = canvas.toDataURL("image/png");
         const narasi = document.getElementById("narasi").value;
         const date = parseLocalDateTime(tanggalWaktu) || new Date(tanggalWaktu);
 
@@ -1151,11 +1154,8 @@ async function processSubmission() {
 
         const desaInfo = normalizeDesaName(selectedDesa);
 
-        const fileNameInsideZipImage = `${desaInfo.cleanName} ${day} ${monthName} ${year} Dukops.png`;
-        const fileNameInsideZipNarasi = `${desaInfo.cleanName} ${day} ${monthName} ${year} Narasi.txt`;
         const zipFileNameForDownload = `${desaInfo.cleanName} ${day} ${monthNum} ${year}.zip`;
-        const zipFileNameForBackend = `${desaInfo.cleanName} ${day} ${monthNum} ${year}.zip`;
-
+        
         const formattedDate = date.toLocaleDateString('id-ID', {
             weekday: 'long',
             day: '2-digit',
@@ -1168,9 +1168,33 @@ async function processSubmission() {
             : narasi;
         const narasiContent = `${formattedDate}\tBabinsa ${desaInfo.cleanName} ${narasiWithoutDate.trimStart()}`;
 
+        // === 1. EKSTRAK PNG ASLI (TANPA WATERMARK) ===
+        const c = document.createElement('canvas');
+        c.width = img.naturalWidth || img.width;
+        c.height = img.naturalHeight || img.height;
+        c.getContext('2d').drawImage(img, 0, 0);
+        const pngBase64 = c.toDataURL('image/png').split('base64,')[1];
+
+        // === 2. BUAT DATA WATERMARK JSON ===
+        const timeStr = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).replace(/:/g, '.');
+        const watermarkData = {
+            desa: desaInfo.cleanName,
+            babinsa: `Babinsa ${desaInfo.cleanName}`,
+            tanggal_iso: date.toISOString(),
+            tanggal_display: `${formattedDate}, ${timeStr} Wita`,
+            koordinat: currentKoordinat,
+            watermark_teks: [
+                `Babinsa ${desaInfo.cleanName}`,
+                currentKoordinat,
+                `${day} ${monthName} ${year}, ${timeStr}`
+            ]
+        };
+
+        // === 3. SUSUN ZIP BARU (PNG + JSON + TXT) ===
         const zip = new JSZip();
-        zip.file(fileNameInsideZipNarasi, narasiContent);
-        zip.file(fileNameInsideZipImage, imgData.split("base64,")[1], { base64: true });
+        zip.file('foto.png', pngBase64, { base64: true });
+        zip.file('watermark.json', JSON.stringify(watermarkData, null, 2));
+        zip.file('narasi.txt', narasiContent);
 
         const content = await zip.generateAsync({ type: "blob" });
 
@@ -1183,10 +1207,10 @@ async function processSubmission() {
         document.body.removeChild(a);
         setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
 
-        const driveUploaded = await uploadToGoogleDrive(content, zipFileNameForBackend, selectedDesa, date);
+        const driveUploaded = await uploadToGoogleDrive(content, zipFileNameForDownload, selectedDesa, date);
 
         if (driveUploaded) {
-            let desaData = updateDesaCounter(selectedDesa, zipFileNameForBackend);
+            let desaData = updateDesaCounter(selectedDesa, zipFileNameForDownload);
             const driveCount = await updateDriveReportLog(true);
             if (Number.isInteger(driveCount)) {
                 desaData = desaCounter[selectedDesa];
@@ -1201,7 +1225,7 @@ async function processSubmission() {
                 clearInputsAfterSuccessfulSend();
             }
         } else {
-            showNotification(`⚠ key aktivasi kadaluarsa. gagal simpan ke Drive`, "warning");
+            showNotification(`⚠ Laporan hanya didownload, gagal simpan ke Drive`, "warning");
             saveSubmittedDate(tanggalWaktu);
         }
 
