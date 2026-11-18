@@ -1,11 +1,7 @@
 // ================= KONFIGURASI AMAN =================
 const APP_CONFIG = {
-    // URL Main Webhook DUKOPS Anda
     googleAppsScriptWebhook: "https://script.google.com/macros/s/AKfycbxM7DR46y0mn56NDbt9l06Upmjx6_GJtpdNtt3Wk50fUSoJQEong80Ec1WM3xRulWOVlA/exec",
-    
-    // URL Absensi DUKOPS Anda
     absenScriptUrl: "https://script.google.com/macros/s/AKfycbw-bVL8qeDkDGY7HgJcSXbGYqrkRWuc2m01sSu6BsNPk3a1JNiwt7FKjEtxyg36ino3Yg/exec",
-    
     allowedImageTypes: ['image/png', 'image/jpeg', 'image/webp'],
     maxImageSize: 10 * 1024 * 1024
 };
@@ -65,7 +61,6 @@ function showNotification(message, type = 'info') {
         return;
     }
 
-    // fallback message if toast element doesn't exist
     const fallback = document.createElement('div');
     fallback.style.position = 'fixed';
     fallback.style.bottom = '20px';
@@ -131,23 +126,14 @@ if (isAndroidDevice) {
 
 function isValidImageFile(file) {
     if (!file) return false;
-
     const type = (file.type || '').toLowerCase();
     const fileName = (file.name || '').toLowerCase();
     const extension = fileName.includes('.') ? fileName.split('.').pop() : '';
     const validExtensions = ['png', 'jpg', 'jpeg', 'webp'];
-
     const hasValidType = APP_CONFIG.allowedImageTypes.includes(type);
     const hasValidExtension = validExtensions.includes(extension);
-
-    if (!hasValidType && !hasValidExtension) {
-        return false;
-    }
-
-    if (typeof file.size === 'number' && file.size > APP_CONFIG.maxImageSize) {
-        return false;
-    }
-
+    if (!hasValidType && !hasValidExtension) return false;
+    if (typeof file.size === 'number' && file.size > APP_CONFIG.maxImageSize) return false;
     return true;
 }
 
@@ -169,7 +155,6 @@ function createAbortSignal(timeoutMs = 15000) {
     if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
         return AbortSignal.timeout(timeoutMs);
     }
-
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
     controller.signal.addEventListener('abort', () => clearTimeout(timer), { once: true });
@@ -260,18 +245,15 @@ function showApp() {
 window.exitApp = function() {
     resetForm();
     currentApp = null;
-
     const splash = document.getElementById('splashScreen');
     const app = document.getElementById('appContainer');
     const startupDesa = document.getElementById('startupDesa');
     if (startupDesa) startupDesa.value = '';
-
     if (app) {
         app.style.display = 'none';
         app.style.opacity = '0';
         app.classList.add('startup-dashboard');
     }
-
     if (splash) splash.style.display = 'flex';
 };
 
@@ -362,11 +344,10 @@ async function sendToBackend(action, data = {}) {
                     }
                 }
             });
-            // TIMEOUT DINAIKKAN JADI 60 DETIK UNTUK UPLOAD
             const response = await fetch(APP_CONFIG.googleAppsScriptWebhook, {
                 method: 'POST',
                 body: formData,
-                signal: createAbortSignal(60000)
+                signal: createAbortSignal(60000) // Timeout 60 detik untuk upload PNG
             });
             return await response.json();
         }
@@ -567,19 +548,15 @@ function setupInstallPrompt() {
 async function initializeApp() {
     console.log("🔄 Initializing DUKOPS app...");
     try {
-        console.log('initializeApp: before loadDesaList');
-        try { await loadDesaList(); console.log('initializeApp: loadDesaList OK'); } catch(e){ console.error('initializeApp: loadDesaList error', e); }
-        try { loadLastSubmittedDates(); } catch(e){ console.error('initializeApp: loadLastSubmittedDates error', e); }
-        try { loadDesaCounter(); } catch(e){ console.error('initializeApp: loadDesaCounter error', e); }
+        try { await loadDesaList(); } catch(e){ console.error(e); }
+        try { loadLastSubmittedDates(); } catch(e){ console.error(e); }
+        try { loadDesaCounter(); } catch(e){ console.error(e); }
 
         try {
             const tanggalEl = document.getElementById('tanggalWaktu');
             if (tanggalEl) tanggalEl.value = '';
             updateDatePreview();
-            console.log('initializeApp: waiting for date input');
-        } catch (e) {
-            console.error('initializeApp: error setting tanggalWaktu/updateDatePreview', e);
-        }
+        } catch (e) { console.error(e); }
 
         setupInstallPrompt();
         resetCanvas();
@@ -635,7 +612,6 @@ async function loadDesaList() {
                 startupSelect.appendChild(startupOption);
             });
         }
-        console.log(`✅ Loaded ${wilayahList.length} wilayah (${desaList.length} desa, ${kelurahanList.length} kelurahan)`);
         showNotification('✅ Daftar desa berhasil dimuat', 'success');
     } catch (error) {
         console.error("❌ Error loading desa list:", error);
@@ -659,11 +635,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 (function tryEarlyLoadDesa(){
     const run = () => {
-        try {
-            if (typeof loadDesaList === 'function') {
-                loadDesaList().catch(()=>{});
-            }
-        } catch (e) {}
+        try { if (typeof loadDesaList === 'function') loadDesaList().catch(()=>{}); } catch (e) {}
     };
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', run);
@@ -696,7 +668,6 @@ function ensureDesaListLoaded(maxAttempts = 6, delayMs = 500) {
 }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => ensureDesaListLoaded()); else ensureDesaListLoaded();
-
 setTimeout(() => { try { if (typeof loadDesaList === 'function') loadDesaList().catch(()=>{}); } catch (e) {} }, 120);
 
 function normalizeDesaName(desaName) {
@@ -729,16 +700,10 @@ async function loadSelectedDesa() {
     const requestId = ++desaCoordinatesRequestId;
 
     if (!select) return;
-    if (!select.value) {
-        resetForm();
-        return;
-    }
+    if (!select.value) { resetForm(); return; }
 
     const selectedOption = select.options[select.selectedIndex];
-    if (!selectedOption) {
-        resetForm();
-        return;
-    }
+    if (!selectedOption) { resetForm(); return; }
 
     const jsonPath = select.value;
     const loading = document.getElementById('loadingKoordinat');
@@ -748,7 +713,6 @@ async function loadSelectedDesa() {
     currentKoordinat = "";
     updateKegiatanLabel();
     updateNarrativePrefix();
-
     updateDesaHeaderImage(selectedDesa);
 
     const desaInfo = normalizeDesaName(selectedDesa);
@@ -767,23 +731,20 @@ async function loadSelectedDesa() {
     if (previewKordinatEl) previewKordinatEl.textContent = "Memuat koordinat...";
 
     try {
-        console.log(`📂 Fetching coordinates from: ${jsonPath}`);
         const response = await fetch(jsonPath, { signal: createAbortSignal(15000) });
         if (requestId !== desaCoordinatesRequestId) return;
-        if (response.status === 404) {
-            showDesaActivationPopup(previewKordinatEl);
-            return;
-        }
+        if (response.status === 404) { showDesaActivationPopup(previewKordinatEl); return; }
         if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        
         let jsonData;
-        try {
-            jsonData = await response.json();
-        } catch (error) {
+        try { jsonData = await response.json(); } 
+        catch (error) {
             if (!(error instanceof SyntaxError)) throw error;
             if (requestId !== desaCoordinatesRequestId) return;
             showDesaActivationPopup(previewKordinatEl);
             return;
         }
+        
         if (requestId !== desaCoordinatesRequestId) return;
         const coordinates = Array.isArray(jsonData.coordinates)
             ? jsonData.coordinates.filter(coord =>
@@ -793,17 +754,20 @@ async function loadSelectedDesa() {
                 Number.isFinite(Number(coord.lat)) &&
                 Number.isFinite(Number(coord.lon)))
             : [];
-        if (coordinates.length === 0) {
-            showDesaActivationPopup(previewKordinatEl);
-            return;
-        }
-        kordinatList = coordinates.map(coord => `${coord.lat},${coord.lon},${coord.elevation || ''}`);
-        console.log(`📌 Loaded ${kordinatList.length} coordinates`);
+            
+        if (coordinates.length === 0) { showDesaActivationPopup(previewKordinatEl); return; }
+        
+        // GANTI KOMA JADI TITIK UNTUK KOORDINAT
+        kordinatList = coordinates.map(coord => {
+            const lat = String(coord.lat).replace(/,/g, '.');
+            const lon = String(coord.lon).replace(/,/g, '.');
+            return `${lat},${lon},${coord.elevation || ''}`;
+        });
+        
         pickRandomKoordinat();
         showNotification(`Koordinat ${desaInfo.cleanName} dimuat (${kordinatList.length} titik)`, "success");
     } catch (error) {
         if (requestId !== desaCoordinatesRequestId) return;
-        console.error("❌ Error loading coordinates:", error);
         if (previewKordinatEl) previewKordinatEl.textContent = "Gagal memuat koordinat";
         showNotification("Gagal memuat koordinat: " + error.message, "error");
     } finally {
@@ -907,7 +871,6 @@ function updateDatePreview() {
             checkInputCompletion();
             return;
         }
-
         tanggalWaktu = tglInput;
         const displayText = formatNarrativeDateTime(date);
         if (label) label.textContent = displayText;
@@ -926,7 +889,6 @@ function updateDatePreview() {
             } else {
                 if (label) label.textContent = 'Pilih tanggal & waktu';
             }
-
         } else {
             tanggalWaktu = "";
             if (label) label.textContent = 'Pilih tanggal & waktu';
@@ -940,16 +902,10 @@ function updateDatePreview() {
 
 function formatNarrativeDateTime(date) {
     const dateText = date.toLocaleDateString('id-ID', {
-        weekday: 'long',
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric'
+        weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
     });
     const timeText = date.toLocaleTimeString('id-ID', {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
     }).replace(/:/g, '.');
     return `${dateText}, ${timeText} Wita`;
 }
@@ -961,10 +917,7 @@ function updateNarrativePrefix() {
 
     const date = new Date(tanggalWaktu);
     const dateText = date.toLocaleDateString('id-ID', {
-        weekday: 'long',
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric'
+        weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
     });
     const desaInfo = normalizeDesaName(selectedDesa);
     const nextPrefix = `${dateText}    Babinsa ${desaInfo.cleanName} `;
@@ -1071,10 +1024,7 @@ function updatePreview() {
             const date = parseLocalDateTime(tanggalWaktu) || new Date(tanggalWaktu);
             let dateText = date.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" }) +
                 ", " + date.toLocaleTimeString("id-ID", {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                    hour12: false
+                    hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
                 });
             
             drawTextWithShadow(
@@ -1086,13 +1036,8 @@ function updatePreview() {
     }
 }
 
-function showLoading() {
-    document.body.classList.add('loading');
-}
-
-function hideLoading() {
-    document.body.classList.remove('loading');
-}
+function showLoading() { document.body.classList.add('loading'); }
+function hideLoading() { document.body.classList.remove('loading'); }
 
 function confirmSubmissionDialog() {
     return new Promise((resolve) => {
@@ -1151,22 +1096,20 @@ async function processSubmission() {
         const monthName = date.toLocaleDateString('id-ID', { month: 'long' });
         const monthYear = date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
         const year = date.getFullYear();
+        const timeStr = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).replace(/:/g, '.');
 
         const desaInfo = normalizeDesaName(selectedDesa);
+        const namaDesa = desaInfo.cleanName;
+        const zipFileNameForDownload = `${namaDesa} ${day} ${monthNum} ${year}.zip`;
 
-        const zipFileNameForDownload = `${desaInfo.cleanName} ${day} ${monthNum} ${year}.zip`;
-        
         const formattedDate = date.toLocaleDateString('id-ID', {
-            weekday: 'long',
-            day: '2-digit',
-            month: 'long',
-            year: 'numeric'
+            weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
         });
 
         const narasiWithoutDate = narrativeDatePrefix && narasi.startsWith(narrativeDatePrefix)
             ? narasi.slice(narrativeDatePrefix.length)
             : narasi;
-        const narasiContent = `${formattedDate}\tBabinsa ${desaInfo.cleanName} ${narasiWithoutDate.trimStart()}`;
+        const narasiContent = `${formattedDate}\tBabinsa ${namaDesa} ${narasiWithoutDate.trimStart()}`;
 
         // === 1. EKSTRAK PNG ASLI (TANPA WATERMARK) ===
         const c = document.createElement('canvas');
@@ -1175,26 +1118,21 @@ async function processSubmission() {
         c.getContext('2d').drawImage(img, 0, 0);
         const pngBase64 = c.toDataURL('image/png').split('base64,')[1];
 
-        // === 2. BUAT DATA WATERMARK JSON ===
-        const timeStr = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).replace(/:/g, '.');
-        const watermarkData = {
-            desa: desaInfo.cleanName,
-            babinsa: `Babinsa ${desaInfo.cleanName}`,
-            tanggal_iso: date.toISOString(),
-            tanggal_display: `${formattedDate}, ${timeStr} Wita`,
-            koordinat: currentKoordinat,
-            watermark_teks: [
-                `Babinsa ${desaInfo.cleanName}`,
-                currentKoordinat,
-                `${day} ${monthName} ${year}, ${timeStr}`
-            ]
-        };
+        // === 2. BUAT DATA WATERMARK JSON (ARRAY SESUAI CONTOH) ===
+        const watermarkData = [
+            {
+                koordinat: currentKoordinat,
+                nama_desa: namaDesa,
+                tanggal: `${day} ${monthName} ${year}`,
+                waktu: timeStr
+            }
+        ];
 
-        // === 3. SUSUN ZIP BARU (PNG + JSON + TXT) ===
+        // === 3. SUSUN ZIP (foto.png + narasi.txt + watermark.json) ===
         const zip = new JSZip();
         zip.file('foto.png', pngBase64, { base64: true });
-        zip.file('watermark.json', JSON.stringify(watermarkData, null, 2));
         zip.file('narasi.txt', narasiContent);
+        zip.file('watermark.json', JSON.stringify(watermarkData, null, 2));
 
         const content = await zip.generateAsync({ type: "blob" });
 
@@ -1370,7 +1308,6 @@ function checkInputCompletion() {
     const narasiVal = narasiEl ? (narasiEl.value || '').trim() : '';
     const hasImage = img && img.src && img.complete;
     const isComplete = selectedDesa && currentKoordinat && tanggalWaktu && hasImage && narasiVal;
-
     const submitBtn = document.getElementById("submitBtn");
     if (submitBtn) submitBtn.disabled = !isComplete;
 }
@@ -1401,7 +1338,6 @@ function speakTargetReached(wilayahName, count, monthYear) {
     if (typeof window.speakIndonesian === 'function') window.speakIndonesian(message);
 }
 
-// ================= POPUP UCAPAN TERIMA KASIH =================
 function showThankYouPopup(desaName, count) {
     const date = parseLocalDateTime(tanggalWaktu) || new Date(tanggalWaktu);
     const monthYear = date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
@@ -1449,7 +1385,7 @@ function showThankYouPopup(desaName, count) {
     setTimeout(() => { if (modal.parentNode) modal.remove(); }, 10000);
 }
 
-// ================= TAB ABSEN (Google Apps Script) =================
+// ================= TAB ABSEN =================
 (function() {
     var SCRIPT_URL = APP_CONFIG.absenScriptUrl;
     var CACHE_KEY_ABSEN = 'absensi_dukops_data';
@@ -1459,7 +1395,6 @@ function showThankYouPopup(desaName, count) {
     var tahunSelect = document.getElementById('absenTahunSelect');
     var bulanSelect = document.getElementById('absenBulanSelect');
     var resultContainer = document.getElementById('absenResultContainer');
-    var screenshotArea = document.getElementById('absenScreenshotArea');
 
     if (tahunSelect) tahunSelect.onchange = onTahunChange;
 
@@ -1657,17 +1592,10 @@ const isFileProtocol = getIsFileProtocol();
 
 if (!isFileProtocol && 'serviceWorker' in navigator) {
     window.addEventListener('load', function() {
-        console.log('🔧 Registering Service Worker...');
         navigator.serviceWorker.register('sw.js')
             .then(function(registration) {
-                console.log('✅ Service Worker registered successfully!');
-                console.log('📦 Scope:', registration.scope);
                 if (registration.active) console.log('✅ Service Worker is active!');
-
-                if (registration.waiting) {
-                    setWaitingServiceWorker(registration.waiting);
-                }
-
+                if (registration.waiting) setWaitingServiceWorker(registration.waiting);
                 registration.addEventListener('updatefound', function() {
                     const newWorker = registration.installing;
                     if (newWorker) {
@@ -1684,7 +1612,7 @@ if (!isFileProtocol && 'serviceWorker' in navigator) {
             });
     });
 } else if (isFileProtocol) {
-    console.log('⚠️ Service Worker skipped on file:// origin. PWA mode requires local HTTP server.');
+    console.log('⚠️ Service Worker skipped on file:// origin.');
 } else {
     console.log('⚠️ Service Worker not supported in this browser.');
 }
