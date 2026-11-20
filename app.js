@@ -1,12 +1,17 @@
 // ================= KONFIGURASI AMAN =================
 const APP_CONFIG = {
-    googleAppsScriptWebhook: "hkhhttps://script.google.com/macros/s/AKfycbw5yuRCJla7st-ZR2L77g9Idb29IwahI_fwuW1hhNNmvJGihDGUDbVHsmHmwcxZpA9cVQ/exec",
+    // URL MAIN WEBHOOK (Script 1)
+    googleAppsScriptWebhook: "https://script.google.com/macros/s/AKfycbw5yuRCJla7st-ZR2L77g9Idb29IwahI_fwuW1hhNNmvJGihDGUDbVHsmHmwcxZpA9cVQ/exec",
+    
+    // URL ABSENSI (Script 2)
     absenScriptUrl: "https://script.google.com/macros/s/AKfycbzNE6dsxslf32JfH74l5HuO0K-zyStL716pPEVYTqD21jGzTjM9ROcH37w5j9r4apZv9A/exec",
+    
     allowedImageTypes: ['image/png', 'image/jpeg', 'image/webp'],
     maxImageSize: 10 * 1024 * 1024
 };
 
-const TARGET_LAPORAN = 9; 
+const TARGET_LAPORAN = 9;
+
 // ================= VARIABEL GLOBAL =================
 let img = new Image();
 let selectedDesa = "";
