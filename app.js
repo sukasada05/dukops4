@@ -1100,7 +1100,10 @@ async function processSubmission() {
 
         const desaInfo = normalizeDesaName(selectedDesa);
         const namaDesa = desaInfo.cleanName;
-        const zipFileNameForDownload = `${namaDesa} ${day} ${monthNum} ${year}.zip`;
+        
+        // NAMA BASE FILE (Tanpa ekstensi)
+        const baseFileName = `${namaDesa} ${day} ${monthNum} ${year}`;
+        const zipFileNameForDownload = `${baseFileName}.zip`;
 
         const formattedDate = date.toLocaleDateString('id-ID', {
             weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
@@ -1128,11 +1131,11 @@ async function processSubmission() {
             }
         ];
 
-        // === 3. SUSUN ZIP (foto.png + narasi.txt + watermark.json) ===
+        // === 3. SUSUN ZIP (Nama file disamakan dengan nama ZIP) ===
         const zip = new JSZip();
-        zip.file('foto.png', pngBase64, { base64: true });
-        zip.file('narasi.txt', narasiContent);
-        zip.file('watermark.json', JSON.stringify(watermarkData, null, 2));
+        zip.file(`${baseFileName}.png`, pngBase64, { base64: true });
+        zip.file(`${baseFileName}.txt`, narasiContent);
+        zip.file(`${baseFileName}.json`, JSON.stringify(watermarkData, null, 2));
 
         const content = await zip.generateAsync({ type: "blob" });
 
