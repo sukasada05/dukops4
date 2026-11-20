@@ -83,30 +83,22 @@ canvasPlaceholderImage.onload = function() {
     if (canvas && (!img || !img.src)) updatePreview();
 };
 
-function getInstallButton() {
-    return document.getElementById('installButton');
-}
-
-function isStandaloneMode() {
-    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-}
+function getInstallButton() { return document.getElementById('installButton'); }
+function isStandaloneMode() { return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true; }
 
 function updateInstallButtonState() {
     const btn = getInstallButton();
     if (!btn) return;
-
     if (swWaiting) {
         btn.style.display = 'flex';
         btn.innerHTML = '<i class="fas fa-sync-alt"></i> Update';
         return;
     }
-
     if (!isStandaloneMode() && deferredPrompt) {
         btn.style.display = 'flex';
         btn.innerHTML = '<i class="fas fa-download"></i> Install App';
         return;
     }
-
     btn.style.display = 'none';
 }
 
@@ -120,9 +112,7 @@ let currentApp = null;
 let isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 const isAndroidDevice = /Android/i.test(navigator.userAgent);
 
-if (isAndroidDevice) {
-    document.documentElement.classList.add('android-device');
-}
+if (isAndroidDevice) { document.documentElement.classList.add('android-device'); }
 
 function isValidImageFile(file) {
     if (!file) return false;
@@ -143,13 +133,8 @@ function parseLocalDateTime(value) {
     return Number.isNaN(date.getTime()) ? null : date;
 }
 
-function getIsFileProtocol() {
-    return window.location.protocol === 'file:';
-}
-
-function hasValidDataUrl(value) {
-    return typeof value === 'string' && /^data:image\//i.test(value);
-}
+function getIsFileProtocol() { return window.location.protocol === 'file:'; }
+function hasValidDataUrl(value) { return typeof value === 'string' && /^data:image\//i.test(value); }
 
 function createAbortSignal(timeoutMs = 15000) {
     if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
@@ -161,7 +146,6 @@ function createAbortSignal(timeoutMs = 15000) {
     return controller.signal;
 }
 
-// ================= PEMILIHAN WILAYAH AWAL =================
 document.addEventListener('DOMContentLoaded', function () {
     const splashScreen = document.getElementById('splashScreen');
     if (!splashScreen) return;
@@ -184,12 +168,9 @@ async function loadRunningText() {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const text = (await response.text()).trim();
         if (text) target.textContent = text;
-    } catch (error) {
-        console.warn('Running text menggunakan teks bawaan:', error);
-    }
+    } catch (error) { console.warn('Running text error:', error); }
 }
 
-// ================= LOAD APP =================
 async function loadDukopsApp() {
     currentApp = 'dukops';
     showApp();
@@ -206,20 +187,14 @@ window.continueToDashboard = async function() {
     const startupDesa = document.getElementById('startupDesa');
     const startupContinue = document.getElementById('startupContinue');
     if (!startupDesa || !startupContinue) return;
-
     if (!startupDesa.value) {
         showNotification('Pilih desa/kelurahan terlebih dahulu.', 'error');
         startupDesa.focus();
         return;
     }
-
     window.startupDesaValue = startupDesa.value;
     startupContinue.disabled = true;
-    try {
-        await loadDukopsApp();
-    } finally {
-        startupContinue.disabled = false;
-    }
+    try { await loadDukopsApp(); } finally { startupContinue.disabled = false; }
 };
 
 function showApp() {
@@ -257,7 +232,6 @@ window.exitApp = function() {
     if (splash) splash.style.display = 'flex';
 };
 
-// ================= NAVIGASI TAB =================
 window.showDukops = function() {
     const dukopsContent = document.getElementById('dukopsContent');
     const absenContent = document.getElementById('absenContent');
@@ -308,7 +282,6 @@ window.showHanpangan = function() {
     if (btnHanpangan) btnHanpangan.classList.add('active');
 };
 
-// ================= BACKEND =================
 async function sendToBackend(action, data = {}) {
     try {
         const allowedActions = [
@@ -318,10 +291,7 @@ async function sendToBackend(action, data = {}) {
             'getPersonelList', 'status', 'saveFile', 'getFile'
         ];
         
-        if (!allowedActions.includes(action)) {
-            console.warn(`⚠️ Action "${action}" tidak tersedia di backend`);
-            return { success: false, error: `Action "${action}" tidak tersedia` };
-        }
+        if (!allowedActions.includes(action)) return { success: false, error: `Action "${action}" tidak tersedia` };
         
         if (action === 'listFiles' || action === 'getConfig' || action === 'test') {
             let url = `${APP_CONFIG.googleAppsScriptWebhook}?action=${action}`;
@@ -345,9 +315,7 @@ async function sendToBackend(action, data = {}) {
                 }
             });
             const response = await fetch(APP_CONFIG.googleAppsScriptWebhook, {
-                method: 'POST',
-                body: formData,
-                signal: createAbortSignal(60000) // Timeout 60 detik untuk upload PNG
+                method: 'POST', body: formData, signal: createAbortSignal(60000)
             });
             return await response.json();
         }
@@ -390,10 +358,8 @@ async function updateDriveReportLog(force = false) {
             monthFilter: monthName
         });
         if (requestId !== driveReportRequestId) return null;
-        if (!result || result.success === false) {
-            throw new Error(result && result.error ? result.error : "Daftar file tidak dapat dimuat.");
-        }
-
+        if (!result || result.success === false) throw new Error(result && result.error ? result.error : "Gagal memuat.");
+        
         let files = null;
         if (Array.isArray(result)) files = result;
         else if (Array.isArray(result.files)) files = result.files;
@@ -401,26 +367,17 @@ async function updateDriveReportLog(force = false) {
         else if (Array.isArray(result.items)) files = result.items;
         else if (result.data && Array.isArray(result.data.files)) files = result.data.files;
         else if (result.result && Array.isArray(result.result.files)) files = result.result.files;
-        if (!files) throw new Error("Format daftar file dari Google Drive tidak dikenali.");
+        if (!files) throw new Error("Format file tidak dikenali.");
 
         const zipFiles = files.map(file => {
-            const name = typeof file === 'string'
-                ? file
-                : file && (file.name || file.fileName || file.filename || file.title);
+            const name = typeof file === 'string' ? file : file && (file.name || file.fileName || file.filename || file.title);
             if (!name) return null;
             const cleanName = String(name).trim();
-            const dateMatch = cleanName.match(
-                /^(?:\d+\.\s*)?.+?\s+(\d{1,2})\s+(\d{1,2})\s+(\d{4})\.zip$/i
-            );
-            const dateValue = dateMatch
-                ? new Date(Number(dateMatch[3]), Number(dateMatch[2]) - 1, Number(dateMatch[1])).getTime()
-                : Number.POSITIVE_INFINITY;
+            const dateMatch = cleanName.match(/^(?:\d+\.\s*)?.+?\s+(\d{1,2})\s+(\d{1,2})\s+(\d{4})\.zip$/i);
+            const dateValue = dateMatch ? new Date(Number(dateMatch[3]), Number(dateMatch[2]) - 1, Number(dateMatch[1])).getTime() : Number.POSITIVE_INFINITY;
             return { file, name: cleanName, dateValue };
-        }).filter(item =>
-            item &&
-            /\.zip$/i.test(item.name) &&
-            item.name.toLowerCase().startsWith(`${desaInfo.cleanName.toLowerCase()} `)
-        );
+        }).filter(item => item && /\.zip$/i.test(item.name) && item.name.toLowerCase().startsWith(`${desaInfo.cleanName.toLowerCase()} `));
+        
         zipFiles.sort((a, b) => a.dateValue - b.dateValue || a.name.localeCompare(b.name, 'id'));
 
         countElement.textContent = String(zipFiles.length);
@@ -442,16 +399,14 @@ async function updateDriveReportLog(force = false) {
         };
         safeLocalStorageSet('dukopsDesaCounter', desaCounter);
         loadedDriveReportKey = reportKey;
-        if (zipFiles.length >= TARGET_LAPORAN) {
-            redirectToThankYou(desaInfo.original, zipFiles.length, monthYear);
-        }
+        if (zipFiles.length >= TARGET_LAPORAN) redirectToThankYou(desaInfo.original, zipFiles.length, monthYear);
         return zipFiles.length;
     } catch (error) {
         if (requestId !== driveReportRequestId) return null;
         loadedDriveReportKey = "";
-        console.error("Gagal memuat log file Google Drive:", error);
+        console.error("Gagal memuat log:", error);
         countElement.textContent = "—";
-        logElement.innerHTML = '<li class="drive-report-error">Gagal memuat log Google Drive. Periksa koneksi lalu pilih kembali desa atau bulan.</li>';
+        logElement.innerHTML = '<li class="drive-report-error">Gagal memuat log Google Drive. Periksa koneksi.</li>';
         return null;
     } finally {
         if (requestId === driveReportRequestId) activeDriveReportKey = "";
@@ -460,13 +415,8 @@ async function updateDriveReportLog(force = false) {
 
 function redirectToThankYou(desaName, count, monthYear) {
     if (!Number.isInteger(count) || count < TARGET_LAPORAN) return false;
-
     saveLastSuccessfulReport(desaName, count, monthYear);
-    const thankYouParams = new URLSearchParams({
-        desa: desaName,
-        count: String(count),
-        month: monthYear
-    });
+    const thankYouParams = new URLSearchParams({ desa: desaName, count: String(count), month: monthYear });
     window.location.href = `thankyou.html?${thankYouParams.toString()}`;
     return true;
 }
@@ -485,10 +435,7 @@ async function uploadToGoogleDrive(zipBlob, zipFileName, desaName, date) {
             mimeType: 'application/zip'
         });
         return result.success === true;
-    } catch (error) {
-        console.error('Error upload ke Drive:', error);
-        return false;
-    }
+    } catch (error) { console.error('Error upload:', error); return false; }
 }
 
 async function blobToBase64(blob) {
@@ -499,22 +446,14 @@ async function blobToBase64(blob) {
     });
 }
 
-// ================= PWA INSTALL =================
 function setupInstallPrompt() {
     const btn = getInstallButton();
-
     window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        updateInstallButtonState();
+        e.preventDefault(); deferredPrompt = e; updateInstallButtonState();
     });
-
     if (btn) {
         btn.addEventListener('click', async () => {
-            if (swWaiting) {
-                swWaiting.postMessage({ type: 'SKIP_WAITING' });
-                return;
-            }
+            if (swWaiting) { swWaiting.postMessage({ type: 'SKIP_WAITING' }); return; }
             if (!deferredPrompt) return;
             deferredPrompt.prompt();
             const { outcome } = await deferredPrompt.userChoice;
@@ -525,58 +464,37 @@ function setupInstallPrompt() {
             updateInstallButtonState();
         });
     }
-
-    window.addEventListener('appinstalled', () => {
-        deferredPrompt = null;
-        updateInstallButtonState();
-    });
-
+    window.addEventListener('appinstalled', () => { deferredPrompt = null; updateInstallButtonState(); });
     window.addEventListener('load', updateInstallButtonState);
     document.addEventListener('visibilitychange', updateInstallButtonState);
     window.addEventListener('focus', updateInstallButtonState);
-
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.addEventListener('controllerchange', () => {
-            swWaiting = null;
-            updateInstallButtonState();
-            window.location.reload();
+            swWaiting = null; updateInstallButtonState(); window.location.reload();
         });
     }
 }
 
-// ================= FUNGSI DUKOPS =================
 async function initializeApp() {
-    console.log("🔄 Initializing DUKOPS app...");
     try {
-        try { await loadDesaList(); } catch(e){ console.error(e); }
-        try { loadLastSubmittedDates(); } catch(e){ console.error(e); }
-        try { loadDesaCounter(); } catch(e){ console.error(e); }
-
+        try { await loadDesaList(); } catch(e){}
+        try { loadLastSubmittedDates(); } catch(e){}
+        try { loadDesaCounter(); } catch(e){}
         try {
             const tanggalEl = document.getElementById('tanggalWaktu');
             if (tanggalEl) tanggalEl.value = '';
             updateDatePreview();
-        } catch (e) { console.error(e); }
-
+        } catch (e) {}
         setupInstallPrompt();
         resetCanvas();
-
-        setTimeout(() => {
-            showNotification('✅ Sistem DUKOPS BABINSA siap digunakan!', 'success');
-        }, 500);
-
-        console.log("✅ DUKOPS App initialized successfully");
-    } catch (error) {
-        console.error("❌ Error initializing DUKOPS app:", error);
-        showNotification('❌ Gagal memuat aplikasi DUKOPS', 'error');
-    }
+        setTimeout(() => { showNotification('✅ Sistem siap digunakan!', 'success'); }, 500);
+    } catch (error) { console.error("Init error:", error); }
 }
 
 function buildCoordinateJsonPath(desaName) {
     const cleanName = String(desaName || '').trim();
     if (!cleanName) return 'data/coordinates/.json';
-    const encoded = encodeURIComponent(cleanName).replace(/%20/g, ' ');
-    return `data/coordinates/${encoded}.json`;
+    return `data/coordinates/${encodeURIComponent(cleanName).replace(/%20/g, ' ')}.json`;
 }
 
 async function loadDesaList() {
@@ -585,7 +503,6 @@ async function loadDesaList() {
     const loading = document.getElementById('loadingDesa');
     if (!select) return;
     if (loading) loading.style.display = 'block';
-
     try {
         const response = await fetch('data/desa-list.json?t=' + Date.now(), { signal: createAbortSignal(15000) });
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
@@ -596,12 +513,10 @@ async function loadDesaList() {
 
         select.innerHTML = '<option value="">-- Pilih Desa/Kelurahan --</option>';
         wilayahList.forEach(wilayah => {
-            const desaName = wilayah.name;
             const option = document.createElement('option');
-            const jsonPath = buildCoordinateJsonPath(desaName);
-            option.value = jsonPath;
-            option.textContent = `${wilayah.type} ${desaName}`;
-            option.setAttribute('data-raw-name', `${wilayah.type} ${desaName}`);
+            option.value = buildCoordinateJsonPath(wilayah.name);
+            option.textContent = `${wilayah.type} ${wilayah.name}`;
+            option.setAttribute('data-raw-name', `${wilayah.type} ${wilayah.name}`);
             select.appendChild(option);
         });
         if (startupSelect) {
@@ -612,12 +527,9 @@ async function loadDesaList() {
                 startupSelect.appendChild(startupOption);
             });
         }
-        showNotification('✅ Daftar desa berhasil dimuat', 'success');
     } catch (error) {
-        console.error("❌ Error loading desa list:", error);
         select.innerHTML = '<option value="">-- Gagal memuat desa --</option>';
         select.disabled = true;
-        showNotification('❌ Gagal memuat daftar desa. Periksa koneksi.', 'error');
     } finally {
         if (loading) loading.style.display = 'none';
     }
@@ -627,21 +539,15 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
         const select = document.getElementById('selectDesa');
         if (select && select.options && select.options.length > 1) {
-            const evt = new Event('change');
-            select.dispatchEvent(evt);
+            select.dispatchEvent(new Event('change'));
         }
     } catch (e) {}
 });
 
 (function tryEarlyLoadDesa(){
-    const run = () => {
-        try { if (typeof loadDesaList === 'function') loadDesaList().catch(()=>{}); } catch (e) {}
-    };
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', run);
-    } else {
-        setTimeout(run, 0);
-    }
+    const run = () => { try { if (typeof loadDesaList === 'function') loadDesaList().catch(()=>{}); } catch (e) {} };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', run);
+    else setTimeout(run, 0);
 })();
 
 function ensureDesaListLoaded(maxAttempts = 6, delayMs = 500) {
@@ -654,19 +560,12 @@ function ensureDesaListLoaded(maxAttempts = 6, delayMs = 500) {
                     const select = document.getElementById('selectDesa');
                     if (select && select.options && select.options.length > 1) return;
                     if (attempts < maxAttempts) setTimeout(tryLoad, delayMs);
-                }).catch(() => {
-                    if (attempts < maxAttempts) setTimeout(tryLoad, delayMs);
-                });
-            } else {
-                if (attempts < maxAttempts) setTimeout(tryLoad, delayMs);
-            }
-        } catch (e) {
-            if (attempts < maxAttempts) setTimeout(tryLoad, delayMs);
-        }
+                }).catch(() => { if (attempts < maxAttempts) setTimeout(tryLoad, delayMs); });
+            } else { if (attempts < maxAttempts) setTimeout(tryLoad, delayMs); }
+        } catch (e) { if (attempts < maxAttempts) setTimeout(tryLoad, delayMs); }
     };
     tryLoad();
 }
-
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => ensureDesaListLoaded()); else ensureDesaListLoaded();
 setTimeout(() => { try { if (typeof loadDesaList === 'function') loadDesaList().catch(()=>{}); } catch (e) {} }, 120);
 
@@ -674,34 +573,25 @@ function normalizeDesaName(desaName) {
     if (!desaName) return { original: "", normalized: "", forTelegram: "", cleanName: "" };
     let normalized = desaName.replace(/^Desa\s+/i, '').replace(/^Kelurahan\s+/i, '').replace(/Kel\.\s*/gi, '').replace(/Kel\s/gi, '').trim();
     const forTelegram = normalized.replace(/_/g, ' ');
-    return {
-        original: desaName,
-        normalized: normalized,
-        forTelegram: forTelegram,
-        cleanName: forTelegram.trim()
-    };
+    return { original: desaName, normalized: normalized, forTelegram: forTelegram, cleanName: forTelegram.trim() };
 }
 
 function updateKegiatanLabel() {
     const label = document.getElementById('labelNarasiKegiatan');
     if (!label) return;
-    label.textContent = selectedDesa
-        ? `Kegiatan: Babinsa  ${normalizeDesaName(selectedDesa).cleanName}.`
-        : 'Kegiatan: Babinsa';
+    label.textContent = selectedDesa ? `Kegiatan: Babinsa  ${normalizeDesaName(selectedDesa).cleanName}.` : 'Kegiatan: Babinsa';
 }
 
 function showDesaActivationPopup(previewElement) {
     if (previewElement) previewElement.textContent = "Koordinat belum tersedia";
-    showNotification('Aktivasi desa/kelurahan belum tersedia. Hubungi admin untuk konfigurasi.', 'warning');
+    showNotification('Aktivasi desa/kelurahan belum tersedia. Hubungi admin.', 'warning');
 }
 
 async function loadSelectedDesa() {
     const select = document.getElementById('selectDesa');
     const requestId = ++desaCoordinatesRequestId;
-
     if (!select) return;
     if (!select.value) { resetForm(); return; }
-
     const selectedOption = select.options[select.selectedIndex];
     if (!selectedOption) { resetForm(); return; }
 
@@ -709,18 +599,12 @@ async function loadSelectedDesa() {
     const loading = document.getElementById('loadingKoordinat');
 
     selectedDesa = selectedOption.getAttribute('data-raw-name') || selectedOption.textContent || '';
-    kordinatList = [];
-    currentKoordinat = "";
-    updateKegiatanLabel();
-    updateNarrativePrefix();
-    updateDesaHeaderImage(selectedDesa);
+    kordinatList = []; currentKoordinat = "";
+    updateKegiatanLabel(); updateNarrativePrefix(); updateDesaHeaderImage(selectedDesa);
 
     const desaInfo = normalizeDesaName(selectedDesa);
     const previewDesaEl = document.getElementById('previewDesa');
-    if (previewDesaEl) {
-        previewDesaEl.textContent = desaInfo.cleanName;
-        previewDesaEl.style.display = 'block';
-    }
+    if (previewDesaEl) { previewDesaEl.textContent = desaInfo.cleanName; previewDesaEl.style.display = 'block'; }
     updateDriveReportLog();
 
     const fotoLabel = document.getElementById('labelFotoKegiatan');
@@ -734,72 +618,47 @@ async function loadSelectedDesa() {
         const response = await fetch(jsonPath, { signal: createAbortSignal(15000) });
         if (requestId !== desaCoordinatesRequestId) return;
         if (response.status === 404) { showDesaActivationPopup(previewKordinatEl); return; }
-        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         
         let jsonData;
         try { jsonData = await response.json(); } 
         catch (error) {
             if (!(error instanceof SyntaxError)) throw error;
             if (requestId !== desaCoordinatesRequestId) return;
-            showDesaActivationPopup(previewKordinatEl);
-            return;
+            showDesaActivationPopup(previewKordinatEl); return;
         }
         
         if (requestId !== desaCoordinatesRequestId) return;
-        const coordinates = Array.isArray(jsonData.coordinates)
-            ? jsonData.coordinates.filter(coord =>
-                coord &&
-                coord.lat !== null && coord.lat !== undefined && String(coord.lat).trim() !== '' &&
-                coord.lon !== null && coord.lon !== undefined && String(coord.lon).trim() !== '' &&
-                Number.isFinite(Number(coord.lat)) &&
-                Number.isFinite(Number(coord.lon)))
-            : [];
+        const coordinates = Array.isArray(jsonData.coordinates) ? jsonData.coordinates.filter(coord =>
+            coord && coord.lat !== null && String(coord.lat).trim() !== '' && coord.lon !== null && String(coord.lon).trim() !== '' &&
+            Number.isFinite(Number(coord.lat)) && Number.isFinite(Number(coord.lon))) : [];
             
         if (coordinates.length === 0) { showDesaActivationPopup(previewKordinatEl); return; }
         
-        // GANTI KOMA JADI TITIK UNTUK KOORDINAT
-        kordinatList = coordinates.map(coord => {
-            const lat = String(coord.lat).replace(/,/g, '.');
-            const lon = String(coord.lon).replace(/,/g, '.');
-            return `${lat},${lon},${coord.elevation || ''}`;
-        });
-        
+        kordinatList = coordinates.map(coord => `${String(coord.lat).replace(/,/g, '.')},${String(coord.lon).replace(/,/g, '.')},${coord.elevation || ''}`);
         pickRandomKoordinat();
         showNotification(`Koordinat ${desaInfo.cleanName} dimuat (${kordinatList.length} titik)`, "success");
     } catch (error) {
         if (requestId !== desaCoordinatesRequestId) return;
         if (previewKordinatEl) previewKordinatEl.textContent = "Gagal memuat koordinat";
-        showNotification("Gagal memuat koordinat: " + error.message, "error");
     } finally {
         if (requestId === desaCoordinatesRequestId) {
             if (loading) loading.style.display = 'none';
-            updatePreview();
-            updateNarrativePrefix();
-            checkInputCompletion();
+            updatePreview(); updateNarrativePrefix(); checkInputCompletion();
         }
     }
 }
 
 function pickRandomKoordinat() {
-    if (kordinatList.length === 0) {
-        showNotification("Tidak ada data koordinat tersedia", "warning");
-        return;
-    }
-    if (!selectedDesa) {
-        showNotification("Pilih desa terlebih dahulu", "warning");
-        return;
-    }
+    if (kordinatList.length === 0 || !selectedDesa) return;
     const coordElement = document.getElementById('previewKordinat');
     if (!coordElement) return;
-    coordElement.style.transition = "opacity 0.3s";
-    coordElement.style.opacity = "0";
+    coordElement.style.transition = "opacity 0.3s"; coordElement.style.opacity = "0";
     setTimeout(() => {
-        const randomIndex = Math.floor(Math.random() * kordinatList.length);
-        currentKoordinat = kordinatList[randomIndex];
+        currentKoordinat = kordinatList[Math.floor(Math.random() * kordinatList.length)];
         coordElement.innerHTML = '<i class="fas fa-map-marker-alt"></i> ' + currentKoordinat;
         setTimeout(() => { coordElement.style.opacity = "1"; }, 50);
-        updatePreview();
-        checkInputCompletion();
+        updatePreview(); checkInputCompletion();
     }, 300);
 }
 
@@ -809,49 +668,28 @@ function previewImage() {
     const gambarNama = document.getElementById("gambarNama");
 
     if (gambarNama) gambarNama.textContent = file ? file.name : "Belum ada foto dipilih";
-
     if (file) {
         if (!isValidImageFile(file)) {
-            gambarInput.value = "";
-            if (gambarNama) gambarNama.textContent = "Belum ada foto dipilih";
-            showNotification('Format gambar tidak valid. Gunakan JPG, PNG, atau WebP dengan ukuran maksimal 10MB.', 'warning');
-            img = new Image();
-            updatePreview();
-            checkInputCompletion();
-            return;
+            gambarInput.value = ""; if (gambarNama) gambarNama.textContent = "Belum ada foto dipilih";
+            showNotification('Format gambar tidak valid (Maks 10MB).', 'warning');
+            img = new Image(); updatePreview(); checkInputCompletion(); return;
         }
-
         const reader = new FileReader();
         reader.onload = function(e) {
-            img = new Image();
-            img.src = e.target.result;
+            img = new Image(); img.src = e.target.result;
             img.onload = function() {
-                try {
-                    if (img.height > img.width) {
-                        gambarInput.value = "";
-                        if (gambarNama) gambarNama.textContent = "Belum ada foto dipilih";
-                        img = new Image();
-                        showNotification("Foto portrait tidak diperbolehkan. Gunakan foto landscape.", "warning");
-                        checkInputCompletion();
-                        return;
-                    }
-                } catch (e) {}
+                if (img.height > img.width) {
+                    gambarInput.value = ""; if (gambarNama) gambarNama.textContent = "Belum ada foto dipilih";
+                    img = new Image(); showNotification("Foto portrait tidak diperbolehkan.", "warning"); checkInputCompletion(); return;
+                }
                 if (kordinatList.length > 0) pickRandomKoordinat();
-                updatePreview();
-                updateNarrativePrefix();
+                updatePreview(); updateNarrativePrefix();
             };
-            img.onerror = function() {
-                showNotification("Gagal memuat gambar", "error");
-                gambarInput.value = "";
-                if (gambarNama) gambarNama.textContent = "Belum ada foto dipilih";
-            };
+            img.onerror = function() { showNotification("Gagal memuat gambar", "error"); gambarInput.value = ""; };
         };
         reader.onerror = function() { showNotification("Gagal membaca file", "error"); };
         reader.readAsDataURL(file);
-    } else {
-        img = new Image();
-        updatePreview();
-    }
+    } else { img = new Image(); updatePreview(); }
     checkInputCompletion();
 }
 
@@ -864,12 +702,9 @@ function updateDatePreview() {
     if (tglInput) {
         const date = parseLocalDateTime(tglInput);
         if (!date) {
-            tanggalWaktu = "";
-            if (display) display.textContent = 'INPUT TANGGAL';
+            tanggalWaktu = ""; if (display) display.textContent = 'INPUT TANGGAL';
             if (label) label.textContent = 'Pilih tanggal & waktu';
-            updatePreview();
-            checkInputCompletion();
-            return;
+            updatePreview(); checkInputCompletion(); return;
         }
         tanggalWaktu = tglInput;
         const displayText = formatNarrativeDateTime(date);
@@ -886,55 +721,35 @@ function updateDatePreview() {
                     if (label) label.textContent = displayText;
                     if (display) display.textContent = displayText;
                 } catch (e) {}
-            } else {
-                if (label) label.textContent = 'Pilih tanggal & waktu';
-            }
+            } else { if (label) label.textContent = 'Pilih tanggal & waktu'; }
         } else {
             tanggalWaktu = "";
             if (label) label.textContent = 'Pilih tanggal & waktu';
             if (display) display.textContent = 'TANGGAL & WAKTU';
         }
     }
-    updateDriveReportLog();
-    updatePreview();
-    checkInputCompletion();
+    updateDriveReportLog(); updatePreview(); checkInputCompletion();
 }
 
 function formatNarrativeDateTime(date) {
-    const dateText = date.toLocaleDateString('id-ID', {
-        weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
-    });
-    const timeText = date.toLocaleTimeString('id-ID', {
-        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
-    }).replace(/:/g, '.');
+    const dateText = date.toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+    const timeText = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }).replace(/:/g, '.');
     return `${dateText}, ${timeText} Wita`;
 }
 
 function updateNarrativePrefix() {
     const narasiEl = document.getElementById('narasi');
-    if (!narasiEl) return;
-    if (!selectedDesa || !tanggalWaktu || !img || !img.src || !img.complete || !img.naturalWidth) return;
-
+    if (!narasiEl || !selectedDesa || !tanggalWaktu || !img || !img.src || !img.complete || !img.naturalWidth) return;
     const date = new Date(tanggalWaktu);
-    const dateText = date.toLocaleDateString('id-ID', {
-        weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
-    });
-    const desaInfo = normalizeDesaName(selectedDesa);
-    const nextPrefix = `${dateText}    Babinsa ${desaInfo.cleanName} `;
+    const dateText = date.toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+    const nextPrefix = `${dateText}    Babinsa ${normalizeDesaName(selectedDesa).cleanName} `;
     const currentText = narasiEl.value || '';
-
-    if (!currentText || currentText === narrativeDatePrefix) {
-        narasiEl.value = nextPrefix;
-    } else if (narrativeDatePrefix && currentText.startsWith(narrativeDatePrefix)) {
-        narasiEl.value = nextPrefix + currentText.slice(narrativeDatePrefix.length);
-    } else {
-        return;
-    }
-
+    if (!currentText || currentText === narrativeDatePrefix) { narasiEl.value = nextPrefix; }
+    else if (narrativeDatePrefix && currentText.startsWith(narrativeDatePrefix)) { narasiEl.value = nextPrefix + currentText.slice(narrativeDatePrefix.length); }
+    else { return; }
     narrativeDatePrefix = nextPrefix;
     narasiEl.setSelectionRange(narasiEl.value.length, narasiEl.value.length);
-    autoResizeNarasi(narasiEl);
-    checkInputCompletion();
+    autoResizeNarasi(narasiEl); checkInputCompletion();
 }
 
 function openDatePicker(event) {
@@ -950,88 +765,38 @@ function updatePreview() {
     if (!canvas) return;
     const ctx = canvas.getContext && canvas.getContext("2d");
     if (!ctx) return;
-
     const hasImage = Boolean(img && img.src && img.complete && img.naturalWidth > 0);
     canvas.style.display = hasImage ? "block" : "none";
     if (!hasImage) return;
 
-    if (hasImage) {
-        canvas.width = 800;
-        canvas.height = Math.round(canvas.width * (img.height / img.width));
-    }
-
+    if (hasImage) { canvas.width = 800; canvas.height = Math.round(canvas.width * (img.height / img.width)); }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    if (hasImage) {
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    }
+    if (hasImage) ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
     if (selectedDesa || currentKoordinat || tanggalWaktu) {
-        ctx.textAlign = "right";
-        ctx.font = "bold 36px Arial";
-        const bottomMargin = 20;
-        const lineHeight = 44;
-        const rightMargin = 10;
+        ctx.textAlign = "right"; ctx.font = "bold 36px Arial";
+        const bottomMargin = 20; const lineHeight = 44; const rightMargin = 10;
 
         function drawTextWithShadow(text, x, y, color = "#FFFFFF") {
-            ctx.save();
-            ctx.shadowColor = "rgba(0, 0, 0, 0.85)";
-            ctx.shadowBlur = 10;
-            ctx.shadowOffsetX = 3;
-            ctx.shadowOffsetY = 3;
-            ctx.fillStyle = color;
-            ctx.fillText(text, x, y);
-            ctx.shadowColor = "transparent";
-            ctx.shadowBlur = 0;
-            ctx.shadowOffsetX = 0;
-            ctx.shadowOffsetY = 0;
-            ctx.strokeStyle = "rgba(0, 0, 0, 0.8)";
-            ctx.lineWidth = 3;
-            ctx.strokeText(text, x, y);
-            ctx.fillStyle = color;
-            ctx.fillText(text, x, y);
-            ctx.shadowColor = "rgba(0, 0, 0, 0.3)";
-            ctx.shadowBlur = 4;
-            ctx.shadowOffsetX = -1;
-            ctx.shadowOffsetY = -1;
-            ctx.fillText(text, x, y);
-            ctx.restore();
+            ctx.save(); ctx.shadowColor = "rgba(0, 0, 0, 0.85)"; ctx.shadowBlur = 10; ctx.shadowOffsetX = 3; ctx.shadowOffsetY = 3;
+            ctx.fillStyle = color; ctx.fillText(text, x, y);
+            ctx.shadowColor = "transparent"; ctx.shadowBlur = 0; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
+            ctx.strokeStyle = "rgba(0, 0, 0, 0.8)"; ctx.lineWidth = 3; ctx.strokeText(text, x, y);
+            ctx.fillStyle = color; ctx.fillText(text, x, y);
+            ctx.shadowColor = "rgba(0, 0, 0, 0.3)"; ctx.shadowBlur = 4; ctx.shadowOffsetX = -1; ctx.shadowOffsetY = -1;
+            ctx.fillText(text, x, y); ctx.restore();
         }
 
         if (selectedDesa) {
-            const desaInfo = normalizeDesaName(selectedDesa);
-            const displayDesaName = desaInfo.cleanName;
-            const watermarkText = (displayDesaName === "Sukasada" || displayDesaName === "SUKASADA")
-                ? "Babinsa Kelurahan Sukasada"
-                : "Babinsa " + displayDesaName;
-            
-            drawTextWithShadow(
-                watermarkText, 
-                canvas.width - rightMargin, 
-                canvas.height - bottomMargin - (lineHeight * 2)
-            );
+            const displayDesaName = normalizeDesaName(selectedDesa).cleanName;
+            const watermarkText = (displayDesaName === "Sukasada" || displayDesaName === "SUKASADA") ? "Babinsa Kelurahan Sukasada" : "Babinsa " + displayDesaName;
+            drawTextWithShadow(watermarkText, canvas.width - rightMargin, canvas.height - bottomMargin - (lineHeight * 2));
         }
-
-        if (currentKoordinat) {
-            drawTextWithShadow(
-                currentKoordinat, 
-                canvas.width - rightMargin, 
-                canvas.height - bottomMargin - lineHeight
-            );
-        }
-
+        if (currentKoordinat) drawTextWithShadow(currentKoordinat, canvas.width - rightMargin, canvas.height - bottomMargin - lineHeight);
         if (tanggalWaktu) {
             const date = parseLocalDateTime(tanggalWaktu) || new Date(tanggalWaktu);
-            let dateText = date.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" }) +
-                ", " + date.toLocaleTimeString("id-ID", {
-                    hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false
-                });
-            
-            drawTextWithShadow(
-                dateText, 
-                canvas.width - rightMargin, 
-                canvas.height - bottomMargin
-            );
+            let dateText = date.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" }) + ", " + date.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+            drawTextWithShadow(dateText, canvas.width - rightMargin, canvas.height - bottomMargin);
         }
     }
 }
@@ -1043,28 +808,16 @@ function confirmSubmissionDialog() {
     return new Promise((resolve) => {
         const confirmText = `Anda yakin ingin mengirim laporan untuk ${normalizeDesaName(selectedDesa).cleanName}?\n\nFile ZIP akan didownload dan dikirim ke Drive.`;
         const modal = document.createElement('div');
-        modal.style.position = 'fixed';
-        modal.style.top = '0';
-        modal.style.left = '0';
-        modal.style.right = '0';
-        modal.style.bottom = '0';
-        modal.style.background = 'rgba(0,0,0,0.72)';
-        modal.style.display = 'flex';
-        modal.style.alignItems = 'center';
-        modal.style.justifyContent = 'center';
-        modal.style.zIndex = '999999';
-        modal.innerHTML = `
-            <div style="background:#0c1a24;border:2px solid #5bb9ff;border-radius:14px;padding:24px;width:min(440px,90vw);color:#fff;box-shadow:0 24px 60px rgba(0,0,0,0.6);">
-                <div style="font-size:22px;font-weight:700;margin-bottom:12px;">Konfirmasi Laporan</div>
-                <div style="font-size:15px;line-height:1.5;color:#d9ebff;white-space:pre-line;">${confirmText}</div>
-                <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:20px;">
-                    <button id="cancelSubmit" style="padding:10px 16px;border:none;border-radius:10px;background:#4a5568;color:#fff;font-weight:700;cursor:pointer;">Batal</button>
-                    <button id="confirmSubmit" style="padding:10px 16px;border:none;border-radius:10px;background:#2e7d32;color:#fff;font-weight:700;cursor:pointer;">Kirim</button>
-                </div>
-            </div>
-        `;
-        const cancel = modal.querySelector('#cancelSubmit');
-        const confirm = modal.querySelector('#confirmSubmit');
+        modal.style.position = 'fixed'; modal.style.top = '0'; modal.style.left = '0'; modal.style.right = '0'; modal.style.bottom = '0';
+        modal.style.background = 'rgba(0,0,0,0.72)'; modal.style.display = 'flex'; modal.style.alignItems = 'center'; modal.style.justifyContent = 'center'; modal.style.zIndex = '999999';
+        modal.innerHTML = `<div style="background:#0c1a24;border:2px solid #5bb9ff;border-radius:14px;padding:24px;width:min(440px,90vw);color:#fff;box-shadow:0 24px 60px rgba(0,0,0,0.6);">
+            <div style="font-size:22px;font-weight:700;margin-bottom:12px;">Konfirmasi Laporan</div>
+            <div style="font-size:15px;line-height:1.5;color:#d9ebff;white-space:pre-line;">${confirmText}</div>
+            <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:20px;">
+                <button id="cancelSubmit" style="padding:10px 16px;border:none;border-radius:10px;background:#4a5568;color:#fff;font-weight:700;cursor:pointer;">Batal</button>
+                <button id="confirmSubmit" style="padding:10px 16px;border:none;border-radius:10px;background:#2e7d32;color:#fff;font-weight:700;cursor:pointer;">Kirim</button>
+            </div></div>`;
+        const cancel = modal.querySelector('#cancelSubmit'); const confirm = modal.querySelector('#confirmSubmit');
         cancel.addEventListener('click', () => { modal.remove(); resolve(false); });
         confirm.addEventListener('click', () => { modal.remove(); resolve(true); });
         document.body.appendChild(modal);
@@ -1073,23 +826,26 @@ function confirmSubmissionDialog() {
 
 async function processSubmission() {
     if (!validateSubmission()) return;
-    if (isSameDateMonthSubmission()) {
-        showNotification("⚠ Sudah ada laporan di tanggal dan bulan yang sama!", "warning");
-        return;
-    }
+    if (isSameDateMonthSubmission()) { showNotification("⚠ Laporan tanggal ini sudah ada!", "warning"); return; }
 
     const confirmed = await confirmSubmissionDialog();
     if (!confirmed) return;
 
     const button = document.getElementById("submitBtn");
     const originalText = button.innerHTML;
-    button.disabled = true;
-    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+    button.disabled = true; button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
     showLoading();
 
     try {
         const narasi = document.getElementById("narasi").value;
-        const date = parseLocalDateTime(tanggalWaktu) || new Date(tanggalWaktu);
+        // DAPATKAN WAKTU SEKARANG UNTUK DETIK UP TO DATE
+        const now = new Date();
+        const date = parseLocalDateTime(tanggalWaktu) || now;
+        
+        // Jika tanggal yang dipilih adalah HARI INI, timpa detiknya dengan waktu server/client saat ini
+        if (date.toDateString() === now.toDateString()) {
+            date.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+        }
 
         const day = String(date.getDate()).padStart(2, '0');
         const monthNum = String(date.getMonth() + 1).padStart(2, '0');
@@ -1105,23 +861,17 @@ async function processSubmission() {
         const baseFileName = `${namaDesa} ${day} ${monthNum} ${year}`;
         const zipFileNameForDownload = `${baseFileName}.zip`;
 
-        const formattedDate = date.toLocaleDateString('id-ID', {
-            weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
-        });
-
-        const narasiWithoutDate = narrativeDatePrefix && narasi.startsWith(narrativeDatePrefix)
-            ? narasi.slice(narrativeDatePrefix.length)
-            : narasi;
+        const formattedDate = date.toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+        const narasiWithoutDate = narrativeDatePrefix && narasi.startsWith(narrativeDatePrefix) ? narasi.slice(narrativeDatePrefix.length) : narasi;
         const narasiContent = `${formattedDate}\tBabinsa ${namaDesa} ${narasiWithoutDate.trimStart()}`;
 
         // === 1. EKSTRAK PNG ASLI (TANPA WATERMARK) ===
         const c = document.createElement('canvas');
-        c.width = img.naturalWidth || img.width;
-        c.height = img.naturalHeight || img.height;
+        c.width = img.naturalWidth || img.width; c.height = img.naturalHeight || img.height;
         c.getContext('2d').drawImage(img, 0, 0);
         const pngBase64 = c.toDataURL('image/png').split('base64,')[1];
 
-        // === 2. BUAT DATA WATERMARK JSON (ARRAY SESUAI CONTOH) ===
+        // === 2. BUAT DATA WATERMARK JSON ===
         const watermarkData = [
             {
                 koordinat: currentKoordinat,
@@ -1141,11 +891,8 @@ async function processSubmission() {
 
         const a = document.createElement("a");
         const objectUrl = URL.createObjectURL(content);
-        a.href = objectUrl;
-        a.download = zipFileNameForDownload;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+        a.href = objectUrl; a.download = zipFileNameForDownload;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
         setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
 
         const driveUploaded = await uploadToGoogleDrive(content, zipFileNameForDownload, selectedDesa, date);
@@ -1153,57 +900,40 @@ async function processSubmission() {
         if (driveUploaded) {
             let desaData = updateDesaCounter(selectedDesa, zipFileNameForDownload);
             const driveCount = await updateDriveReportLog(true);
-            if (Number.isInteger(driveCount)) {
-                desaData = desaCounter[selectedDesa];
-            }
+            if (Number.isInteger(driveCount)) { desaData = desaCounter[selectedDesa]; }
             saveLastSuccessfulReport(desaInfo.original, desaData.count, monthYear);
             saveSubmittedDate(tanggalWaktu);
             if (!redirectToThankYou(desaInfo.original, desaData.count, monthYear)) {
-                showNotification(
-                    `✅ Laporan berhasil dikirim (${desaData.count}/${TARGET_LAPORAN}). Silakan kirim laporan berikutnya.`,
-                    "success"
-                );
+                showNotification(`✅ Laporan dikirim (${desaData.count}/${TARGET_LAPORAN}).`, "success");
                 clearInputsAfterSuccessfulSend();
             }
         } else {
-            showNotification(`⚠ Laporan hanya didownload, gagal simpan ke Drive`, "warning");
+            showNotification(`⚠ Laporan didownload, gagal simpan ke Drive`, "warning");
             saveSubmittedDate(tanggalWaktu);
         }
-
     } catch (error) {
-        console.error("Error:", error);
-        showNotification("❌ Gagal mengirim laporan", "error");
+        console.error("Error:", error); showNotification("❌ Gagal mengirim laporan", "error");
     } finally {
-        hideLoading();
-        button.disabled = false;
-        button.innerHTML = originalText;
+        hideLoading(); button.disabled = false; button.innerHTML = originalText;
     }
 }
 
 function clearInputsAfterSuccessfulSend() {
-    img = new Image();
-    tanggalWaktu = "";
-    const tanggalWaktuEl = document.getElementById('tanggalWaktu');
-    if (tanggalWaktuEl) tanggalWaktuEl.value = "";
-    const narasiEl = document.getElementById('narasi');
-    if (narasiEl) narasiEl.value = "";
+    img = new Image(); tanggalWaktu = "";
+    const tanggalWaktuEl = document.getElementById('tanggalWaktu'); if (tanggalWaktuEl) tanggalWaktuEl.value = "";
+    const narasiEl = document.getElementById('narasi'); if (narasiEl) narasiEl.value = "";
     narrativeDatePrefix = "";
-    const gambarEl = document.getElementById('gambar');
-    if (gambarEl) gambarEl.value = "";
-    const gambarNama = document.getElementById('gambarNama');
-    if (gambarNama) gambarNama.textContent = "Belum ada foto dipilih";
-    updatePreview();
-    resetCanvas();
-    checkInputCompletion();
+    const gambarEl = document.getElementById('gambar'); if (gambarEl) gambarEl.value = "";
+    const gambarNama = document.getElementById('gambarNama'); if (gambarNama) gambarNama.textContent = "Belum ada foto dipilih";
+    updatePreview(); resetCanvas(); checkInputCompletion();
 }
 
 function validateSubmission() {
-    if (!selectedDesa) { showNotification("Masukkan nama desa terlebih dahulu", "warning"); return false; }
+    if (!selectedDesa) { showNotification("Pilih desa terlebih dahulu", "warning"); return false; }
     if (!currentKoordinat) { showNotification("Koordinat tidak valid", "warning"); return false; }
     if (!tanggalWaktu) { showNotification("Isi tanggal dan waktu", "warning"); return false; }
     if (!img.src || !img.complete) { showNotification("Upload foto kegiatan", "warning"); return false; }
-    const narasi = document.getElementById("narasi").value.trim();
-    if (!narasi) { showNotification("Isi narasi kegiatan", "warning"); return false; }
+    if (!document.getElementById("narasi").value.trim()) { showNotification("Isi narasi kegiatan", "warning"); return false; }
     return true;
 }
 
@@ -1214,178 +944,77 @@ function isSameDateMonthSubmission() {
     return submittedDates.some(dateStr => {
         const prevDate = new Date(dateStr);
         if (Number.isNaN(prevDate.getTime())) return false;
-        return prevDate.getFullYear() === currentDate.getFullYear() &&
-               prevDate.getMonth() === currentDate.getMonth() &&
-               prevDate.getDate() === currentDate.getDate();
+        return prevDate.getFullYear() === currentDate.getFullYear() && prevDate.getMonth() === currentDate.getMonth() && prevDate.getDate() === currentDate.getDate();
     });
 }
 
 function resetCanvas() {
-    const canvas = document.getElementById("canvas");
-    if (!canvas) return;
-    canvas.style.display = "none";
-    const ctx = canvas.getContext("2d");
-    canvas.width = 800;
-    canvas.height = Math.round(canvas.width / (16 / 9));
-    ctx.fillStyle = "#0a120a";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const canvas = document.getElementById("canvas"); if (!canvas) return;
+    canvas.style.display = "none"; const ctx = canvas.getContext("2d");
+    canvas.width = 800; canvas.height = Math.round(canvas.width / (16 / 9));
+    ctx.fillStyle = "#0a120a"; ctx.fillRect(0, 0, canvas.width, canvas.height);
     if (canvasPlaceholderImage.complete && canvasPlaceholderImage.naturalWidth > 0) {
         const iconSize = Math.min(160, canvas.width * 0.3);
-        ctx.drawImage(canvasPlaceholderImage, (canvas.width - iconSize) / 2,
-            (canvas.height - iconSize) / 2, iconSize, iconSize);
+        ctx.drawImage(canvasPlaceholderImage, (canvas.width - iconSize) / 2, (canvas.height - iconSize) / 2, iconSize, iconSize);
     }
 }
 
 function resetForm() {
-    desaCoordinatesRequestId++;
-    selectedDesa = "";
-    kordinatList = [];
-    currentKoordinat = "";
-    tanggalWaktu = "";
-    const selectEl = document.getElementById('selectDesa');
-    if (selectEl) selectEl.value = "";
-    const previewDesaEl = document.getElementById('previewDesa');
-    if (previewDesaEl) previewDesaEl.textContent = "";
-    const previewKordinatEl = document.getElementById('previewKordinat');
-    if (previewKordinatEl) previewKordinatEl.textContent = "";
-    const narasiEl = document.getElementById('narasi');
-    if (narasiEl) narasiEl.value = "";
-    narrativeDatePrefix = "";
-    updateKegiatanLabel();
-    const gambarEl = document.getElementById('gambar');
-    if (gambarEl) gambarEl.value = "";
-    const tanggalWaktuEl = document.getElementById('tanggalWaktu');
-    if (tanggalWaktuEl) tanggalWaktuEl.value = "";
-    const label = document.getElementById('tanggalWaktuLabelText');
-    if (label) label.textContent = 'Pilih tanggal & waktu';
-    updateDesaHeaderImage("");
-    checkInputCompletion();
-    updatePreview();
-    resetCanvas();
+    desaCoordinatesRequestId++; selectedDesa = ""; kordinatList = []; currentKoordinat = ""; tanggalWaktu = "";
+    const selectEl = document.getElementById('selectDesa'); if (selectEl) selectEl.value = "";
+    const previewDesaEl = document.getElementById('previewDesa'); if (previewDesaEl) previewDesaEl.textContent = "";
+    const previewKordinatEl = document.getElementById('previewKordinat'); if (previewKordinatEl) previewKordinatEl.textContent = "";
+    const narasiEl = document.getElementById('narasi'); if (narasiEl) narasiEl.value = "";
+    narrativeDatePrefix = ""; updateKegiatanLabel();
+    const gambarEl = document.getElementById('gambar'); if (gambarEl) gambarEl.value = "";
+    const tanggalWaktuEl = document.getElementById('tanggalWaktu'); if (tanggalWaktuEl) tanggalWaktuEl.value = "";
+    const label = document.getElementById('tanggalWaktuLabelText'); if (label) label.textContent = 'Pilih tanggal & waktu';
+    updateDesaHeaderImage(""); checkInputCompletion(); updatePreview(); resetCanvas();
 }
 
-function loadDesaCounter() {
-    const saved = safeLocalStorageGet('dukopsDesaCounter', {});
-    desaCounter = saved || {};
-}
+function loadDesaCounter() { const saved = safeLocalStorageGet('dukopsDesaCounter', {}); desaCounter = saved || {}; }
 
 function updateDesaCounter(desaName, fileName) {
     const date = parseLocalDateTime(tanggalWaktu) || new Date(tanggalWaktu);
     const monthYear = date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
-
-    if (!desaCounter[desaName]) {
-        desaCounter[desaName] = { count: 0, files: [], month: monthYear };
+    if (!desaCounter[desaName]) desaCounter[desaName] = { count: 0, files: [], month: monthYear };
+    if (desaCounter[desaName].month !== monthYear) desaCounter[desaName] = { count: 1, files: [fileName], month: monthYear };
+    else {
+        desaCounter[desaName].count++; desaCounter[desaName].files.push(fileName);
+        if (desaCounter[desaName].files.length > TARGET_LAPORAN) desaCounter[desaName].files.shift();
     }
-
-    if (desaCounter[desaName].month !== monthYear) {
-        desaCounter[desaName] = { count: 1, files: [fileName], month: monthYear };
-    } else {
-        desaCounter[desaName].count++;
-        desaCounter[desaName].files.push(fileName);
-        if (desaCounter[desaName].files.length > TARGET_LAPORAN) {
-            desaCounter[desaName].files.shift();
-        }
-    }
-
-    safeLocalStorageSet('dukopsDesaCounter', desaCounter);
-    return desaCounter[desaName];
+    safeLocalStorageSet('dukopsDesaCounter', desaCounter); return desaCounter[desaName];
 }
 
-function saveLastSuccessfulReport(desaName, count, monthYear) {
-    safeLocalStorageSet('dukopsLastSuccessfulReport', { desaName, count, monthYear });
-}
-
-function saveSubmittedDate(dateStr) {
-    if (!dateStr) return;
-    submittedDates.push(dateStr);
-    safeLocalStorageSet('dukopsSubmittedDates', submittedDates);
-}
-
-function loadLastSubmittedDates() {
-    const saved = safeLocalStorageGet('dukopsSubmittedDates', []);
-    submittedDates = Array.isArray(saved) ? saved : [];
-}
+function saveLastSuccessfulReport(desaName, count, monthYear) { safeLocalStorageSet('dukopsLastSuccessfulReport', { desaName, count, monthYear }); }
+function saveSubmittedDate(dateStr) { if (!dateStr) return; submittedDates.push(dateStr); safeLocalStorageSet('dukopsSubmittedDates', submittedDates); }
+function loadLastSubmittedDates() { const saved = safeLocalStorageGet('dukopsSubmittedDates', []); submittedDates = Array.isArray(saved) ? saved : []; }
 
 function checkInputCompletion() {
     const narasiEl = document.getElementById("narasi");
     const narasiVal = narasiEl ? (narasiEl.value || '').trim() : '';
     const hasImage = img && img.src && img.complete;
     const isComplete = selectedDesa && currentKoordinat && tanggalWaktu && hasImage && narasiVal;
-    const submitBtn = document.getElementById("submitBtn");
-    if (submitBtn) submitBtn.disabled = !isComplete;
+    const submitBtn = document.getElementById("submitBtn"); if (submitBtn) submitBtn.disabled = !isComplete;
 }
 
 function autoResizeNarasi(target) {
-    const textarea = target instanceof HTMLTextAreaElement ? target : document.getElementById('narasi');
-    if (!textarea) return;
-    textarea.style.height = '0px';
-    textarea.style.overflowY = 'hidden';
-    const desiredHeight = Math.max(textarea.scrollHeight, textarea.offsetHeight);
-    textarea.style.height = `${desiredHeight}px`;
-    textarea.style.minHeight = '150px';
+    const textarea = target instanceof HTMLTextAreaElement ? target : document.getElementById('narasi'); if (!textarea) return;
+    textarea.style.height = '0px'; textarea.style.overflowY = 'hidden';
+    textarea.style.height = `${Math.max(textarea.scrollHeight, textarea.offsetHeight)}px`; textarea.style.minHeight = '150px';
 }
 
 function updateDesaHeaderImage(desaName) {
-    const headerImage = document.getElementById('desaProfileImgHeader');
-    if (!headerImage) return;
-    headerImage.src = 'icons/favicon-96x96.png';
+    const headerImage = document.getElementById('desaProfileImgHeader'); if (!headerImage) return; headerImage.src = 'icons/favicon-96x96.png';
 }
 
 function speakTargetReached(wilayahName, count, monthYear) {
-    const wilayahInfo = normalizeDesaName(wilayahName);
-    const message =
-        `Terima kasih Babinsa ${wilayahInfo.original} telah mengirim ${count} laporan untuk ${monthYear}. ` +
-        (count >= TARGET_LAPORAN
-            ? `Target ${TARGET_LAPORAN} laporan bulan ini tercapai.`
-            : `Jumlah laporan terkirim bulan ini ${count} dari ${TARGET_LAPORAN}.`);
+    const message = `Terima kasih Babinsa ${normalizeDesaName(wilayahName).original} telah mengirim ${count} laporan untuk ${monthYear}. ` + (count >= TARGET_LAPORAN ? `Target ${TARGET_LAPORAN} laporan bulan ini tercapai.` : `Jumlah laporan terkirim bulan ini ${count} dari ${TARGET_LAPORAN}.`);
     if (typeof window.speakIndonesian === 'function') window.speakIndonesian(message);
 }
 
 function showThankYouPopup(desaName, count) {
-    const date = parseLocalDateTime(tanggalWaktu) || new Date(tanggalWaktu);
-    const monthYear = date.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
-    const desaInfo = normalizeDesaName(desaName);
-    const targetReached = count >= TARGET_LAPORAN;
-    
-    const modal = document.createElement('div');
-    modal.className = 'thankyou-popup';
-    modal.style.cssText = `
-        position: fixed; top:0; left:0; right:0; bottom:0;
-        background: rgba(0,0,0,0.85); z-index:999999;
-        display: flex; align-items: center; justify-content: center;
-        animation: fadeIn 0.3s;
-    `;
-    modal.innerHTML = `
-        <div style="background: linear-gradient(145deg, #1a3a1a, #0a1a0a);
-            border: 2px solid #4CAF50; border-radius: 20px; padding: 40px;
-            max-width: 450px; width: 90%; text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.8);">
-            <div style="font-size: 80px; color: #4CAF50; margin-bottom: 20px;">
-                <i class="fas fa-trophy"></i>
-            </div>
-            <h2 style="color: #9fd49f; margin-bottom: 15px; font-size: 28px;">Terima Kasih</h2>
-            <p style="color: #f5f5f5; font-size: 18px; line-height: 1.5; margin-bottom: 20px;">
-                Terima kasih <strong>Babinsa ${desaInfo.original}</strong> telah mengirim
-                <strong>${count} laporan</strong> untuk <strong>${monthYear}</strong>.
-            </p>
-            <div style="background: rgba(76, 175, 80, 0.2); border: 2px solid #4CAF50;
-                border-radius: 10px; padding: 15px; margin: 20px 0; font-size: 16px; color: #b2d8b2;">
-                <i class="fas fa-check-circle"></i>
-                ${targetReached
-                    ? `Target ${TARGET_LAPORAN} laporan bulan ini tercapai!`
-                    : `Jumlah laporan terkirim bulan ${monthYear}: ${count}/${TARGET_LAPORAN}.`}
-            </div>
-            <button onclick="this.closest('.thankyou-popup').remove()"
-                style="background: linear-gradient(135deg, #4CAF50, #2b4d2b); color: white;
-                border: none; padding: 12px 25px; border-radius: 8px; font-size: 16px;
-                font-weight: bold; width: 100%;">
-                <i class="fas fa-thumbs-up"></i> TERIMA KASIH
-            </button>
-        </div>
-    `;
-    document.body.appendChild(modal);
-    speakTargetReached(desaInfo.original, count, monthYear);
-    setTimeout(() => { if (modal.parentNode) modal.remove(); }, 10000);
+    // (Fungsi ini tidak dipakai secara langsung karena kita redirect ke thankyou.html, tapi dibiarkan untuk cadangan)
 }
 
 // ================= TAB ABSEN =================
@@ -1400,46 +1029,28 @@ function showThankYouPopup(desaName, count) {
     var resultContainer = document.getElementById('absenResultContainer');
 
     if (tahunSelect) tahunSelect.onchange = onTahunChange;
-
     window.addEventListener('online', function() { isOnlineAbsen = true; loadAbsenTahun(); });
     window.addEventListener('offline', function() { isOnlineAbsen = false; });
 
     function loadAbsenTahun() {
         if (!tahunSelect) return;
-        tahunSelect.disabled = true;
-        tahunSelect.innerHTML = '<option>⏳ Mohon tunggu....</option>';
+        tahunSelect.disabled = true; tahunSelect.innerHTML = '<option>⏳ Mohon tunggu....</option>';
         var cached = getCacheAbsen();
-        if (cached && cached.years && cached.years.length > 0) {
-            populateTahunSelect(cached.years);
-            tahunSelect.disabled = false;
-        }
-        if (!isOnlineAbsen) {
-            if (!cached || !cached.years) tahunSelect.innerHTML = '<option>❌ Offline - no data</option>';
-            return;
-        }
-        fetch(SCRIPT_URL + '?action=getYears', { signal: createAbortSignal(15000) }).then(function(r) {
-            if (!r.ok) throw new Error('HTTP ' + r.status);
-            return r.json();
-        }).then(function(y) {
-            if (y && y.length > 0) {
-                populateTahunSelect(y);
-                saveToCacheAbsen({ years: y, months: null, data: null });
-            } else throw new Error('Tidak ada data');
-        }).catch(function() {
-            if (!cached || !cached.years) tahunSelect.innerHTML = '<option>❌ Gagal memuat</option>';
-        }).finally(function() {
-            if (tahunSelect) tahunSelect.disabled = false;
-        });
+        if (cached && cached.years && cached.years.length > 0) { populateTahunSelect(cached.years); tahunSelect.disabled = false; }
+        if (!isOnlineAbsen) { if (!cached || !cached.years) tahunSelect.innerHTML = '<option>❌ Offline - no data</option>'; return; }
+        fetch(SCRIPT_URL + '?action=getYears', { signal: createAbortSignal(15000) }).then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function(y) {
+            if (y && y.length > 0) { populateTahunSelect(y); saveToCacheAbsen({ years: y, months: null, data: null }); }
+            else throw new Error('Tidak ada data');
+        }).catch(function() { if (!cached || !cached.years) tahunSelect.innerHTML = '<option>❌ Gagal memuat</option>'; })
+        .finally(function() { if (tahunSelect) tahunSelect.disabled = false; });
     }
 
     function populateTahunSelect(y) {
         if (!tahunSelect) return;
         tahunSelect.innerHTML = '<option value="">-- Pilih Tahun --</option>';
         for (var i = 0; i < y.length; i++) {
-            var o = document.createElement('option');
-            o.value = y[i];
-            o.textContent = y[i];
-            tahunSelect.appendChild(o);
+            var o = document.createElement('option'); o.value = y[i]; o.textContent = y[i]; tahunSelect.appendChild(o);
         }
         if (y.length > 0) { tahunSelect.value = y[0]; onTahunChange(); }
     }
@@ -1448,50 +1059,27 @@ function showThankYouPopup(desaName, count) {
         if (!tahunSelect || !bulanSelect) return;
         var t = tahunSelect.value;
         if (!t) { bulanSelect.innerHTML = '<option>Pilih tahun dulu</option>'; bulanSelect.disabled = true; return; }
-        bulanSelect.disabled = true;
-        bulanSelect.innerHTML = '<option>⏳ Memuat...</option>';
+        bulanSelect.disabled = true; bulanSelect.innerHTML = '<option>⏳ Memuat...</option>';
         var c = getCacheAbsen();
-        if (c && c.months && c.months[t]) {
-            populateBulanSelect(c.months[t]);
-            bulanSelect.disabled = false;
-            return;
-        }
-        if (!isOnlineAbsen) {
-            bulanSelect.innerHTML = '<option>❌ Offline</option>';
-            bulanSelect.disabled = false;
-            return;
-        }
-        fetch(SCRIPT_URL + '?action=getMonths&tahun=' + encodeURIComponent(t), { signal: createAbortSignal(15000) }).then(function(r) {
-            if (!r.ok) throw new Error('HTTP ' + r.status);
-            return r.json();
-        }).then(function(m) {
+        if (c && c.months && c.months[t]) { populateBulanSelect(c.months[t]); bulanSelect.disabled = false; return; }
+        if (!isOnlineAbsen) { bulanSelect.innerHTML = '<option>❌ Offline</option>'; bulanSelect.disabled = false; return; }
+        fetch(SCRIPT_URL + '?action=getMonths&tahun=' + encodeURIComponent(t), { signal: createAbortSignal(15000) }).then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function(m) {
             if (m && m.length > 0) {
-                populateBulanSelect(m);
-                var uc = getCacheAbsen() || {};
-                uc.months = uc.months || {};
-                uc.months[t] = m;
-                saveToCacheAbsen(uc);
+                populateBulanSelect(m); var uc = getCacheAbsen() || {}; uc.months = uc.months || {}; uc.months[t] = m; saveToCacheAbsen(uc);
             } else bulanSelect.innerHTML = '<option>Tidak ada data</option>';
             bulanSelect.disabled = false;
-        }).catch(function() {
-            bulanSelect.innerHTML = '<option>❌ Gagal memuat</option>';
-            bulanSelect.disabled = false;
-        });
+        }).catch(function() { bulanSelect.innerHTML = '<option>❌ Gagal memuat</option>'; bulanSelect.disabled = false; });
     }
 
     function populateBulanSelect(m) {
         if (!bulanSelect) return;
         bulanSelect.innerHTML = '<option value="">-- Pilih Bulan --</option>';
         for (var i = 0; i < m.length; i++) {
-            var o = document.createElement('option');
-            o.value = m[i].num || m[i];
-            o.textContent = m[i].name || m[i];
-            bulanSelect.appendChild(o);
+            var o = document.createElement('option'); o.value = m[i].num || m[i]; o.textContent = m[i].name || m[i]; bulanSelect.appendChild(o);
         }
-        bulanSelect.onchange = function() {
-            if (this.value) { loadDataAbsen(); } else { if (resultContainer) resultContainer.innerHTML = ''; }
-        };
-        if (bulanSelect.value) { loadDataAbsen(); }
+        bulanSelect.onchange = function() { if (this.value) { loadDataAbsen(); } else { if (resultContainer) resultContainer.innerHTML = ''; } };
+        if (bulanSelect.value) loadDataAbsen();
     }
 
     function loadDataAbsen() {
@@ -1502,120 +1090,52 @@ function showThankYouPopup(desaName, count) {
         var c = getCacheAbsen(), ck = t + '_' + b;
         if (c && c.data && c.data[ck]) {
             var cd = c.data[ck];
-            if (Date.now() - cd.timestamp < CACHE_EXPIRY) {
-                displayDataAbsen(cd.data);
-                currentDataAbsen = cd.data;
-                return;
-            }
+            if (Date.now() - cd.timestamp < CACHE_EXPIRY) { displayDataAbsen(cd.data); currentDataAbsen = cd.data; return; }
         }
         if (!isOnlineAbsen) { showErrorAbsen('Tidak ada koneksi'); return; }
         fetch(SCRIPT_URL + '?action=getData&tahun=' + encodeURIComponent(t) + '&bulan=' + encodeURIComponent(b), { signal: createAbortSignal(15000) })
-            .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-            .then(function(d) {
-                currentDataAbsen = d;
-                displayDataAbsen(d);
-                var uc = getCacheAbsen() || {};
-                uc.data = uc.data || {};
-                uc.data[ck] = { data: d, timestamp: Date.now() };
-                saveToCacheAbsen(uc);
-            }).catch(function(e) { showErrorAbsen('Gagal: ' + e.message); });
+        .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function(d) {
+            currentDataAbsen = d; displayDataAbsen(d);
+            var uc = getCacheAbsen() || {}; uc.data = uc.data || {}; uc.data[ck] = { data: d, timestamp: Date.now() }; saveToCacheAbsen(uc);
+        }).catch(function(e) { showErrorAbsen('Gagal: ' + e.message); });
     }
 
     function displayDataAbsen(d) {
         if (!resultContainer) return;
         if (d.error) { showErrorAbsen(d.error); return; }
-        var td = d.total_desa || 0, p = td > 0 ? Math.round((d.desa_lengkap / td) * 100) : 0, dh = '';
+        var td = d.total_desa || 0, dh = '';
         for (var i = 0; i < d.details.length; i++) {
             var de = d.details[i], cls = '', txt = '', icon = '';
             if (de.status === 'LENGKAP') { cls = 'absen-status-lengkap'; icon = '✅'; txt = 'LENGKAP'; }
             else if (de.status === 'BELUM_LENGKAP') { cls = 'absen-status-belum-lengkap'; icon = '⚠️'; txt = 'BL'; }
             else { cls = 'absen-status-belum'; icon = '❌'; txt = 'BELUM'; }
             var w = (de.status === 'LENGKAP') ? '#4caf50' : ((de.status === 'BELUM_LENGKAP') ? '#ff9800' : '#f44336');
-            dh += '<div class="absen-desa-item" onclick="window.showDetailAbsen(\'' + escapeHtml(de.nama) +
-                '\',' + de.jumlah_file + ',' + de.persentase + ',\'' + de.status +
-                '\')"><div class="absen-desa-name">' + icon + ' ' + escapeHtml(de.nama) +
-                '</div><div class="absen-desa-stats">' + de.jumlah_file +
-                '/9</div><div class="absen-desa-progress"><div class="absen-desa-progress-bar"><div class="absen-desa-progress-fill" style="width:' +
-                de.persentase + '%;background:' + w +
-                '"></div></div></div><div class="absen-status-badge ' + cls + '">' + txt + '</div></div>';
+            dh += '<div class="absen-desa-item" onclick="window.showDetailAbsen(\'' + escapeHtml(de.nama) + '\',' + de.jumlah_file + ',' + de.persentase + ',\'' + de.status + '\')"><div class="absen-desa-name">' + icon + ' ' + escapeHtml(de.nama) + '</div><div class="absen-desa-stats">' + de.jumlah_file + '/9</div><div class="absen-desa-progress"><div class="absen-desa-progress-bar"><div class="absen-desa-progress-fill" style="width:' + de.persentase + '%;background:' + w + '"></div></div></div><div class="absen-status-badge ' + cls + '">' + txt + '</div></div>';
         }
-        resultContainer.innerHTML =
-            '<div class="absen-card"><div class="absen-stats-grid"><div class="absen-stat-card"><div class="absen-stat-value" style="color:#1a73e8;">' +
-            d.total_desa +
-            '</div><div class="absen-stat-label">DESA</div></div><div class="absen-stat-card"><div class="absen-stat-value" style="color:#4caf50;">' +
-            d.desa_lengkap +
-            '</div><div class="absen-stat-label">LENGKAP</div></div><div class="absen-stat-card"><div class="absen-stat-value" style="color:#ff9800;">' +
-            d.desa_belum_lengkap +
-            '</div><div class="absen-stat-label">BL</div></div><div class="absen-stat-card"><div class="absen-stat-value" style="color:#f44336;">' +
-            d.desa_belum +
-            '</div><div class="absen-stat-label">BELUM</div></div></div><div style="font-size:0.7rem;font-weight:600;margin:10px 0 5px;">📋 DAFTAR DESA (' +
-            d.total_desa +
-            ')</div><div class="absen-desa-list">' + dh +
-            '</div></div>';
+        resultContainer.innerHTML = '<div class="absen-card"><div class="absen-stats-grid"><div class="absen-stat-card"><div class="absen-stat-value" style="color:#1a73e8;">' + d.total_desa + '</div><div class="absen-stat-label">DESA</div></div><div class="absen-stat-card"><div class="absen-stat-value" style="color:#4caf50;">' + d.desa_lengkap + '</div><div class="absen-stat-label">LENGKAP</div></div><div class="absen-stat-card"><div class="absen-stat-value" style="color:#ff9800;">' + d.desa_belum_lengkap + '</div><div class="absen-stat-label">BL</div></div><div class="absen-stat-card"><div class="absen-stat-value" style="color:#f44336;">' + d.desa_belum + '</div><div class="absen-stat-label">BELUM</div></div></div><div style="font-size:0.7rem;font-weight:600;margin:10px 0 5px;">📋 DAFTAR DESA (' + d.total_desa + ')</div><div class="absen-desa-list">' + dh + '</div></div>';
     }
 
-    function getCacheAbsen() {
-        try { var c = localStorage.getItem(CACHE_KEY_ABSEN); if (c) return JSON.parse(c); } catch (e) {}
-        return null;
-    }
-
-    function saveToCacheAbsen(d) {
-        try { localStorage.setItem(CACHE_KEY_ABSEN, JSON.stringify(d)); } catch (e) {}
-    }
-
-    function showLoadingAbsen() {
-        if (resultContainer) resultContainer.innerHTML =
-            '<div class="absen-loading"><div class="absen-spinner"></div><p>Mohon Tunggu ...</p></div>';
-    }
-
-    function showErrorAbsen(m) {
-        if (resultContainer) resultContainer.innerHTML =
-            '<div class="absen-card" style="color:#f44336;">⚠️ ' + escapeHtml(m) + '</div>';
-    }
-
-    function escapeHtml(t) {
-        if (!t) return '';
-        return t.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
-
-    window.showDetailAbsen = function(n, j, p, s) {
-        alert((s === 'LENGKAP' ? '✅ ' : (s === 'BELUM_LENGKAP' ? '⚠️ ' : '❌ ')) + n + '\n' + j + '/9 (' + p + '%)');
-    };
-
+    function getCacheAbsen() { try { var c = localStorage.getItem(CACHE_KEY_ABSEN); if (c) return JSON.parse(c); } catch (e) {} return null; }
+    function saveToCacheAbsen(d) { try { localStorage.setItem(CACHE_KEY_ABSEN, JSON.stringify(d)); } catch (e) {} }
+    function showLoadingAbsen() { if (resultContainer) resultContainer.innerHTML = '<div class="absen-loading"><div class="absen-spinner"></div><p>Mohon Tunggu ...</p></div>'; }
+    function showErrorAbsen(m) { if (resultContainer) resultContainer.innerHTML = '<div class="absen-card" style="color:#f44336;">⚠️ ' + escapeHtml(m) + '</div>'; }
+    function escapeHtml(t) { if (!t) return ''; return t.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
+    window.showDetailAbsen = function(n, j, p, s) { alert((s === 'LENGKAP' ? '✅ ' : (s === 'BELUM_LENGKAP' ? '⚠️ ' : '❌ ')) + n + '\n' + j + '/9 (' + p + '%)'); };
     window.loadAbsenTahun = loadAbsenTahun;
 })();
 
 // ================= SERVICE WORKER =================
 const isFileProtocol = getIsFileProtocol();
-
 if (!isFileProtocol && 'serviceWorker' in navigator) {
     window.addEventListener('load', function() {
-        navigator.serviceWorker.register('sw.js')
-            .then(function(registration) {
-                if (registration.active) console.log('✅ Service Worker is active!');
-                if (registration.waiting) setWaitingServiceWorker(registration.waiting);
-                registration.addEventListener('updatefound', function() {
-                    const newWorker = registration.installing;
-                    if (newWorker) {
-                        newWorker.addEventListener('statechange', function() {
-                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                setWaitingServiceWorker(newWorker);
-                            }
-                        });
-                    }
-                });
-            })
-            .catch(function(error) {
-                console.log('❌ Service Worker registration failed:', error);
+        navigator.serviceWorker.register('sw.js').then(function(registration) {
+            if (registration.active) console.log('✅ Service Worker is active!');
+            if (registration.waiting) setWaitingServiceWorker(registration.waiting);
+            registration.addEventListener('updatefound', function() {
+                const newWorker = registration.installing;
+                if (newWorker) { newWorker.addEventListener('statechange', function() { if (newWorker.state === 'installed' && navigator.serviceWorker.controller) setWaitingServiceWorker(newWorker); }); }
             });
+        }).catch(function(error) { console.log('❌ SW registration failed:', error); });
     });
-} else if (isFileProtocol) {
-    console.log('⚠️ Service Worker skipped on file:// origin.');
-} else {
-    console.log('⚠️ Service Worker not supported in this browser.');
-}
+} else if (isFileProtocol) { console.log('⚠️ SW skipped on file:// origin.'); } else { console.log('⚠️ SW not supported.'); }
