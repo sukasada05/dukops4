@@ -6,8 +6,7 @@ const APP_CONFIG = {
     maxImageSize: 10 * 1024 * 1024
 };
 
-const TARGET_LAPORAN = 9;
-
+const TARGET_LAPORAN = 9; 
 // ================= VARIABEL GLOBAL =================
 let img = new Image();
 let selectedDesa = "";
@@ -156,6 +155,7 @@ document.addEventListener('DOMContentLoaded', function () {
     loadRunningText();
 });
 
+// Interval 1 detik untuk update preview (termasuk detik real-time)
 setInterval(() => {
     const tanggalEl = document.getElementById('tanggalWaktu');
     if (tanggalEl && tanggalEl.value) updateDatePreview();
@@ -706,12 +706,17 @@ function updateDatePreview() {
     const tglInput = tglEl ? tglEl.value : '';
 
     if (tglInput) {
-        const date = parseLocalDateTime(tglInput);
+        let date = parseLocalDateTime(tglInput);
         if (!date) {
             tanggalWaktu = ""; if (display) display.textContent = 'INPUT TANGGAL';
             if (label) label.textContent = 'Pilih tanggal & waktu';
             updatePreview(); checkInputCompletion(); return;
         }
+        
+        // AMBIL DETIK DARI WAKTU SAAT INI (REAL-TIME)
+        const now = new Date();
+        date.setSeconds(now.getSeconds());
+        
         tanggalWaktu = tglInput;
         const displayText = formatNarrativeDateTime(date);
         if (label) label.textContent = displayText;
@@ -800,7 +805,11 @@ function updatePreview() {
         }
         if (currentKoordinat) drawTextWithShadow(currentKoordinat, canvas.width - rightMargin, canvas.height - bottomMargin - lineHeight);
         if (tanggalWaktu) {
-            const date = parseLocalDateTime(tanggalWaktu) || new Date(tanggalWaktu);
+            let date = parseLocalDateTime(tanggalWaktu) || new Date(tanggalWaktu);
+            // AMBIL DETIK DARI WAKTU SAAT INI (REAL-TIME)
+            const now = new Date();
+            date.setSeconds(now.getSeconds());
+            
             let dateText = date.toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" }) + ", " + date.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
             drawTextWithShadow(dateText, canvas.width - rightMargin, canvas.height - bottomMargin);
         }
@@ -844,13 +853,11 @@ async function processSubmission() {
 
     try {
         const narasi = document.getElementById("narasi").value;
-        const now = new Date();
-        const date = parseLocalDateTime(tanggalWaktu) || now;
+        let date = parseLocalDateTime(tanggalWaktu) || new Date();
         
-        // Detik up to date jika tanggal yang dipilih = hari ini
-        if (date.toDateString() === now.toDateString()) {
-            date.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
-        }
+        // AMBIL DETIK DARI WAKTU SAAT INI (REAL-TIME) SAAT KIRIM DITEKAN
+        const now = new Date();
+        date.setSeconds(now.getSeconds());
 
         const day = String(date.getDate()).padStart(2, '0');
         const monthNum = String(date.getMonth() + 1).padStart(2, '0');
@@ -862,7 +869,6 @@ async function processSubmission() {
         const desaInfo = normalizeDesaName(selectedDesa);
         const namaDesa = desaInfo.cleanName;
         
-        // NAMA BASE FILE (Tanpa ekstensi)
         const baseFileName = `${namaDesa} ${day} ${monthNum} ${year}`;
         const zipFileNameForDownload = `${baseFileName}.zip`;
 
@@ -871,8 +877,8 @@ async function processSubmission() {
         const narasiContent = `${formattedDate}\tBabinsa ${namaDesa} ${narasiWithoutDate.trimStart()}`;
 
         // === 1. KOMPRES FOTO KE JPEG (RESIZE 1280px + QUALITY 85%) ===
-        const MAX_DIMENSION = 1280;   // Lebar/tinggi maksimal (px)
-        const JPEG_QUALITY = 0.85;    // 0.85 = 85% (bagus, hemat)
+        const MAX_DIMENSION = 1280;
+        const JPEG_QUALITY = 0.85;
         
         const origW = img.naturalWidth || img.width;
         const origH = img.naturalHeight || img.height;
@@ -881,17 +887,12 @@ async function processSubmission() {
         const newH = Math.round(origH * scale);
 
         const c = document.createElement('canvas');
-        c.width = newW;
-        c.height = newH;
+        c.width = newW; c.height = newH;
         const ctx = c.getContext('2d');
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'high';
+        ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
         ctx.drawImage(img, 0, 0, newW, newH);
         
-        // JPEG base64
         const jpgBase64 = c.toDataURL('image/jpeg', JPEG_QUALITY).split('base64,')[1];
-        
-        console.log(`📸 Foto: ${origW}×${origH} → ${newW}×${newH} (JPEG q=${JPEG_QUALITY})`);
 
         // === 2. BUAT DATA WATERMARK JSON (ARRAY SESUAI CONTOH) ===
         const watermarkData = [
@@ -1035,9 +1036,7 @@ function speakTargetReached(wilayahName, count, monthYear) {
     if (typeof window.speakIndonesian === 'function') window.speakIndonesian(message);
 }
 
-function showThankYouPopup(desaName, count) {
-    // Fungsi cadangan
-}
+function showThankYouPopup(desaName, count) { }
 
 // ================= TAB ABSEN =================
 (function() {
