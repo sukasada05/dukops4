@@ -1,7 +1,7 @@
 // ================= KONFIGURASI AMAN =================
 const APP_CONFIG = {
-    googleAppsScriptWebhook: "https://script.google.com/macros/s/AKfycbxM7DR46y0mn56NDbt9l06Upmjx6_GJtpdNtt3Wk50fUSoJQEong80Ec1WM3xRulWOVlA/exec",
-    absenScriptUrl: "https://script.google.com/macros/s/AKfycbw-bVL8qeDkDGY7HgJcSXbGYqrkRWuc2m01sSu6BsNPk3a1JNiwt7FKjEtxyg36ino3Yg/exec",
+    googleAppsScriptWebhook: "hkhhttps://script.google.com/macros/s/AKfycbw5yuRCJla7st-ZR2L77g9Idb29IwahI_fwuW1hhNNmvJGihDGUDbVHsmHmwcxZpA9cVQ/exec",
+    absenScriptUrl: "https://script.google.com/macros/s/AKfycbzNE6dsxslf32JfH74l5HuO0K-zyStL716pPEVYTqD21jGzTjM9ROcH37w5j9r4apZv9A/exec",
     allowedImageTypes: ['image/png', 'image/jpeg', 'image/webp'],
     maxImageSize: 10 * 1024 * 1024
 };
