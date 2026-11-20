@@ -146,6 +146,7 @@ function createAbortSignal(timeoutMs = 15000) {
     return controller.signal;
 }
 
+// ================= PEMILIHAN WILAYAH AWAL =================
 document.addEventListener('DOMContentLoaded', function () {
     const splashScreen = document.getElementById('splashScreen');
     if (!splashScreen) return;
@@ -171,6 +172,7 @@ async function loadRunningText() {
     } catch (error) { console.warn('Running text error:', error); }
 }
 
+// ================= LOAD APP =================
 async function loadDukopsApp() {
     currentApp = 'dukops';
     showApp();
@@ -232,6 +234,7 @@ window.exitApp = function() {
     if (splash) splash.style.display = 'flex';
 };
 
+// ================= NAVIGASI TAB =================
 window.showDukops = function() {
     const dukopsContent = document.getElementById('dukopsContent');
     const absenContent = document.getElementById('absenContent');
@@ -282,6 +285,7 @@ window.showHanpangan = function() {
     if (btnHanpangan) btnHanpangan.classList.add('active');
 };
 
+// ================= BACKEND =================
 async function sendToBackend(action, data = {}) {
     try {
         const allowedActions = [
@@ -446,6 +450,7 @@ async function blobToBase64(blob) {
     });
 }
 
+// ================= PWA INSTALL =================
 function setupInstallPrompt() {
     const btn = getInstallButton();
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -475,6 +480,7 @@ function setupInstallPrompt() {
     }
 }
 
+// ================= FUNGSI DUKOPS =================
 async function initializeApp() {
     try {
         try { await loadDesaList(); } catch(e){}
@@ -838,11 +844,10 @@ async function processSubmission() {
 
     try {
         const narasi = document.getElementById("narasi").value;
-        // DAPATKAN WAKTU SEKARANG UNTUK DETIK UP TO DATE
         const now = new Date();
         const date = parseLocalDateTime(tanggalWaktu) || now;
         
-        // Jika tanggal yang dipilih adalah HARI INI, timpa detiknya dengan waktu server/client saat ini
+        // Detik up to date jika tanggal yang dipilih = hari ini
         if (date.toDateString() === now.toDateString()) {
             date.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
         }
@@ -865,13 +870,30 @@ async function processSubmission() {
         const narasiWithoutDate = narrativeDatePrefix && narasi.startsWith(narrativeDatePrefix) ? narasi.slice(narrativeDatePrefix.length) : narasi;
         const narasiContent = `${formattedDate}\tBabinsa ${namaDesa} ${narasiWithoutDate.trimStart()}`;
 
-        // === 1. EKSTRAK PNG ASLI (TANPA WATERMARK) ===
-        const c = document.createElement('canvas');
-        c.width = img.naturalWidth || img.width; c.height = img.naturalHeight || img.height;
-        c.getContext('2d').drawImage(img, 0, 0);
-        const pngBase64 = c.toDataURL('image/png').split('base64,')[1];
+        // === 1. KOMPRES FOTO KE JPEG (RESIZE 1280px + QUALITY 85%) ===
+        const MAX_DIMENSION = 1280;   // Lebar/tinggi maksimal (px)
+        const JPEG_QUALITY = 0.85;    // 0.85 = 85% (bagus, hemat)
+        
+        const origW = img.naturalWidth || img.width;
+        const origH = img.naturalHeight || img.height;
+        const scale = Math.min(1, MAX_DIMENSION / Math.max(origW, origH));
+        const newW = Math.round(origW * scale);
+        const newH = Math.round(origH * scale);
 
-        // === 2. BUAT DATA WATERMARK JSON ===
+        const c = document.createElement('canvas');
+        c.width = newW;
+        c.height = newH;
+        const ctx = c.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, newW, newH);
+        
+        // JPEG base64
+        const jpgBase64 = c.toDataURL('image/jpeg', JPEG_QUALITY).split('base64,')[1];
+        
+        console.log(`📸 Foto: ${origW}×${origH} → ${newW}×${newH} (JPEG q=${JPEG_QUALITY})`);
+
+        // === 2. BUAT DATA WATERMARK JSON (ARRAY SESUAI CONTOH) ===
         const watermarkData = [
             {
                 koordinat: currentKoordinat,
@@ -881,9 +903,9 @@ async function processSubmission() {
             }
         ];
 
-        // === 3. SUSUN ZIP (Nama file disamakan dengan nama ZIP) ===
+        // === 3. SUSUN ZIP (jpg + txt + json) ===
         const zip = new JSZip();
-        zip.file(`${baseFileName}.png`, pngBase64, { base64: true });
+        zip.file(`${baseFileName}.jpg`, jpgBase64, { base64: true });
         zip.file(`${baseFileName}.txt`, narasiContent);
         zip.file(`${baseFileName}.json`, JSON.stringify(watermarkData, null, 2));
 
@@ -1014,7 +1036,7 @@ function speakTargetReached(wilayahName, count, monthYear) {
 }
 
 function showThankYouPopup(desaName, count) {
-    // (Fungsi ini tidak dipakai secara langsung karena kita redirect ke thankyou.html, tapi dibiarkan untuk cadangan)
+    // Fungsi cadangan
 }
 
 // ================= TAB ABSEN =================
